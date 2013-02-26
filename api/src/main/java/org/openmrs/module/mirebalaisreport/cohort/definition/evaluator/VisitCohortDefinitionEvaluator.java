@@ -26,6 +26,7 @@ import org.openmrs.module.mirebalaisreport.cohort.definition.VisitCohortDefiniti
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.evaluator.CohortDefinitionEvaluator;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
@@ -50,21 +51,19 @@ public class VisitCohortDefinitionEvaluator implements CohortDefinitionEvaluator
             throw new IllegalArgumentException("Currently only timeQualifier=ANY is implemented");
         }
 
-        // TODO transform onOrBefore to the last millisecond of the day if they have 00:00:00.000
-
         Criteria crit = sessionFactory.getCurrentSession().createCriteria(Visit.class);
         crit.add(Restrictions.eq("voided", false));
         if (cd.getStartedOnOrAfter() != null) {
             crit.add(Restrictions.ge("startDatetime", cd.getStartedOnOrAfter()));
         }
         if (cd.getStartedOnOrBefore() != null) {
-            crit.add(Restrictions.le("startDatetime", cd.getStartedOnOrBefore()));
+            crit.add(Restrictions.le("startDatetime", DateUtil.getEndOfDayIfTimeExcluded(cd.getStartedOnOrBefore())));
         }
         if (cd.getStoppedOnOrAfter() != null) {
             crit.add(Restrictions.ge("stopDatetime", cd.getStoppedOnOrAfter()));
         }
         if (cd.getStoppedOnOrBefore() != null) {
-            crit.add(Restrictions.le("stopDatetime", cd.getStoppedOnOrBefore()));
+            crit.add(Restrictions.le("stopDatetime", DateUtil.getEndOfDayIfTimeExcluded(cd.getStoppedOnOrBefore())));
         }
         if (cd.getVisitTypeList() != null) {
             crit.add(Restrictions.in("visitType", cd.getVisitTypeList()));
@@ -82,7 +81,7 @@ public class VisitCohortDefinitionEvaluator implements CohortDefinitionEvaluator
             crit.add(Restrictions.ge("dateCreated", cd.getCreatedOnOrAfter()));
         }
         if (cd.getCreatedOnOrBefore() != null) {
-            crit.add(Restrictions.le("dateCreated", cd.getCreatedOnOrBefore()));
+            crit.add(Restrictions.le("dateCreated", DateUtil.getEndOfDayIfTimeExcluded(cd.getCreatedOnOrBefore())));
         }
         crit.setProjection(Projections.distinct(Projections.property("patient.id")));
 
