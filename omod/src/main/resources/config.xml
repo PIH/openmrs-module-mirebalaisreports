@@ -12,8 +12,17 @@
 		${project.parent.description}
 	</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>${openMRSVersion}</require_version>
-	<!-- / Module Properties -->
+	<require_version>1.9.3</require_version>
+
+    <require_modules>
+        <require_module version="${reportingVersion}">
+            org.openmrs.module.reporting
+        </require_module>
+        <require_module version="${emrVersion}">
+            org.openmrs.module.emr
+        </require_module>
+    </require_modules>
+    <!-- / Module Properties -->
 
 	
 	<!-- Module Activator -->
@@ -36,14 +45,6 @@
 	<messages>
 		<lang>en</lang>
 		<file>messages.properties</file>
-	</messages>
-	<messages>
-		<lang>fr</lang>
-		<file>messages_fr.properties</file>
-	</messages>
-	<messages>
-		<lang>es</lang>
-		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
 
