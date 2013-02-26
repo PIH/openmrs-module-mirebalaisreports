@@ -20,7 +20,6 @@ import org.openmrs.Cohort;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.mirebalaisreport.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -49,6 +48,9 @@ public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensiti
     @Autowired
     UserService userService;
 
+    @Autowired
+    CohortDefinitionService cohortDefinitionService;
+
     @Before
     public void setUp() throws Exception {
         cd = new VisitCohortDefinition();
@@ -56,7 +58,7 @@ public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensiti
 
     @Test
     public void testEvaluateWithNoProperties() throws Exception {
-        Cohort c = Context.getService(CohortDefinitionService.class).evaluate(cd, null);
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
         assertThat(c.size(), is(2));
     }
 
@@ -64,7 +66,7 @@ public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensiti
     public void testEvaluateWithManyProperties() throws Exception {
         setManyProperties();
 
-        Cohort c = Context.getService(CohortDefinitionService.class).evaluate(cd, null);
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
         assertThat(c.size(), is(1));
         assertThat(c.getMemberIds(), containsInAnyOrder(2));
     }
@@ -74,7 +76,7 @@ public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensiti
         setManyProperties();
         cd.setReturnInverse(true);
 
-        Cohort c = Context.getService(CohortDefinitionService.class).evaluate(cd, null);
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
         assertThat(c.size(), is(3));
         assertThat(c.getMemberIds(), not(containsInAnyOrder(2)));
     }
