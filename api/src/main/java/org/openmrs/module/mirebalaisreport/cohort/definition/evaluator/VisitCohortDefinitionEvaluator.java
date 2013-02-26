@@ -47,6 +47,8 @@ public class VisitCohortDefinitionEvaluator implements CohortDefinitionEvaluator
     public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) throws EvaluationException {
         VisitCohortDefinition cd = (VisitCohortDefinition) cohortDefinition;
 
+        // TODO need to exclude voided patients (just in case there are non-voided visits for voided patients)
+
         if (cd.getTimeQualifier() != TimeQualifier.ANY) {
             throw new IllegalArgumentException("Currently only timeQualifier=ANY is implemented");
         }
