@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.mirebalaisreport.cohort.definition;
+package org.openmrs.module.mirebalaisreports.cohort.definition;
 
 import org.openmrs.Concept;
 import org.openmrs.Location;
@@ -58,7 +58,7 @@ public class VisitCohortDefinition extends BaseCohortDefinition {
     @ConfigurationProperty(group = "when")
     private Date stoppedOnOrBefore;
 
-    @ConfigurationProperty(group = "when")
+    //@ConfigurationProperty(group = "when")
     private Boolean isActive;
 
     @ConfigurationProperty(group = "other")

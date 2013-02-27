@@ -1,8 +1,8 @@
-package org.openmrs.module.mirebalaisreport.definitions;
+package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.mirebalaisreport.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.MapDataSet;

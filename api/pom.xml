@@ -8,7 +8,7 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mirebalaisreport-api</artifactId>
+	<artifactId>mirebalaisreports-api</artifactId>
 	<packaging>jar</packaging>
 	<name>Mirebalais Hospital Reporting Module Module API</name>
 	<description>API project for MirebalaisHospitalReportingModule</description>

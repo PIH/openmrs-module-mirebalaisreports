@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.mirebalaisreport.cohort.definition.evaluator;
+package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import org.openmrs.Cohort;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
-import org.openmrs.module.mirebalaisreport.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;

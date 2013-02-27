@@ -1,4 +1,4 @@
-package org.openmrs.module.mirebalaisreport.definitions;
+package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Test;
 import org.openmrs.module.reporting.common.DateUtil;

@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.mirebalaisreport.cohort.definition.evaluator;
+package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -22,7 +22,7 @@ import org.openmrs.Cohort;
 import org.openmrs.Visit;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.mirebalaisreport.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.evaluator.CohortDefinitionEvaluator;
