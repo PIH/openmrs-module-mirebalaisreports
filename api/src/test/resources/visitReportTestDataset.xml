@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <global_property property="patientregistration.patientRegistrationEncounterType" property_value="Registration" uuid="4f55827e-26fe-102b-99cb-0017a47871b3"/>
+
+    <encounter_type encounter_type_id="100" name="Registration" description="Registration Visit" creator="1" date_created="2005-02-24 00:00:00.0" retired="false" uuid="873f968a-73a8-4f9c-ac78-9f4778b751b6"/>
+    <encounter encounter_id="103" encounter_type="100" patient_id="7" location_id="1" encounter_datetime="2012-01-02 09:00:00.0" creator="1" date_created="2012-01-02 09:00:00.0" voided="false" uuid="6519d653-393b-4118-9c83-a3655b82d4ac"/>
+
+    <visit visit_id="100" patient_id="2" visit_type_id="1" date_started="2012-01-01 00:00:00.0" date_stopped="2012-01-01 18:30:00.0" creator="1" date_created="2012-01-01 00:00:00.0" voided="0" uuid="f9ac1b0d-77eb-4a4a-9af4-e78ea7fec3d7" />
+    <visit visit_id="104" patient_id="7" visit_type_id="1" date_started="2012-01-01 00:00:00.0" date_stopped="2012-01-01 18:30:00.0" creator="1" date_created="2012-01-01 00:00:00.0" voided="0" uuid="f5a9c8fb-30fa-4927-8198-3bdfb330e578" />
+
+    <visit visit_id="101" patient_id="6" visit_type_id="1" date_started="2012-01-02 00:00:00.0" creator="1" date_created="2012-01-02 00:00:00.0" voided="0" uuid="f5a9c8fb-30fa-4927-8198-3bdfb440e578" />
+    <visit visit_id="102" patient_id="2" visit_type_id="1" date_started="2012-01-02 00:00:00.0" creator="1" date_created="2012-01-02 00:00:00.0" voided="0" uuid="f9baf2fe-05f6-4312-9fcf-a9d5e987eab2" />
+
+    <visit visit_id="103" patient_id="7" visit_type_id="1" date_started="2012-01-02 09:00:00.0" date_stopped="2012-01-02 10:30:00.0" creator="1" date_created="2012-01-02 00:00:00.0" voided="0" uuid="b8f93573-2b79-4b32-b0c9-7fe7c74c7a78" />
+</dataset>

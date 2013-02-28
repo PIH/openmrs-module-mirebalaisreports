@@ -85,6 +85,11 @@ public class VisitCohortDefinitionEvaluator implements CohortDefinitionEvaluator
         if (cd.getCreatedOnOrBefore() != null) {
             crit.add(Restrictions.le("dateCreated", DateUtil.getEndOfDayIfTimeExcluded(cd.getCreatedOnOrBefore())));
         }
+        if (cd.isActive() != null) {
+            if(cd.isActive()) {
+                crit.add(Restrictions.isNull("stopDatetime"));
+            }
+        }
         crit.setProjection(Projections.distinct(Projections.property("patient.id")));
 
         Cohort c = new Cohort();

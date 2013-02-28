@@ -58,8 +58,8 @@ public class VisitCohortDefinition extends BaseCohortDefinition {
     @ConfigurationProperty(group = "when")
     private Date stoppedOnOrBefore;
 
-    //@ConfigurationProperty(group = "when")
-    private Boolean isActive;
+    @ConfigurationProperty(group = "when")
+    private Boolean active;
 
     @ConfigurationProperty(group = "other")
     private Boolean returnInverse = Boolean.FALSE;
@@ -89,8 +89,8 @@ public class VisitCohortDefinition extends BaseCohortDefinition {
         if (stoppedOnOrBefore != null) {
             sb.append(" stopped on or before " + stoppedOnOrBefore);
         }
-        if (isActive != null) {
-            if (isActive) {
+        if (active != null) {
+            if (active) {
                 sb.append(" and is active");
             } else {
                 sb.append(" and is completed");
@@ -219,11 +219,11 @@ public class VisitCohortDefinition extends BaseCohortDefinition {
         this.createdOnOrAfter = createdOnOrAfter;
     }
 
-    public Boolean getActive() {
-        return isActive;
+    public Boolean isActive() {
+        return active;
     }
 
     public void setActive(Boolean active) {
-        isActive = active;
+        this.active = active;
     }
 }

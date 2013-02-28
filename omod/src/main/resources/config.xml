@@ -23,6 +23,9 @@
         <require_module version="${emrVersion}">
             org.openmrs.module.emr
         </require_module>
+        <require_module version="${patientregistrationVersion}">
+            org.openmrs.module.patientregistration
+        </require_module>
     </require_modules>
 
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.MirebalaisHospitalReportingModuleActivator</activator>
