@@ -20,6 +20,10 @@ public class BasicStatisticsPageController {
         addColumnValueToPageModel(pageModel, reportResult, "startedVisitDayBefore");
         addColumnValueToPageModel(pageModel, reportResult, "activeVisits");
         addColumnValueToPageModel(pageModel, reportResult, "todayRegistrations");
+        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBefore");
+        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBeforeWithVitals");
+        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBeforeWithDiagnosis");
+        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBeforeWithVitalsAndDiagnosis");
     }
 
     private void addColumnValueToPageModel(PageModel pageModel, MapDataSet dataset, String columnName) {
