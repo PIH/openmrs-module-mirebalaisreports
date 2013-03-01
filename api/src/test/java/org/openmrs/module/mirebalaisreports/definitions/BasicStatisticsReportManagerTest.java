@@ -3,7 +3,11 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.openmrs.Cohort;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
@@ -12,6 +16,7 @@ import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.indicator.dimension.CohortIndicatorAndDimensionResult;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
@@ -22,9 +27,17 @@ import static org.mockito.Mockito.when;
 
 public class BasicStatisticsReportManagerTest extends BaseModuleContextSensitiveTest {
 
+    @Autowired
+    private BasicStatisticsReportManager basicStatisticsReportManager;
+    private EmrProperties emrProperties;
+
+
     @Before
-    public void setupDatabase() throws Exception {
+    public void setup() throws Exception {
         executeDataSet("visitReportTestDataset.xml");
+
+        emrProperties = mock(EmrProperties.class);
+        basicStatisticsReportManager.setEmrProperties(emrProperties);
     }
 
     @Test
@@ -33,13 +46,9 @@ public class BasicStatisticsReportManagerTest extends BaseModuleContextSensitive
 
         DiagnosisMetadata dmd = new DiagnosisMetadata();
         dmd.setDiagnosisSetConcept(Context.getConceptService().getConcept(23));
-
-        EmrProperties emrProperties = mock(EmrProperties.class);
         when(emrProperties.getDiagnosisMetadata()).thenReturn(dmd);
 
-        BasicStatisticsReportManager report = new BasicStatisticsReportManager(emrProperties);
-
-        MapDataSet result = report.evaluate(day);
+        MapDataSet result = basicStatisticsReportManager.evaluate(day);
 
         CohortIndicatorAndDimensionResult startedVisitOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("startedVisitOnDay");
         CohortIndicatorAndDimensionResult startedVisitDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("startedVisitDayBefore");

@@ -24,6 +24,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.ui.framework.SimpleObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -31,11 +32,8 @@ import java.util.List;
 
 public class BasicStatisticsReportManager {
 
+    @Autowired
     EmrProperties emrProperties;
-
-    public BasicStatisticsReportManager(EmrProperties emrProperties) {
-        this.emrProperties = emrProperties;
-    }
 
     public MapDataSet evaluate(Date day) throws EvaluationException {
         day = DateUtil.getStartOfDay(day);
@@ -156,4 +154,7 @@ public class BasicStatisticsReportManager {
         return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
     }
 
+    public void setEmrProperties(EmrProperties emrProperties) {
+        this.emrProperties = emrProperties;
+    }
 }
