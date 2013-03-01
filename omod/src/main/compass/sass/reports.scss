@@ -1,0 +1,12 @@
+@import "colors";
+
+.reportBox {
+  display: inline-block;
+  color: $text;
+
+  ul {
+    background-color: $pihSecondaryDarkBlue;
+    color: $white;
+  }
+
+}
