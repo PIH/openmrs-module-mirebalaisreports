@@ -15,26 +15,22 @@
     ${ ui.message("mirebalaisreports.basicStatistics.title") }
 </h1>
 
-<h3>
-    ${ ui.message("mirebalaisreports.hospitalPopulation.title") }
-</h3>
-
 <div class=" reportBox">
     <p>${ ui.message("mirebalaisreports.label.today") }</p>
     <ul>
-        <li>${ startedVisitOnDay } ${ ui.message("mirebalaisreports.label.startedVisits") }</li>
-        <li>${ activeVisits } ${ ui.message("mirebalaisreports.label.activeVisits") }</li>
-        <li>${ todayRegistrations } ${ ui.message("mirebalaisreports.label.registrationsToday") }</li>
+        <li><span class="data">${ startedVisitOnDay }</span> ${ ui.message("mirebalaisreports.label.startedVisits") }</li>
+        <li><span class="data">${ activeVisits }</span> ${ ui.message("mirebalaisreports.label.activeVisits") }</li>
+        <li><span class="data">${ todayRegistrations }</span> ${ ui.message("mirebalaisreports.label.registrationsToday") }</li>
     </ul>
 </div>
 
 <div class="reportBox">
     <p>${ ui.message("mirebalaisreports.label.yesterday") }</p>
     <ul>
-        <li>${ startedVisitDayBefore } ${ ui.message("mirebalaisreports.label.totalVisits") }</li>
-        <li>${ outpatientsDayBefore } ${ ui.message("mirebalaisreports.label.outpatientsDayBefore") }</li>
-        <li>${ outpatientsDayBeforeWithVitals } ${ ui.message("mirebalaisreports.label.outpatientsDayBeforeWithVitals") }</li>
-        <li>${ outpatientsDayBeforeWithDiagnosis } ${ ui.message("mirebalaisreports.label.outpatientsDayBeforeWithDiagnosis") }</li>
-        <li>${ outpatientsDayBeforeWithVitalsAndDiagnosis } ${ ui.message("mirebalaisreports.label.outpatientsDayBeforeWithVitalsAndDiagnosis") }</li>
+        <li><span class="data">${ startedVisitDayBefore }</span> ${ ui.message("mirebalaisreports.label.totalVisits") }</li>
+        <li><span class="data">${ outpatientsDayBefore }</span> ${ ui.message("mirebalaisreports.label.outpatientsDayBefore") }</li>
+        <li><span class="data">${ outpatientsDayBeforeWithVitals }</span> ${ ui.message("mirebalaisreports.label.outpatientsDayBeforeWithVitals") }</li>
+        <li><span class="data">${ outpatientsDayBeforeWithDiagnosis }</span> ${ ui.message("mirebalaisreports.label.outpatientsDayBeforeWithDiagnosis") }</li>
+        <li><span class="data">${ outpatientsDayBeforeWithVitalsAndDiagnosis }</span> ${ ui.message("mirebalaisreports.label.outpatientsDayBeforeWithVitalsAndDiagnosis") }</li>
     </ul>
 </div>

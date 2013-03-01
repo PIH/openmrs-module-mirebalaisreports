@@ -3,10 +3,25 @@
 .reportBox {
   display: inline-block;
   color: $text;
+  vertical-align: top;
+  margin: 20px;
+
+  p {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
 
   ul {
     background-color: $pihSecondaryDarkBlue;
     color: $white;
+    padding: 10px;
+
+    span.data {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
   }
 
 }
