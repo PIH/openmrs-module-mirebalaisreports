@@ -45,6 +45,7 @@
         <providerManagementVersion>1.1.3</providerManagementVersion>
         <patientregistrationVersion>2.0-SNAPSHOT</patientregistrationVersion>
         <idgenVersion>2.4</idgenVersion>
+        <appframeworkVersion>1.4</appframeworkVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -146,6 +147,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>patientregistration-api</artifactId>
             <version>${patientregistrationVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>appframework-api</artifactId>
+            <version>${appframeworkVersion}</version>
             <scope>provided</scope>
         </dependency>
         <!-- OpenMRS modules -->

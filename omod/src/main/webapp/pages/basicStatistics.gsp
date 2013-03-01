@@ -29,9 +29,22 @@
     <tbody>
     <tr>
         <td>${ ui.message("mirebalaisreports.label.startedVisits") }</td>
-        <td>${ startedVisitOnDay }</td>
         <td>${ startedVisitDayBefore }</td>
+        <td>${ startedVisitOnDay }</td>
     </tr>
+    </tbody>
+</table>
+
+
+<br/>
+<table>
+    <thead>
+    <tr>
+        <th>Statistic</th>
+        <th>${ ui.message("mirebalaisreports.label.today") }</th>
+    </tr>
+    </thead>
+    <tbody>
     <tr>
         <td>${ ui.message("mirebalaisreports.label.activeVisits") }</td>
         <td>${ activeVisits }</td>
