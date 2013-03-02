@@ -66,7 +66,7 @@
             <span class="label">Visits Today</span>
             <span class="data">${ startedVisitOnDay.value }</span>
         </li>
-        <li class="subtle">
+        <li class="subtle indented">
             <span class="label">Visits Yesterday</span>
             <span class="data">${ startedVisitDayBefore }</span>
         </li>
