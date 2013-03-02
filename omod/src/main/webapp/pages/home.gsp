@@ -14,6 +14,6 @@
 </h1>
 
 <ul>
-    <li>Basic Statistics</li>
+    <li><a href="${ ui.pageLink("mirebalaisreports", "basicStatistics") }">${ ui.message("mirebalaisreports.basicStatistics.title") }</a></li>
     <li><a href="${ ui.pageLink("mirebalaisreports", "noncodeddiagnoses/report") }">${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }</a></li>
 </ul>

@@ -14,7 +14,7 @@
     <bean id="reportsApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="mirebalaisreports.Reports"/>
         <property name="labelCode" value="mirebalaisreports.app.reports.label"/>
-        <property name="homepageUrl" value="mirebalaisreports/basicStatistics.page"/>
+        <property name="homepageUrl" value="mirebalaisreports/home.page"/>
         <property name="iconUrl" value="icon-list-alt"/>
         <property name="order" value="2" />
     </bean>

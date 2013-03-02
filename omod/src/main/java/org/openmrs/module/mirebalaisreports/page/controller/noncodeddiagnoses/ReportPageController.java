@@ -42,6 +42,8 @@ public class ReportPageController {
                     @RequestParam(required = false, value = "toDate") Date toDate,
                     PageModel model) {
 
+        // NOTE it is very hacky to use the Hibernate session factory in a controller. Please don't copy this!
+
         if (fromDate == null) {
             fromDate = DateUtils.addDays(new Date(), -7);
         }

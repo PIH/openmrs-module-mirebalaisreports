@@ -18,9 +18,20 @@
     color: $white;
     padding: 10px;
 
+    li.indented {
+      padding-left: 1em;
+    }
+
+    span.label {
+    }
+
     span.data {
-      font-size: 1.5em;
+      font-size: 1.8em;
       font-weight: bold;
+    }
+
+    .subtle {
+      color: darken($white, 50%);
     }
   }
 
