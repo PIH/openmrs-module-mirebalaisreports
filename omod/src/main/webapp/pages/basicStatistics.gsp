@@ -51,28 +51,26 @@
 <h1>
     ${ ui.message("mirebalaisreports.basicStatistics.title") }
 </h1>
-<p class="small">
-    Generated ${ ui.format(new Date()) }
-</p>
 
 <div class="reportBox">
     <p>Hospital Usage</p>
     <ul>
         <li>
-            <span class="label">Registrations Today</span>
             <span class="data">${ todayRegistrations.value }</span>
+            <span class="label">Registrations Today</span>
         </li>
         <li>
-            <span class="label">Visits Today</span>
             <span class="data">${ startedVisitOnDay.value }</span>
-        </li>
-        <li class="subtle indented">
-            <span class="label">Visits Yesterday</span>
-            <span class="data">${ startedVisitDayBefore }</span>
+            <span class="label">Visits Today</span>
+            
         </li>
         <li>
-            <span class="label">Open Visits (Now)</span>
+            <span class="data">${ startedVisitDayBefore }</span>
+            <span class="label">Visits Yesterday</span>
+        </li>
+        <li>
             <span class="data">${ activeVisits.value }</span>
+            <span class="label">Open Visits (Now)</span>
         </li>
     </ul>
 </div>
@@ -81,10 +79,10 @@
     <p>Data Quality</p>
     <ul>
         <li>
-            <span class="label">Outpatients seen yesterday</span>
             <span class="data">
                 ${ outpatientsDayBefore }
             </span>
+            <span class="label">Outpatients seen yesterday</span>
         </li>
         <%
         def indicators = [
@@ -95,11 +93,11 @@
         indicators.each {
         %>
             <li class="indented">
-                <span class="label">${ it.label }</span>
                 <span class="data">
                     ${ percentage(it.value) }%
                     (${ numerator(it.value) })
                 </span>
+                <span class="label">${ it.label }</span>
                 <div class="percentage-bar" data-numerator="${ numerator(it.value) }" data-denominator="${ denominator(it.value) }"></div>
             </li>
         <% } %>
