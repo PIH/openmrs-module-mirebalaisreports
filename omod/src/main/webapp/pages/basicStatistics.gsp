@@ -94,8 +94,12 @@
         %>
             <li class="indented">
                 <span class="data">
-                    ${ percentage(it.value) }%
-                    (${ numerator(it.value) })
+                    <span>
+                        ${ percentage(it.value) }%
+                    </span>
+                    <span class="number">
+                        (${ numerator(it.value) })
+                    </span>
                 </span>
                 <span class="label">${ it.label }</span>
                 <div class="percentage-bar" data-numerator="${ numerator(it.value) }" data-denominator="${ denominator(it.value) }"></div>
