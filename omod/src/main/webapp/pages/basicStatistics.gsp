@@ -38,6 +38,9 @@
         jq('.percentage-bar').each(function(index) {
             var n = Number(jq(this).attr('data-numerator'));
             var d = Number(jq(this).attr('data-denominator'));
+
+            var n = 70;
+            var d = 100;
             if (d && d > 0) {
                 jq(this).progressbar({
                     value: n,

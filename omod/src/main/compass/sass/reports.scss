@@ -41,5 +41,11 @@
     background-image: -webkit-linear-gradient(top, rgb(235, 235, 235), rgb(250, 250, 250));
     border: 0;
     border-radius: 2px;
+    width: 90%;
+    margin: 0 auto;
+
+    .ui-progressbar-value {
+      border-radius: 0;
+    }
   }
 }
