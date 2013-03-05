@@ -56,8 +56,12 @@
     <p>Hospital Usage</p>
     <ul>
         <li>
+            <span class="data">${ activeVisits.value }</span>
+            <span class="label">Open Visits (Now)</span>
+        </li>
+        <li>
             <span class="data">${ todayRegistrations.value }</span>
-            <span class="label">Registrations Today</span>
+            <span class="label">Registration(s) Today</span>
         </li>
         <li>
             <span class="data">${ startedVisitOnDay.value }</span>
@@ -67,10 +71,6 @@
         <li>
             <span class="data">${ startedVisitDayBefore }</span>
             <span class="label">Visits Yesterday</span>
-        </li>
-        <li>
-            <span class="data">${ activeVisits.value }</span>
-            <span class="label">Open Visits (Now)</span>
         </li>
     </ul>
 </div>
@@ -82,7 +82,7 @@
             <span class="data">
                 ${ outpatientsDayBefore }
             </span>
-            <span class="label">Outpatients seen yesterday</span>
+            <span class="label">Outpatient(s) seen yesterday</span>
         </li>
         <%
         def indicators = [
