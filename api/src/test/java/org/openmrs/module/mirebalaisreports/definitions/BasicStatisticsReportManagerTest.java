@@ -3,15 +3,9 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.openmrs.Cohort;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
+import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.indicator.dimension.CohortIndicatorAndDimensionResult;
@@ -22,31 +16,26 @@ import java.util.Date;
 
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class BasicStatisticsReportManagerTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     private BasicStatisticsReportManager basicStatisticsReportManager;
-    private EmrProperties emrProperties;
+
+    @Autowired
+    private MirebalaisProperties mirebalaisProperties;
 
 
     @Before
     public void setup() throws Exception {
         executeDataSet("visitReportTestDataset.xml");
 
-        emrProperties = mock(EmrProperties.class);
-        basicStatisticsReportManager.setEmrProperties(emrProperties);
+        basicStatisticsReportManager.setMirebalaisProperties(mirebalaisProperties);
     }
 
     @Test
     public void shouldBuildAndRunReport() throws Exception {
         Date day = DateUtil.parseDate("2012-01-02", "yyyy-MM-dd");
-
-        DiagnosisMetadata dmd = new DiagnosisMetadata();
-        dmd.setDiagnosisSetConcept(Context.getConceptService().getConcept(23));
-        when(emrProperties.getDiagnosisMetadata()).thenReturn(dmd);
 
         MapDataSet result = basicStatisticsReportManager.evaluate(day);
 
@@ -55,23 +44,24 @@ public class BasicStatisticsReportManagerTest extends BaseModuleContextSensitive
         CohortIndicatorAndDimensionResult patientsCurrentlyInHospital = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("activeVisits");
         CohortIndicatorAndDimensionResult todayRegistrations = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("todayRegistrations");
         CohortIndicatorAndDimensionResult outpatientsDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBefore");
+        CohortIndicatorAndDimensionResult outpatientsDayBeforeWithClinical = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBeforeWithClinical");
         CohortIndicatorAndDimensionResult outpatientsDayBeforeWithVitals = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBeforeWithVitals");
         CohortIndicatorAndDimensionResult outpatientsDayBeforeWithDiagnosis = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBeforeWithDiagnosis");
-        CohortIndicatorAndDimensionResult outpatientsDayBeforeWithVitalsAndDiagnosis = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBeforeWithVitalsAndDiagnosis");
 
         assertThat(startedVisitOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6, 7));
         assertThat(startedVisitDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 7));
         assertThat(patientsCurrentlyInHospital.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6));
         assertThat(todayRegistrations.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
 
-        Matcher<Cohort> isExpectedDenominatorCohort = hasCohort(2, 6, 7);
-        assertThat(outpatientsDayBefore.getCohortIndicatorAndDimensionCohort(), isExpectedDenominatorCohort);
+        Matcher<Cohort> isExpectedOutpatientEncounterCohort = hasCohort(2, 6, 7, 8);
+        Matcher<Cohort> isExpectedOutpatientClinicalCohort = hasCohort(2, 6, 7);
+        assertThat(outpatientsDayBefore.getCohortIndicatorAndDimensionCohort(), isExpectedOutpatientEncounterCohort);
+        assertThat(outpatientsDayBeforeWithClinical.getCohortIndicatorAndDimensionCohort(), isExpectedOutpatientClinicalCohort);
+        assertThat(outpatientsDayBeforeWithClinical.getCohortIndicatorAndDimensionDenominator(), isExpectedOutpatientEncounterCohort);
         assertThat(outpatientsDayBeforeWithVitals.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 7));
-        assertThat(outpatientsDayBeforeWithVitals.getCohortIndicatorAndDimensionDenominator(), isExpectedDenominatorCohort);
+        assertThat(outpatientsDayBeforeWithVitals.getCohortIndicatorAndDimensionDenominator(), isExpectedOutpatientClinicalCohort);
         assertThat(outpatientsDayBeforeWithDiagnosis.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
-        assertThat(outpatientsDayBeforeWithDiagnosis.getCohortIndicatorAndDimensionDenominator(), isExpectedDenominatorCohort);
-        assertThat(outpatientsDayBeforeWithVitalsAndDiagnosis.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
-        assertThat(outpatientsDayBeforeWithVitalsAndDiagnosis.getCohortIndicatorAndDimensionDenominator(), isExpectedDenominatorCohort);
+        assertThat(outpatientsDayBeforeWithDiagnosis.getCohortIndicatorAndDimensionDenominator(), isExpectedOutpatientClinicalCohort);
     }
 
     private Matcher<Cohort> hasCohort(final Integer... expectedMemberIds) {

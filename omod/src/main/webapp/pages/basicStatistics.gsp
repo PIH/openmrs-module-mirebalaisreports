@@ -53,7 +53,7 @@
 </h1>
 
 <div class="reportBox">
-    <p>Hospital Usage</p>
+    <p>Hospital Utilization</p>
     <ul>
         <li>
             <span class="data">${ activeVisits.value }</span>
@@ -84,11 +84,21 @@
             </span>
             <span class="label">Outpatient(s) seen yesterday</span>
         </li>
+        <li>
+            <span class="data">
+                <span>
+                    ${ percentage(outpatientsDayBeforeWithClinical) }%
+                </span>
+                <span class="number">
+                    (${ numerator(outpatientsDayBeforeWithClinical) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> with any clinical encounter</span>
+        </li>
         <%
         def indicators = [
             [ label: "with vitals captured", value: outpatientsDayBeforeWithVitals ],
             [ label: "with diagnosis captured", value: outpatientsDayBeforeWithDiagnosis ],
-            [ label: "with both vitals & diagnosis captured", value: outpatientsDayBeforeWithVitalsAndDiagnosis ]
         ]
         indicators.each {
         %>
@@ -101,7 +111,7 @@
                         (${ numerator(it.value) })
                     </span>
                 </span>
-                <span class="label">${ it.label }</span>
+                <span class="label"><i class="icon-angle-right small"></i> ${ it.label }</span>
                 <div class="percentage-bar" data-numerator="${ numerator(it.value) }" data-denominator="${ denominator(it.value) }"></div>
             </li>
         <% } %>

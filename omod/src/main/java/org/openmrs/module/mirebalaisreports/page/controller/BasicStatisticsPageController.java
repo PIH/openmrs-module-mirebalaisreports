@@ -7,6 +7,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 
 import java.util.Date;
+import java.util.Map;
 
 public class BasicStatisticsPageController {
 
@@ -16,17 +17,9 @@ public class BasicStatisticsPageController {
         Date today = new Date();
         MapDataSet reportResult = reportManager.evaluate(today);
 
-        addColumnValueToPageModel(pageModel, reportResult, "startedVisitOnDay");
-        addColumnValueToPageModel(pageModel, reportResult, "startedVisitDayBefore");
-        addColumnValueToPageModel(pageModel, reportResult, "activeVisits");
-        addColumnValueToPageModel(pageModel, reportResult, "todayRegistrations");
-        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBefore");
-        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBeforeWithVitals");
-        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBeforeWithDiagnosis");
-        addColumnValueToPageModel(pageModel, reportResult, "outpatientsDayBeforeWithVitalsAndDiagnosis");
+        for (Map.Entry<String, Object> entry : reportResult.getData().getColumnValuesByKey().entrySet()) {
+            pageModel.addAttribute(entry.getKey(), entry.getValue());
+        }
     }
 
-    private void addColumnValueToPageModel(PageModel pageModel, MapDataSet dataset, String columnName) {
-        pageModel.addAttribute(columnName, dataset.getData().getColumnValue(columnName));
-    }
 }
