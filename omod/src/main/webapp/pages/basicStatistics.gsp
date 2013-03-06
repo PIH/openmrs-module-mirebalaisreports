@@ -25,26 +25,6 @@
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.thisUrl() }" }
     ];
-
-    function indicatorColor(pct) {
-        var red = Math.round(180 * (1-pct));
-        var green = Math.round(180 * pct);
-        var blue = 0;
-        return "rgb(" + red + "," + green + "," + blue + ")";
-    }
-
-    jq(function() {
-        jq('.percentage-bar').each(function(index) {
-            var n = Number(jq(this).attr('data-numerator'));
-            var d = Number(jq(this).attr('data-denominator'));
-            if (d && d > 0) {
-                jq(this).progressbar({
-                    value: n,
-                    max: d
-                }).find(".ui-progressbar-value").css({ "background-color": indicatorColor(n/d) });
-            }
-        });
-    });
 </script>
 
 <h1>
@@ -111,7 +91,6 @@
                     </span>
                 </span>
                 <span class="label"><i class="icon-angle-right small"></i> ${ it.label }</span>
-                <div class="percentage-bar" data-numerator="${ numerator(it.value) }" data-denominator="${ denominator(it.value) }"></div>
             </li>
         <% } %>
     </ul>
