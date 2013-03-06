@@ -55,7 +55,7 @@
 </div>
 
 <div class="reportBox">
-    <p>Data Quality</p>
+    <p>Outpatient Clinic data collection</p>
     <ul>
         <li>
             <span class="data">
@@ -81,7 +81,7 @@
         ]
         indicators.each {
         %>
-            <li class="indented">
+            <li>
                 <span class="data">
                     <span>
                         ${ percentage(it.value) }%
@@ -94,9 +94,6 @@
             </li>
         <% } %>
     </ul>
-</div>
-
-<div class="reportLinksBox">
 </div>
 
 <div class="reportLinksBox">
