@@ -45,5 +45,27 @@
       color: darken($white, 40%);
     }
   }
+}
+
+.reportLinksBox {
+  display: inline-block;
+  color: $text;
+  vertical-align: top;
+  margin: 20px;
+  width: 45%;
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  ul {
+    background-color: $lighterGrey;
+    padding-left: 10px;
+
+    li {
+      font-weight: bold;
+      padding: 0.2em;
+    }
+  }
 
 }

@@ -23,8 +23,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.pageLink("mirebalaisreports", "home") }" },
-        { label: "${ ui.message("mirebalaisreports.basicStatistics.title") }", link: "${ ui.thisUrl() }" }
+        { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.thisUrl() }" }
     ];
 
     function indicatorColor(pct) {
@@ -115,5 +114,15 @@
                 <div class="percentage-bar" data-numerator="${ numerator(it.value) }" data-denominator="${ denominator(it.value) }"></div>
             </li>
         <% } %>
+    </ul>
+</div>
+
+<div class="reportLinksBox">
+</div>
+
+<div class="reportLinksBox">
+    <p>Data Quality Reports</p>
+    <ul>
+        <li><a href="${ ui.pageLink("mirebalaisreports", "noncodeddiagnoses/report") }">${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }</a></li>
     </ul>
 </div>

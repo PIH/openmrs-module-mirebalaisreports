@@ -5,7 +5,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.pageLink("mirebalaisreports", "home") }" },
+        { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.pageLink("mirebalaisreports", "basicStatistics") }" },
         { label: "${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }", link: "${ ui.thisUrl() }" }
     ];
 </script>
@@ -27,6 +27,11 @@
         </tr>
     </thead>
     <tbody>
+    <% if (!list) { %>
+        <tr>
+            <td colspan="3">${ ui.message("emr.none") }</td>
+        </tr>
+    <% } %>
     <% list.each { %>
         <tr>
             <td>${ ui.escapeHtml(it.diagnosis) }</td>
