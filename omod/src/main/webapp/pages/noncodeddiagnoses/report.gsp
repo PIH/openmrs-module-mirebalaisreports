@@ -15,15 +15,15 @@
 </h1>
 
 <h3>
-    Diagnoses entered as free-text, from ${ ui.format(fromDate) } to ${ ui.format(toDate) }
+    ${ ui.message("mirebalaisreports.noncodeddiagnoses.subtitle", ui.format(fromDate), ui.format(toDate)) }
 </h3>
 
 <table>
     <thead>
         <tr>
-            <th>Diagnosis</th>
-            <th>Entered By</th>
-            <th>Entry Date</th>
+            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.diagnosis") }</th>
+            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy") }</th>
+            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.entryDate") }</th>
         </tr>
     </thead>
     <tbody>
