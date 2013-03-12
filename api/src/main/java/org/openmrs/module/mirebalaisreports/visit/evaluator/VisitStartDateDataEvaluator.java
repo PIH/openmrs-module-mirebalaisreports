@@ -14,20 +14,18 @@
 
 package org.openmrs.module.mirebalaisreports.visit.evaluator;
 
-import org.openmrs.Encounter;
-import org.openmrs.Visit;
 import org.openmrs.annotation.Handler;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.mirebalaisreports.visit.definition.VisitDataDefinition;
 import org.openmrs.module.mirebalaisreports.visit.definition.VisitStartDateDataDefinition;
-import org.openmrs.module.reporting.data.encounter.EncounterDataUtil;
-import org.openmrs.module.reporting.data.encounter.EvaluatedEncounterData;
-import org.openmrs.module.reporting.dataset.query.service.DataSetQueryService;
+import org.openmrs.module.mirebalaisreports.visit.query.VisitQueryService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -35,13 +33,23 @@ import java.util.Set;
 @Handler(supports = VisitStartDateDataDefinition.class)
 public class VisitStartDateDataEvaluator implements VisitDataEvaluator {
 
+    @Autowired
+    public VisitQueryService visitQueryService;
+
     @Override
     public EvaluatedVisitData evaluate(VisitDataDefinition definition, EvaluationContext context) throws EvaluationException {
         EvaluatedVisitData c = new EvaluatedVisitData(definition, context);
-        DataSetQueryService qs = Context.getService(DataSetQueryService.class);
-        Map<Integer, Object> data = qs.getPropertyValues(Visit.class, "startDatetime", context);
-        // note that we are _not_ filtering based on any base patient cohort from context
-        c.setData(data);
+
+        VisitStartDateDataDefinition visitStartDateDataDefinition = (VisitStartDateDataDefinition) definition;
+
+        Date startDate = visitStartDateDataDefinition.getOnOrAfter();
+        Date endDate = visitStartDateDataDefinition.getOnOrBefore();
+
+        Map<Integer, Date> visitIdsFromVisitsThatHaveDiagnoses =
+                visitQueryService.getMapOfVisitIdsAndStartDatesFromVisitsThatHaveDiagnoses(startDate, endDate);
+
+
+        c.setData((Map<Integer, Object>) visitIdsFromVisitsThatHaveDiagnoses);
         return c;
     }
 

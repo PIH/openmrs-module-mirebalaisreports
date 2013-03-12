@@ -15,6 +15,7 @@
 package org.openmrs.module.mirebalaisreports.visit.definition;
 
 import org.openmrs.module.reporting.data.BaseDataDefinition;
+import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
 import java.util.Date;
 
@@ -23,9 +24,30 @@ import java.util.Date;
  */
 public class VisitStartDateDataDefinition extends BaseDataDefinition implements VisitDataDefinition {
 
+    @ConfigurationProperty
+    private Date onOrAfter;
+
+    @ConfigurationProperty
+    private Date onOrBefore;
+
     @Override
     public Class<?> getDataType() {
         return Date.class;
     }
 
+    public Date getOnOrBefore() {
+        return onOrBefore;
+    }
+
+    public void setOnOrBefore(Date onOrBefore) {
+        this.onOrBefore = onOrBefore;
+    }
+
+    public Date getOnOrAfter() {
+        return onOrAfter;
+    }
+
+    public void setOnOrAfter(Date onOrAfter) {
+        this.onOrAfter = onOrAfter;
+    }
 }

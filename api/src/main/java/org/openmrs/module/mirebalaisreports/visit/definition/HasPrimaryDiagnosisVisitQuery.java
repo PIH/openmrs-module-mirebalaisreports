@@ -48,10 +48,4 @@ public class HasPrimaryDiagnosisVisitQuery extends BaseQuery<Visit> implements V
         this.onOrBefore = onOrBefore;
     }
 
-    /**
-     * @return visits between given dates that have a primary diagnosis
-     */
-    public List<Integer> evaluate() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
 }

@@ -16,7 +16,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.mirebalaisreports.visit.definition.HasPrimaryDiagnosisVisitQuery;
 import org.openmrs.module.mirebalaisreports.visit.definition.VisitDataSetDefinition;
-import org.openmrs.module.reporting.data.encounter.definition.EncounterDatetimeDataDefinition;
+import org.openmrs.module.mirebalaisreports.visit.definition.VisitStartDateDataDefinition;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.definition.service.DataSetDefinitionService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
@@ -37,24 +37,24 @@ public class MorbidityRegisterReportManager {
     private DataSetDefinitionService dataSetDefinitionService;
 
     public DataSet evaluate(Date startOfPeriod, Date endOfPeriod) throws EvaluationException {
-        VisitDataSetDefinition dsd = buildDataSetDefinition(startOfPeriod, endOfPeriod);
+        VisitDataSetDefinition visitDataSetDefinition = buildDataSetDefinition(startOfPeriod, endOfPeriod);
 
-        DataSet evaluated = dataSetDefinitionService.evaluate(dsd, new EvaluationContext());
+        DataSet evaluated = dataSetDefinitionService.evaluate(visitDataSetDefinition, new EvaluationContext());
         return evaluated;
     }
 
     public VisitDataSetDefinition buildDataSetDefinition(Date startOfPeriod, Date endOfPeriod) {
-        VisitDataSetDefinition dsd = new VisitDataSetDefinition();
+        VisitDataSetDefinition visitDataSetDefinition = new VisitDataSetDefinition();
 
         // define what will be the rows
         HasPrimaryDiagnosisVisitQuery query = new HasPrimaryDiagnosisVisitQuery();
         query.setOnOrAfter(startOfPeriod);
         query.setOnOrBefore(endOfPeriod);
-        dsd.addRowFilter(map(query, null));
+        visitDataSetDefinition.addRowFilter(query, null);
 
         // definitions for each column
-        dsd.addColumn("date", new VisitStartDateDataDefinition(), "");
-        return dsd;
+        visitDataSetDefinition.addColumn("date", new VisitStartDateDataDefinition(), "");
+        return visitDataSetDefinition;
     }
 
     private <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {
