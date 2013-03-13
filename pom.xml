@@ -35,7 +35,7 @@
 	
 	<properties>
 		<openMRSVersion>1.9.3-SNAPSHOT</openMRSVersion>
-        <emrVersion>0.1.0-SNAPSHOT</emrVersion>
+        <emrVersion>1.1-SNAPSHOT</emrVersion>
         <reportingVersion>0.7.5</reportingVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
@@ -100,6 +100,13 @@
             <artifactId>emr-api</artifactId>
             <version>${emrVersion}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emr-api</artifactId>
+            <version>${emrVersion}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
