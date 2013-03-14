@@ -31,4 +31,9 @@
     <visit visit_id="101" patient_id="6" visit_type_id="1" date_started="2012-01-02 00:00:00.0" creator="1" date_created="2012-01-02 00:00:00.0" voided="0" uuid="f5a9c8fb-30fa-4927-8198-3bdfb440e578" />
     <visit visit_id="102" patient_id="2" visit_type_id="1" date_started="2012-01-02 00:00:00.0" creator="1" date_created="2012-01-02 00:00:00.0" voided="0" uuid="f9baf2fe-05f6-4312-9fcf-a9d5e987eab2" />
     <visit visit_id="103" patient_id="7" visit_type_id="1" date_started="2012-01-02 09:00:00.0" date_stopped="2012-01-02 10:30:00.0" creator="1" date_created="2012-01-02 00:00:00.0" voided="0" uuid="b8f93573-2b79-4b32-b0c9-7fe7c74c7a78" />
+
+    <!-- one patient created -->
+    <person person_id="100" gender="F" birthdate="1976-08-25 00:00:00.0" birthdate_estimated="1" dead="false" creator="1" date_created="2012-01-02 12:34:56.0" voided="false" uuid="21b0c60c-8c40-11e2-865a-f15cf9ca08c8"/>
+    <patient patient_id="100" creator="1" date_created="2012-01-02 12:34:56.0" voided="false" void_reason=""/>
+
 </dataset>
