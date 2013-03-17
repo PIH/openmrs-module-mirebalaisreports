@@ -35,8 +35,8 @@
 	
 	<properties>
 		<openMRSVersion>1.9.3-SNAPSHOT</openMRSVersion>
-        <emrVersion>1.1-SNAPSHOT</emrVersion>
-        <reportingVersion>0.7.5</reportingVersion>
+        <emrVersion>1.2-SNAPSHOT</emrVersion>
+        <reportingVersion>0.7.6-SNAPSHOT</reportingVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <calculationVersion>1.0</calculationVersion>

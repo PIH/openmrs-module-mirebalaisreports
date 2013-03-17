@@ -23,8 +23,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +47,7 @@ public class VisitStartDateDataEvaluator implements VisitDataEvaluator {
                 visitQueryService.getMapOfVisitIdsAndStartDatesFromVisitsThatHaveDiagnoses(startDate, endDate);
 
 
-        c.setData((Map<Integer, Object>) visitIdsFromVisitsThatHaveDiagnoses);
+//        c.setData((Map<Integer, Object>) visitIdsFromVisitsThatHaveDiagnoses);
         return c;
     }
 

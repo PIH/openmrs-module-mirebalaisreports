@@ -9,8 +9,6 @@
         <property name="moduleId" value="${project.parent.artifactId}"/>
     </bean>
 
-    <bean class="org.openmrs.module.mirebalaisreports.definitions.BasicStatisticsReportManager" />
-
     <bean id="reportsApp" class="org.openmrs.module.appframework.SimpleAppDescriptor">
         <property name="id" value="mirebalaisreports.Reports"/>
         <property name="labelCode" value="mirebalaisreports.app.reports.label"/>

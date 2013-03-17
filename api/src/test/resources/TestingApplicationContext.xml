@@ -9,6 +9,4 @@
         <property name="moduleId" value="${project.parent.artifactId}"/>
     </bean>
 
-    <bean class="org.openmrs.module.mirebalaisreports.definitions.BasicStatisticsReportManager" />
-
 </beans>
