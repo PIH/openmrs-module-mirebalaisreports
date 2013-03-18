@@ -34,6 +34,9 @@
 
     <!-- one patient created -->
     <person person_id="100" gender="F" birthdate="1976-08-25 00:00:00.0" birthdate_estimated="1" dead="false" creator="1" date_created="2012-01-02 12:34:56.0" voided="false" uuid="21b0c60c-8c40-11e2-865a-f15cf9ca08c8"/>
+
+    <person_attribute_type person_attribute_type_id="11" name="Test Patient" description="Flag to describe if the patient was created to a test or not" format="java.lang.Boolean" sort_weight="14"  searchable="0" retired="0" creator="1" date_created="2012-01-02 12:34:56.0"  uuid="4f07985c-88a5-4abd-aa0c-f3ec8324d8e7" />
+
     <patient patient_id="100" creator="1" date_created="2012-01-02 12:34:56.0" voided="false" void_reason=""/>
 
 </dataset>
