@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.concept.EmrConceptService;
@@ -34,8 +35,10 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -88,13 +91,40 @@ public class WeeklyDiagnosisSurveillanceReportManager {
             throw new IllegalStateException("Cannot find indicator for specific coded diagnoses");
         }
 
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "hemorrhagicFever", "Syndrome de fièvre hémorragique aiguë", mirebalaisProperties.getIcd10ConceptSource(), "A99");
+        ConceptSource icd10 = mirebalaisProperties.getIcd10ConceptSource();
+        ConceptSource pih = mirebalaisProperties.getPihConceptSource();
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "hemorrhagicFever", "Syndrome de fièvre hémorragique aiguë", icd10, "A99");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "bacterialMeningitis", "Cas suspect de méningite bactérienne", icd10, "G00.9");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "diphtheria", "Cas suspect de diphtérie", icd10, "A36.9");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "acuteFlassicParalysis", "Cas suspect de paralysie flasque aiguë", pih, "Acute flassic paralysis");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "measles", "Cas suspect de rougeole", icd10, "B05.9");
+        // TODO: need an appropriate concept for: Morsure par animal suspecté de rage
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "suspectedMalaria", "Cas suspect de paludisme (malaria)", icd10, "B54");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "confirmedMalaria", "Cas confirmé de paludisme (malaria)", icd10, "B53.8");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "dengue", "Cas suspect de dengue (et la dengue hémorragique)", icd10, "A90", "A91");
+        // TODO: Fièvre d’origine inconnue
+        // TODO: Syndrome ictérique fébrile (maybe this is related to jaundice?)
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "diarrhea", "Diarrhée aiguë non-sanglante", pih, "DIARRHEA"); // TODO maybe also "Gastroenteritis and colitis"
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "bloodyDiarrhea", "Diarrhée aiguë sanglante", pih, "DIARRHEA, BLOODY");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "typhoid", "Cas suspect de typhoïde", icd10, "A01.0");
+        //
+        //Cas suspect de coqueluche
+        //Infection respiratoire aiguë
+        //Cas suspect de tuberculose
+        //Cas suspect de tétanos
+        //Cas suspect de charbon cutané
+        //Troisième trimestre de grossesse sans suivi
+        //Complications de grossesse
         return dsd;
     }
 
-    private void addDiseaseColumnsForCode(CohortIndicatorDataSetDefinition dsd, CohortIndicator indicator, String name, String label, ConceptSource source, String icdCode) {
+    private void addDiseaseColumnsForCode(CohortIndicatorDataSetDefinition dsd, CohortIndicator indicator, String name, String label, ConceptSource source, String... icdCodes) {
         Map<String, Object> mappings = ParameterizableUtil.createParameterMappings("startDate=${startOfWeek},endDate=${startOfWeek + 6d}");
-        mappings.put("codedDiagnoses", emrConceptService.getConceptsSameOrNarrowerThan(conceptService.getConceptReferenceTermByCode(icdCode, source)));
+        List<Concept> concepts = new ArrayList<Concept>();
+        for (String icdCode : icdCodes) {
+            concepts.addAll(emrConceptService.getConceptsSameOrNarrowerThan(conceptService.getConceptReferenceTermByCode(icdCode, source)));
+        }
+        mappings.put("codedDiagnoses", concepts);
 
         Mapped<CohortIndicator> mappedIndicator = new Mapped<CohortIndicator>(indicator, mappings);
 

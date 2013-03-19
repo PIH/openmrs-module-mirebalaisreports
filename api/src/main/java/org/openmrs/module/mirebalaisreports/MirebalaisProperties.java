@@ -78,4 +78,9 @@ public class MirebalaisProperties extends EmrProperties {
     public ConceptSource getIcd10ConceptSource() {
         return conceptService.getConceptSourceByUuid(ICD10_CONCEPT_SOURCE_UUID);
     }
+
+    public ConceptSource getPihConceptSource() {
+        return conceptService.getConceptSourceByName("PIH");
+    }
+
 }
