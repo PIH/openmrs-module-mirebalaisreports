@@ -2,14 +2,19 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.reporting.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.emr.reporting.library.BasicCohortDefinitionLibrary;
 import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.PersonAuditInfoCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.MapDataSet;
@@ -22,10 +27,15 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
+import org.openmrs.module.reporting.report.ReportData;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.ui.framework.SimpleObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +47,9 @@ public class BasicStatisticsReportManager {
 
     @Autowired
     EncounterService encounterService;
+
+    @Autowired
+    CohortDefinitionService cohortDefinitionService;
 
     public MapDataSet evaluate(Date day) throws EvaluationException {
         day = DateUtil.getStartOfDay(day);
@@ -68,6 +81,8 @@ public class BasicStatisticsReportManager {
         consultAndVitalsOnDayQuery.addSearch("vitals", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getVitalsEncounterType()));
         consultAndVitalsOnDayQuery.addSearch("consult", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getConsultEncounterType()));
         consultAndVitalsOnDayQuery.setCompositionString("vitals OR consult");
+
+        CohortDefinition excludeTestPatientsCohortDefinition = cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "exclude test patients");
 
         // set up indicators
         CohortIndicator visitsStartedOnDay = new CohortIndicator("Visits Started on Day");
@@ -118,10 +133,18 @@ public class BasicStatisticsReportManager {
         dsd.addColumn("outpatientsDayBeforeWithVitals", "Yesterday's Outpatients with vitals", map(outpatientClinicalEncountersOnDayWithVitals, "day=${reportDay-1d}"), "");
         dsd.addColumn("outpatientsDayBeforeWithDiagnosis", "Yesterday's Outpatients with diagnosis", map(outpatientClinicalEncountersOnDayWithConsult, "day=${reportDay-1d}"), "");
 
+        ReportDefinition rd = new ReportDefinition();
+        rd.setBaseCohortDefinition(map((CohortDefinition) excludeTestPatientsCohortDefinition, ""));
+        rd.addParameter(new Parameter("reportDay", "Report Day", Date.class));
+        rd.addDataSetDefinition("dsd", map(dsd, "reportDay=${reportDay}"));
+
         EvaluationContext evaluationContext = new EvaluationContext();
         evaluationContext.addParameterValue("reportDay", day);
 
-        DataSet evaluated = Context.getService(DataSetDefinitionService.class).evaluate(dsd, evaluationContext);
+        ReportData evaluatedReport = Context.getService(ReportDefinitionService.class).evaluate(rd, evaluationContext);
+        DataSet evaluated = evaluatedReport.getDataSets().get("dsd");
+
+        //DataSet evaluated = Context.getService(DataSetDefinitionService.class).evaluate(dsd, evaluationContext);
         return (MapDataSet) evaluated;
     }
 
