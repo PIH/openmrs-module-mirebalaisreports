@@ -51,7 +51,7 @@ public class BasicStatisticsReportManagerTest extends BaseModuleContextSensitive
         assertThat(startedVisitOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6, 7));
         assertThat(startedVisitDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 7));
         assertThat(patientsCurrentlyInHospital.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6));
-        assertThat(todayRegistrations.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
+        assertThat(todayRegistrations.getCohortIndicatorAndDimensionCohort(), hasCohort(100));
 
         Matcher<Cohort> isExpectedOutpatientEncounterCohort = hasCohort(2, 6, 7, 8);
         Matcher<Cohort> isExpectedOutpatientClinicalCohort = hasCohort(2, 6, 7);

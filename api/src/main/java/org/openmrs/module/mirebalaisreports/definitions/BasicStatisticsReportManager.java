@@ -6,6 +6,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.reporting.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
+import org.openmrs.module.mirebalaisreports.cohort.definition.PersonAuditInfoCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -23,13 +24,10 @@ import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.ui.framework.SimpleObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@Component
 public class BasicStatisticsReportManager {
 
     @Autowired
@@ -54,10 +52,9 @@ public class BasicStatisticsReportManager {
         VisitCohortDefinition activeVisitsQuery = new VisitCohortDefinition();
         activeVisitsQuery.setActive(true);
 
-        EncounterCohortDefinition todayRegistrationsQuery = new EncounterCohortDefinition();
-        todayRegistrationsQuery.setEncounterTypeList(Arrays.asList(mirebalaisProperties.getRegistrationEncounterType()));
-        todayRegistrationsQuery.setOnOrAfter(day);
-        todayRegistrationsQuery.setOnOrBefore(DateUtil.getEndOfDay(day));
+        PersonAuditInfoCohortDefinition todayRegistrationsQuery = new PersonAuditInfoCohortDefinition();
+        todayRegistrationsQuery.addParameter(new Parameter("createdOnOrAfter", "Start of day", Date.class));
+        todayRegistrationsQuery.addParameter(new Parameter("createdOnOrBefore", "End of day", Date.class));
 
         EncounterCohortDefinition encountersOfTypesInPeriodQuery = new EncounterCohortDefinition();
         encountersOfTypesInPeriodQuery.addParameter(new Parameter("encounterTypeList", "Encounter Types", EncounterType.class, List.class, null));
@@ -79,7 +76,8 @@ public class BasicStatisticsReportManager {
         activeVisits.setCohortDefinition(activeVisitsQuery, "");
 
         CohortIndicator todayRegistrations = new CohortIndicator("Registrations Today");
-        todayRegistrations.setCohortDefinition(todayRegistrationsQuery, "");
+        todayRegistrations.addParameter(new Parameter("day", "Day", Date.class));
+        todayRegistrations.setCohortDefinition(todayRegistrationsQuery, "createdOnOrAfter=${day},createdOnOrBefore=${day}");
 
         Mapped<CohortDefinition> outpatientOnDayMCD = new Mapped<CohortDefinition>(encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getVisitEncounterTypes()));
         Mapped<CohortDefinition> clinicalOnDayMCD = new Mapped<CohortDefinition>(encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getClinicalEncounterTypes()));
@@ -112,7 +110,7 @@ public class BasicStatisticsReportManager {
         dsd.addColumn("startedVisitOnDay", "Started Visit On Day", map(visitsStartedOnDay, "day=${reportDay}"), "");
         dsd.addColumn("startedVisitDayBefore", "Started Visit On Day Before", map(visitsStartedOnDay, "day=${reportDay-1d}"), "");
         dsd.addColumn("activeVisits", "Current Active Visits", map(activeVisits, ""), "");
-        dsd.addColumn("todayRegistrations", "Registrations made today", map(todayRegistrations, ""), "");
+        dsd.addColumn("todayRegistrations", "Registrations made today", map(todayRegistrations, "day=${reportDay}"), "");
         dsd.addColumn("outpatientsDayBefore", "Yesterday's Outpatients", map(outpatientEncountersOnDay, "day=${reportDay-1d}"), "");
         dsd.addColumn("outpatientsDayBeforeWithClinical", "Yesterday's Outpatients with any clinical encounter", map(outpatientClinicalEncountersOnDay, "day=${reportDay-1d}"), "");
         dsd.addColumn("outpatientsDayBeforeWithVitals", "Yesterday's Outpatients with vitals", map(outpatientClinicalEncountersOnDayWithVitals, "day=${reportDay-1d}"), "");
