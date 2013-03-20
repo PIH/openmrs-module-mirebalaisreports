@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.mirebalaisreports.visit.api.VisitDataService;
 import org.openmrs.module.mirebalaisreports.visit.definition.VisitStartDateDataDefinition;
@@ -35,6 +36,7 @@ import static org.junit.Assert.assertThat;
 /**
  *
  */
+@Ignore
 public class MorbidityRegisterReportManagerTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
