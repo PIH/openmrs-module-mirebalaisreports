@@ -23,6 +23,7 @@ import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.test.BaseContextSensitiveTest;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -34,7 +35,7 @@ import static org.junit.Assert.assertThat;
 /**
  *
  */
-public class MorbidityRegisterReportManagerTest extends BaseContextSensitiveTest {
+public class MorbidityRegisterReportManagerTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     VisitDataService visitDataService;
