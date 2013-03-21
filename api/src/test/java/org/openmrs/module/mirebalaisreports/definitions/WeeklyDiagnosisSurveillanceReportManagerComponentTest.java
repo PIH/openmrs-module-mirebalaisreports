@@ -15,6 +15,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
@@ -55,6 +56,7 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
 /**
  *
  */
+@Ignore
 public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
