@@ -35,6 +35,7 @@
 	
 	<properties>
 		<openMRSVersion>1.9.3</openMRSVersion>
+        <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
         <emrVersion>1.2-SNAPSHOT</emrVersion>
         <reportingVersion>0.7.5</reportingVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
@@ -95,6 +96,12 @@
         <!-- End OpenMRS core -->
 
         <!-- OpenMRS modules (should all have scope provided) -->
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api</artifactId>
+            <version>${emrapiVersion}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emr-api</artifactId>
