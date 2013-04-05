@@ -41,6 +41,7 @@
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <calculationVersion>1.0</calculationVersion>
+        <metadatasharingVersion>1.1.6</metadatasharingVersion>
         <uiframeworkVersion>2.5.1</uiframeworkVersion>
         <htmlformentryVersion>2.0.5</htmlformentryVersion>
         <providerManagementVersion>1.1.3</providerManagementVersion>
@@ -169,6 +170,15 @@
             <version>${appframeworkVersion}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- modules only requires to fire up the app context when running component tests -->
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>metadatasharing-api</artifactId>
+            <version>${metadatasharingVersion}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- OpenMRS modules -->
 
     </dependencies>
