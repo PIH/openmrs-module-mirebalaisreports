@@ -30,13 +30,13 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.TestUtils;
-import org.openmrs.module.emr.consult.CodedOrFreeTextAnswer;
-import org.openmrs.module.emr.consult.Diagnosis;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
 import org.openmrs.module.emr.test.TestTimer;
 import org.openmrs.module.emr.test.builder.ConceptBuilder;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
+import org.openmrs.module.emrapi.diagnosis.Diagnosis;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -75,7 +75,7 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
     private ObsService obsService;
 
     @Autowired
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
     @Before
     public void setUp() throws Exception {
@@ -97,7 +97,7 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
         narrowerThan.setUuid(EmrConstants.NARROWER_THAN_CONCEPT_MAP_TYPE_UUID);
         conceptService.saveConceptMapType(narrowerThan);
 
-        DiagnosisMetadata diagnosisMetadata = TestUtils.setupDiagnosisMetadata(conceptService, emrProperties);
+        DiagnosisMetadata diagnosisMetadata = TestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
 
         ConceptDatatype naDatatype = conceptService.getConceptDatatypeByName("N/A");
         ConceptClass diagnosisClass = conceptService.getConceptClassByName("Diagnosis");

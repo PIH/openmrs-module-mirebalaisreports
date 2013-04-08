@@ -20,7 +20,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Obs;
-import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -37,7 +37,7 @@ import java.util.List;
 public class ReportPageController {
 
     public void get(@SpringBean SessionFactory sessionFactory,
-                    @SpringBean EmrProperties emrProperties,
+                    @SpringBean EmrApiProperties emrApiProperties,
                     @RequestParam(required = false, value = "fromDate") Date fromDate,
                     @RequestParam(required = false, value = "toDate") Date toDate,
                     PageModel model) {
@@ -57,7 +57,7 @@ public class ReportPageController {
         criteria.add(Restrictions.eq("voided", false));
         criteria.add(Restrictions.ge("dateCreated", fromDate));
         criteria.add(Restrictions.le("dateCreated", toDate));
-        criteria.add(Restrictions.eq("concept", emrProperties.getDiagnosisMetadata().getNonCodedDiagnosisConcept()));
+        criteria.add(Restrictions.eq("concept", emrApiProperties.getDiagnosisMetadata().getNonCodedDiagnosisConcept()));
         criteria.setProjection(Projections.projectionList().add(Projections.property("valueText")).add(Projections.property("creator")).add(Projections.property("dateCreated")));
 
         List<SimpleObject> list = new ArrayList<SimpleObject>();

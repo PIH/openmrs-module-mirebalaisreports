@@ -2,24 +2,21 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
-import org.openmrs.PersonAttributeType;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emr.reporting.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.emr.reporting.library.BasicCohortDefinitionLibrary;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.PersonAuditInfoCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
-import org.openmrs.module.reporting.dataset.definition.service.DataSetDefinitionService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -34,8 +31,6 @@ import org.openmrs.ui.framework.SimpleObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +39,9 @@ public class BasicStatisticsReportManager {
 
     @Autowired
     MirebalaisProperties mirebalaisProperties;
+
+    @Autowired
+    EmrApiProperties emrApiProperties;
 
     @Autowired
     EncounterService encounterService;
@@ -79,7 +77,7 @@ public class BasicStatisticsReportManager {
         CompositionCohortDefinition consultAndVitalsOnDayQuery = new CompositionCohortDefinition();
         consultAndVitalsOnDayQuery.addParameter(new Parameter("day", "Day", Date.class));
         consultAndVitalsOnDayQuery.addSearch("vitals", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getVitalsEncounterType()));
-        consultAndVitalsOnDayQuery.addSearch("consult", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getConsultEncounterType()));
+        consultAndVitalsOnDayQuery.addSearch("consult", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", emrApiProperties.getConsultEncounterType()));
         consultAndVitalsOnDayQuery.setCompositionString("vitals OR consult");
 
         CohortDefinition excludeTestPatientsCohortDefinition = cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "exclude test patients");
@@ -118,7 +116,7 @@ public class BasicStatisticsReportManager {
         CohortIndicator outpatientClinicalEncountersOnDayWithConsult = new CohortIndicator("Outpatients on Day (clinical encounters) - % with consult");
         outpatientClinicalEncountersOnDayWithConsult.setType(CohortIndicator.IndicatorType.FRACTION);
         outpatientClinicalEncountersOnDayWithConsult.addParameter(new Parameter("day", "Day", Date.class));
-        outpatientClinicalEncountersOnDayWithConsult.setCohortDefinition(encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getConsultEncounterType()));
+        outpatientClinicalEncountersOnDayWithConsult.setCohortDefinition(encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", emrApiProperties.getConsultEncounterType()));
         outpatientClinicalEncountersOnDayWithConsult.setDenominator(clinicalOnDayMCD);
 
         // set up a dataset with the indicators

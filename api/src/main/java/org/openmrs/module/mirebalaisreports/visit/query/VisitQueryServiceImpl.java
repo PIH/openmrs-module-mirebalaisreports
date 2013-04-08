@@ -2,8 +2,8 @@ package org.openmrs.module.mirebalaisreports.visit.query;
 
 
 import org.openmrs.Concept;
-import org.openmrs.module.emr.EmrProperties;
-import org.openmrs.module.emr.consult.DiagnosisMetadata;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
 import org.openmrs.module.mirebalaisreports.visit.definition.VisitQuery;
 import org.openmrs.module.mirebalaisreports.visit.query.db.VisitQueryDAO;
 import org.openmrs.module.reporting.definition.service.BaseDefinitionService;
@@ -15,20 +15,20 @@ public class VisitQueryServiceImpl extends BaseDefinitionService<VisitQuery> imp
 
     private VisitQueryDAO visitQueryDAO;
 
-    private EmrProperties emrProperties;
+    private EmrApiProperties emrApiProperties;
 
 
     public void setVisitQueryDAO(VisitQueryDAO visitQueryDAO) {
         this.visitQueryDAO = visitQueryDAO;
     }
 
-    public void setEmrProperties(EmrProperties emrProperties) {
-        this.emrProperties = emrProperties;
+    public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
+        this.emrApiProperties = emrApiProperties;
     }
 
     @Override
     public Map<Integer, Date> getMapOfVisitIdsAndStartDatesFromVisitsThatHaveDiagnoses(Date startDate, Date endDate){
-        DiagnosisMetadata diagnosisMetadata = emrProperties.getDiagnosisMetadata();
+        DiagnosisMetadata diagnosisMetadata = emrApiProperties.getDiagnosisMetadata();
         Concept diagnosisSetConcept = diagnosisMetadata.getDiagnosisSetConcept();
 
         return visitQueryDAO.getMapOfVisitIdsAndDates(diagnosisSetConcept, startDate, endDate);
