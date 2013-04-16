@@ -47,7 +47,7 @@
         <htmlformentryVersion>2.0.5</htmlformentryVersion>
         <providerManagementVersion>1.1.3</providerManagementVersion>
         <patientregistrationVersion>2.0</patientregistrationVersion>
-        <idgenVersion>2.4</idgenVersion>
+        <idgenVersion>2.5-SNAPSHOT</idgenVersion>
         <appframeworkVersion>1.4</appframeworkVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
