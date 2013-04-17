@@ -32,66 +32,146 @@
 </h1>
 
 <div class="reportBox">
-    <p>${ ui.message("mirebalaisreports.basicStatistics.hospitalUtilization") }</p>
+    <p>${ ui.message("mirebalaisreports.basicStatistics.label.today") }</p>
     <ul>
         <li>
-            <span class="data">${ activeVisits.value }</span>
-            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.activeVisits") }</span>
+            <span class="data">${ startedVisitOnDay.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.totalVisits") }</span>
         </li>
         <li>
             <span class="data">${ todayRegistrations.value }</span>
-            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.todayRegistrations") }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.newlyRegisteredPatients") }</span>
         </li>
         <li>
-            <span class="data">${ startedVisitOnDay.value }</span>
-            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.startedVisitOnDay") }</span>
+            <span class="data">${ returningPatientsOnDay.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.returningPatients") }</span>
+        </li>    
+    </ul>
+    <ul>
+        <li>
+            <span class="data">${ outpatientOnDay.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.keVisits") }</span>
         </li>
         <li>
-            <span class="data">${ startedVisitDayBefore }</span>
-            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.startedVisitDayBefore") }</span>
+            <span class="data">
+                <span>
+                    ${ percentage(outpatientWithVitalsOnDay) }%
+                </span>
+                <span class="number">
+                    (${ numerator(outpatientWithVitalsOnDay) }/${ denominator(outpatientWithVitalsOnDay) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
+        </li>
+        <li>
+            <span class="data">
+                <span>
+                    ${ percentage(outpatientWithDiagnosisOnDay) }%
+                </span>
+                <span class="number">
+                    (${ numerator(outpatientWithDiagnosisOnDay) }/${ denominator(outpatientWithDiagnosisOnDay) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithDiagnosis") }</span>
+        </li>
+        <li>
+            <span class="data">${ womenOnDay.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.sfVisits") }</span>
+        </li>
+        <li>
+            <span class="data">
+                <span>
+                    ${ percentage(womenWithVitalsOnDay) }%
+                </span>
+                <span class="number">
+                    (${ numerator(womenWithVitalsOnDay) }/${ denominator(womenWithVitalsOnDay) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
+        </li>
+        <li>
+            <span class="data">
+                <span>
+                    ${ percentage(womenWithDiagnosisOnDay) }%
+                </span>
+                <span class="number">
+                    (${ numerator(womenWithDiagnosisOnDay) }/${ denominator(womenWithDiagnosisOnDay) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithDiagnosis") }</span>
         </li>
     </ul>
 </div>
 
 <div class="reportBox">
-    <p>${ ui.message("mirebalaisreports.basicStatistics.dataQuality") }</p>
+    <p>${ ui.message("mirebalaisreports.basicStatistics.label.yesterday") }</p>
     <ul>
         <li>
-            <span class="data">
-                ${ outpatientsDayBefore.value }
-            </span>
-            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBefore") }</span>
+            <span class="data">${ startedVisitDayBefore }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.totalVisits") }</span>
+        </li>
+        <li>
+            <span class="data">${ yesterdayRegistrations.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.newlyRegisteredPatients") }</span>
+        </li>
+        <li>
+            <span class="data">${ returningPatientsOnDayBefore.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.returningPatients") }</span>
+        </li>  
+    </ul>
+    <ul>
+        <li>
+            <span class="data">${ outpatientOnDayBefore.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.keVisits") }</span>
         </li>
         <li>
             <span class="data">
                 <span>
-                    ${ percentage(outpatientsDayBeforeWithClinical) }%
+                    ${ percentage(outpatientWithVitalsOnDayBefore) }%
                 </span>
                 <span class="number">
-                    (${ numerator(outpatientsDayBeforeWithClinical) }/${ denominator(outpatientsDayBeforeWithClinical) })
+                    (${ numerator(outpatientWithVitalsOnDayBefore) }/${ denominator(outpatientWithVitalsOnDayBefore) })
                 </span>
             </span>
-            <span class="label"><i class="icon-angle-right small"></i> with any clinical encounter</span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
         </li>
-        <%
-        def indicators = [
-            [ label: ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals"), value: outpatientsDayBeforeWithVitals ],
-            [ label: ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithDiagnosis"), value: outpatientsDayBeforeWithDiagnosis ],
-        ]
-        indicators.each {
-        %>
-            <li>
-                <span class="data">
-                    <span>
-                        ${ percentage(it.value) }%
-                    </span>
-                    <span class="number">
-                        (${ numerator(it.value) }/${ denominator(it.value) })
-                    </span>
+        <li>
+            <span class="data">
+                <span>
+                    ${ percentage(outpatientWithDiagnosisOnDayBefore) }%
                 </span>
-                <span class="label"><i class="icon-angle-right small"></i> ${ it.label }</span>
-            </li>
-        <% } %>
+                <span class="number">
+                    (${ numerator(outpatientWithDiagnosisOnDayBefore) }/${ denominator(outpatientWithDiagnosisOnDayBefore) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithDiagnosis") }</span>
+        </li>
+        <li>
+            <span class="data">${ womenOnDayBefore.value }</span>
+            <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.sfVisits") }</span>
+        </li>
+        <li>
+            <span class="data">
+                <span>
+                    ${ percentage(womenWithVitalsOnDayBefore) }%
+                </span>
+                <span class="number">
+                    (${ numerator(womenWithVitalsOnDayBefore) }/${ denominator(womenWithVitalsOnDayBefore) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
+        </li>
+        <li>
+            <span class="data">
+                <span>
+                    ${ percentage(womenWithDiagnosisOnDayBefore) }%
+                </span>
+                <span class="number">
+                    (${ numerator(womenWithDiagnosisOnDayBefore) }/${ denominator(womenWithDiagnosisOnDayBefore) })
+                </span>
+            </span>
+            <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithDiagnosis") }</span>
+        </li>         
     </ul>
 </div>
 

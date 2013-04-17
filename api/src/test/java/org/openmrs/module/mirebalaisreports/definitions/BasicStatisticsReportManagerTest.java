@@ -41,27 +41,61 @@ public class BasicStatisticsReportManagerTest extends BaseModuleContextSensitive
 
         CohortIndicatorAndDimensionResult startedVisitOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("startedVisitOnDay");
         CohortIndicatorAndDimensionResult startedVisitDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("startedVisitDayBefore");
+
         CohortIndicatorAndDimensionResult patientsCurrentlyInHospital = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("activeVisits");
+
+        CohortIndicatorAndDimensionResult outpatientOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientOnDay");
+        CohortIndicatorAndDimensionResult outpatientOnDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientOnDayBefore");
+
+        CohortIndicatorAndDimensionResult womenOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("womenOnDay");
+        CohortIndicatorAndDimensionResult womenOnDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("womenOnDayBefore");
+
         CohortIndicatorAndDimensionResult todayRegistrations = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("todayRegistrations");
-        CohortIndicatorAndDimensionResult outpatientsDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBefore");
-        CohortIndicatorAndDimensionResult outpatientsDayBeforeWithClinical = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBeforeWithClinical");
-        CohortIndicatorAndDimensionResult outpatientsDayBeforeWithVitals = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBeforeWithVitals");
-        CohortIndicatorAndDimensionResult outpatientsDayBeforeWithDiagnosis = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientsDayBeforeWithDiagnosis");
+        CohortIndicatorAndDimensionResult yesterdayRegistrations = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("yesterdayRegistrations");
+
+        CohortIndicatorAndDimensionResult returningPatientsOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("returningPatientsOnDay");
+        CohortIndicatorAndDimensionResult returningPatientsOnDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("returningPatientsOnDayBefore");
+
+        CohortIndicatorAndDimensionResult outpatientsWithVitalsOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientWithVitalsOnDay");
+        CohortIndicatorAndDimensionResult outpatientsWithVitalsOnDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientWithVitalsOnDayBefore");
+
+        CohortIndicatorAndDimensionResult outpatientsWithDiagnosisOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientWithDiagnosisOnDay");
+        CohortIndicatorAndDimensionResult outpatientsWithDiagnosisOnDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("outpatientWithDiagnosisOnDayBefore");
+
+        CohortIndicatorAndDimensionResult womenWithVitalsOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("womenWithVitalsOnDay");
+        CohortIndicatorAndDimensionResult womenWithVitalsOnDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("womenWithVitalsOnDayBefore");
+
+        CohortIndicatorAndDimensionResult womenWithDiagnosisOnDay = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("womenWithDiagnosisOnDay");
+        CohortIndicatorAndDimensionResult womenWithDiagnosisOnDayBefore = (CohortIndicatorAndDimensionResult) result.getData().getColumnValue("womenWithDiagnosisOnDayBefore");
 
         assertThat(startedVisitOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6, 7));
-        assertThat(startedVisitDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 7));
-        assertThat(patientsCurrentlyInHospital.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6));
-        assertThat(todayRegistrations.getCohortIndicatorAndDimensionCohort(), hasCohort(100));
+        assertThat(startedVisitDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 7, 6));
 
-        Matcher<Cohort> isExpectedOutpatientEncounterCohort = hasCohort(2, 6, 7, 8);
-        Matcher<Cohort> isExpectedOutpatientClinicalCohort = hasCohort(2, 6, 7);
-        assertThat(outpatientsDayBefore.getCohortIndicatorAndDimensionCohort(), isExpectedOutpatientEncounterCohort);
-        assertThat(outpatientsDayBeforeWithClinical.getCohortIndicatorAndDimensionCohort(), isExpectedOutpatientClinicalCohort);
-        assertThat(outpatientsDayBeforeWithClinical.getCohortIndicatorAndDimensionDenominator(), isExpectedOutpatientEncounterCohort);
-        assertThat(outpatientsDayBeforeWithVitals.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 7));
-        assertThat(outpatientsDayBeforeWithVitals.getCohortIndicatorAndDimensionDenominator(), isExpectedOutpatientClinicalCohort);
-        assertThat(outpatientsDayBeforeWithDiagnosis.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
-        assertThat(outpatientsDayBeforeWithDiagnosis.getCohortIndicatorAndDimensionDenominator(), isExpectedOutpatientClinicalCohort);
+        assertThat(patientsCurrentlyInHospital.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6));
+
+        assertThat(todayRegistrations.getCohortIndicatorAndDimensionCohort(), hasCohort(100));
+        assertThat(yesterdayRegistrations.getCohortIndicatorAndDimensionCohort(), hasCohort(101, 9));
+
+        assertThat(returningPatientsOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(7, 8, 9));
+        assertThat(returningPatientsOnDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
+
+        assertThat(outpatientOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(7, 9));
+        assertThat(outpatientOnDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(2, 6, 7, 8));
+
+        assertThat(womenOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(7, 8));
+        assertThat(womenOnDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(9));
+
+        assertThat(outpatientsWithVitalsOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
+        assertThat(outpatientsWithVitalsOnDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(2));
+
+        assertThat(outpatientsWithDiagnosisOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(9));
+        assertThat(outpatientsWithDiagnosisOnDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(6, 7));
+
+        assertThat(womenWithVitalsOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(7));
+        assertThat(womenWithVitalsOnDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(9));
+
+        assertThat(womenWithDiagnosisOnDay.getCohortIndicatorAndDimensionCohort(), hasCohort(8));
+        assertThat(womenWithDiagnosisOnDayBefore.getCohortIndicatorAndDimensionCohort(), hasCohort(9));
     }
 
     private Matcher<Cohort> hasCohort(final Integer... expectedMemberIds) {

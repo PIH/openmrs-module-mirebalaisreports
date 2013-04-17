@@ -16,6 +16,7 @@ package org.openmrs.module.mirebalaisreports;
 
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterType;
+import org.openmrs.Location;
 import org.openmrs.module.emr.EmrProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,22 @@ public class MirebalaisProperties extends EmrProperties {
     public static final String REGISTRATION_ENCOUNTER_TYPE_UUID = "873f968a-73a8-4f9c-ac78-9f4778b751b6";
     public static final String PAYMENT_ENCOUNTER_TYPE_UUID = "f1c286d0-b83f-4cd4-8348-7ea3c28ead13";
     public static final String ICD10_CONCEPT_SOURCE_UUID = "3f65bd34-26fe-102b-80cb-0017a47871b2";
+    public static final String CONSULT_ENCOUNTER_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
+
+    public static final String OUTPATIENT_CLINIC_UUID = "199e7d87-92a0-4398-a0f8-11d012178164";
+    public static final String WOMEN_CLINIC_UUID = "9b2066a2-7087-47f6-9b3a-b001037432a3";
+
+    public Location getOutpatientLocation() {
+        return locationService.getLocationByUuid(OUTPATIENT_CLINIC_UUID);
+    }
+
+    public Location getWomenLocation() {
+        return locationService.getLocationByUuid(WOMEN_CLINIC_UUID);
+    }
+
+    public EncounterType getConsultEncounterType() {
+        return getRequiredEncounterTypeByUuid(CONSULT_ENCOUNTER_TYPE_UUID);
+    }
 
     public EncounterType getRegistrationEncounterType() {
         return getRequiredEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
