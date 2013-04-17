@@ -53,7 +53,7 @@
             <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.keVisits") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(outpatientWithVitalsOnDay) }%
                 </span>
@@ -64,7 +64,7 @@
             <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(outpatientWithDiagnosisOnDay) }%
                 </span>
@@ -79,7 +79,7 @@
             <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.sfVisits") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(womenWithVitalsOnDay) }%
                 </span>
@@ -90,7 +90,7 @@
             <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(womenWithDiagnosisOnDay) }%
                 </span>
@@ -125,7 +125,7 @@
             <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.keVisits") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(outpatientWithVitalsOnDayBefore) }%
                 </span>
@@ -136,7 +136,7 @@
             <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(outpatientWithDiagnosisOnDayBefore) }%
                 </span>
@@ -151,7 +151,7 @@
             <span class="label">${ ui.message("mirebalaisreports.basicStatistics.label.sfVisits") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(womenWithVitalsOnDayBefore) }%
                 </span>
@@ -162,7 +162,7 @@
             <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithVitals") }</span>
         </li>
         <li>
-            <span class="data">
+            <span class="data percentage">
                 <span>
                     ${ percentage(womenWithDiagnosisOnDayBefore) }%
                 </span>
