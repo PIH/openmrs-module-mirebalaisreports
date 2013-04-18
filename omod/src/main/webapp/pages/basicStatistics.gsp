@@ -2,6 +2,11 @@
     ui.decorateWith("emr", "standardEmrPage")
     ui.includeCss("mirebalaisreports", "reports.css")
 
+    def dateFormat = new java.text.SimpleDateFormat("dd MMMMM yyyy")
+    def calendarDate = java.util.Calendar.getInstance()
+    calendarDate.add(java.util.Calendar.DATE, -1)
+    def yesterday = calendarDate.getTime()
+
     def numerator = { indicator ->
         return indicator.cohortIndicatorAndDimensionCohort.size()
     }
@@ -32,7 +37,9 @@
 </h1>
 
 <div class="reportBox">
-    <p>${ ui.message("mirebalaisreports.basicStatistics.label.today") }</p>
+    <p>${ ui.message("mirebalaisreports.basicStatistics.label.today") }
+       <span class="date">${dateFormat.format(new java.util.Date())}</span>
+    </p>
     <ul>
         <li>
             <span class="data">${ startedVisitOnDay.value }</span>
@@ -104,7 +111,9 @@
 </div>
 
 <div class="reportBox">
-    <p>${ ui.message("mirebalaisreports.basicStatistics.label.yesterday") }</p>
+    <p>${ ui.message("mirebalaisreports.basicStatistics.label.yesterday") }
+       <span class="date">${dateFormat.format(yesterday)}</span>
+    </p>
     <ul>
         <li>
             <span class="data">${ startedVisitDayBefore }</span>
