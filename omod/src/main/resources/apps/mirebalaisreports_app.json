@@ -1,0 +1,9 @@
+[
+    {
+        "id": "mirebalaisreports.Reports",
+        "label": "mirebalaisreports.app.reports.label",
+        "url": "mirebalaisreports/basicStatistics.page",
+        "iconUrl": "icon-list-alt",
+        "order": 2
+    }
+]
