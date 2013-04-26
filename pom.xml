@@ -37,8 +37,8 @@
 		<openMRSVersion>1.9.4-SNAPSHOT</openMRSVersion>
         <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
-        <emrVersion>1.2-SNAPSHOT</emrVersion>
-        <reportingVersion>0.7.5</reportingVersion>
+        <emrVersion>2.0-SNAPSHOT</emrVersion>
+        <reportingVersion>0.7.6-SNAPSHOT</reportingVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <calculationVersion>1.0</calculationVersion>

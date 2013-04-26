@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports;
 
+import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -37,6 +38,7 @@ public class MirebalaisProperties extends EmrProperties {
 
     public static final String OUTPATIENT_CLINIC_UUID = "199e7d87-92a0-4398-a0f8-11d012178164";
     public static final String WOMEN_CLINIC_UUID = "9b2066a2-7087-47f6-9b3a-b001037432a3";
+    public static final String SET_OF_NON_DIAGNOSIS_CONCEPT_UUID = "a2d2124b-fc2e-4aa2-ac87-792d4205dd8d";
 
     public Location getOutpatientLocation() {
         return locationService.getLocationByUuid(OUTPATIENT_CLINIC_UUID);
@@ -98,6 +100,14 @@ public class MirebalaisProperties extends EmrProperties {
 
     public ConceptSource getPihConceptSource() {
         return conceptService.getConceptSourceByName("PIH");
+    }
+
+    public ConceptSource getMirebalaisReportsConceptSource() {
+        return conceptService.getConceptSourceByName("org.openmrs.module.mirebalaisreports");
+    }
+
+    public Concept getSetOfNonDiagnoses() {
+        return conceptService.getConceptByUuid(SET_OF_NON_DIAGNOSIS_CONCEPT_UUID);
     }
 
 }

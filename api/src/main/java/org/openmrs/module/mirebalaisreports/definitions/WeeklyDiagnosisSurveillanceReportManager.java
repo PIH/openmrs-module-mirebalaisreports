@@ -14,15 +14,20 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.apache.commons.io.IOUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.concept.EmrConceptService;
+import org.openmrs.module.emr.reporting.library.BasicCohortDefinitionLibrary;
 import org.openmrs.module.emr.reporting.library.BasicDimensionLibrary;
 import org.openmrs.module.emr.reporting.library.BasicIndicatorLibrary;
 import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
@@ -35,11 +40,16 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -91,34 +101,61 @@ public class WeeklyDiagnosisSurveillanceReportManager {
             throw new IllegalStateException("Cannot find indicator for specific coded diagnoses");
         }
 
-        ConceptSource icd10 = mirebalaisProperties.getIcd10ConceptSource();
-        ConceptSource pih = mirebalaisProperties.getPihConceptSource();
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "hemorrhagicFever", "Syndrome de fièvre hémorragique aiguë", icd10, "A99");
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "bacterialMeningitis", "Cas suspect de méningite bactérienne", icd10, "G00.9");
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "diphtheria", "Cas suspect de diphtérie", icd10, "A36.9");
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "acuteFlassicParalysis", "Cas suspect de paralysie flasque aiguë", pih, "Acute flassic paralysis");
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "measles", "Cas suspect de rougeole", icd10, "B05.9");
-        // TODO: need an appropriate concept for: Morsure par animal suspecté de rage
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "suspectedMalaria", "Cas suspect de paludisme (malaria)", icd10, "B54");
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "confirmedMalaria", "Cas confirmé de paludisme (malaria)", icd10, "B53.8");
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "dengue", "Cas suspect de dengue (et la dengue hémorragique)", icd10, "A90", "A91");
-        // TODO: Fièvre d’origine inconnue
-        // TODO: Syndrome ictérique fébrile (maybe this is related to jaundice?)
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "diarrhea", "Diarrhée aiguë non-sanglante", pih, "DIARRHEA"); // TODO maybe also "Gastroenteritis and colitis"
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "bloodyDiarrhea", "Diarrhée aiguë sanglante", pih, "DIARRHEA, BLOODY");
-        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, "typhoid", "Cas suspect de typhoïde", icd10, "A01.0");
-        //
-        //Cas suspect de coqueluche
-        //Infection respiratoire aiguë
-        //Cas suspect de tuberculose
-        //Cas suspect de tétanos
-        //Cas suspect de charbon cutané
-        //Troisième trimestre de grossesse sans suivi
-        //Complications de grossesse
+        ConceptSource mirebalaisReports = mirebalaisProperties.getMirebalaisReportsConceptSource();
+
+        Set<Concept> alreadyReportedConcepts = new HashSet<Concept>();
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "hemorrhagicFever", "Syndrome de fièvre hémorragique aiguë", mirebalaisReports, "hemorrFever");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "bacterialMeningitis", "Cas suspect de méningite bactérienne", mirebalaisReports, "bactMeningitis");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "diphtheria", "Cas suspect de diphtérie", mirebalaisReports, "diphtheria");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "acuteFlassicParalysis", "Cas suspect de paralysie flasque aiguë", mirebalaisReports, "flassicParalysis");
+            addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "measles", "Cas suspect de rougeole", mirebalaisReports, "measles");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "rabies", "Morsure par animal suspecté de rage", mirebalaisReports, "rabies");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "suspectedMalaria", "Cas suspect de paludisme (malaria)", mirebalaisReports, "suspMalaria");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "confirmedMalaria", "Cas confirmé de paludisme (malaria)", mirebalaisReports, "confMalaria");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "dengue", "Cas suspect de dengue (et la dengue hémorragique)", mirebalaisReports, "dengue");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "fever", "Fièvre d’origine inconnue", mirebalaisReports, "fever");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "jaundiceFever", "Syndrome ictérique fébrile", mirebalaisReports, "jaundiceFever");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "diarrhea", "Diarrhée aiguë non-sanglante", mirebalaisReports, "diarrhea");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "bloodyDiarrhea", "Diarrhée aiguë sanglante", mirebalaisReports, "bloodyDiarrhea");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "typhoid", "Cas suspect de typhoïde", mirebalaisReports, "typhoid");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "pertussis", "Cas suspect de coqueluche", mirebalaisReports, "pertussis");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "respiratoryInfection", "Infection respiratoire aiguë", mirebalaisReports, "respiratoryInfection");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "tuberculosis", "Cas suspect de tuberculose", mirebalaisReports, "tuberculosis");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "tetanus", "Cas suspect de tétanos", mirebalaisReports, "tetanus");
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "anthrax", "Cas suspect de charbon cutané", mirebalaisReports, "anthrax");
+        // TODO: Troisième trimestre de grossesse sans suivi
+        addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "pregnancyComplications", "Complications de grossesse", mirebalaisReports, "pregnancyComplications");
+
+        // TODO: NOUVEAUX patients vus avec d’autres conditions
+        // Patients with some diagnosis during the period (excluding Bonne Sante Apparent and Unknown), but no notifiable disease in the period
+        // QUESTION: should this include non-coded diagnoses?
+        {
+            CohortDefinition codedDiagnosisQuery = cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "specific coded diagnoses between dates");
+            codedDiagnosisQuery.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+            codedDiagnosisQuery.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+            codedDiagnosisQuery.addParameter(new Parameter("codedDiagnoses", "Include Coded Diagnoses", Concept.class, List.class, null));
+            codedDiagnosisQuery.addParameter(new Parameter("excludeCodedDiagnoses", "Exclude Coded Diagnoses", Concept.class, List.class, null));
+
+            CompositionCohortDefinition composition = new CompositionCohortDefinition();
+            composition.addParameter(new Parameter("startOfWeek", "Start of Week", Date.class));
+            composition.addSearch("hasDiagnosisWithExclusions", map(codedDiagnosisQuery, "onOrAfter", "${startOfWeek}", "onOrBefore", "${startOfWeek + 6d}",
+                    "excludeCodedDiagnoses", mirebalaisProperties.getSetOfNonDiagnoses().getSetMembers()));
+            composition.addSearch("hasAlreadyReportedDiagnosis", map(codedDiagnosisQuery, "onOrAfter", "${startOfWeek}", "onOrBefore", "${startOfWeek + 6d}",
+                    "codedDiagnoses", new ArrayList<Concept>(alreadyReportedConcepts)));
+            composition.setCompositionString("hasDiagnosisWithExclusions AND NOT hasAlreadyReportedDiagnosis");
+
+            CohortIndicator ci = new CohortIndicator();
+            ci.addParameter(new Parameter("startOfWeek", "Start of week", Date.class));
+            ci.setCohortDefinition(map(composition, "startOfWeek=${startOfWeek}"));
+
+            Mapped<CohortIndicator> mappedIndicator = map(ci, "startOfWeek=${startOfWeek}");
+            addDsdColumns(dsd, "other", "NOUVEAUX patients vus avec d’autres conditions", mappedIndicator);
+        }
+
         return dsd;
     }
 
-    private void addDiseaseColumnsForCode(CohortIndicatorDataSetDefinition dsd, CohortIndicator indicator, String name, String label, ConceptSource source, String... icdCodes) {
+    private void addDiseaseColumnsForCode(CohortIndicatorDataSetDefinition dsd, CohortIndicator indicator, Set<Concept> alreadyReportedConcepts, String name, String label, ConceptSource source, String... icdCodes) {
         Map<String, Object> mappings = ParameterizableUtil.createParameterMappings("startDate=${startOfWeek},endDate=${startOfWeek + 6d}");
         List<Concept> concepts = new ArrayList<Concept>();
         for (String icdCode : icdCodes) {
@@ -126,8 +163,14 @@ public class WeeklyDiagnosisSurveillanceReportManager {
         }
         mappings.put("codedDiagnoses", concepts);
 
+        alreadyReportedConcepts.addAll(concepts);
+
         Mapped<CohortIndicator> mappedIndicator = new Mapped<CohortIndicator>(indicator, mappings);
 
+        addDsdColumns(dsd, name, label, mappedIndicator);
+    }
+
+    private void addDsdColumns(CohortIndicatorDataSetDefinition dsd, String name, String label, Mapped<CohortIndicator> mappedIndicator) {
         dsd.addColumn(name + ".male.young", label + " (<5 ans H)", mappedIndicator, "age=young|gender=male");
         dsd.addColumn(name + ".female.young", label + " (<5 ans F)", mappedIndicator, "age=young|gender=female");
         dsd.addColumn(name + ".male.old", label + " (>=5 ans H)", mappedIndicator, "age=old|gender=male");
@@ -154,4 +197,22 @@ public class WeeklyDiagnosisSurveillanceReportManager {
         }
         return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
     }
+
+    public byte[] loadExcelTemplate() {
+        String templatePath = "reportTemplates/MSPP_Weekly_Diagnosis_Surveillance-template.xls";
+
+        try {
+            InputStream is = this.getClass().getClassLoader().getResourceAsStream(templatePath);
+            byte[] contents = IOUtils.toByteArray(is);
+            IOUtils.closeQuietly(is);
+            return contents;
+        } catch (IOException ex) {
+            throw new RuntimeException("Error loading excel template", ex);
+        }
+    }
+
+    public String getExcelDownloadFilename(EvaluationContext evaluationContext) {
+        return "MSPP_Weekly_Diagnosis_Surveillance_" + new SimpleDateFormat("yyyyMMdd").format(evaluationContext.getParameterValue("startOfWeek")) + ".xls";
+    }
+
 }

@@ -191,5 +191,8 @@
     <p>${ ui.message("mirebalaisreports.basicStatistics.dataQualityReports") }</p>
     <ul>
         <li><a href="${ ui.pageLink("mirebalaisreports", "noncodeddiagnoses/report") }">${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }</a></li>
+        <% if (featureToggles.isFeatureEnabled("notifiableDiseasesReport")) { %>
+            <li><a href="${ ui.pageLink("mirebalaisreports", "notifiablediseases/run") }">${ ui.message("mirebalaisreports.notifiablediseases.title") } (TODO move this link)</a></li>
+        <% } %>
     </ul>
 </div>

@@ -15,7 +15,6 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
@@ -37,17 +36,22 @@ import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.CodedOrFreeTextAnswer;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
-import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
-import org.openmrs.module.reporting.dataset.definition.service.DataSetDefinitionService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.indicator.dimension.CohortIndicatorAndDimensionResult;
+import org.openmrs.module.reporting.report.ReportData;
+import org.openmrs.module.reporting.report.ReportDesign;
+import org.openmrs.module.reporting.report.ReportDesignResource;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
+import org.openmrs.module.reporting.report.renderer.ExcelTemplateRenderer;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 import static org.junit.Assert.assertThat;
@@ -56,14 +60,13 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
 /**
  *
  */
-@Ignore
 public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
     private WeeklyDiagnosisSurveillanceReportManager manager;
 
     @Autowired
-    private DataSetDefinitionService service;
+    private ReportDefinitionService service;
 
     @Autowired
     private ConceptService conceptService;
@@ -81,17 +84,15 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
     public void setUp() throws Exception {
         TestTimer timer = new TestTimer();
 
-        ConceptSource icd10 = conceptService.getConceptSourceByName("ICD-10");
-        icd10.setUuid(MirebalaisProperties.ICD10_CONCEPT_SOURCE_UUID);
-        conceptService.saveConceptSource(icd10);
+        ConceptSource source = new ConceptSource();
+        source.setUuid("947a1410-1987-4399-8017-c1ea70f242d1");
+        source.setName("org.openmrs.module.mirebalaisreports");
+        conceptService.saveConceptSource(source);
 
-        ConceptSource pih = new ConceptSource();
-        pih.setUuid("fb9aaaf1-65e2-4c18-b53c-16b575f2f385");
-        pih.setName("PIH");
-        conceptService.saveConceptSource(pih);
-
-        createTerms(icd10, "G00.9", "A36.9", "B05.9", "B54", "B53.8", "A90", "A91", "A01.0");
-        createTerms(pih, "Acute flassic paralysis", "DIARRHEA", "DIARRHEA, BLOODY");
+        // "hemorrFever" will be created when creating the diagnosis
+        createTerms(source, "bactMeningitis", "diphtheria", "flassicParalysis", "measles", "rabies",
+                "suspMalaria", "confMalaria", "dengue", "fever", "jaundiceFever", "diarrhea", "bloodyDiarrhea",
+                "typhoid", "pertussis", "respiratoryInfection", "tuberculosis", "tetanus", "anthrax", "pregnancyComplications");
 
         ConceptMapType narrowerThan = conceptService.getConceptMapTypeByName("is-parent-to");
         narrowerThan.setUuid(EmrConstants.NARROWER_THAN_CONCEPT_MAP_TYPE_UUID);
@@ -104,7 +105,15 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
 
         Concept diag = new ConceptBuilder(conceptService, naDatatype, diagnosisClass)
                 .addName("Viral Haemmorhagic Fever")
-                .addMapping(narrowerThan, icd10, "A99").saveAndGet();
+                .addMapping(narrowerThan, source, "hemorrFever").saveAndGet();
+
+        Concept nothing = new ConceptBuilder(conceptService, naDatatype, diagnosisClass)
+                .addName("Doing fine").saveAndGet();
+
+        Concept nonDiagnoses = new ConceptBuilder(conceptService, naDatatype, diagnosisClass) // really a set
+                .setUuid("a2d2124b-fc2e-4aa2-ac87-792d4205dd8d")
+                .addName("Non Diagnoses")
+                .addSetMember(nothing).saveAndGet();
 
         Date obsDatetime = DateUtil.parseDate("2013-01-04", "yyyy-MM-dd");
 
@@ -142,13 +151,15 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
         TestTimer timer = new TestTimer();
 
         timer.println("Started");
+        ReportDefinition reportDefinition = manager.buildReportDefinition();
         CohortIndicatorDataSetDefinition dsd = manager.buildDataSetDefinition();
 
         timer.println("Built DSD");
 
         EvaluationContext evaluationContext = new EvaluationContext();
         evaluationContext.addParameterValue("startOfWeek", DateUtil.parseDate("2013-01-01", "yyyy-MM-dd"));
-        MapDataSet evaluated = (MapDataSet) service.evaluate(dsd, evaluationContext);
+        ReportData reportData = service.evaluate(reportDefinition, evaluationContext);
+        MapDataSet evaluated = (MapDataSet) reportData.getDataSets().values().iterator().next();
 
         timer.println("Evaluated");
 
@@ -157,6 +168,27 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
         assertThat(((CohortIndicatorAndDimensionResult) data.getColumnValue("hemorrhagicFever.female.young")).getCohortIndicatorAndDimensionCohort(), isCohortWithExactlyIds());
         assertThat(((CohortIndicatorAndDimensionResult) data.getColumnValue("hemorrhagicFever.male.old")).getCohortIndicatorAndDimensionCohort(), isCohortWithExactlyIds(6));
         assertThat(((CohortIndicatorAndDimensionResult) data.getColumnValue("hemorrhagicFever.female.old")).getCohortIndicatorAndDimensionCohort(), isCohortWithExactlyIds(7));
+
+        ReportDesignResource resource = new ReportDesignResource();
+        resource.setName("template.xls");
+        resource.setContents(manager.loadExcelTemplate());
+
+        final ReportDesign design = new ReportDesign();
+        design.setName("Excel report design (not persisted)");
+        design.setReportDefinition(reportDefinition);
+        design.setRendererType(ExcelTemplateRenderer.class);
+        design.addResource(resource);
+
+        ExcelTemplateRenderer renderer = new ExcelTemplateRenderer() {
+            @Override
+            public ReportDesign getDesign(String argument) {
+                return design;
+            }
+        };
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        renderer.render(reportData, "xxx:xls", out);
+        System.out.println("Wrote an excel file with " + out.size() + " bytes");
     }
 
 }
