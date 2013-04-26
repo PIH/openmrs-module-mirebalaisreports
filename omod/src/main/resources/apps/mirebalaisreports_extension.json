@@ -6,7 +6,7 @@
         "label": "mirebalaisreports.app.reports.label",
         "url": "mirebalaisreports/basicStatistics.page",
         "icon": "icon-list-alt",
-        "order": 2,
+        "order": 4,
         "requiredPrivilege": "App: mirebalaisreports.Reports"
     }
 ]
