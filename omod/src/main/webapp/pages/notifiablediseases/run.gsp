@@ -22,7 +22,7 @@
     <input type="hidden" name="format" value="excel"/>
 
     <p>
-        <label for="start-of-week">First day of week</label>
+        <label for="start-of-week">${ ui.message("mirebalaisreports.notifiablediseases.startOfWeek.label") }</label>
         <input id="start-of-week" type="date" name="startOfWeek"/>
     </p>
 
