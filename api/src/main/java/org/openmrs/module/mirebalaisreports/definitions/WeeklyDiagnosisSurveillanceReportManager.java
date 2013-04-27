@@ -16,6 +16,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Concept;
+import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emr.concept.EmrConceptService;
@@ -155,11 +156,15 @@ public class WeeklyDiagnosisSurveillanceReportManager {
         return dsd;
     }
 
-    private void addDiseaseColumnsForCode(CohortIndicatorDataSetDefinition dsd, CohortIndicator indicator, Set<Concept> alreadyReportedConcepts, String name, String label, ConceptSource source, String... icdCodes) {
+    private void addDiseaseColumnsForCode(CohortIndicatorDataSetDefinition dsd, CohortIndicator indicator, Set<Concept> alreadyReportedConcepts, String name, String label, ConceptSource source, String... codesInSource) {
         Map<String, Object> mappings = ParameterizableUtil.createParameterMappings("startDate=${startOfWeek},endDate=${startOfWeek + 6d}");
         List<Concept> concepts = new ArrayList<Concept>();
-        for (String icdCode : icdCodes) {
-            concepts.addAll(emrConceptService.getConceptsSameOrNarrowerThan(conceptService.getConceptReferenceTermByCode(icdCode, source)));
+        for (String code : codesInSource) {
+            ConceptReferenceTerm conceptReferenceTermByCode = conceptService.getConceptReferenceTermByCode(code, source);
+            if (conceptReferenceTermByCode == null) {
+                throw new IllegalStateException("Could not find " + code + " in " + source);
+            }
+            concepts.addAll(emrConceptService.getConceptsSameOrNarrowerThan(conceptReferenceTermByCode));
         }
         mappings.put("codedDiagnoses", concepts);
 
