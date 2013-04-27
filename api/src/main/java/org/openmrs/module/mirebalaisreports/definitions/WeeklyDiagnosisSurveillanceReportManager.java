@@ -15,6 +15,8 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
@@ -57,6 +59,8 @@ import java.util.Set;
  */
 @Component
 public class WeeklyDiagnosisSurveillanceReportManager {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     @Autowired
     CohortDefinitionService cohortDefinitionService;
@@ -162,9 +166,13 @@ public class WeeklyDiagnosisSurveillanceReportManager {
         for (String code : codesInSource) {
             ConceptReferenceTerm conceptReferenceTermByCode = conceptService.getConceptReferenceTermByCode(code, source);
             if (conceptReferenceTermByCode == null) {
-                throw new IllegalStateException("Could not find " + code + " in " + source);
+                log.error("Could not find code " + code + " in source " + source + " for indicator " + name + ". Skipping it. Please fix the concepts.");
+                continue;
             }
             concepts.addAll(emrConceptService.getConceptsSameOrNarrowerThan(conceptReferenceTermByCode));
+        }
+        if (concepts.size() == 0) {
+            return;
         }
         mappings.put("codedDiagnoses", concepts);
 

@@ -16,7 +16,6 @@ package org.openmrs.module.mirebalaisreports.page.controller.notifiablediseases;
 
 import org.openmrs.module.mirebalaisreports.definitions.WeeklyDiagnosisSurveillanceReportManager;
 import org.openmrs.module.reporting.common.ContentType;
-import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.report.ReportData;
@@ -63,8 +62,6 @@ public class RunPageController {
         for (Map.Entry<String, Object> e : params.entrySet()) {
             evaluationContext.addParameterValue(e.getKey(), e.getValue());
         }
-
-        evaluationContext.addParameterValue("startOfWeek", DateUtil.parseDate("2013-01-01", "yyyy-MM-dd"));
 
         ReportDefinition reportDefinition = reportManager.buildReportDefinition();
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, evaluationContext);
