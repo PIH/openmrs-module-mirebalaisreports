@@ -1,7 +1,7 @@
 [
     {
         "id": "mirebalaisreports.Reports",
-        "extensionPointId": "org.openmrs.mirebalais.homepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "mirebalaisreports.app.reports.label",
         "url": "mirebalaisreports/basicStatistics.page",
