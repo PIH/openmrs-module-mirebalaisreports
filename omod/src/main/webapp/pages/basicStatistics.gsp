@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("emr", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage")
     ui.includeCss("mirebalaisreports", "reports.css")
 
     def dateFormat = new java.text.SimpleDateFormat("dd MMMMM yyyy")
