@@ -21,14 +21,14 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
-import org.openmrs.module.emr.reporting.library.BasicCohortDefinitionLibrary;
-import org.openmrs.module.emr.reporting.library.BasicDimensionLibrary;
-import org.openmrs.module.emr.reporting.library.BasicIndicatorLibrary;
+import org.openmrs.module.mirebalaisreports.library.BasicCohortDefinitionLibrary;
+import org.openmrs.module.mirebalaisreports.library.BasicDimensionLibrary;
+import org.openmrs.module.mirebalaisreports.library.BasicIndicatorLibrary;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
+import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -37,8 +37,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
-import org.openmrs.module.reporting.indicator.dimension.service.DimensionService;
-import org.openmrs.module.reporting.indicator.service.IndicatorService;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -63,13 +61,7 @@ public class WeeklyDiagnosisSurveillanceReportManager {
     private final Log log = LogFactory.getLog(getClass());
 
     @Autowired
-    CohortDefinitionService cohortDefinitionService;
-
-    @Autowired
-    DimensionService dimensionService;
-
-    @Autowired
-    IndicatorService indicatorService;
+	MirebalaisReportsService reportsService;
 
     @Autowired
     ConceptService conceptService;
@@ -96,12 +88,12 @@ public class WeeklyDiagnosisSurveillanceReportManager {
         dsd.addParameter(new Parameter("startOfWeek", "Start of Week", Date.class));
 
         dsd.addDimension("age",
-                map((CohortDefinitionDimension) dimensionService.getDefinitionByUuid(BasicDimensionLibrary.PREFIX + "age two levels (cutoff in years)"),
+                map((CohortDefinitionDimension) reportsService.getDimension(BasicDimensionLibrary.PREFIX + "age two levels (cutoff in years)"),
                         "date", "${startOfWeek}", "cutoff", 5));
         dsd.addDimension("gender",
-                map((CohortDefinitionDimension) dimensionService.getDefinitionByUuid(BasicDimensionLibrary.PREFIX + "gender"), ""));
+                map((CohortDefinitionDimension) reportsService.getDimension(BasicDimensionLibrary.PREFIX + "gender"), ""));
 
-        CohortIndicator specificCodedDiagnosesIndicator = (CohortIndicator) indicatorService.getDefinitionByUuid(BasicIndicatorLibrary.PREFIX + "specific coded diagnoses during period");
+        CohortIndicator specificCodedDiagnosesIndicator = (CohortIndicator) reportsService.getIndicator(BasicIndicatorLibrary.PREFIX + "specific coded diagnoses during period");
         if (specificCodedDiagnosesIndicator == null) {
             throw new IllegalStateException("Cannot find indicator for specific coded diagnoses");
         }
@@ -135,7 +127,7 @@ public class WeeklyDiagnosisSurveillanceReportManager {
         // Patients with some diagnosis during the period (excluding Bonne Sante Apparent and Unknown), but no notifiable disease in the period
         // QUESTION: should this include non-coded diagnoses?
         {
-            CohortDefinition codedDiagnosisQuery = cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "specific coded diagnoses between dates");
+            CohortDefinition codedDiagnosisQuery = reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "specific coded diagnoses between dates");
             codedDiagnosisQuery.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
             codedDiagnosisQuery.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
             codedDiagnosisQuery.addParameter(new Parameter("codedDiagnoses", "Include Coded Diagnoses", Concept.class, List.class, null));

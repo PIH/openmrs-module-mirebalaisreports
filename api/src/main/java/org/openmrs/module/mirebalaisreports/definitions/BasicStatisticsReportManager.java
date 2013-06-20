@@ -6,15 +6,15 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.emr.reporting.cohort.definition.VisitCohortDefinition;
-import org.openmrs.module.emr.reporting.library.BasicCohortDefinitionLibrary;
+import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
+import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.library.BasicCohortDefinitionLibrary;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.PersonAuditInfoCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.MapDataSet;
@@ -49,7 +49,7 @@ public class BasicStatisticsReportManager {
     EncounterService encounterService;
 
     @Autowired
-    CohortDefinitionService cohortDefinitionService;
+	MirebalaisReportsService reportsService;
 
     public MapDataSet evaluate(Date day) throws EvaluationException, DateParseException {
         day = DateUtil.getStartOfDay(day);
@@ -101,7 +101,7 @@ public class BasicStatisticsReportManager {
         returningPatientsOnDayQuery.addSearch("visit", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getVisitEncounterTypes()));
         returningPatientsOnDayQuery.setCompositionString("returning AND visit");
 
-        CohortDefinition excludeTestPatientsCohortDefinition = cohortDefinitionService.getDefinitionByUuid(BasicCohortDefinitionLibrary.PREFIX + "exclude test patients");
+        CohortDefinition excludeTestPatientsCohortDefinition = reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "exclude test patients");
 
         // set up indicators
 
