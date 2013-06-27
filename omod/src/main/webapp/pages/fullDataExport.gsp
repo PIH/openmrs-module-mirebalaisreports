@@ -39,7 +39,7 @@
 							<li>
 								<input id="dataSetOption${option}" type="checkbox" name="dataSets" value="${option}" checked="true" style="float:none;"/>
 								${ ui.message("mirebalaisreports.fulldataexport."+option+".name") }
-								<small>${ ui.message("mirebalaisreports.fulldataexport."+option+".description") }</small>
+								<small> (${ ui.message("mirebalaisreports.fulldataexport."+option+".description") })</small>
 							</li>
 						<% } %>
 					</ul>
