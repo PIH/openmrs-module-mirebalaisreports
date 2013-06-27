@@ -31,30 +31,47 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>src/main/webapp</directory>
 				<filtering>false</filtering>
 				<excludes>
-					<exclude>resources</exclude>
+					<exclude>**/*.xml</exclude>
+					<exclude>**/*.properties</exclude>
+					<exclude>**/*.json</exclude>
 				</excludes>
-				<targetPath>web/module</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.json</include>
+				</includes>
 			</resource>
 			<resource>
 				<directory>src/main/webapp</directory>
 				<filtering>false</filtering>
-				<includes>
-					<include>resources</include>
-				</includes>
 				<targetPath>web/module</targetPath>
 			</resource>
 		</resources>
 
 		<testResources>
 			<testResource>
-				<directory>src/test/resources</directory>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.xml</exclude>
+					<exclude>**/*.properties</exclude>
+					<exclude>**/*.json</exclude>
+				</excludes>
+			</testResource>
+			<testResource>
+				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.json</include>
+				</includes>
 			</testResource>
 		</testResources>
 

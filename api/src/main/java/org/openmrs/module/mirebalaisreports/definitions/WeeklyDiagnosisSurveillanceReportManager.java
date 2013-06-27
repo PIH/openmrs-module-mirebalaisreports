@@ -21,11 +21,11 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.library.BasicCohortDefinitionLibrary;
 import org.openmrs.module.mirebalaisreports.library.BasicDimensionLibrary;
 import org.openmrs.module.mirebalaisreports.library.BasicIndicatorLibrary;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
-import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -70,7 +70,7 @@ public class WeeklyDiagnosisSurveillanceReportManager {
     EmrConceptService emrConceptService;
 
     @Autowired
-    MirebalaisProperties mirebalaisProperties;
+	MirebalaisReportsProperties mirebalaisReportsProperties;
 
     public ReportDefinition buildReportDefinition() {
         CohortIndicatorDataSetDefinition dsd = buildDataSetDefinition();
@@ -98,7 +98,7 @@ public class WeeklyDiagnosisSurveillanceReportManager {
             throw new IllegalStateException("Cannot find indicator for specific coded diagnoses");
         }
 
-        ConceptSource mirebalaisReports = mirebalaisProperties.getMirebalaisReportsConceptSource();
+        ConceptSource mirebalaisReports = mirebalaisReportsProperties.getMirebalaisReportsConceptSource();
 
         Set<Concept> alreadyReportedConcepts = new HashSet<Concept>();
         addDiseaseColumnsForCode(dsd, specificCodedDiagnosesIndicator, alreadyReportedConcepts, "hemorrhagicFever", "Syndrome de fièvre hémorragique aiguë", mirebalaisReports, "hemorrFever");
@@ -136,7 +136,7 @@ public class WeeklyDiagnosisSurveillanceReportManager {
             CompositionCohortDefinition composition = new CompositionCohortDefinition();
             composition.addParameter(new Parameter("startOfWeek", "Start of Week", Date.class));
             composition.addSearch("hasDiagnosisWithExclusions", map(codedDiagnosisQuery, "onOrAfter", "${startOfWeek}", "onOrBefore", "${startOfWeek + 6d}",
-                    "excludeCodedDiagnoses", mirebalaisProperties.getSetOfNonDiagnoses().getSetMembers()));
+                    "excludeCodedDiagnoses", mirebalaisReportsProperties.getSetOfNonDiagnoses().getSetMembers()));
             composition.addSearch("hasAlreadyReportedDiagnosis", map(codedDiagnosisQuery, "onOrAfter", "${startOfWeek}", "onOrBefore", "${startOfWeek + 6d}",
                     "codedDiagnoses", new ArrayList<Concept>(alreadyReportedConcepts)));
             composition.setCompositionString("hasDiagnosisWithExclusions AND NOT hasAlreadyReportedDiagnosis");
@@ -204,7 +204,7 @@ public class WeeklyDiagnosisSurveillanceReportManager {
     }
 
     public byte[] loadExcelTemplate() {
-        String templatePath = "reportTemplates/MSPP_Weekly_Diagnosis_Surveillance-template.xls";
+        String templatePath = "org/openmrs/module/mirebalaisreports/reportTemplates/MSPP_Weekly_Diagnosis_Surveillance-template.xls";
 
         try {
             InputStream is = this.getClass().getClassLoader().getResourceAsStream(templatePath);

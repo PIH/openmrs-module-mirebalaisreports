@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.openmrs.Cohort;
-import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.indicator.dimension.CohortIndicatorAndDimensionResult;
@@ -23,14 +23,14 @@ public class BasicStatisticsReportManagerTest extends BaseModuleContextSensitive
     private BasicStatisticsReportManager basicStatisticsReportManager;
 
     @Autowired
-    private MirebalaisProperties mirebalaisProperties;
+    private MirebalaisReportsProperties mirebalaisReportsProperties;
 
 
     @Before
     public void setup() throws Exception {
         executeDataSet("visitReportTestDataset.xml");
 
-        basicStatisticsReportManager.setMirebalaisProperties(mirebalaisProperties);
+        basicStatisticsReportManager.setMirebalaisReportsProperties(mirebalaisReportsProperties);
     }
 
     @Test

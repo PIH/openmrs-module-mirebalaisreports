@@ -6,11 +6,11 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
 import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.mirebalaisreports.library.BasicCohortDefinitionLibrary;
 import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.module.mirebalaisreports.MirebalaisProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.PersonAuditInfoCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -40,7 +40,7 @@ import java.util.List;
 public class BasicStatisticsReportManager {
 
     @Autowired
-    MirebalaisProperties mirebalaisProperties;
+	MirebalaisReportsProperties mirebalaisReportsProperties;
 
     @Autowired
     EmrApiProperties emrApiProperties;
@@ -89,7 +89,7 @@ public class BasicStatisticsReportManager {
         //consult and vitals
         CompositionCohortDefinition consultAndVitalsOnDayQuery = new CompositionCohortDefinition();
         consultAndVitalsOnDayQuery.addParameter(new Parameter("day", "Day", Date.class));
-        consultAndVitalsOnDayQuery.addSearch("vitals", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getVitalsEncounterType()));
+        consultAndVitalsOnDayQuery.addSearch("vitals", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisReportsProperties.getVitalsEncounterType()));
         consultAndVitalsOnDayQuery.addSearch("consult", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", emrApiProperties.getConsultEncounterType()));
         consultAndVitalsOnDayQuery.setCompositionString("vitals OR consult");
 
@@ -97,8 +97,8 @@ public class BasicStatisticsReportManager {
         String[] ymd = new String[] { "yyyy-MM-dd" };
         CompositionCohortDefinition returningPatientsOnDayQuery = new CompositionCohortDefinition();
         returningPatientsOnDayQuery.addParameter(new Parameter("day", "Day", Date.class));
-        returningPatientsOnDayQuery.addSearch("returning", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", DateUtils.parseDate("1900-01-01", ymd), "onOrBefore", "${day-1d}", "encounterTypeList", mirebalaisProperties.getVisitEncounterTypes()));
-        returningPatientsOnDayQuery.addSearch("visit", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisProperties.getVisitEncounterTypes()));
+        returningPatientsOnDayQuery.addSearch("returning", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", DateUtils.parseDate("1900-01-01", ymd), "onOrBefore", "${day-1d}", "encounterTypeList", mirebalaisReportsProperties.getVisitEncounterTypes()));
+        returningPatientsOnDayQuery.addSearch("visit", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisReportsProperties.getVisitEncounterTypes()));
         returningPatientsOnDayQuery.setCompositionString("returning AND visit");
 
         CohortDefinition excludeTestPatientsCohortDefinition = reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "exclude test patients");
@@ -127,27 +127,27 @@ public class BasicStatisticsReportManager {
         //outpatient on day
         CohortIndicator outpatientOnDay = new CohortIndicator("Outpatient on Day");
         outpatientOnDay.addParameter(new Parameter("day", "Day", Date.class));
-        outpatientOnDay.setCohortDefinition(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getOutpatientLocation()));
+        outpatientOnDay.setCohortDefinition(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getOutpatientLocation()));
 
         //women on day
         CohortIndicator womenClinicOnDay = new CohortIndicator("Women on Day");
         womenClinicOnDay.addParameter(new Parameter("day", "Day", Date.class));
-        womenClinicOnDay.setCohortDefinition(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getWomenLocation()));
+        womenClinicOnDay.setCohortDefinition(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getWomenLocation()));
 
         //set up maps
 
         //outpatient map
-        Mapped<CohortDefinition> outpatientOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getOutpatientLocation()));
+        Mapped<CohortDefinition> outpatientOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getOutpatientLocation()));
         //women map
-        Mapped<CohortDefinition> womenOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getWomenLocation()));
+        Mapped<CohortDefinition> womenOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getWomenLocation()));
         //outpatient vitals map
-        Mapped<CohortDefinition> outpatientVitalsOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getOutpatientLocation(), "encounterTypeList", mirebalaisProperties.getVitalsEncounterType()));
+        Mapped<CohortDefinition> outpatientVitalsOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getOutpatientLocation(), "encounterTypeList", mirebalaisReportsProperties.getVitalsEncounterType()));
         //outpatient diagnosis map
-        Mapped<CohortDefinition> outpatientDiagnosisOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getOutpatientLocation(), "encounterTypeList", mirebalaisProperties.getConsultEncounterType()));
+        Mapped<CohortDefinition> outpatientDiagnosisOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getOutpatientLocation(), "encounterTypeList", mirebalaisReportsProperties.getConsultEncounterType()));
         //women vitals map
-        Mapped<CohortDefinition> womenVitalsOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getWomenLocation(), "encounterTypeList", mirebalaisProperties.getVitalsEncounterType()));
+        Mapped<CohortDefinition> womenVitalsOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getWomenLocation(), "encounterTypeList", mirebalaisReportsProperties.getVitalsEncounterType()));
         //women diagnosis map
-        Mapped<CohortDefinition> womenDiagnosisOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisProperties.getWomenLocation(), "encounterTypeList", mirebalaisProperties.getConsultEncounterType()));
+        Mapped<CohortDefinition> womenDiagnosisOnDayMCD = new Mapped<CohortDefinition>(encountersOfLocationPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "locationList", mirebalaisReportsProperties.getWomenLocation(), "encounterTypeList", mirebalaisReportsProperties.getConsultEncounterType()));
 
         //outpatient with vitals
         CohortIndicator outpatientWithVitalsOnDay = new CohortIndicator("Outpatients on Day - % with vitals");
@@ -234,8 +234,8 @@ public class BasicStatisticsReportManager {
         return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
     }
 
-    public void setMirebalaisProperties(MirebalaisProperties mirebalaisProperties) {
-        this.mirebalaisProperties = mirebalaisProperties;
+    public void setMirebalaisReportsProperties(MirebalaisReportsProperties mirebalaisReportsProperties) {
+        this.mirebalaisReportsProperties = mirebalaisReportsProperties;
     }
 
 }
