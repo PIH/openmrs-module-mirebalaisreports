@@ -4,7 +4,7 @@
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "mirebalaisreports.app.reports.label",
-        "url": "mirebalaisreports/basicStatistics.page",
+        "url": "mirebalaisreports/home.page",
         "icon": "icon-list-alt",
         "order": 4,
         "requiredPrivilege": "App: mirebalaisreports.Reports"

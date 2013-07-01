@@ -5,7 +5,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.pageLink("mirebalaisreports", "basicStatistics") }" },
+        { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.pageLink("mirebalaisreports", "home") }" },
         { label: "${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }", link: "${ ui.thisUrl() }" }
     ];
 </script>
@@ -27,16 +27,16 @@
         </tr>
     </thead>
     <tbody>
-    <% if (!list) { %>
+    <% if (!data) { %>
         <tr>
             <td colspan="3">${ ui.message("emr.none") }</td>
         </tr>
     <% } %>
-    <% list.each { %>
+    <% data.each { %>
         <tr>
-            <td>${ ui.escapeHtml(it.diagnosis) }</td>
-            <td>${ ui.format(it.creator) }</td>
-            <td>${ ui.format(it.dateCreated) }</td>
+            <td>${ ui.escapeHtml(it.getColumnValue("diagnosis")) }</td>
+            <td>${ ui.format(it.getColumnValue("creator")) }</td>
+            <td>${ ui.format(it.getColumnValue("dateCreated")) }</td>
         </tr>
     <% } %>
     </tbody>

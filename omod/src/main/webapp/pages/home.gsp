@@ -1,5 +1,6 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
+	ui.includeCss("mirebalaisreports", "reports.css")
 %>
 
 <script type="text/javascript">
@@ -9,11 +10,34 @@
     ];
 </script>
 
-<h1>
-    ${ ui.message("mirebalaisreports.home.title") }
-</h1>
+<div class="reportBox">
+	<p>${ ui.message("mirebalaisreports.categories.overviewReports") }</p>
+	<ul>
+		<li><a href="${ ui.pageLink("mirebalaisreports", "basicStatistics") }">${ basicStatisticsReport.name }</a></li>
+	</ul>
+</div>
+<div class="reportBox">
+	<p>${ ui.message("mirebalaisreports.categories.dataQualityReports") }</p>
+	<ul>
+		<li><a href="${ ui.pageLink("mirebalaisreports", "nonCodedDiagnoses") }">${ nonCodedDiagnosesReport.name }</a></li>
+	</ul>
+</div>
 
-<ul>
-    <li><a href="${ ui.pageLink("mirebalaisreports", "basicStatistics") }">${ ui.message("mirebalaisreports.basicStatistics.title") }</a></li>
-    <li><a href="${ ui.pageLink("mirebalaisreports", "noncodeddiagnoses/report") }">${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }</a></li>
-</ul>
+<div style="padding-top:20px;">
+	<% if (context.hasPrivilege(weeklyDiagnosisSurveillanceReport.requiredPrivilege)) { %>
+	<div class="reportBox">
+		<p>${ ui.message("mirebalaisreports.categories.msppReports") }</p>
+		<ul>
+			<li><a href="${ ui.pageLink("mirebalaisreports", "weeklyDiagnosisSurveillance") }">${ weeklyDiagnosisSurveillanceReport.name }</a></li>
+		</ul>
+	</div>
+	<% } %>
+	<% if (context.hasPrivilege(fullDataExportReport.requiredPrivilege)) { %>
+	<div class="reportBox">
+		<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
+		<ul>
+			<li><a href="${ ui.pageLink("mirebalaisreports", "fullDataExport") }">${ fullDataExportReport.name }</a></li>
+		</ul>
+	</div>
+	<% } %>
+</div>

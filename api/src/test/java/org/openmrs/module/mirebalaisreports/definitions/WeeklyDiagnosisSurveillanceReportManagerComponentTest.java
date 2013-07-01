@@ -53,6 +53,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertThat;
 import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyIds;
@@ -150,14 +152,17 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
     public void testReport() throws Exception {
         TestTimer timer = new TestTimer();
 
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("startOfWeek", DateUtil.parseDate("2013-01-01", "yyyy-MM-dd"));
+
         timer.println("Started");
-        ReportDefinition reportDefinition = manager.buildReportDefinition();
+		EvaluationContext evaluationContext = manager.initializeContext(params);
+        ReportDefinition reportDefinition = manager.constructReportDefinition(evaluationContext);
         CohortIndicatorDataSetDefinition dsd = manager.buildDataSetDefinition();
 
         timer.println("Built DSD");
 
-        EvaluationContext evaluationContext = new EvaluationContext();
-        evaluationContext.addParameterValue("startOfWeek", DateUtil.parseDate("2013-01-01", "yyyy-MM-dd"));
+
         ReportData reportData = service.evaluate(reportDefinition, evaluationContext);
         MapDataSet evaluated = (MapDataSet) reportData.getDataSets().values().iterator().next();
 

@@ -40,7 +40,7 @@ import java.util.Map;
  * Responsible for defining the full data export report
  */
 @Component
-public class FullDataExportReportManager implements ReportManager {
+public class FullDataExportReportManager extends BaseReportManager {
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -81,13 +81,8 @@ public class FullDataExportReportManager implements ReportManager {
 	//***** INSTANCE METHODS
 
 	@Override
-	public String getName() {
-		return translate("name");
-	}
-
-	@Override
-	public String getDescription() {
-		return translate("description");
+	protected String getMessageCodePrefix() {
+		return "mirebalaisreports.fulldataexport.";
 	}
 
 	@Override
@@ -114,16 +109,14 @@ public class FullDataExportReportManager implements ReportManager {
 	}
 
 	@Override
-	public EvaluationContext initializeContext(Map<String, Object> parameters) {
-		EvaluationContext context = new EvaluationContext();
-		context.setParameterValues(parameters);
-		return context;
+	public String getRequiredPrivilege() {
+		return "Report: mirebalaisreports.fulldataexport";
 	}
 
 	@Override
 	public ReportDefinition constructReportDefinition(EvaluationContext context) {
 
-		log.warn("Creating Report Definition...");
+		log.info("Constructing " + getName());
         ReportDefinition rd = new ReportDefinition();
 		rd.setName(getName());
 		rd.setDescription(getDescription());
@@ -136,7 +129,7 @@ public class FullDataExportReportManager implements ReportManager {
 
 		for (String key : dataSets) {
 
-			log.warn("Adding: " + key);
+			log.debug("Adding dataSet: " + key);
 
 			SqlDataSetDefinition dsd = new SqlDataSetDefinition();
 			dsd.setName(MessageUtil.translate("mirebalaisreports.fulldataexport." + key + ".name"));
@@ -160,7 +153,7 @@ public class FullDataExportReportManager implements ReportManager {
 
 	protected String applyMetadataReplacements(String sql) {
 
-		log.warn("Replacing metadata references");
+		log.debug("Replacing metadata references");
 		MirebalaisReportsProperties mrp = mirebalaisReportsProperties;
 
 		sql = replace(sql, "zlId", mrp.getZlEmrIdentifierType());
@@ -198,21 +191,12 @@ public class FullDataExportReportManager implements ReportManager {
 		sql = replace(sql, "ed", mrp.getSetOfEmergencyDiagnoses());
 		sql = replace(sql, "ageRst", mrp.getSetOfAgeRestrictedDiagnoses());
 
-		log.warn("Replacing metadata references complete.");
+		log.debug("Replacing metadata references complete.");
 		return sql;
     }
 
 	protected String replace(String sql, String oldValue, OpenmrsObject newValue) {
 		String s = sql.replace(":"+oldValue, newValue.getId().toString());
 		return s;
-	}
-
-	protected String translate(String code) {
-		String messageCode = "mirebalaisreports.fulldataexport."+code;
-		String translation = MessageUtil.translate(messageCode);
-		if (messageCode.equals(translation)) {
-			return code;
-		}
-		return translation;
 	}
 }

@@ -56,7 +56,7 @@ import java.util.Set;
  *
  */
 @Component
-public class WeeklyDiagnosisSurveillanceReportManager {
+public class WeeklyDiagnosisSurveillanceReportManager extends BaseReportManager {
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -72,11 +72,28 @@ public class WeeklyDiagnosisSurveillanceReportManager {
     @Autowired
 	MirebalaisReportsProperties mirebalaisReportsProperties;
 
-    public ReportDefinition buildReportDefinition() {
+	@Override
+	protected String getMessageCodePrefix() {
+		return "mirebalaisreports.notifiablediseases.";
+	}
+
+	@Override
+	public List<Parameter> getParameters() {
+		List<Parameter> ret = new ArrayList<Parameter>();
+		ret.add(new Parameter("startOfWeek", "Start of Week", Date.class));
+		return ret;
+	}
+
+	@Override
+	public String getRequiredPrivilege() {
+		return "Report: mirebalaisreports.notifiablediseases";
+	}
+
+	public ReportDefinition constructReportDefinition(EvaluationContext context) {
         CohortIndicatorDataSetDefinition dsd = buildDataSetDefinition();
 
         ReportDefinition reportDefinition = new ReportDefinition();
-        reportDefinition.addParameter(new Parameter("startOfWeek", "Start of Week", Date.class));
+        reportDefinition.addParameters(getParameters());
         reportDefinition.addDataSetDefinition("indicators", map(dsd, "startOfWeek=${startOfWeek}"));
 
         return reportDefinition;

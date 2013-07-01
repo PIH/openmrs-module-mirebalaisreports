@@ -10,7 +10,6 @@ import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
-import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.FileDownload;
 import org.openmrs.ui.framework.page.PageModel;
@@ -49,17 +48,17 @@ public class FullDataExportPageController {
 		ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
 		RenderingMode mode = reportManager.getRenderingModes().get(0);
 
-		log.warn("Evaluating report definition");
+		log.info("Evaluating " + reportManager.getName());
 		ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
-		log.warn("Running renderer");
+		log.info("Rendering to " + mode.getDescriptor());
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		mode.getRenderer().render(reportData, mode.getArgument(), out);
 
 		String filename = mode.getRenderer().getFilename(reportDefinition, mode.getArgument());
 		String contentType = mode.getRenderer().getRenderedContentType(reportDefinition, mode.getArgument());
 
-		log.warn("Rendering complete.  Outputing " + filename + " as contentType: " + contentType);
+		log.info("Rendering complete.  Outputing " + filename + " as contentType: " + contentType);
 		return new FileDownload(filename, contentType, out.toByteArray());
 	}
 }

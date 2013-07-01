@@ -28,7 +28,8 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.thisUrl() }" }
+		{ label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.pageLink("mirebalaisreports", "home") }" },
+        { label: "${ ui.message("mirebalaisreports.basicStatistics.title") }", link: "${ ui.thisUrl() }" }
     ];
 </script>
 
@@ -181,18 +182,5 @@
             </span>
             <span class="label"><i class="icon-angle-right small"></i> ${ ui.message("mirebalaisreports.basicStatistics.label.outpatientsDayBeforeWithDiagnosis") }</span>
         </li>         
-    </ul>
-</div>
-
-<div class="reportLinksBox">
-</div>
-
-<div class="reportLinksBox">
-    <p>${ ui.message("mirebalaisreports.basicStatistics.dataQualityReports") }</p>
-    <ul>
-        <li><a href="${ ui.pageLink("mirebalaisreports", "noncodeddiagnoses/report") }">${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }</a></li>
-        <% if (featureToggles.isFeatureEnabled("notifiableDiseasesReport")) { %>
-            <li><a href="${ ui.pageLink("mirebalaisreports", "notifiablediseases/run") }">${ ui.message("mirebalaisreports.notifiablediseases.title") } (TODO move this link)</a></li>
-        <% } %>
     </ul>
 </div>

@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.mirebalaisreports.page.controller.notifiablediseases;
+package org.openmrs.module.mirebalaisreports.page.controller;
 
 import org.openmrs.module.mirebalaisreports.definitions.WeeklyDiagnosisSurveillanceReportManager;
 import org.openmrs.module.reporting.common.ContentType;
@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  *
  */
-public class RunPageController {
+public class WeeklyDiagnosisSurveillancePageController {
 
     public void get() {
         // GSP for this is static for now
@@ -58,13 +58,10 @@ public class RunPageController {
     }
 
     private FileDownload runReportAsExcel(ReportDefinitionService reportDefinitionService, WeeklyDiagnosisSurveillanceReportManager reportManager, Map<String, Object> params) throws EvaluationException, IOException {
-        EvaluationContext evaluationContext = new EvaluationContext();
-        for (Map.Entry<String, Object> e : params.entrySet()) {
-            evaluationContext.addParameterValue(e.getKey(), e.getValue());
-        }
 
-        ReportDefinition reportDefinition = reportManager.buildReportDefinition();
-        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, evaluationContext);
+		EvaluationContext context = reportManager.initializeContext(params);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
+        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
         // this is a hack, copied from ExcelRendererTest in the reporting module, to avoid needing to save the template
         // and report design in the database
@@ -89,7 +86,7 @@ public class RunPageController {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         renderer.render(reportData, "xxx:xls", out);
 
-        return new FileDownload(reportManager.getExcelDownloadFilename(evaluationContext), ContentType.EXCEL.getContentType(), out.toByteArray());
+        return new FileDownload(reportManager.getExcelDownloadFilename(context), ContentType.EXCEL.getContentType(), out.toByteArray());
     }
 
 }

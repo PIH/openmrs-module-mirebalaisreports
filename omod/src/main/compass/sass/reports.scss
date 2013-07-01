@@ -31,6 +31,10 @@
       padding-bottom: 0.5em;
     }
 
+    a:visited, a.visited {
+      color: $white;
+    }
+
     span.label {
       display: inline-block;
     }
