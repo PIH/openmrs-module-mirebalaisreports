@@ -13,13 +13,13 @@
 <div class="reportBox">
 	<p>${ ui.message("mirebalaisreports.categories.overviewReports") }</p>
 	<ul>
-		<li><a href="${ ui.pageLink("mirebalaisreports", "basicStatistics") }">${ basicStatisticsReport.name }</a></li>
+		<li><a id="mirebalaisreports-basicStatisticsReport-link" href="${ ui.pageLink("mirebalaisreports", "basicStatistics") }">${ basicStatisticsReport.name }</a></li>
 	</ul>
 </div>
 <div class="reportBox">
 	<p>${ ui.message("mirebalaisreports.categories.dataQualityReports") }</p>
 	<ul>
-		<li><a href="${ ui.pageLink("mirebalaisreports", "nonCodedDiagnoses") }">${ nonCodedDiagnosesReport.name }</a></li>
+		<li><a id="mirebalaisreports-nonCodedDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "nonCodedDiagnoses") }">${ nonCodedDiagnosesReport.name }</a></li>
 	</ul>
 </div>
 
@@ -28,7 +28,7 @@
 	<div class="reportBox">
 		<p>${ ui.message("mirebalaisreports.categories.msppReports") }</p>
 		<ul>
-			<li><a href="${ ui.pageLink("mirebalaisreports", "weeklyDiagnosisSurveillance") }">${ weeklyDiagnosisSurveillanceReport.name }</a></li>
+			<li><a id="mirebalaisreports-weeklyDiagnosisSurveillanceReport-link" href="${ ui.pageLink("mirebalaisreports", "weeklyDiagnosisSurveillance") }">${ weeklyDiagnosisSurveillanceReport.name }</a></li>
 		</ul>
 	</div>
 	<% } %>
@@ -36,7 +36,7 @@
 	<div class="reportBox">
 		<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
 		<ul>
-			<li><a href="${ ui.pageLink("mirebalaisreports", "fullDataExport") }">${ fullDataExportReport.name }</a></li>
+			<li><a id="mirebalaisreports-fullDataExportReport-link" href="${ ui.pageLink("mirebalaisreports", "fullDataExport") }">${ fullDataExportReport.name }</a></li>
 		</ul>
 	</div>
 	<% } %>
