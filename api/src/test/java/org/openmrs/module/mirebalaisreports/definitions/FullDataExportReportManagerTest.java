@@ -58,7 +58,7 @@ public class FullDataExportReportManagerTest extends BaseModuleContextSensitiveT
     public void shouldSetupTheReportWithAllDataSets() throws Exception {
 		EvaluationContext context = createContext(new Date(), new Date());
 		ReportDefinition reportDefinition = fullDataExport.constructReportDefinition(context);
-		Assert.assertEquals(8, reportDefinition.getDataSetDefinitions().size());
+		Assert.assertEquals(13, reportDefinition.getDataSetDefinitions().size());
 	}
 
 	@Test
@@ -66,6 +66,17 @@ public class FullDataExportReportManagerTest extends BaseModuleContextSensitiveT
 		EvaluationContext context = createContext(new Date(), new Date(), "patients", "visits");
 		ReportDefinition reportDefinition = fullDataExport.constructReportDefinition(context);
 		Assert.assertEquals(2, reportDefinition.getDataSetDefinitions().size());
+	}
+
+	@Test
+	public void shouldOrderTheDataSetsInTheReportCorrectly() throws Exception {
+		EvaluationContext context = createContext(new Date(), new Date());
+		ReportDefinition reportDefinition = fullDataExport.constructReportDefinition(context);
+		int i=0;
+		for (String dsName : reportDefinition.getDataSetDefinitions().keySet()) {
+			Assert.assertEquals(fullDataExport.getDataSetOptions().get(i), dsName);
+			i++;
+		}
 	}
 
 	@Test

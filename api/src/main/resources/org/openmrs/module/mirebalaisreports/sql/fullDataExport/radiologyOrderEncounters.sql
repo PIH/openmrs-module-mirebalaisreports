@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.encounter_datetime, el.name encounter_location, CONCAT(pn.given_name, ' ', pn.family_name) provider, pd.value_numeric amount_paid, e.date_created,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.encounter_datetime, el.name encounter_location, CONCAT(pn.given_name, ' ', pn.family_name) provider, COUNT(o.order_id) num_orders, e.date_created,
 
 --Mark as retrospective if more than 30 seconds elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 30, TRUE, FALSE) retrospective
@@ -23,22 +23,18 @@ LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_cre
 --Most recent name
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
 
---Check in encounter
-INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = 1
+--Radiology order encounter
+INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = 7
 
---User who created the check-in encounter
+--User who created the encounter
 INNER JOIN users u ON e.creator = u.user_id
 INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
 
 --Location of encounter
 INNER JOIN location el ON e.location_id = el.location_id
 
---Payment amount
-LEFT OUTER JOIN obs pd ON e.encounter_id = pd.encounter_id AND pd.voided = 0 AND pd.concept_id = 124
-
---Reason for visit
-LEFT OUTER JOIN obs reason ON e.encounter_id = reason.encounter_id AND reason.voided = 0 AND reason.concept_id = 123
-LEFT OUTER JOIN concept_name reason_n ON reason.value_coded = reason_n.concept_id AND reason_n.voided = 0 AND reason_n.locale = 'en' AND reason_n.concept_name_type = 'FULLY_SPECIFIED'
+--Radiology order associated with encounter
+INNER JOIN orders o ON e.encounter_id = o.encounter_id AND o.voided = 0
 
 WHERE p.voided = 0
 

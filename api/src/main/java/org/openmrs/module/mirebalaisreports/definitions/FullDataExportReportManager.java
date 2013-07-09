@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,9 @@ public class FullDataExportReportManager extends BaseReportManager {
 	public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
 	public final List<String> dataSetOptions = Arrays.asList(
-		"patients", "visits", "checkins", "vitals", "consultations", "diagnoses", "radiologyEncounters", "radiologyOrders"
+		"patients", "visits", "checkins", "vitals", "consultations", "diagnoses",
+		"hospitalizations", "postOpNote1", "postOpNote2",
+		"radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters"
 	);
 
 	public List<String> getDataSetOptions() {
@@ -122,9 +125,15 @@ public class FullDataExportReportManager extends BaseReportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		List<String> dataSets = (List<String>)context.getParameterValue(getWhichDataSetParameter().getName());
-		if (dataSets == null) {
-			dataSets = dataSetOptions;
+		List<String> dataSets = new ArrayList<String>(dataSetOptions);
+		List<String> chosenDataSets = (List<String>)context.getParameterValue(getWhichDataSetParameter().getName());
+		if (chosenDataSets != null) {
+			for (Iterator<String> i = dataSets.iterator(); i.hasNext();) {
+				String ds = i.next();
+				if (!chosenDataSets.contains(ds)) {
+					i.remove();
+				}
+			}
 		}
 
 		for (String key : dataSets) {
