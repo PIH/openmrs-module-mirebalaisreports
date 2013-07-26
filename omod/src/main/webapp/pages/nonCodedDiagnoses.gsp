@@ -29,7 +29,7 @@
     <tbody>
     <% if (!data) { %>
         <tr>
-            <td colspan="3">${ ui.message("emr.none") }</td>
+            <td colspan="3">${ ui.message("mirebalaisreports.none") }</td>
         </tr>
     <% } %>
     <% data.each { %>
