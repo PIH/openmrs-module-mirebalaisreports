@@ -20,10 +20,10 @@ import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
-import org.openmrs.module.emr.TestUtils;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
+import org.openmrs.module.emrapi.test.ContextSensitiveMetadataTestUtils;
 import org.openmrs.module.emrapi.test.builder.ObsBuilder;
 import org.openmrs.module.mirebalaisreports.cohort.definition.DiagnosisCohortDefinition;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
@@ -59,7 +59,7 @@ public class DiagnosisCohortDefinitionEvaluatorTest extends BaseModuleContextSen
 
     @Before
     public void setUp() throws Exception {
-        dmd = TestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
+        dmd = ContextSensitiveMetadataTestUtils.setupDiagnosisMetadata(conceptService, emrApiProperties);
     }
 
     @Test
