@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) provider, IF(o.concept_id = 357, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = 357, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_en, icd.code icd10_code,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) provider, IF(o.concept_id = 357, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = 357, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_en, icd.code icd10_code,
 
 --Checks to see if diagnosis is a member of a variety of concept sets
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = 340), TRUE, FALSE) notifiable,
@@ -13,8 +13,8 @@ IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = 427),
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = 341), TRUE, FALSE) age_restricted,
 o.date_created,
 
---Mark as retrospective if more than 30 seconds elapsed between encounter date and creation
-IF(TIME_TO_SEC(o.date_created) - TIME_TO_SEC(o.obs_datetime) > 30, TRUE, FALSE) retrospective
+--Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
+IF(TIME_TO_SEC(o.date_created) - TIME_TO_SEC(o.obs_datetime) > 1800, TRUE, FALSE) retrospective
 
 FROM patient p
 
