@@ -1,7 +1,8 @@
 SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.encounter_datetime, el.name encounter_location, CONCAT(pn.given_name, ' ', pn.family_name) provider, pd.value_numeric amount_paid, e.date_created,
 
---Mark as retrospective if more than 30 seconds elapsed between encounter date and creation
-IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 30, TRUE, FALSE) retrospective
+										 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
+IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
+reason_n.name reason_for_visit
 
 FROM patient p
 
@@ -37,7 +38,7 @@ INNER JOIN location el ON e.location_id = el.location_id
 LEFT OUTER JOIN obs pd ON e.encounter_id = pd.encounter_id AND pd.voided = 0 AND pd.concept_id = 124
 
 --Reason for visit
-LEFT OUTER JOIN obs reason ON e.encounter_id = reason.encounter_id AND reason.voided = 0 AND reason.concept_id = 123
+LEFT OUTER JOIN obs reason ON e.encounter_id = reason.encounter_id AND reason.voided = 0 AND reason.concept_id = 1244
 LEFT OUTER JOIN concept_name reason_n ON reason.value_coded = reason_n.concept_id AND reason_n.voided = 0 AND reason_n.locale = 'en' AND reason_n.concept_name_type = 'FULLY_SPECIFIED'
 
 WHERE p.voided = 0
