@@ -27,10 +27,10 @@ implant_n.name implant,
 implant_comment.value_text implant_comment,
 complication_n.name complication,
 plan.value_text plan, e.date_created,
-emergency_n.name emergency
 
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
-IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective
+IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
+emergency_n.name emergency
 
 FROM patient p
 
