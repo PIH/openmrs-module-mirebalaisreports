@@ -44,7 +44,7 @@
         <calculationVersion>1.0</calculationVersion>
         <metadatasharingVersion>1.1.7.1</metadatasharingVersion>
         <uiframeworkVersion>2.5.1</uiframeworkVersion>
-        <htmlformentryVersion>2.1.1</htmlformentryVersion>
+        <htmlformentryVersion>2.1.4</htmlformentryVersion>
         <providerManagementVersion>2.0</providerManagementVersion>
         <patientregistrationVersion>2.0</patientregistrationVersion>
         <idgenVersion>2.5</idgenVersion>
