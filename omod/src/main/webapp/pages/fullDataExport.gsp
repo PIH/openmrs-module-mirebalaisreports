@@ -8,6 +8,24 @@
         { label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.pageLink("mirebalaisreports", "home") }" },
         { label: "${ reportManager.name }", link: "${ ui.thisUrl() }" }
     ];
+
+    var toggleSubmitButton = function() {
+        if (jq('#startDateField-display').val() && jq('#endDateField-display').val()) {
+            jq('#submit').prop('disabled', false).removeClass('disabled');
+        }
+        else {
+            jq('#submit').prop('disabled', true).addClass('disabled');
+        }
+    };
+
+    jq(function() {
+        jq('#startDateField-display').change(toggleSubmitButton);
+        jq('#endDateField-display').change(toggleSubmitButton);
+        jq('#selectAll').click(function() {
+            jq(':checkbox').prop('checked', jq('#selectAll').prop('checked'));
+        })
+    })
+
 </script>
 
 <div id="reportNameSection" class="title">
@@ -42,11 +60,15 @@
 								<small> (${ ui.message("mirebalaisreports.fulldataexport."+option+".description") })</small>
 							</li>
 						<% } %>
+                        <li>
+                            <input id="selectAll" type="checkbox" value="" checked="true" style="float:none;">
+                            ${ ui.message("mirebalaisreports.fulldataexport.selectAll.name") }
+                        </li>
 					</ul>
 				<% } %>
 			</p>
 		<% } %>
 	</fieldset>
 
-    <button type="submit">${ ui.message("mirebalaisreports.general.runReport") }</button>
+    <button id="submit" type="submit" class="disabled" disabled>${ ui.message("mirebalaisreports.general.runReport") }</button>
 </form>
