@@ -26,21 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SkipBaseSetup
-public class FullDataExportReportManagerTest extends BaseModuleContextSensitiveTest {
+public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired
     private FullDataExportReportManager fullDataExport;
 
-	@Autowired
-	private ReportDefinitionService reportDefinitionService;
-
-    @Before
-    public void setup() throws Exception {
-        executeDataSet("org/openmrs/module/mirebalaisreports/coreMetadata.xml");
-		authenticate();
-    }
-
-	public EvaluationContext createContext(Date startDate, Date endDate, String... dataSets) {
+    public EvaluationContext createContext(Date startDate, Date endDate, String... dataSets) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (startDate != null) {
 			params.put(fullDataExport.getStartDateParameter().getName(), startDate);
