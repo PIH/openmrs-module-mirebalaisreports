@@ -19,11 +19,12 @@
         jq(".codeDiagnosis").click(function(event) {
             createCodeDiagnosisDialog();
             var patientId = jq(event.target).attr("data-patient-id");
+            var patientIdentifier = jq(event.target).attr("data-patient-identifier");
             var nonCodedDiagnosis = jq(event.target).attr("data-nonCoded-Diagnosis");
             var personName = jq(event.target).attr("data-person-name");
             var obsId = jq(event.target).attr("data-obs-id");
 
-            showCodeDiagnosisDialog(patientId, personName, obsId, nonCodedDiagnosis);
+            showCodeDiagnosisDialog(patientId, patientIdentifier, personName, obsId, nonCodedDiagnosis);
         });
 
 
@@ -66,7 +67,9 @@
             <td>${ ui.format(it.getColumnValue("creator")) }</td>
             <td>${ ui.format(it.getColumnValue("dateCreated")) }</td>
             <td>
-                <a class="codeDiagnosis" data-patient-id="${ it.getColumnValue("patientId") }"
+                <a class="codeDiagnosis"
+                   data-patient-identifier="${ it.getColumnValue("patientIdentifier") }"
+                   data-patient-id="${ it.getColumnValue("patientId") }"
                    data-person-name="${ it.getColumnValue("personName") }"
                    data-nonCoded-Diagnosis="${ ui.escapeHtml(it.getColumnValue("diagnosis")) }"
                    data-obs-id ="${ it.getColumnValue("obsId") }"
