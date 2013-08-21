@@ -37,6 +37,7 @@
 		<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
 		<ul>
 			<li><a id="mirebalaisreports-fullDataExportReport-link" href="${ ui.pageLink("mirebalaisreports", "fullDataExport") }">${ fullDataExportReport.name }</a></li>
+            <li><a id="mirebalaisreports-lqasDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "lqasDiagnoses") }">${ lqasDiagnosesReport.name }</a></li>
 		</ul>
 	</div>
 	<% } %>

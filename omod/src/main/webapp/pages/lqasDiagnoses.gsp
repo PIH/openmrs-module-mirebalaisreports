@@ -1,6 +1,15 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
 %>
+<style type="text/css">
+    #run-report {
+        padding-top: 0px;
+    }
+
+    #run-report button {
+        margin-top: 1.5em;
+    }
+</style>
 
 <script type="text/javascript">
     var breadcrumbs = [
@@ -19,8 +28,7 @@
     };
 
     jq(function() {
-        jq('#startDateField-display').change(toggleSubmitButton);
-        jq('#endDateField-display').change(toggleSubmitButton);
+        jq('#startDateField-display, #endDateField-display').change(toggleSubmitButton);
     })
 
 </script>
@@ -36,7 +44,7 @@
 <br/>
 
 <form method="post">
-    <fieldset style="min-width:25%; padding-top:0px;">
+    <fieldset id="run-report">
         <legend>
             ${ ui.message("mirebalaisreports.general.runReport") }
         </legend>
@@ -50,7 +58,10 @@
                 <% } %>
             </p>
         <% } %>
+
+        <p>
+            <button id="submit" type="submit" class="disabled" disabled>${ ui.message("mirebalaisreports.general.runReport") }</button>
+        </p>
     </fieldset>
 
-    <button id="submit" type="submit" class="disabled" disabled>${ ui.message("mirebalaisreports.general.runReport") }</button>
 </form>
