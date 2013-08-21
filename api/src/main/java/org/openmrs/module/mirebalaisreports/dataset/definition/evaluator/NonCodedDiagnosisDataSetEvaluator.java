@@ -21,8 +21,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.annotation.Handler;
+import org.openmrs.api.PatientService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -49,6 +53,9 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
     @Autowired
     private EmrApiProperties emrApiProperties;
 
+    @Autowired
+    private PatientService patientService;
+
 	@Override
 	public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
 		NonCodedDiagnosisDataSetDefinition dsd = (NonCodedDiagnosisDataSetDefinition) dataSetDefinition;
@@ -63,7 +70,12 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
 		criteria.add(Restrictions.ge("dateCreated", fromDate));
 		criteria.add(Restrictions.le("dateCreated", toDate));
 		criteria.add(Restrictions.eq("concept", emrApiProperties.getDiagnosisMetadata().getNonCodedDiagnosisConcept()));
-		criteria.setProjection(Projections.projectionList().add(Projections.property("valueText")).add(Projections.property("creator")).add(Projections.property("dateCreated")));
+		criteria.setProjection(Projections.projectionList()
+                .add(Projections.property("valueText"))
+                .add(Projections.property("creator"))
+                .add(Projections.property("dateCreated"))
+                .add(Projections.property("personId"))
+                .add(Projections.property("obsId")));
 
 		SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
 		for (Object[] o : (List<Object[]>) criteria.list()) {
@@ -71,6 +83,14 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
 			row.addColumnValue(new DataSetColumn("diagnosis", "diagnosis", Concept.class), o[0]);
 			row.addColumnValue(new DataSetColumn("creator", "creator", User.class), o[1]);
 			row.addColumnValue(new DataSetColumn("dateCreated", "dateCreated", Date.class), o[2]);
+            Integer patientId = (Integer) o[3];
+            row.addColumnValue(new DataSetColumn("patientId", "patientId", Patient.class), patientId);
+            Patient patient = patientService.getPatient( patientId ) ;
+            if ( patient !=null ){
+                row.addColumnValue(new DataSetColumn("patientIdentifier", "patientIdentifier", PatientIdentifier.class), patient.getPatientIdentifier());
+                row.addColumnValue(new DataSetColumn("personName", "personName", PersonName.class), patient.getPersonName());
+            }
+            row.addColumnValue(new DataSetColumn("obsId", "obsId", Obs.class), o[4]);
 			dataSet.addRow(row);
 		}
 		return dataSet;
