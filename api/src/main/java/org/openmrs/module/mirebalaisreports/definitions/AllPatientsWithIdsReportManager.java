@@ -3,37 +3,20 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
-import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * This shows a random list of 25 visits with diagnoses, data clerk, dossier, clinician. LQAS report is used for
- * concordance of diagnoses in the dossier with the paper record available in the HUM system.
- */
 @Component
-public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
-
-    public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
+public class AllPatientsWithIdsReportManager extends  BaseMirebalaisReportManager{
 
     @Override
     protected String getMessageCodePrefix() {
-        return "mirebalaisreports.lqasdiagnoses.";
-    }
-
-    @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> l = new ArrayList<Parameter>();
-        l.add(getStartDateParameter());
-        l.add(getEndDateParameter());
-        return l;
+        return "mirebalaisreports.allpatientswithids.";
     }
 
     @Override
@@ -57,27 +40,20 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
         ReportDefinition rd = new ReportDefinition();
         rd.setName(getName());
         rd.setDescription(getDescription());
-        rd.setParameters(getParameters());
 
         SqlDataSetDefinition dsd = new SqlDataSetDefinition();
         dsd.setName(getName());
         dsd.setDescription(getDescription());
-        dsd.addParameter(getStartDateParameter());
-        dsd.addParameter(getEndDateParameter());
 
-        String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "lqas_diagnoses.sql");
+
+        String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "allPatients_withIds.sql");
         sql = applyMetadataReplacements(sql);
         dsd.setSqlQuery(sql);
         if (log.isTraceEnabled()) {
             log.trace("sql = " + sql);
         }
 
-        Map<String, Object> mappings =  new HashMap<String, Object>();
-        mappings.put("startDate","${startDate}");
-        mappings.put("endDate", "${endDate}");
-
-        rd.addDataSetDefinition("dsd", dsd, mappings);
+        rd.addDataSetDefinition("dsd", dsd, null);
         return rd;
     }
-
 }

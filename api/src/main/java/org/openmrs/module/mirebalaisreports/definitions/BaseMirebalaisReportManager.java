@@ -16,6 +16,8 @@ import java.util.Date;
  */
 public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
+    public static final String SQL_DIR = "org/openmrs/module/mirebalaisreports/sql/";
+
     protected final Log log = LogFactory.getLog(getClass());
 
     @Autowired
@@ -45,6 +47,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "hivId", mrp.getHivEmrIdentifierType());
 
         sql = replace(sql, "testPt", mrp.getTestPatientPersonAttributeType());
+        sql = replace(sql, "phoneType", mrp.getTelephoneNumberPersonAttributeType());
 
         sql = replace(sql, "regEnc", mrp.getRegistrationEncounterType());
         sql = replace(sql, "chkEnc", mrp.getCheckInEncounterType());

@@ -2,6 +2,7 @@ package org.openmrs.module.mirebalaisreports.page.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.mirebalaisreports.definitions.AllPatientsWithIdsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.BasicStatisticsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.FullDataExportReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.LqasDiagnosesReportManager;
@@ -19,6 +20,7 @@ public class HomePageController {
 					@SpringBean WeeklyDiagnosisSurveillanceReportManager weeklyDiagnosisSurveillanceReportManager,
 					@SpringBean FullDataExportReportManager fullDataExportReportManager,
                     @SpringBean LqasDiagnosesReportManager lqasDiagnosesReportManager,
+                    @SpringBean AllPatientsWithIdsReportManager allPatientsWithIdsReportManager,
                     PageModel pageModel) {
 
 		// TODO: Move this all into the reports or some external configuration
@@ -28,5 +30,6 @@ public class HomePageController {
 		pageModel.addAttribute("weeklyDiagnosisSurveillanceReport", weeklyDiagnosisSurveillanceReportManager);
 		pageModel.addAttribute("fullDataExportReport", fullDataExportReportManager);
         pageModel.addAttribute("lqasDiagnosesReport", lqasDiagnosesReportManager);
+        pageModel.addAttribute("allPatientsWithIdsReportManager", allPatientsWithIdsReportManager);
     }
 }

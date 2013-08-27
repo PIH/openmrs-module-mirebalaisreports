@@ -85,10 +85,15 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	//***** PERSON ATTRIBUTE TYPES
 
 	public static final String TEST_PERSON_ATTRIBUTE_UUID = "4f07985c-88a5-4abd-aa0c-f3ec8324d8e7";
+    public static final String TELEPHONE_PERSON_ATTRIBUTE_UUID = "14d4f066-15f5-102d-96e4-000c29c2a5d7";
 
 	public PersonAttributeType getTestPatientPersonAttributeType() {
 		return getRequiredPersonAttributeTypeByUuid(TEST_PERSON_ATTRIBUTE_UUID);
 	}
+
+    public PersonAttributeType getTelephoneNumberPersonAttributeType() {
+        return getRequiredPersonAttributeTypeByUuid(TELEPHONE_PERSON_ATTRIBUTE_UUID);
+    }
 
 	private PersonAttributeType getRequiredPersonAttributeTypeByUuid(String uuid) {
 		PersonAttributeType t = personService.getPersonAttributeTypeByUuid(uuid);
