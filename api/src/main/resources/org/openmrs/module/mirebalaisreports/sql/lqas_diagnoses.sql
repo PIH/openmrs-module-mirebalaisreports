@@ -16,6 +16,7 @@ INNER JOIN encounter pc
 
 INNER JOIN location loc
    ON pc.location_id = loc.location_id
+   AND loc.location_id = :location
 
 INNER JOIN patient_identifier d
    ON p.patient_id = d.patient_id

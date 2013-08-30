@@ -2,6 +2,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
@@ -36,6 +37,10 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
     public Parameter getEndDateParameter() {
         return new Parameter("endDate", translate("parameter.endDate"), Date.class);
+    }
+
+    public Parameter getLocationParameter() {
+        return new Parameter("location", translate("parameter.location"), Location.class);
     }
 
     protected String applyMetadataReplacements(String sql) {

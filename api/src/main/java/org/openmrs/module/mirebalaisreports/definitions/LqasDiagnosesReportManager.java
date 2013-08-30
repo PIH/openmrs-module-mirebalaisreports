@@ -33,6 +33,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(getStartDateParameter());
         l.add(getEndDateParameter());
+        l.add(getLocationParameter());
         return l;
     }
 
@@ -64,6 +65,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
         dsd.setDescription(getDescription());
         dsd.addParameter(getStartDateParameter());
         dsd.addParameter(getEndDateParameter());
+        dsd.addParameter(getLocationParameter());
 
         String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "lqas_diagnoses.sql");
         sql = applyMetadataReplacements(sql);
@@ -75,6 +77,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
         Map<String, Object> mappings =  new HashMap<String, Object>();
         mappings.put("startDate","${startDate}");
         mappings.put("endDate", "${endDate}");
+        mappings.put("location", "${location}");
 
         rd.addDataSetDefinition("dsd", dsd, mappings);
         return rd;

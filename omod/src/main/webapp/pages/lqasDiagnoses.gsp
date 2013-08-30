@@ -55,6 +55,8 @@
                     ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "startDateField", "label": parameter.label, "formFieldName": "startDate", "useTime": false ]) }
                 <% } else if (parameter.name == "endDate") { %>
                     ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "endDateField", "label": parameter.label, "formFieldName": "endDate", "useTime": false ]) }
+                <% } else if (parameter.name == "location") { %>
+                    ${ ui.includeFragment("emr", "field/location", [ "id": "locationField", "label": parameter.label, "formFieldName": "location" ]) }
                 <% } %>
             </p>
         <% } %>

@@ -3,7 +3,7 @@ package org.openmrs.module.mirebalaisreports.page.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.impl.cookie.DateParseException;
-import org.openmrs.module.mirebalaisreports.definitions.FullDataExportReportManager;
+import org.openmrs.Location;
 import org.openmrs.module.mirebalaisreports.definitions.LqasDiagnosesReportManager;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,11 +37,13 @@ public class LqasDiagnosesPageController {
     public Object post(@SpringBean LqasDiagnosesReportManager reportManager,
                        @SpringBean ReportDefinitionService reportDefinitionService,
                        @RequestParam("startDate") Date startDate,
-                       @RequestParam("endDate") Date endDate) throws EvaluationException, IOException {
+                       @RequestParam("endDate") Date endDate,
+                       @RequestParam("location") Location location) throws EvaluationException, IOException {
 
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put(reportManager.getStartDateParameter().getName(), startDate);
         parameters.put(reportManager.getEndDateParameter().getName(), endDate);
+        parameters.put(reportManager.getLocationParameter().getName(), location);
 
         EvaluationContext context = reportManager.initializeContext(parameters);
         ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
