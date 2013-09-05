@@ -40,7 +40,7 @@
     ${ ui.message("mirebalaisreports.noncodeddiagnoses.subtitle", ui.format(fromDate), ui.format(toDate)) }
 </h3>
 
-<table>
+<table id="non-coded-diagnoses">
     <thead>
         <tr>
             <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.diagnosis") }</th>
