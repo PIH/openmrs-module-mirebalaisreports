@@ -49,8 +49,9 @@
         <patientregistrationVersion>2.0</patientregistrationVersion>
         <idgenVersion>2.5</idgenVersion>
         <appframeworkVersion>1.4</appframeworkVersion>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+        <eventVersion>2.1</eventVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <!-- Begin OpenMRS core -->
@@ -190,6 +191,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>metadatasharing-api</artifactId>
             <version>${metadatasharingVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs</groupId>
+            <artifactId>event-api</artifactId>
+            <version>${eventVersion}</version>
             <scope>test</scope>
         </dependency>
 
