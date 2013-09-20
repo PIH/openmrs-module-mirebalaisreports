@@ -20,11 +20,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
 import org.openmrs.User;
+import org.openmrs.Visit;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -75,7 +77,8 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
                 .add(Projections.property("creator"))
                 .add(Projections.property("dateCreated"))
                 .add(Projections.property("personId"))
-                .add(Projections.property("obsId")));
+                .add(Projections.property("obsId"))
+                .add(Projections.property("encounter")));
 
 		SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
 		for (Object[] o : (List<Object[]>) criteria.list()) {
@@ -91,6 +94,11 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
                 row.addColumnValue(new DataSetColumn("personName", "personName", PersonName.class), patient.getPersonName());
             }
             row.addColumnValue(new DataSetColumn("obsId", "obsId", Obs.class), o[4]);
+            Encounter encounter = (Encounter) o[5];
+            if ( (encounter != null) && (encounter.getVisit() != null) ){
+                row.addColumnValue(new DataSetColumn("visitId", "visitId", Integer.class), encounter.getVisit().getId());
+                row.addColumnValue(new DataSetColumn("encounterDateTime", "encounterDateTime", Date.class), encounter.getEncounterDatetime());
+            }
 			dataSet.addRow(row);
 		}
 		return dataSet;

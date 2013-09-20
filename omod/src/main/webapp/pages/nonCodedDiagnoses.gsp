@@ -19,12 +19,13 @@
         jq(".codeDiagnosis").click(function(event) {
             createCodeDiagnosisDialog();
             var patientId = jq(event.target).attr("data-patient-id");
+            var visitId = jq(event.target).attr("data-visit-id");
             var patientIdentifier = jq(event.target).attr("data-patient-identifier");
             var nonCodedDiagnosis = jq(event.target).attr("data-nonCoded-Diagnosis");
             var personName = jq(event.target).attr("data-person-name");
             var obsId = jq(event.target).attr("data-obs-id");
 
-            showCodeDiagnosisDialog(patientId, patientIdentifier, personName, obsId, nonCodedDiagnosis);
+            showCodeDiagnosisDialog(patientId, visitId, patientIdentifier, personName, obsId, nonCodedDiagnosis);
         });
 
 
@@ -47,6 +48,7 @@
             <th>${ ui.message("coreapps.patient.identifier") }</th>
             <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy") }</th>
             <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.entryDate") }</th>
+            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.encounterDateTime") }</th>
             <th>${ ui.message("coreapps.dataManagement.codeDiagnosis.title") }</th>
         </tr>
     </thead>
@@ -60,16 +62,18 @@
         <tr>
             <td>${ ui.escapeHtml(it.getColumnValue("diagnosis")) }</td>
             <td>
-                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: it.getColumnValue("patientId") ]) }">
+                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: it.getColumnValue("patientId") , visitId: it.getColumnValue("visitId") ]) }">
                     ${ ui.format(it.getColumnValue("patientIdentifier")) }
                 </a>
             </td>
             <td>${ ui.format(it.getColumnValue("creator")) }</td>
             <td>${ ui.format(it.getColumnValue("dateCreated")) }</td>
+            <td>${ ui.format(it.getColumnValue("encounterDateTime")) }</td>
             <td>
                 <a class="codeDiagnosis"
                    data-patient-identifier="${ it.getColumnValue("patientIdentifier") }"
                    data-patient-id="${ it.getColumnValue("patientId") }"
+                   data-visit-id="${ it.getColumnValue("visitId") }"
                    data-person-name="${ it.getColumnValue("personName") }"
                    data-nonCoded-Diagnosis="${ ui.escapeHtml(it.getColumnValue("diagnosis")) }"
                    data-obs-id ="${ it.getColumnValue("obsId") }"
