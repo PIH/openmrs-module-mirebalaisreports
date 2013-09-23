@@ -26,6 +26,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportData;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.ui.framework.SimpleObject;
@@ -57,7 +58,12 @@ public class BasicStatisticsReportManager extends BaseReportManager {
 
 	//***** INSTANCE METHODS *****
 
-	@Override
+    @Override
+    public String getUuid() {
+        return MirebalaisReportsProperties.BASIC_STATISTICS_REPORT_DEFINITION_UUID;
+    }
+
+    @Override
 	protected String getMessageCodePrefix() {
 		return "mirebalaisreports.basicStatistics.";
 	}
@@ -255,6 +261,12 @@ public class BasicStatisticsReportManager extends BaseReportManager {
 
     public void setMirebalaisReportsProperties(MirebalaisReportsProperties mirebalaisReportsProperties) {
         this.mirebalaisReportsProperties = mirebalaisReportsProperties;
+    }
+
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+        // TODO implement this
+        return null;
     }
 
 }

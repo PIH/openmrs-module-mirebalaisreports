@@ -14,33 +14,26 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.OpenmrsObject;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Responsible for defining the full data export report
+ * @see FullDataExportBuilder
  */
-@Component
 public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 	//***** CONSTANTS *****
@@ -48,19 +41,22 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 	public static final String SQL_DIR = "org/openmrs/module/mirebalaisreports/sql/fullDataExport/";
 	public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
-	public final List<String> dataSetOptions = Arrays.asList(
-		"patients", "visits", "checkins", "vitals", "consultations", "diagnoses",
-		"hospitalizations", "postOpNote1", "postOpNote2",
-		"radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters"
-	);
+    private String uuid;
+    private String name;
+    private String description;
+    private List<String> dataSets;
 
-	public List<String> getDataSetOptions() {
-		return dataSetOptions;
-	}
+    public FullDataExportReportManager(String uuid, String name, String description, List<String> dataSets) {
+        this.uuid = uuid;
+        this.name = name;
+        this.description = description;
+        this.dataSets = dataSets;
+    }
 
-    public Parameter getWhichDataSetParameter() {
-		return new Parameter("whichDataSets", translate("parameter.dataToInclude"), String.class, List.class, dataSetOptions, null);
-	}
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
 
 	//***** INSTANCE METHODS
 
@@ -74,7 +70,6 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 		List<Parameter> l = new ArrayList<Parameter>();
 		l.add(getStartDateParameter());
 		l.add(getEndDateParameter());
-		l.add(getWhichDataSetParameter());
 		return l;
 	}
 
@@ -83,7 +78,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 		List<RenderingMode> l = new ArrayList<RenderingMode>();
 		{
 			RenderingMode mode = new RenderingMode();
-			mode.setLabel(translate("output.Excel"));
+			mode.setLabel(translate("output.excel"));
 			mode.setRenderer(new XlsReportRenderer());
 			mode.setSortWeight(50);
 			mode.setArgument("");
@@ -105,17 +100,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 		rd.setName(getName());
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
-
-		List<String> dataSets = new ArrayList<String>(dataSetOptions);
-		List<String> chosenDataSets = (List<String>)context.getParameterValue(getWhichDataSetParameter().getName());
-		if (chosenDataSets != null) {
-			for (Iterator<String> i = dataSets.iterator(); i.hasNext();) {
-				String ds = i.next();
-				if (!chosenDataSets.contains(ds)) {
-					i.remove();
-				}
-			}
-		}
+        rd.setUuid(getUuid());
 
 		for (String key : dataSets) {
 
@@ -140,5 +125,10 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 		return rd;
 	}
+
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+        return Arrays.asList(xlsReportDesign(reportDefinition));
+    }
 
 }

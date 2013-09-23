@@ -42,7 +42,6 @@ public class FullDataExportPageController {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put(reportManager.getStartDateParameter().getName(), startDate);
 		parameters.put(reportManager.getEndDateParameter().getName(), endDate);
-		parameters.put(reportManager.getWhichDataSetParameter().getName(), dataSets);
 
 		EvaluationContext context = reportManager.initializeContext(parameters);
 		ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);

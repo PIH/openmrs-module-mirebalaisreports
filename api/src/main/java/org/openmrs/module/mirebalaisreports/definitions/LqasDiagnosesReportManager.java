@@ -1,15 +1,18 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +25,11 @@ import java.util.Map;
 public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
     public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
+
+    @Override
+    public String getUuid() {
+        return MirebalaisReportsProperties.LQAS_DIAGNOSES_REPORT_DEFINITION_UUID;
+    }
 
     @Override
     protected String getMessageCodePrefix() {
@@ -58,6 +66,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
         ReportDefinition rd = new ReportDefinition();
         rd.setName(getName());
         rd.setDescription(getDescription());
+        rd.setUuid(getUuid());
         rd.setParameters(getParameters());
 
         SqlDataSetDefinition dsd = new SqlDataSetDefinition();
@@ -81,6 +90,11 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
         rd.addDataSetDefinition("dsd", dsd, mappings);
         return rd;
+    }
+
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+        return Arrays.asList(xlsReportDesign(reportDefinition));
     }
 
 }

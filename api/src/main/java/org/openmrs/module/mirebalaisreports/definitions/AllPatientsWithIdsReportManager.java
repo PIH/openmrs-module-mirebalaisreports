@@ -1,18 +1,26 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class AllPatientsWithIdsReportManager extends  BaseMirebalaisReportManager{
+
+    @Override
+    public String getUuid() {
+        return MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID;
+    }
 
     @Override
     protected String getMessageCodePrefix() {
@@ -40,6 +48,7 @@ public class AllPatientsWithIdsReportManager extends  BaseMirebalaisReportManage
         ReportDefinition rd = new ReportDefinition();
         rd.setName(getName());
         rd.setDescription(getDescription());
+        rd.setUuid(getUuid());
 
         SqlDataSetDefinition dsd = new SqlDataSetDefinition();
         dsd.setName(getName());
@@ -56,4 +65,10 @@ public class AllPatientsWithIdsReportManager extends  BaseMirebalaisReportManage
         rd.addDataSetDefinition("dsd", dsd, null);
         return rd;
     }
+
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+        return Arrays.asList(xlsReportDesign(reportDefinition));
+    }
+
 }

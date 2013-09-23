@@ -2,9 +2,9 @@ package org.openmrs.module.mirebalaisreports.page.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.AllPatientsWithIdsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.BasicStatisticsReportManager;
-import org.openmrs.module.mirebalaisreports.definitions.FullDataExportReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.LqasDiagnosesReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.WeeklyDiagnosisSurveillanceReportManager;
@@ -18,9 +18,9 @@ public class HomePageController {
     public void get(@SpringBean BasicStatisticsReportManager basicStatisticsReportManager,
 					@SpringBean NonCodedDiagnosesReportManager nonCodedDiagnosesReportManager,
 					@SpringBean WeeklyDiagnosisSurveillanceReportManager weeklyDiagnosisSurveillanceReportManager,
-					@SpringBean FullDataExportReportManager fullDataExportReportManager,
                     @SpringBean LqasDiagnosesReportManager lqasDiagnosesReportManager,
                     @SpringBean AllPatientsWithIdsReportManager allPatientsWithIdsReportManager,
+                    @SpringBean MirebalaisReportsProperties mirebalaisReportsProperties,
                     PageModel pageModel) {
 
 		// TODO: Move this all into the reports or some external configuration
@@ -28,8 +28,8 @@ public class HomePageController {
 		pageModel.addAttribute("basicStatisticsReport", basicStatisticsReportManager);
 		pageModel.addAttribute("nonCodedDiagnosesReport", nonCodedDiagnosesReportManager);
 		pageModel.addAttribute("weeklyDiagnosisSurveillanceReport", weeklyDiagnosisSurveillanceReportManager);
-		pageModel.addAttribute("fullDataExportReport", fullDataExportReportManager);
         pageModel.addAttribute("lqasDiagnosesReport", lqasDiagnosesReportManager);
         pageModel.addAttribute("allPatientsWithIdsReportManager", allPatientsWithIdsReportManager);
+        pageModel.addAttribute("properties", mirebalaisReportsProperties);
     }
 }

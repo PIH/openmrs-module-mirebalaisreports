@@ -16,51 +16,81 @@ package org.openmrs.module.mirebalaisreports;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
+import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
+import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.module.reporting.report.ReportDesign;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
+import org.openmrs.module.reporting.report.service.ReportService;
+
+import java.util.List;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
-public class MirebalaisHospitalReportingModuleActivator implements ModuleActivator {
+public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
-		
-	/**
-	 * @see ModuleActivator#willRefreshContext()
-	 */
-	public void willRefreshContext() {
-		log.info("Refreshing Mirebalais Hospital Reporting Module Module");
-	}
-	
-	/**
-	 * @see ModuleActivator#contextRefreshed()
-	 */
-	public void contextRefreshed() {
-		log.info("Mirebalais Hospital Reporting Module Module refreshed");
-	}
-	
-	/**
-	 * @see ModuleActivator#willStart()
-	 */
-	public void willStart() {
-		log.info("Starting Mirebalais Hospital Reporting Module Module");
-	}
-	
-	/**
+
+    private ReportService reportService;
+    private ReportDefinitionService reportDefinitionService;
+
+    /**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-		log.info("Mirebalais Hospital Reporting Module Module started");
+        reportService = Context.getService(ReportService.class);
+        reportDefinitionService = Context.getService(ReportDefinitionService.class);
+
+        setupFullDataExports();
+
+        log.info("Mirebalais Hospital Reporting Module Module started");
 	}
-	
-	/**
-	 * @see ModuleActivator#willStop()
-	 */
-	public void willStop() {
-		log.info("Stopping Mirebalais Hospital Reporting Module Module");
-	}
-	
-	/**
+
+    private void setupFullDataExports() {
+        FullDataExportBuilder fullDataExportBuilder = Context.getRegisteredComponents(FullDataExportBuilder.class).get(0);
+        for (ReportManager manager : fullDataExportBuilder.getAllReportManagers()) {
+            setupReport(manager);
+        }
+    }
+
+    private void setupReport(ReportManager manager) {
+        EvaluationContext evaluationContext = manager.initializeContext(null);
+        ReportDefinition reportDefinition = manager.constructReportDefinition(evaluationContext);
+
+        log.info("Saving new definition of " + reportDefinition.getName());
+
+        ReportDefinition existing = reportDefinitionService.getDefinitionByUuid(reportDefinition.getUuid());
+        if (existing != null) {
+            // we need to overwrite the existing, rather than purge-and-recreate, to avoid deleting old ReportRequests
+            log.debug("overwriting existing ReportDefinition");
+            reportDefinition.setId(existing.getId());
+            Context.evictFromSession(existing);
+        }
+
+        reportDefinitionService.saveDefinition(reportDefinition);
+
+        // purging a ReportDesign doesn't trigger any extra logic, so we can just purge-and-recreate here
+        List<ReportDesign> existingDesigns = reportService.getReportDesigns(reportDefinition, null, true);
+        if (existingDesigns.size() > 0) {
+            log.debug("Deleting " + existingDesigns.size() + " old designs for " + reportDefinition.getName());
+            for (ReportDesign design : existingDesigns) {
+                reportService.purgeReportDesign(design);
+            }
+        }
+
+        List<ReportDesign> designs = manager.constructReportDesigns(reportDefinition, evaluationContext);
+        for (ReportDesign design : designs) {
+            reportService.saveReportDesign(design);
+        }
+
+    }
+
+    /**
 	 * @see ModuleActivator#stopped()
 	 */
 	public void stopped() {

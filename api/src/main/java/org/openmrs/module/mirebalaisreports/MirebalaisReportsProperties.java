@@ -32,11 +32,19 @@ import java.util.List;
 @Component("mirebalaisReportsProperties")
 public class MirebalaisReportsProperties extends EmrProperties {
 
+    //***** REPORT DEFINITIONS *****
+    public static final String FULL_DATA_EXPORT_REPORT_DEFINITION_UUID = "8c3752e2-20bb-11e3-b5bd-0bec7fb71852";
+    public static final String ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID = "d534683e-20bd-11e3-b5bd-0bec7fb71852";
+    public static final String LQAS_DIAGNOSES_REPORT_DEFINITION_UUID = "f277f5b4-20bd-11e3-b5bd-0bec7fb71852";
+    public static final String NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID = "3737be52-2265-11e3-818c-c7ea4184d59e";
+    public static final String WEEKLY_DIAGNOSIS_SURVEILLANCE_REPORT_DEFINITION_UUID = "c8a26f2c-2265-11e3-818c-c7ea4184d59e";
+    public static final String BASIC_STATISTICS_REPORT_DEFINITION_UUID = "5650dbc4-2266-11e3-818c-c7ea4184d59e";
+
 	//***** LOCATIONS *****
 
 	public static final String OUTPATIENT_CLINIC_UUID = "199e7d87-92a0-4398-a0f8-11d012178164";
 
-	public Location getOutpatientLocation() {
+    public Location getOutpatientLocation() {
 		return getRequiredLocationByUuid(OUTPATIENT_CLINIC_UUID);
 	}
 

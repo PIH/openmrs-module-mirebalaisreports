@@ -16,7 +16,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.report.ReportData;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 
@@ -28,30 +28,35 @@ import java.util.Map;
  */
 public interface ReportManager {
 
+    /**
+     * @return the uuid of the Report
+     */
+    String getUuid();
+
 	/**
 	 * @return the name of the Report
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * @return the description of the Report
 	 */
-	public String getDescription();
+	String getDescription();
 
 	/**
 	 * @return the parameters of the Report
 	 */
-	public List<Parameter> getParameters();
+	List<Parameter> getParameters();
 
 	/**
 	 * @return the rendering modes of the Report
 	 */
-	public List<RenderingMode> getRenderingModes();
+	List<RenderingMode> getRenderingModes();
 
 	/**
 	 * @return the privilege required to view or evaluate this report
 	 */
-	public String getRequiredPrivilege();
+	String getRequiredPrivilege();
 
 	/**
 	 * This method provides a mechanism to validate input parameters,
@@ -60,10 +65,18 @@ public interface ReportManager {
 	 * be used when running this report.
 	 * @return the EvaluationContext to use for the report.
 	 */
-	public EvaluationContext initializeContext(Map<String, Object> parameters);
+	EvaluationContext initializeContext(Map<String, Object> parameters);
 
 	/**
 	 * @return the ReportDefinition that should be evaluated for the given context
 	 */
-	public ReportDefinition constructReportDefinition(EvaluationContext context);
+	ReportDefinition constructReportDefinition(EvaluationContext context);
+
+    /**
+     * @param reportDefinition this will be the same ReportDefinition returned by an earlier call to #constructReportDefinition
+     * @param evaluationContext
+     * @return the ReportDesigns under which this report can be evaluated
+     */
+    List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext);
+
 }

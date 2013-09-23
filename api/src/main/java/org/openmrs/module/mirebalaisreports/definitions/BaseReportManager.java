@@ -18,9 +18,13 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.report.ReportDesign;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
+import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +66,7 @@ public abstract class BaseReportManager implements ReportManager {
 	@Override
 	public EvaluationContext initializeContext(Map<String, Object> parameters) {
 		EvaluationContext context = new EvaluationContext();
-		context.setParameterValues(parameters);
+		context.setParameterValues(parameters == null ? new HashMap<String, Object>() : parameters);
 		return context;
 	}
 
@@ -74,4 +78,12 @@ public abstract class BaseReportManager implements ReportManager {
 		}
 		return translation;
 	}
+
+    protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign design = new ReportDesign();
+        design.setName(getMessageCodePrefix() + "output.excel");
+        design.setReportDefinition(reportDefinition);
+        design.setRendererType(XlsReportRenderer.class);
+        return design;
+    }
 }

@@ -1,6 +1,11 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
 	ui.includeCss("mirebalaisreports", "reports.css")
+
+    def fullDataExportLink = ui.pageLink("reportingui", "runReport", [
+            reportDefinition: properties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID,
+            breadcrumb: """{ label: "${ ui.message("mirebalaisreports.home.title") }", link: "${ ui.escapeJs(ui.pageLink("mirebalaisreports", "home")) }" }"""
+    ])
 %>
 
 <script type="text/javascript">
@@ -32,11 +37,11 @@
 		</ul>
 	</div>
 	<% } %>
-	<% if (context.hasPrivilege(fullDataExportReport.requiredPrivilege)) { %>
+	<% if (context.hasPrivilege("Report: mirebalaisreports.fulldataexport")) { %>
 	<div class="reportBox">
 		<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
 		<ul>
-			<li><a id="mirebalaisreports-fullDataExportReport-link" href="${ ui.pageLink("mirebalaisreports", "fullDataExport") }">${ fullDataExportReport.name }</a></li>
+			<li><a id="mirebalaisreports-fullDataExportReport-link" href="${ fullDataExportLink }">${ ui.message("mirebalaisreports.fulldataexport.name") }</a></li>
             <li><a id="mirebalaisreports-lqasDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "lqasDiagnoses") }">${ lqasDiagnosesReport.name }</a></li>
             <li><a id="mirebalaisreports-allPatientsWithIdsReport-link" href="${ ui.pageLink("mirebalaisreports", "allPatientsWithIds") }">${ allPatientsWithIdsReportManager.name }</a></li>
 		</ul>

@@ -21,12 +21,12 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
 import org.openmrs.module.mirebalaisreports.library.BasicCohortDefinitionLibrary;
 import org.openmrs.module.mirebalaisreports.library.BasicDimensionLibrary;
 import org.openmrs.module.mirebalaisreports.library.BasicIndicatorLibrary;
-import org.openmrs.module.emrapi.concept.EmrConceptService;
-import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -37,6 +37,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -72,7 +73,12 @@ public class WeeklyDiagnosisSurveillanceReportManager extends BaseReportManager 
     @Autowired
 	MirebalaisReportsProperties mirebalaisReportsProperties;
 
-	@Override
+    @Override
+    public String getUuid() {
+        return MirebalaisReportsProperties.WEEKLY_DIAGNOSIS_SURVEILLANCE_REPORT_DEFINITION_UUID;
+    }
+
+    @Override
 	protected String getMessageCodePrefix() {
 		return "mirebalaisreports.notifiablediseases.";
 	}
@@ -237,4 +243,9 @@ public class WeeklyDiagnosisSurveillanceReportManager extends BaseReportManager 
         return "MSPP_Weekly_Diagnosis_Surveillance_" + new SimpleDateFormat("yyyyMMdd").format(evaluationContext.getParameterValue("startOfWeek")) + ".xls";
     }
 
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+        // TODO fix this
+        return null;
+    }
 }

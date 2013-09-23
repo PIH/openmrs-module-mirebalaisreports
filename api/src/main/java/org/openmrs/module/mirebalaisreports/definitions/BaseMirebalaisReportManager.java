@@ -27,6 +27,8 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
     @Autowired
     EmrApiProperties emrApiProperties;
 
+    public abstract String getUuid();
+
     public void setMirebalaisReportsProperties(MirebalaisReportsProperties mirebalaisReportsProperties) {
         this.mirebalaisReportsProperties = mirebalaisReportsProperties;
     }

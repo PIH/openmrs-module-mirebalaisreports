@@ -18,14 +18,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +51,11 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 
 	@Autowired
 	SessionFactory sessionFactory;
+
+    @Override
+    public String getUuid() {
+        return MirebalaisReportsProperties.NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID;
+    }
 
 	public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
 		this.emrApiProperties = emrApiProperties;
@@ -91,4 +99,10 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 
 		return rd;
 	}
+
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+        return Arrays.asList(xlsReportDesign(reportDefinition));
+    }
+
 }
