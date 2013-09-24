@@ -60,7 +60,7 @@
     <% } %>
     <% data.each { %>
         <tr>
-            <td>${ ui.escapeHtml(it.getColumnValue("diagnosis")) }</td>
+            <td class="non-coded-diagnoses-td">${ ui.escapeHtml(it.getColumnValue("diagnosis")) }</td>
             <td>
                 <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: it.getColumnValue("patientId") , visitId: it.getColumnValue("visitId") ]) }">
                     ${ ui.format(it.getColumnValue("patientIdentifier")) }
