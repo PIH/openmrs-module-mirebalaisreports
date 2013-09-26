@@ -14,14 +14,10 @@
 
 package org.openmrs.module.mirebalaisreports.dataset.definition;
 
-import org.openmrs.Concept;
-import org.openmrs.module.emrapi.diagnosis.Diagnosis;
-import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.BaseDataSetDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Searches for Obs that represent non-coded diagnoses in a given date range
@@ -35,6 +31,9 @@ public class NonCodedDiagnosisDataSetDefinition extends BaseDataSetDefinition {
 
     @ConfigurationProperty(group = "when")
     private Date toDate;
+
+    @ConfigurationProperty(group = "what")
+    private String nonCoded;
 
 	public Date getFromDate() {
 		return fromDate;
@@ -51,4 +50,12 @@ public class NonCodedDiagnosisDataSetDefinition extends BaseDataSetDefinition {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
+
+    public String getNonCoded() {
+        return nonCoded;
+    }
+
+    public void setNonCoded(String nonCoded) {
+        this.nonCoded = nonCoded;
+    }
 }

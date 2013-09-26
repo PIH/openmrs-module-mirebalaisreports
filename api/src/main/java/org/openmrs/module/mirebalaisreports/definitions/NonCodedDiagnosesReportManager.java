@@ -77,6 +77,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 		List<Parameter> l = new ArrayList<Parameter>();
 		l.add(new Parameter("fromDate", "From Date", Date.class));
 		l.add(new Parameter("toDate", "To Date", Date.class));
+        l.add(new Parameter("nonCoded", "Non-Coded", String.class));
 		return l;
 	}
 
@@ -94,6 +95,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 		Map<String, Object> mappings = new HashMap<String, Object>();
 		mappings.put("fromDate", "${fromDate}");
 		mappings.put("toDate", "${toDate}");
+        mappings.put("nonCoded", "${nonCoded}");
 
 		rd.addDataSetDefinition(DATA_SET_NAME, dsd, mappings);
 

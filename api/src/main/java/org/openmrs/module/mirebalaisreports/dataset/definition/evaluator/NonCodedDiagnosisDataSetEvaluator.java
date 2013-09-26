@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.dataset.definition.evaluator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -26,7 +27,6 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
 import org.openmrs.User;
-import org.openmrs.Visit;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -66,11 +66,15 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
 		Date toDate = ObjectUtil.nvl(dsd.getToDate(), new Date());
 		fromDate = DateUtil.getStartOfDay(fromDate);
 		toDate = DateUtil.getEndOfDay(toDate);
+        String nonCoded = ObjectUtil.nvl(dsd.getNonCoded(),null);
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Obs.class);
 		criteria.add(Restrictions.eq("voided", false));
 		criteria.add(Restrictions.ge("dateCreated", fromDate));
 		criteria.add(Restrictions.le("dateCreated", toDate));
+        if (StringUtils.isNotBlank(nonCoded) ){
+            criteria.add(Restrictions.eq("valueText", nonCoded));
+        }
 		criteria.add(Restrictions.eq("concept", emrApiProperties.getDiagnosisMetadata().getNonCodedDiagnosisConcept()));
 		criteria.setProjection(Projections.projectionList()
                 .add(Projections.property("valueText"))

@@ -14,7 +14,27 @@
 
 <script type="text/javascript">
 
+    var toggleSubmitButton = function() {
+        if (jq('#startDateField-display').val() || jq('#endDateField-display').val() ||
+                jq('#nonCodedField-display').val() ) {
+            jq('#submit').prop('disabled', false).removeClass('disabled');
+        }
+        else {
+            jq('#submit').prop('disabled', true).addClass('disabled');
+        }
+    };
+
     jq(function() {
+        jq('#startDateField-display, #endDateField-display, #nonCodedField-display').change(toggleSubmitButton);
+
+        jq('#nonCodedForm').submit(function() {
+            var nonCoded = jq('#nonCodedField-display').val();
+            if (nonCoded.length > 0) {
+                jq('#nonCodedField-field').val(nonCoded);
+            }
+
+            return true;
+        })
 
         jq(".codeDiagnosis").click(function(event) {
             createCodeDiagnosisDialog();
@@ -37,6 +57,40 @@
     ${ ui.message("mirebalaisreports.noncodeddiagnoses.title") }
 </h1>
 
+<form id="nonCodedForm" method="post">
+    <fieldset id="run-report">
+        <legend>
+            ${ ui.message("mirebalaisreports.general.runReport") }
+        </legend>
+        <% for (int i=0; i<reportManager.parameters.size(); i++) {
+            def parameter = reportManager.parameters.get(i); %>
+        <p id="parameter${i}Section">
+            <% if (parameter.name == "fromDate") { %>
+            ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "startDateField", "label": parameter.label, "formFieldName": "fromDate", "useTime": false ]) }
+            <% } else if (parameter.name == "toDate") { %>
+            ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "endDateField", "label": parameter.label, "formFieldName": "toDate", "useTime": false ]) }
+            <% } else if (parameter.name == "nonCoded") { %>
+                <p id="nonCodedField">
+                    <label for="nonCodedField-display">
+                        ${ ui.message("mirebalaisreports.noncodeddiagnoses.nonCodedDiagnosis") }
+                    </label>
+                    <span id="nonCodedField-wrapper">
+                        <input type="text" id="nonCodedField-display" value=""  />
+                    </span>
+                    <input type="hidden" id="nonCodedField-field" name="nonCoded" />
+                </p>
+
+            <% } %>
+        </p>
+        <% } %>
+
+        <p>
+            <button id="submit" type="submit" class="disabled" disabled>${ ui.message("mirebalaisreports.general.runReport") }</button>
+        </p>
+    </fieldset>
+
+</form>
+
 <h3>
     ${ ui.message("mirebalaisreports.noncodeddiagnoses.subtitle", ui.format(fromDate), ui.format(toDate)) }
 </h3>
@@ -44,12 +98,12 @@
 <table id="non-coded-diagnoses">
     <thead>
         <tr>
-            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.diagnosis") }</th>
+            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.nonCodedDiagnosis") }</th>
             <th>${ ui.message("coreapps.patient.identifier") }</th>
             <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy") }</th>
             <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.entryDate") }</th>
             <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.encounterDateTime") }</th>
-            <th>${ ui.message("coreapps.dataManagement.codeDiagnosis.title") }</th>
+            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.createDiagnosis") }</th>
         </tr>
     </thead>
     <tbody>

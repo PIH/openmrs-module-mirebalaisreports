@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.page.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -43,7 +44,7 @@ public class NonCodedDiagnosesPageController {
                     PageModel model) throws EvaluationException, IOException {
 
         if (fromDate == null) {
-            fromDate = DateUtils.addDays(new Date(), -7);
+            fromDate = DateUtils.addDays(new Date(), -21);
         }
         if (toDate == null) {
             toDate = new Date();
@@ -54,11 +55,47 @@ public class NonCodedDiagnosesPageController {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("fromDate", fromDate);
 		params.put("toDate", toDate);
+        params.put("nonCoded", "");
 
 		EvaluationContext context = reportManager.initializeContext(params);
 		ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
 		ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
+        model.addAttribute("reportManager", reportManager);
+        model.addAttribute("data", reportData.getDataSets().get(NonCodedDiagnosesReportManager.DATA_SET_NAME));
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
+    }
+
+    public void post(@SpringBean NonCodedDiagnosesReportManager reportManager,
+                       @SpringBean ReportDefinitionService reportDefinitionService,
+                       @RequestParam(required = false, value = "fromDate") Date fromDate,
+                       @RequestParam(required = false, value = "toDate") Date toDate,
+                       @RequestParam(required = false, value = "nonCoded") String nonCoded,
+                       PageModel model) throws EvaluationException, IOException {
+
+        if (fromDate == null) {
+            fromDate = DateUtils.addDays(new Date(), -21);
+        }
+        if (toDate == null) {
+            toDate = new Date();
+        }
+        fromDate = DateUtil.getStartOfDay(fromDate);
+        toDate = DateUtil.getEndOfDay(toDate);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("fromDate", fromDate);
+        params.put("toDate", toDate);
+        if(StringUtils.isNotBlank(nonCoded)){
+            params.put("nonCoded", nonCoded);
+        } else {
+            params.put("nonCoded", "");
+        }
+        EvaluationContext context = reportManager.initializeContext(params);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
+        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
+
+        model.addAttribute("reportManager", reportManager);
         model.addAttribute("data", reportData.getDataSets().get(NonCodedDiagnosesReportManager.DATA_SET_NAME));
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
