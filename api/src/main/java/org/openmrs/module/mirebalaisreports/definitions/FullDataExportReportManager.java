@@ -42,14 +42,12 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 	public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
     private String uuid;
-    private String name;
-    private String description;
+    private String messageCodePrefix;
     private List<String> dataSets;
 
-    public FullDataExportReportManager(String uuid, String name, String description, List<String> dataSets) {
+    public FullDataExportReportManager(String uuid, String messageCodePrefix, List<String> dataSets) {
         this.uuid = uuid;
-        this.name = name;
-        this.description = description;
+        this.messageCodePrefix = messageCodePrefix;
         this.dataSets = dataSets;
     }
 
@@ -62,7 +60,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 	@Override
 	protected String getMessageCodePrefix() {
-		return "mirebalaisreports.fulldataexport.";
+		return messageCodePrefix;
 	}
 
 	@Override
@@ -97,8 +95,8 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 		log.info("Constructing " + getName());
         ReportDefinition rd = new ReportDefinition();
-		rd.setName(getName());
-		rd.setDescription(getDescription());
+		rd.setName(getMessageCodePrefix() + "name");
+		rd.setDescription(getMessageCodePrefix() + "description");
 		rd.setParameters(getParameters());
         rd.setUuid(getUuid());
 

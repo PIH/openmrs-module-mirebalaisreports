@@ -44,7 +44,7 @@ public class FullDataExportBuilder {
     private List<Configuration> configurations = new ArrayList<Configuration>();
 
     public FullDataExportBuilder() {
-        configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "Full Data Export", "Full Data Export", null));
+        configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.fulldataexport.", null));
     }
 
     public List<FullDataExportReportManager> getAllReportManagers() {
@@ -62,7 +62,7 @@ public class FullDataExportBuilder {
             dataSets = dataSetOptions;
         }
 
-        FullDataExportReportManager manager = new FullDataExportReportManager(configuration.getUuid(), configuration.getName(), configuration.getDescription(), dataSets);
+        FullDataExportReportManager manager = new FullDataExportReportManager(configuration.getUuid(), configuration.getMessageCodePrefix(), dataSets);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(manager);
         return manager;
     }
@@ -71,16 +71,13 @@ public class FullDataExportBuilder {
 
         private String uuid;
 
-        private String name;
-
-        private String description;
+        private String messageCodePrefix;
 
         private List<String> dataSets;
 
-        public Configuration(String uuid, String name, String description, List<String> dataSets) {
+        public Configuration(String uuid, String messageCodePrefix, List<String> dataSets) {
             this.uuid = uuid;
-            this.name = name;
-            this.description = description;
+            this.messageCodePrefix = messageCodePrefix;
             this.dataSets = dataSets;
         }
 
@@ -88,12 +85,8 @@ public class FullDataExportBuilder {
             return uuid;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
+        public String getMessageCodePrefix() {
+            return messageCodePrefix;
         }
 
         public List<String> getDataSets() {

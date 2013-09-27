@@ -38,7 +38,7 @@
         <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
-        <reportingVersion>0.7.6</reportingVersion>
+        <reportingVersion>0.8</reportingVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <calculationVersion>1.0</calculationVersion>
@@ -48,7 +48,7 @@
         <providerManagementVersion>2.0</providerManagementVersion>
         <patientregistrationVersion>2.0</patientregistrationVersion>
         <idgenVersion>2.5</idgenVersion>
-        <appframeworkVersion>1.4</appframeworkVersion>
+        <appframeworkVersion>2.0</appframeworkVersion>
         <eventVersion>2.1</eventVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
