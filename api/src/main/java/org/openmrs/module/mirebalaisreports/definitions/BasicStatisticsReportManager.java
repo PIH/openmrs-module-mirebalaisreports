@@ -76,7 +76,7 @@ public class BasicStatisticsReportManager extends BaseReportManager {
 	}
 
 	@Override
-	public ReportDefinition constructReportDefinition(EvaluationContext context) {
+	public ReportDefinition constructReportDefinition() {
 		// set up underlying queries
 		VisitCohortDefinition visitsStartedOnDayQuery = new VisitCohortDefinition();
 		visitsStartedOnDayQuery.addParameter(new Parameter("startedOnOrAfter", "Start of Day", Date.class));
@@ -237,11 +237,11 @@ public class BasicStatisticsReportManager extends BaseReportManager {
 
 	public MapDataSet evaluate(Date day) throws EvaluationException, DateParseException {
 
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("reportDay", DateUtil.getStartOfDay(day));
+        ReportDefinition rd = constructReportDefinition();
 
-		EvaluationContext context = initializeContext(parameters);
-		ReportDefinition rd = constructReportDefinition(context);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("reportDay", DateUtil.getStartOfDay(day));
+        EvaluationContext context = initializeContext(parameters);
 
         ReportData evaluatedReport = Context.getService(ReportDefinitionService.class).evaluate(rd, context);
         DataSet evaluated = evaluatedReport.getDataSets().get("dsd");
@@ -264,7 +264,7 @@ public class BasicStatisticsReportManager extends BaseReportManager {
     }
 
     @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         // TODO implement this
         return null;
     }

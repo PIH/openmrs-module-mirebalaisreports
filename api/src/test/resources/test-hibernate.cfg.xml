@@ -6,5 +6,6 @@
 <hibernate-configuration>
     <session-factory>
         <mapping resource="ImportedPackage.hbm.xml" />
+        <mapping resource="ReportDesign.hbm.xml" />
     </session-factory>
 </hibernate-configuration>

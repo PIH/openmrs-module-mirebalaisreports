@@ -20,7 +20,6 @@ import org.hibernate.SessionFactory;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
-import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -82,7 +81,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 	}
 
 	@Override
-	public ReportDefinition constructReportDefinition(EvaluationContext context) {
+	public ReportDefinition constructReportDefinition() {
 
 		log.info("Constructing " + getName());
         ReportDefinition rd = new ReportDefinition();
@@ -103,7 +102,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 	}
 
     @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         return Arrays.asList(xlsReportDesign(reportDefinition));
     }
 

@@ -157,7 +157,7 @@ public class WeeklyDiagnosisSurveillanceReportManagerComponentTest extends BaseM
 
         timer.println("Started");
 		EvaluationContext evaluationContext = manager.initializeContext(params);
-        ReportDefinition reportDefinition = manager.constructReportDefinition(evaluationContext);
+        ReportDefinition reportDefinition = manager.constructReportDefinition();
         CohortIndicatorDataSetDefinition dsd = manager.buildDataSetDefinition();
 
         timer.println("Built DSD");

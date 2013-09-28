@@ -10,7 +10,6 @@ import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.util.ReportUtil;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,7 +41,7 @@ public class LqasDiagnosesReportManagerComponentTest extends BaseMirebalaisRepor
         params.put(reportManager.getEndDateParameter().getName(), endDate);
         EvaluationContext evaluationContext = reportManager.initializeContext(params);
 
-        ReportDefinition reportDefinition = reportManager.constructReportDefinition(evaluationContext);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         RenderingMode mode = reportManager.getRenderingModes().get(0);
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, evaluationContext);
 

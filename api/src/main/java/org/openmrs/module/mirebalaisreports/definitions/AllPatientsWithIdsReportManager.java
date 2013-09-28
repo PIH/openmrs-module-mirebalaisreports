@@ -3,7 +3,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
-import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
@@ -42,7 +41,7 @@ public class AllPatientsWithIdsReportManager extends  BaseMirebalaisReportManage
     }
 
     @Override
-    public ReportDefinition constructReportDefinition(EvaluationContext context) {
+    public ReportDefinition constructReportDefinition() {
         log.info("Constructing " + getName());
 
         ReportDefinition rd = new ReportDefinition();
@@ -67,7 +66,7 @@ public class AllPatientsWithIdsReportManager extends  BaseMirebalaisReportManage
     }
 
     @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         return Arrays.asList(xlsReportDesign(reportDefinition));
     }
 

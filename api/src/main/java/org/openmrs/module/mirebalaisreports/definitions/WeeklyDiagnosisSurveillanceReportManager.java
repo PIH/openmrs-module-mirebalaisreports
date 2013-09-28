@@ -95,7 +95,8 @@ public class WeeklyDiagnosisSurveillanceReportManager extends BaseReportManager 
 		return "Report: mirebalaisreports.notifiablediseases";
 	}
 
-	public ReportDefinition constructReportDefinition(EvaluationContext context) {
+    @Override
+	public ReportDefinition constructReportDefinition() {
         CohortIndicatorDataSetDefinition dsd = buildDataSetDefinition();
 
         ReportDefinition reportDefinition = new ReportDefinition();
@@ -244,7 +245,7 @@ public class WeeklyDiagnosisSurveillanceReportManager extends BaseReportManager 
     }
 
     @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext) {
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         // TODO fix this
         return null;
     }

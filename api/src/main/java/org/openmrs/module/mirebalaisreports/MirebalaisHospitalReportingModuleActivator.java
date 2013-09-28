@@ -21,7 +21,6 @@ import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
 import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
-import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
@@ -59,8 +58,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
     }
 
     private void setupReport(ReportManager manager) {
-        EvaluationContext evaluationContext = manager.initializeContext(null);
-        ReportDefinition reportDefinition = manager.constructReportDefinition(evaluationContext);
+        ReportDefinition reportDefinition = manager.constructReportDefinition();
 
         log.info("Saving new definition of " + reportDefinition.getName());
 
@@ -83,7 +81,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
             }
         }
 
-        List<ReportDesign> designs = manager.constructReportDesigns(reportDefinition, evaluationContext);
+        List<ReportDesign> designs = manager.constructReportDesigns(reportDefinition);
         for (ReportDesign design : designs) {
             reportService.saveReportDesign(design);
         }

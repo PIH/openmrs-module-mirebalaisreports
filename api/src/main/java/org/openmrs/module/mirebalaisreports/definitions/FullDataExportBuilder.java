@@ -67,7 +67,7 @@ public class FullDataExportBuilder {
         return manager;
     }
 
-    public class Configuration {
+    public static class Configuration {
 
         private String uuid;
 

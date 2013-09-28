@@ -3,12 +3,13 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
+import org.openmrs.module.reporting.report.renderer.TsvReportRenderer;
 import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,76 +18,43 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 @SkipBaseSetup
-@Ignore
 public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired
-    private FullDataExportReportManager fullDataExport;
-
-    public EvaluationContext createContext(Date startDate, Date endDate, String... dataSets) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		if (startDate != null) {
-			params.put(fullDataExport.getStartDateParameter().getName(), startDate);
-		}
-		if (endDate != null) {
-			params.put(fullDataExport.getEndDateParameter().getName(), endDate);
-		}
-		if (dataSets != null && dataSets.length > 0) {
-			//params.put(fullDataExport.getWhichDataSetParameter().getName(), Arrays.asList(dataSets));
-		}
-		return fullDataExport.initializeContext(params);
-	}
-
-    @Test
-    public void shouldSetupTheReportWithAllDataSets() throws Exception {
-		EvaluationContext context = createContext(new Date(), new Date());
-		ReportDefinition reportDefinition = fullDataExport.constructReportDefinition(context);
-		Assert.assertEquals(13, reportDefinition.getDataSetDefinitions().size());
-	}
+    FullDataExportBuilder builder;
 
 	@Test
-	public void shouldSetupTheReportWithSelectedDataSets() throws Exception {
-		EvaluationContext context = createContext(new Date(), new Date(), "patients", "visits");
-		ReportDefinition reportDefinition = fullDataExport.constructReportDefinition(context);
-		Assert.assertEquals(2, reportDefinition.getDataSetDefinitions().size());
-	}
-
-	@Test
-	public void shouldOrderTheDataSetsInTheReportCorrectly() throws Exception {
-		EvaluationContext context = createContext(new Date(), new Date());
-		ReportDefinition reportDefinition = fullDataExport.constructReportDefinition(context);
-		int i=0;
-		for (String dsName : reportDefinition.getDataSetDefinitions().keySet()) {
-//			Assert.assertEquals(fullDataExport.getDataSetOptions().get(i), dsName);
-			i++;
-		}
-	}
-
-	@Test
-	@Ignore // Ignoring this for now since H2 doesnt seem to like our sql queries
 	public void shouldSuccessfullyRenderToExcel() throws Exception {
+        executeDataSet("org/openmrs/module/mirebalaisreports/patientsBasedOnCoreMetadata.xml");
 
-		EvaluationContext context = createContext(new Date(), new Date(), "patients", "visits");
-		ReportDefinition reportDefinition = fullDataExport.constructReportDefinition(context);
-		RenderingMode mode = fullDataExport.getRenderingModes().get(0);
-		ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("patients-new"));
+        FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		mode.getRenderer().render(reportData, mode.getArgument(), out);
-		File outputFile = new File(System.getProperty("java.io.tmpdir"), "test.xls");
-		ReportUtil.writeByteArrayToFile(outputFile, out.toByteArray());
+        EvaluationContext context = new EvaluationContext();
+        context.addParameterValue("startDate", DateUtil.parseDate("2013-07-01", "yyyy-MM-dd"));
+        context.addParameterValue("endDate", DateUtil.parseDate("2013-09-30", "yyyy-MM-dd"));
 
-		InputStream is = new FileInputStream(outputFile);
-		POIFSFileSystem fs = new POIFSFileSystem(is);
-		HSSFWorkbook wb = new HSSFWorkbook(fs);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
+        RenderingMode mode = reportManager.getRenderingModes().get(0);
+        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
-		Assert.assertEquals(2, wb.getNumberOfSheets());
-		Assert.assertEquals("patients", wb.getSheetName(0));
-		Assert.assertEquals("visits", wb.getSheetName(1));
-	}
+        new TsvReportRenderer().render(reportData, null, System.out);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mode.getRenderer().render(reportData, mode.getArgument(), out);
+        File outputFile = new File(System.getProperty("java.io.tmpdir"), "test.xls");
+        ReportUtil.writeByteArrayToFile(outputFile, out.toByteArray());
+
+        System.out.println("Wrote to " + outputFile.getAbsolutePath());
+
+        InputStream is = new FileInputStream(outputFile);
+        POIFSFileSystem fs = new POIFSFileSystem(is);
+        HSSFWorkbook wb = new HSSFWorkbook(fs);
+
+        Assert.assertEquals(1, wb.getNumberOfSheets());
+        Assert.assertEquals("patients-new", wb.getSheetName(0));
+    }
 }

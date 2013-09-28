@@ -49,8 +49,10 @@ public interface ReportManager {
 	List<Parameter> getParameters();
 
 	/**
+     * @deprecated shift to using constructReportDesigns instead, so that report definitions can be persisted
 	 * @return the rendering modes of the Report
 	 */
+    @Deprecated
 	List<RenderingMode> getRenderingModes();
 
 	/**
@@ -68,15 +70,14 @@ public interface ReportManager {
 	EvaluationContext initializeContext(Map<String, Object> parameters);
 
 	/**
-	 * @return the ReportDefinition that should be evaluated for the given context
+	 * @return a ReportDefinition that may be persisted or run
 	 */
-	ReportDefinition constructReportDefinition(EvaluationContext context);
+	ReportDefinition constructReportDefinition();
 
     /**
      * @param reportDefinition this will be the same ReportDefinition returned by an earlier call to #constructReportDefinition
-     * @param evaluationContext
      * @return the ReportDesigns under which this report can be evaluated
      */
-    List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition, EvaluationContext evaluationContext);
+    List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition);
 
 }
