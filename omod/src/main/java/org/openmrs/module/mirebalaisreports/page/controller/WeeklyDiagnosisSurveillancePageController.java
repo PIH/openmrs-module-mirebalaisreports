@@ -60,7 +60,7 @@ public class WeeklyDiagnosisSurveillancePageController {
     private FileDownload runReportAsExcel(ReportDefinitionService reportDefinitionService, WeeklyDiagnosisSurveillanceReportManager reportManager, Map<String, Object> params) throws EvaluationException, IOException {
 
 		EvaluationContext context = reportManager.initializeContext(params);
-        ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
         // this is a hack, copied from ExcelRendererTest in the reporting module, to avoid needing to save the template

@@ -46,7 +46,7 @@ public class LqasDiagnosesPageController {
         parameters.put(reportManager.getLocationParameter().getName(), location);
 
         EvaluationContext context = reportManager.initializeContext(parameters);
-        ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         RenderingMode mode = reportManager.getRenderingModes().get(0);
 
         log.info("Evaluating " + reportManager.getName());

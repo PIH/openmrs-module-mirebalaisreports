@@ -10,7 +10,6 @@ import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
-
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.FileDownload;
 import org.openmrs.ui.framework.page.PageModel;
@@ -36,7 +35,7 @@ public class AllPatientsWithIdsPageController {
         Map<String, Object> parameters = new HashMap<String, Object>();
 
         EvaluationContext context = reportManager.initializeContext(parameters);
-        ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         RenderingMode mode = reportManager.getRenderingModes().get(0);
 
         log.info("Evaluating " + reportManager.getName());

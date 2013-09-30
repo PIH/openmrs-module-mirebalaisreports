@@ -58,7 +58,7 @@ public class NonCodedDiagnosesPageController {
         params.put("nonCoded", "");
 
 		EvaluationContext context = reportManager.initializeContext(params);
-		ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
+		ReportDefinition reportDefinition = reportManager.constructReportDefinition();
 		ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
         model.addAttribute("reportManager", reportManager);
@@ -92,7 +92,7 @@ public class NonCodedDiagnosesPageController {
             params.put("nonCoded", "");
         }
         EvaluationContext context = reportManager.initializeContext(params);
-        ReportDefinition reportDefinition = reportManager.constructReportDefinition(context);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
         model.addAttribute("reportManager", reportManager);

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class AllPatientsWithIdsReportManager extends  BaseMirebalaisReportManager{
+public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager{
 
     @Override
     public String getUuid() {
