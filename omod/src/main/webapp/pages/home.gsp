@@ -37,7 +37,7 @@
 		</ul>
 	</div>
 	<% } %>
-	<% if (context.hasPrivilege("Report: mirebalaisreports.fulldataexport")) { %>
+	<% if (context.hasPrivilege("App: mirebalaisreports.dataexports")) { %>
 	<div class="reportBox">
 		<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
 		<ul>
