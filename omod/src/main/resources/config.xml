@@ -26,8 +26,8 @@
         <require_module version="${patientregistrationVersion}">
             org.openmrs.module.patientregistration
         </require_module>
-        <require_module version="${mirebalaismetadataVersion}">
-            org.openmrs.module.mirebalaismetadata
+        <require_module version="${mirebalaisVersion}">
+            org.openmrs.module.mirebalais
         </require_module>
     </require_modules>
 
