@@ -81,7 +81,7 @@ public abstract class BaseReportManager implements ReportManager {
 
     protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition) {
         ReportDesign design = new ReportDesign();
-        design.setName(getMessageCodePrefix() + "output.excel");
+        design.setName("mirebalaisreports.output.excel");
         design.setReportDefinition(reportDefinition);
         design.setRendererType(XlsReportRenderer.class);
         return design;

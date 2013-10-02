@@ -34,15 +34,15 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
     }
 
     public Parameter getStartDateParameter() {
-        return new Parameter("startDate", translate("parameter.startDate"), Date.class);
+        return new Parameter("startDate", "mirebalaisreports.parameter.startDate", Date.class);
     }
 
     public Parameter getEndDateParameter() {
-        return new Parameter("endDate", translate("parameter.endDate"), Date.class);
+        return new Parameter("endDate", "mirebalaisreports.parameter.endDate", Date.class);
     }
 
     public Parameter getLocationParameter() {
-        return new Parameter("location", translate("parameter.location"), Location.class);
+        return new Parameter("location", "mirebalaisreports.parameter.location", Location.class);
     }
 
     protected String applyMetadataReplacements(String sql) {
