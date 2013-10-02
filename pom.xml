@@ -34,7 +34,7 @@
 	</modules>
 	
 	<properties>
-        <mirebalaisVersion>1.2-SNAPSHOT</mirebalaisVersion>
+        <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
 		<openMRSVersion>1.9.4-SNAPSHOT</openMRSVersion>
         <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>

@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.mirebalaisreports.test;
 
-import org.apache.commons.io.FileUtils;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.QueryDataSet;
@@ -24,7 +23,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 
 /**
@@ -39,7 +37,7 @@ import java.io.FileWriter;
 public class CreateCoreMetadata extends BaseModuleContextSensitiveTest {
 
 	public String getOutputDirectory() {
-		return "/home/mseaton/code/mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
+		return "/home/mogoodrich/temp";
 		//return "";
 	}
 
