@@ -37,7 +37,7 @@ import java.io.FileWriter;
 public class CreateCoreMetadata extends BaseModuleContextSensitiveTest {
 
 	public String getOutputDirectory() {
-		return "/home/mogoodrich/temp";
+		return "/home/mseaton/code/mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
 		//return "";
 	}
 
