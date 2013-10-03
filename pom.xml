@@ -35,16 +35,16 @@
 	
 	<properties>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-		<openMRSVersion>1.9.4-SNAPSHOT</openMRSVersion>
-        <emrapiVersion>1.0-SNAPSHOT</emrapiVersion>
+		<openMRSVersion>1.9.4</openMRSVersion>
+        <emrapiVersion>1.1-SNAPSHOT</emrapiVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
-        <reportingVersion>0.8</reportingVersion>
+        <reportingVersion>0.8.1-SNAPSHOT</reportingVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <calculationVersion>1.0</calculationVersion>
         <metadatasharingVersion>1.1.7.1</metadatasharingVersion>
-        <uiframeworkVersion>2.5.1</uiframeworkVersion>
+        <uiframeworkVersion>3.1</uiframeworkVersion>
         <htmlformentryVersion>2.1.4</htmlformentryVersion>
         <providerManagementVersion>2.0</providerManagementVersion>
         <patientregistrationVersion>2.0</patientregistrationVersion>
