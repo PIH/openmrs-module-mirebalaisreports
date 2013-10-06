@@ -1,7 +1,7 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
-    // ui.includeJavascript("mirebalaisreports", "nonCodedDiagnoses.js")
     ui.includeJavascript("coreapps", "fragments/datamanagement/codeDiagnosisDialog.js")
+    ui.includeJavascript("uicommons", "datatables/jquery.dataTables.min.js")
 %>
 
 <script type="text/javascript">
@@ -25,6 +25,9 @@
     };
 
     jq(function() {
+
+        jq("#non-coded-diagnoses").dataTable({});
+        
         jq('#startDateField-display, #endDateField-display, #nonCodedField-display').change(toggleSubmitButton);
 
         jq('#nonCodedForm').submit(function() {

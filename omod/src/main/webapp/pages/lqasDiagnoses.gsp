@@ -19,7 +19,10 @@
     ];
 
     var toggleSubmitButton = function() {
-        if (jq('#startDateField-display').val() && jq('#endDateField-display').val()) {
+
+        if (jq('#startDateField-display').val()
+                && jq('#endDateField-display').val()
+                && jq('#locationField-field').val()) {
             jq('#submit').prop('disabled', false).removeClass('disabled');
         }
         else {
@@ -28,7 +31,7 @@
     };
 
     jq(function() {
-        jq('#startDateField-display, #endDateField-display').change(toggleSubmitButton);
+        jq('#startDateField-display, #endDateField-display, #locationField-field').change(toggleSubmitButton);
     })
 
 </script>
