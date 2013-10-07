@@ -30,7 +30,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 	public void shouldSuccessfullyRenderToExcel() throws Exception {
         executeDataSet("org/openmrs/module/mirebalaisreports/patientsBasedOnCoreMetadata.xml");
 
-        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("patients-new"));
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("patients"));
         FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
 
         EvaluationContext context = new EvaluationContext();
@@ -55,6 +55,6 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         HSSFWorkbook wb = new HSSFWorkbook(fs);
 
         Assert.assertEquals(1, wb.getNumberOfSheets());
-        Assert.assertEquals("patients-new", wb.getSheetName(0));
+        Assert.assertEquals("patients", wb.getSheetName(0));
     }
 }
