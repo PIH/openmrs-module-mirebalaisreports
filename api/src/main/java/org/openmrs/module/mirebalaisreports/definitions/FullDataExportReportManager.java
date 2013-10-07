@@ -151,7 +151,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 			log.debug("Adding dataSet: " + key);
 
             DataSetDefinition dsd;
-            if ("patients-new".equals(key)) {
+            if ("patients".equals(key)) {
                 dsd = constructPatientsDataSetDefinition();
             }
             else {
