@@ -16,8 +16,8 @@ package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.mirebalaisreports.cohort.definition.DiagnosisCohortDefinition;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.mirebalaisreports.cohort.definition.DiagnosisCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -42,7 +42,7 @@ public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDe
     private EmrApiProperties emrApiProperties;
 
     @Override
-    public String getUuidPrefix() {
+    public String getKeyPrefix() {
         return PREFIX;
     }
 

@@ -17,7 +17,10 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
+import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
@@ -86,4 +89,15 @@ public abstract class BaseReportManager implements ReportManager {
         design.setRendererType(XlsReportRenderer.class);
         return design;
     }
+
+    public <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {
+        if (parameterizable == null) {
+            throw new NullPointerException("Programming error: missing parameterizable");
+        }
+        if (mappings == null) {
+            mappings = ""; // probably not necessary, just to be safe
+        }
+        return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
+    }
+
 }

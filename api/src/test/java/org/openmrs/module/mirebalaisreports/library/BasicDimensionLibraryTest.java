@@ -48,13 +48,13 @@ public class BasicDimensionLibraryTest {
 
     @Test
     public void testNonExistent() throws Exception {
-        assertNull(library.getDefinitionByUuid("none like this"));
-        assertNull(library.getDefinitionByUuid(library.getUuidPrefix() + "none like this"));
+        assertNull(library.getDefinition("none like this"));
+        assertNull(library.getDefinition(library.getKeyPrefix() + "none like this"));
     }
 
     @Test
     public void testGender() throws Exception {
-        Dimension dimension = library.getDefinitionByUuid(library.getUuidPrefix() + "gender");
+        Dimension dimension = library.getDefinition(library.getKeyPrefix() + "gender");
         assertThat(dimension, instanceOf(CohortDefinitionDimension.class));
         assertThat(dimension.getParameters().size(), is(0));
         assertThat(dimension.getOptionKeys(), containsInAnyOrder("male", "female"));
@@ -62,7 +62,7 @@ public class BasicDimensionLibraryTest {
 
     @Test
     public void testAgeTwoLevelInYears() throws Exception {
-        Dimension dimension = library.getDefinitionByUuid(library.getUuidPrefix() + "age two levels (cutoff in years)");
+        Dimension dimension = library.getDefinition(library.getKeyPrefix() + "age two levels (cutoff in years)");
         assertThat(dimension, instanceOf(CohortDefinitionDimension.class));
         assertThat(dimension.getParameters(), containsInAnyOrder(parameterNamed("date"), parameterNamed("cutoff")));
         assertThat(dimension.getOptionKeys(), containsInAnyOrder("young", "old"));

@@ -26,9 +26,9 @@ import java.util.List;
  */
 public interface DefinitionLibrary<T extends Definition> {
 
-    public String getUuidPrefix();
+    public String getKeyPrefix();
 
-    public T getDefinitionByUuid(String uuid);
+    public T getDefinition(String uuid);
 
     public List<T> getAllDefinitions(boolean includeRetired);
 

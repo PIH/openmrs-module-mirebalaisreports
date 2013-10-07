@@ -47,7 +47,7 @@ public class MirebalaisReportsServiceImpl extends BaseOpenmrsService implements 
 	protected <T extends Definition> T getDefinition(String uuid, Class<T> type) {
 		DefinitionLibrary<T> l = HandlerUtil.getPreferredHandler(DefinitionLibrary.class, type);
 		if (l != null) {
-			return l.getDefinitionByUuid(uuid);
+			return l.getDefinition(uuid);
 		}
 		return DefinitionContext.getDefinitionByUuid(type, uuid);
 	}

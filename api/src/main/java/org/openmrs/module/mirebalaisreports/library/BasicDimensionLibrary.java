@@ -16,9 +16,6 @@ package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
-import org.openmrs.module.mirebalaisreports.library.BaseDefinitionLibrary;
-import org.openmrs.module.mirebalaisreports.library.DocumentedDefinition;
-import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.indicator.dimension.Dimension;
@@ -49,7 +46,7 @@ public class BasicDimensionLibrary extends BaseDefinitionLibrary<Dimension> {
     }
 
     @Override
-    public String getUuidPrefix() {
+    public String getKeyPrefix() {
         return PREFIX;
     }
 

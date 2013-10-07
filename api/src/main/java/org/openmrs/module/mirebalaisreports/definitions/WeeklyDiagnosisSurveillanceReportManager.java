@@ -217,16 +217,6 @@ public class WeeklyDiagnosisSurveillanceReportManager extends BaseReportManager 
         return new Mapped<T>(parameterizable, map);
     }
 
-    private <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {
-        if (parameterizable == null) {
-            throw new NullPointerException("Programming error: missing parameterizable");
-        }
-        if (mappings == null) {
-            mappings = ""; // probably not necessary, just to be safe
-        }
-        return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
-    }
-
     public byte[] loadExcelTemplate() {
         String templatePath = "org/openmrs/module/mirebalaisreports/reportTemplates/MSPP_Weekly_Diagnosis_Surveillance-template.xls";
 

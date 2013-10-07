@@ -17,10 +17,7 @@ package org.openmrs.module.mirebalaisreports.library;
 import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
-import org.openmrs.module.mirebalaisreports.library.BaseDefinitionLibrary;
-import org.openmrs.module.mirebalaisreports.library.DocumentedDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.Indicator;
@@ -48,7 +45,7 @@ public class BasicIndicatorLibrary extends BaseDefinitionLibrary<CohortIndicator
     }
 
     @Override
-    public String getUuidPrefix() {
+    public String getKeyPrefix() {
         return PREFIX;
     }
 

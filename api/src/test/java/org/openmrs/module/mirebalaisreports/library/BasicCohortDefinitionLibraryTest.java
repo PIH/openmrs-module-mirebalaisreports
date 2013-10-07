@@ -43,13 +43,13 @@ public class BasicCohortDefinitionLibraryTest {
 
     @Test
     public void testNonExistent() throws Exception {
-        assertNull(library.getDefinitionByUuid("something random"));
-        assertNull(library.getDefinitionByUuid(library.getUuidPrefix() + "something random"));
+        assertNull(library.getDefinition("something random"));
+        assertNull(library.getDefinition(library.getKeyPrefix() + "something random"));
     }
 
     @Test
     public void testMales() throws Exception {
-        CohortDefinition actual = library.getDefinitionByUuid(library.getUuidPrefix() + "males");
+        CohortDefinition actual = library.getDefinition(library.getKeyPrefix() + "males");
         assertThat(actual, instanceOf(GenderCohortDefinition.class));
         assertThat(actual.getParameters().size(), is(0));
         assertThat(actual, hasProperty("maleIncluded", is(true)));
@@ -59,7 +59,7 @@ public class BasicCohortDefinitionLibraryTest {
 
     @Test
     public void testFemales() throws Exception {
-        CohortDefinition actual = library.getDefinitionByUuid(library.getUuidPrefix() + "females");
+        CohortDefinition actual = library.getDefinition(library.getKeyPrefix() + "females");
         assertThat(actual, instanceOf(GenderCohortDefinition.class));
         assertThat(actual.getParameters().size(), is(0));
         assertThat(actual, hasProperty("maleIncluded", is(false)));
@@ -69,7 +69,7 @@ public class BasicCohortDefinitionLibraryTest {
 
     @Test
     public void testUnknownGender() throws Exception {
-        CohortDefinition actual = library.getDefinitionByUuid(library.getUuidPrefix() + "unknown gender");
+        CohortDefinition actual = library.getDefinition(library.getKeyPrefix() + "unknown gender");
         assertThat(actual, instanceOf(GenderCohortDefinition.class));
         assertThat(actual.getParameters().size(), is(0));
         assertThat(actual, hasProperty("maleIncluded", is(false)));
@@ -79,7 +79,7 @@ public class BasicCohortDefinitionLibraryTest {
 
     @Test
     public void testAgeUpTo() throws Exception {
-        CohortDefinition actual = library.getDefinitionByUuid(library.getUuidPrefix() + "up to age on date");
+        CohortDefinition actual = library.getDefinition(library.getKeyPrefix() + "up to age on date");
         assertThat(actual, instanceOf(AgeCohortDefinition.class));
         assertThat(actual.getParameters(), containsInAnyOrder(parameterNamed("effectiveDate"), parameterNamed("maxAge")));
         assertThat(actual, hasProperty("maxAgeUnit", is(DurationUnit.YEARS)));
@@ -87,7 +87,7 @@ public class BasicCohortDefinitionLibraryTest {
 
     @Test
     public void testAgeAtLeast() throws Exception {
-        CohortDefinition actual = library.getDefinitionByUuid(library.getUuidPrefix() + "at least age on date");
+        CohortDefinition actual = library.getDefinition(library.getKeyPrefix() + "at least age on date");
         assertThat(actual, instanceOf(AgeCohortDefinition.class));
         assertThat(actual.getParameters(), containsInAnyOrder(parameterNamed("effectiveDate"), parameterNamed("minAge")));
         assertThat(actual, hasProperty("minAgeUnit", is(DurationUnit.YEARS)));

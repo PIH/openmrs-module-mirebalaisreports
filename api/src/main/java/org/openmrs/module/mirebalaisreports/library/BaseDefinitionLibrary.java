@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.library;
 
+import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.evaluation.Definition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
@@ -21,6 +22,7 @@ import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,15 +34,11 @@ import java.util.List;
  */
 public abstract class BaseDefinitionLibrary<T extends Definition> implements DefinitionLibrary<T> {
 
-    public abstract String getUuidPrefix();
+    public abstract String getKeyPrefix();
 
-    public T getDefinitionByUuid(String uuid) {
-        if (uuid.startsWith(getUuidPrefix())) {
-            String lookFor = uuid.substring(getUuidPrefix().length());
-            return findAndInvokeMethod(lookFor);
-        } else {
-            return null;
-        }
+    public T getDefinition(String key) {
+        String lookFor = key.startsWith(getKeyPrefix()) ? key.substring(getKeyPrefix().length()) : key;
+        return findAndInvokeMethod(lookFor);
     }
 
     private T findAndInvokeMethod(String annotationValue) {
@@ -57,9 +55,18 @@ public abstract class BaseDefinitionLibrary<T extends Definition> implements Def
             T definition = (T) method.invoke(this);
 
             DocumentedDefinition documented = method.getAnnotation(DocumentedDefinition.class);
-            definition.setUuid(documented.value());
-            definition.setName(documented.name());
-            definition.setDescription(documented.definition());
+            String key = getKeyPrefix() + documented.value();
+            String name = documented.name();
+            if (name == null) {
+                name = key + ".name";
+            }
+            String description = documented.definition();
+            if (description == null) {
+                description = key + ".description";
+            }
+            definition.setUuid(key);
+            definition.setName(name);
+            definition.setDescription(description);
             return definition;
         } catch (Exception ex) {
             throw new IllegalStateException(ex);
@@ -115,4 +122,22 @@ public abstract class BaseDefinitionLibrary<T extends Definition> implements Def
         return new Mapped<T>(parameterizable, Collections.<String, Object>emptyMap());
     }
 
+    protected DataConverter[] converters(Object... converterOrArray) {
+        List<DataConverter> converters = new ArrayList<DataConverter>();
+        for (Object o : converterOrArray) {
+            if (o instanceof DataConverter) {
+                converters.add((DataConverter) o);
+            }
+            else if (o instanceof DataConverter[]) {
+                converters.addAll(Arrays.asList((DataConverter[]) o));
+            }
+            else if (o == null) {
+                continue;
+            }
+            else {
+                throw new IllegalArgumentException("inputs must be DataConverter or DataConverter[]");
+            }
+        }
+        return converters.toArray(new DataConverter[converters.size()]);
+    }
 }

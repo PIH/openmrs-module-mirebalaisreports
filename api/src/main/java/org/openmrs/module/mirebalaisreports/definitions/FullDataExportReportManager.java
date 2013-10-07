@@ -14,29 +14,14 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.openmrs.Encounter;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonAttribute;
-import org.openmrs.User;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
-import org.openmrs.module.mirebalaisreports.data.converter.CountConverter;
-import org.openmrs.module.mirebalaisreports.data.converter.MostRecentlyCreatedConverter;
-import org.openmrs.module.reporting.common.Birthdate;
+import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.library.PatientDataLibrary;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
-import org.openmrs.module.reporting.common.TimeQualifier;
-import org.openmrs.module.reporting.common.VitalStatus;
-import org.openmrs.module.reporting.data.converter.ObjectFormatter;
-import org.openmrs.module.reporting.data.converter.PropertyConverter;
-import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.AgeAtDateOfOtherDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.VitalStatusDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
@@ -45,9 +30,11 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +49,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 	public static final String SQL_DIR = "org/openmrs/module/mirebalaisreports/sql/fullDataExport/";
 	public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
+
+    @Autowired
+    private PatientDataLibrary patientDataLibrary;
 
     private String uuid;
     private String messageCodePrefix;
@@ -122,7 +112,41 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 		rd.setParameters(getParameters());
         rd.setUuid(getUuid());
 
-		for (String key : dataSets) {
+        {
+            CompositionCohortDefinition baseCohortDefinition = new CompositionCohortDefinition();
+            baseCohortDefinition.addParameter(getStartDateParameter());
+            baseCohortDefinition.addParameter(getEndDateParameter());
+
+            // --Only show patients with a visit or registration encounter during the period
+            // INNER JOIN (
+            // SELECT patient_id, date_started FROM visit WHERE voided = 0 AND date_started BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
+            // UNION
+            // SELECT patient_id, encounter_datetime FROM encounter WHERE voided = 0 AND encounter_type = 6 AND encounter_datetime BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
+            // ) list ON p.patient_id = list.patient_id
+
+            VisitCohortDefinition visitDuringPeriod = new VisitCohortDefinition();
+            visitDuringPeriod.addParameter(new Parameter("startedOnOrAfter", "", Date.class));
+            visitDuringPeriod.addParameter(new Parameter("startedOnOrBefore", "", Date.class));
+            baseCohortDefinition.addSearch("visitDuringPeriod", this.<CohortDefinition>map(visitDuringPeriod, "startedOnOrAfter=${startDate},startedOnOrBefore=${endDate}"));
+
+            EncounterCohortDefinition registrationEncounterDuringPeriod = new EncounterCohortDefinition();
+            registrationEncounterDuringPeriod.addEncounterType(mirebalaisReportsProperties.getRegistrationEncounterType());
+            registrationEncounterDuringPeriod.addParameter(new Parameter("onOrAfter", "", Date.class));
+            registrationEncounterDuringPeriod.addParameter(new Parameter("onOrBefore", "", Date.class));
+            baseCohortDefinition.addSearch("registrationEncounterDuringPeriod", this.<CohortDefinition>map(registrationEncounterDuringPeriod, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+            // --Exclude test patients
+            // AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = 11 AND voided = 0)
+            PersonAttributeCohortDefinition testPatient = new PersonAttributeCohortDefinition();
+            testPatient.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
+            testPatient.addValue("true");
+            baseCohortDefinition.addSearch("testPatient", testPatient, null);
+
+            baseCohortDefinition.setCompositionString("(visitDuringPeriod OR registrationEncounterDuringPeriod) AND NOT testPatient");
+            rd.setBaseCohortDefinition(this.<CohortDefinition>map(baseCohortDefinition, "startDate=${startDate},endDate=${endDate}"));
+        }
+
+        for (String key : dataSets) {
 
 			log.debug("Adding dataSet: " + key);
 
@@ -160,108 +184,101 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
     private DataSetDefinition constructPatientsDataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        dsd.addColumn("patient_id", new PatientIdDataDefinition(), "");
+        dsd.addParameter(getStartDateParameter());
+        dsd.addParameter(getEndDateParameter());
 
-        PatientIdentifierDataDefinition zlEmrIds = new PatientIdentifierDataDefinition("zlemr", mirebalaisReportsProperties.getZlEmrIdentifierType());
-        PatientIdentifierDataDefinition numeroDossiers = new PatientIdentifierDataDefinition("numero_dossier", mirebalaisReportsProperties.getDossierNumberIdentifierType());
-        PatientIdentifierDataDefinition hivEmrIds = new PatientIdentifierDataDefinition("hivemr", mirebalaisReportsProperties.getHivEmrIdentifierType());
-        VitalStatusDataDefinition vitalStatus = new VitalStatusDataDefinition();
-        PreferredAddressDataDefinition preferredAddress = new PreferredAddressDataDefinition();
-
-        EncountersForPatientDataDefinition firstRegistrationEncounter = new EncountersForPatientDataDefinition();
-        firstRegistrationEncounter.setWhich(TimeQualifier.FIRST);
-        firstRegistrationEncounter.setTypes(Arrays.asList(mirebalaisReportsProperties.getRegistrationEncounterType()));
-
+        dsd.addColumn("patient_id", patientDataLibrary.getDefinition("patientId"), "");
 
         // Most recent ZL EMR ID
         // INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
-        dsd.addColumn("zlemr", zlEmrIds, "", new MostRecentlyCreatedConverter(PatientIdentifier.class), new PropertyConverter(PatientIdentifier.class, "identifier"));
+        dsd.addColumn("zlemr", patientDataLibrary.getDefinition("mostRecentZlEmrId.identifier"), "");
 
         // ZL EMR ID location
         // INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
-        dsd.addColumn("loc_registered", zlEmrIds, "", new MostRecentlyCreatedConverter(PatientIdentifier.class), new PropertyConverter(PatientIdentifier.class, "location"), new ObjectFormatter());
+        dsd.addColumn("loc_registered", patientDataLibrary.getDefinition("mostRecentZlEmrId.location"), "");
 
         // un.value unknown_patient
         // Unknown patient
         // LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = 10 AND un.voided = 0
-        dsd.addColumn("unknown_patient", new PersonAttributeDataDefinition(emrApiProperties.getUnknownPatientPersonAttributeType()), "", new PropertyConverter(PersonAttribute.class, "value"));
+        dsd.addColumn("unknown_patient", patientDataLibrary.getDefinition("unknownPatient.value"), "");
 
         // --Number of ZL EMRs assigned to this patient
         // INNER JOIN (SELECT patient_id, COUNT(patient_identifier_id) num FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 GROUP BY patient_id) numzlemr ON p.patient_id = numzlemr.patient_id
-        dsd.addColumn("numzlemr", zlEmrIds, "", new CountConverter());
+        // TODO difference: returns 0 where the existing behavior is to leave those blank
+        dsd.addColumn("numzlemr", patientDataLibrary.getDefinition("numberOfZlEmrIds"), "");
 
         // --Most recent Numero Dossier
         // LEFT OUTER JOIN (SELECT patient_id, identifier FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 ORDER BY date_created DESC) nd ON p.patient_id = nd.patient_id
-        dsd.addColumn("numero_dossier", numeroDossiers, "", new PropertyConverter(PatientIdentifier.class, "identifier"));
+        dsd.addColumn("numero_dossier", patientDataLibrary.getDefinition("mostRecentDossierNumber.identifier"), "");
 
         // --Number of Numero Dossiers
         // LEFT OUTER JOIN (SELECT patient_id, COUNT(patient_identifier_id) num FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 GROUP BY patient_id) numnd ON p.patient_id = numnd.patient_id
-        dsd.addColumn("num_nd", numeroDossiers, "", new CountConverter());
+        // TODO difference: returns 0 where the existing behavior is to leave those blank
+        dsd.addColumn("num_nd", patientDataLibrary.getDefinition("numberOfDossierNumbers"), "");
 
         // --HIV EMR ID
         // LEFT OUTER JOIN (SELECT patient_id, identifier FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 ORDER BY date_created DESC) hivemr ON p.patient_id = hivemr.patient_id
-        dsd.addColumn("hivemr", hivEmrIds, "", new PropertyConverter(PatientIdentifier.class, "identifier"));
+        dsd.addColumn("hivemr", patientDataLibrary.getDefinition("mostRecentHivEmrId.identifier"), "");
 
         // --Number of HIV EMR IDs
         // LEFT OUTER JOIN (SELECT patient_id, COUNT(patient_identifier_id) num FROM patient_identifier WHERE identifier_type = 3 AND voided = 0 GROUP BY patient_id) numhiv ON p.patient_id = numhiv.patient_id
-        dsd.addColumn("num_hiv", hivEmrIds, "", new CountConverter());
+        // TODO difference: returns 0 where the existing behavior is to leave those blank
+        dsd.addColumn("num_hiv", patientDataLibrary.getDefinition("numberOfHivEmrIds"), "");
 
         // pr.birthdate
-        dsd.addColumn("birthdate", new BirthdateDataDefinition(), "", new PropertyConverter(Birthdate.class, "birthdate"));
+        dsd.addColumn("birthdate", patientDataLibrary.getDefinition("birthdate.ymd"), "");
 
         // pr.birthdate_estimated
-        dsd.addColumn("birthdate_estimated", new BirthdateDataDefinition(), "", new PropertyConverter(Birthdate.class, "estimated"));
+        dsd.addColumn("birthdate_estimated", patientDataLibrary.getDefinition("birthdate.estimated"), "");
 
         // pr.gender
-        dsd.addColumn("gender", new GenderDataDefinition(), "");
+        dsd.addColumn("gender", patientDataLibrary.getDefinition("gender"), "");
 
         // pr.dead
-        dsd.addColumn("dead", vitalStatus, "", new PropertyConverter(VitalStatus.class, "dead"));
+        dsd.addColumn("dead", patientDataLibrary.getDefinition("vitalStatus.dead"), "");
 
         // pr.death_date
-        dsd.addColumn("death_date", vitalStatus, "", new PropertyConverter(VitalStatus.class, "deathDate"));
+        dsd.addColumn("death_date", patientDataLibrary.getDefinition("vitalStatus.deathDate"), "");
 
         // --Most recent address
         // LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
         // TODO: implemented this with preferred address rather than most recent one
 
         // pa.state_province department
-        dsd.addColumn("department", preferredAddress, "", new PropertyConverter(PersonAddress.class, "stateProvince"));
+        dsd.addColumn("department", patientDataLibrary.getDefinition("preferredAddress.department"), "");
 
         // pa.city_village commune
-        dsd.addColumn("commune", preferredAddress, "", new PropertyConverter(PersonAddress.class, "cityVillage"));
+        dsd.addColumn("commune", patientDataLibrary.getDefinition("preferredAddress.commune"), "");
 
         // pa.address3 section
-        dsd.addColumn("section", preferredAddress, "", new PropertyConverter(PersonAddress.class, "address3"));
+        dsd.addColumn("section", patientDataLibrary.getDefinition("preferredAddress.section"), "");
 
         // pa.address1 locality
-        dsd.addColumn("locality", preferredAddress, "", new PropertyConverter(PersonAddress.class, "address1"));
+        dsd.addColumn("locality", patientDataLibrary.getDefinition("preferredAddress.locality"), "");
 
         // pa.address2 street_landmark
-        dsd.addColumn("street_landmark", preferredAddress, "", new PropertyConverter(PersonAddress.class, "address2"));
+        dsd.addColumn("street_landmark", patientDataLibrary.getDefinition("preferredAddress.streetLandmark"), "");
 
         // reg.encounter_datetime date_registered
         // --First registration encounter
         // LEFT OUTER JOIN (SELECT patient_id, MIN(encounter_id) encounter_id FROM encounter WHERE encounter_type = 6 AND voided = 0 GROUP BY patient_id) first_reg ON p.patient_id = first_reg.patient_id
         // LEFT OUTER JOIN encounter reg ON first_reg.encounter_id = reg.encounter_id
-        dsd.addColumn("date_registered", firstRegistrationEncounter, "", new PropertyConverter(Encounter.class, "encounterDatetime"));
+
+        dsd.addColumn("date_registered", patientDataLibrary.getDefinition("registration.encounterDatetime"), "");
 
         // regl.name reg_location
         // --Location registered
         // LEFT OUTER JOIN location regl ON reg.location_id = regl.location_id
-        dsd.addColumn("reg_location", firstRegistrationEncounter, "", new PropertyConverter(Encounter.class, "location"), new ObjectFormatter());
+        dsd.addColumn("reg_location", patientDataLibrary.getDefinition("registration.location"), "");
 
         // CONCAT(regn.given_name, ' ', regn.family_name) reg_by
         // --User who registered the patient
         // LEFT OUTER JOIN users u ON reg.creator = u.user_id
         // LEFT OUTER JOIN person_name regn ON u.person_id = regn.person_id
-        dsd.addColumn("reg_by", firstRegistrationEncounter, "", new PropertyConverter(Encounter.class, "creator"), new PropertyConverter(User.class, "personName"), new ObjectFormatter("{givenName} {familyName}"));
+        dsd.addColumn("reg_by", patientDataLibrary.getDefinition("registration.creator.name"), "");
 
-        // TODO figure out whether we can use AgeAtDateOfOtherDataDefinition to get Age on Registration encounter, or if we need a custom DataDefinition for this
         // ROUND(DATEDIFF(reg.encounter_datetime, pr.birthdate)/365.25, 1) age_at_reg
-        AgeAtDateOfOtherDataDefinition ageAtRegistration = new AgeAtDateOfOtherDataDefinition();
-        //ageAtRegistration.setEffectiveDateDefinition(new MappedData<PersonDataDefinition>(firstRegistrationEncounter, mappings("onOrAfter", "onOrBefore"), new PropertyConverter(Encounter.class, "encounterDatetime")));
-        //dsd.addColumn("age_at_reg", ageAtRegistration, "", new PropertyConverter(Age.class, "fullYears"));
+        dsd.addColumn("age_at_reg", patientDataLibrary.getDefinition("registration.age"), "");
 
         return dsd;
     }

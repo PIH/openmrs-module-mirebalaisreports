@@ -22,8 +22,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
-import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -247,16 +245,6 @@ public class BasicStatisticsReportManager extends BaseReportManager {
         DataSet evaluated = evaluatedReport.getDataSets().get("dsd");
 
         return (MapDataSet) evaluated;
-    }
-
-    private <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {
-        if (parameterizable == null) {
-            throw new NullPointerException("Programming error: missing parameterizable");
-        }
-        if (mappings == null) {
-            mappings = "";
-        }
-        return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
     }
 
     public void setMirebalaisReportsProperties(MirebalaisReportsProperties mirebalaisReportsProperties) {
