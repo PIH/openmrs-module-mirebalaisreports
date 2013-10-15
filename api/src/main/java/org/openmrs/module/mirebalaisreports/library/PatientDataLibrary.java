@@ -8,11 +8,8 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.User;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.reporting.common.Birthdate;
-import org.openmrs.module.reporting.common.VitalStatus;
 import org.openmrs.module.reporting.data.MappedData;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
-import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.converter.CountConverter;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.EarliestCreatedConverter;
@@ -22,15 +19,13 @@ import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PersonToPatientDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.AgeAtDateOfOtherDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.VitalStatusDataDefinition;
+import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,28 +44,13 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
     private EmrApiProperties emrApiProperties;
 
     @Override
+    public Class<? super PatientDataDefinition> getDefinitionType() {
+        return PatientDataDefinition.class;
+    }
+
+    @Override
     public String getKeyPrefix() {
         return "mirebalais.patientDataCalculation.";
-    }
-
-    @DocumentedDefinition("patientId")
-    public PatientDataDefinition getPatientId() {
-        return new PatientIdDataDefinition();
-    }
-
-    @DocumentedDefinition("birthdate.ymd")
-    public PatientDataDefinition getBirthdateYmd() {
-        return getBirthdate(new BirthdateConverter("yyyy-MM-dd"));
-    }
-
-    @DocumentedDefinition("birthdate.estimated")
-    public PatientDataDefinition getBirthdateEstimated() {
-        return getBirthdate(new PropertyConverter(Birthdate.class, "estimated"));
-    }
-
-    @DocumentedDefinition("gender")
-    public PatientDataDefinition getGender() {
-        return new PersonToPatientDataDefinition(new GenderDataDefinition());
     }
 
     @DocumentedDefinition("numberOfZlEmrIds")
@@ -123,16 +103,6 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
                 new PersonToPatientDataDefinition(
                         new PersonAttributeDataDefinition(emrApiProperties.getUnknownPatientPersonAttributeType())),
                 new PropertyConverter(PersonAttribute.class, "value"));
-    }
-
-    @DocumentedDefinition("vitalStatus.dead")
-    public PatientDataDefinition getVitalStatusDead() {
-        return getVitalStatus(new PropertyConverter(VitalStatus.class, "dead"));
-    }
-
-    @DocumentedDefinition("vitalStatus.deathDate")
-    public PatientDataDefinition getVitalStatusDeathDate() {
-        return getVitalStatus(new PropertyConverter(VitalStatus.class, "deathDate"));
     }
 
     @DocumentedDefinition("preferredAddress.department")
@@ -188,13 +158,6 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
         return new ConvertedPatientDataDefinition(new PersonToPatientDataDefinition(ageAtRegistration), new AgeConverter("{y:1}"));
     }
 
-    private PatientDataDefinition getBirthdate(DataConverter... converters) {
-        return new ConvertedPatientDataDefinition(
-                new PersonToPatientDataDefinition(
-                        new BirthdateDataDefinition()),
-                converters);
-    }
-
     private PatientDataDefinition getIdentifiersOf(PatientIdentifierType patientIdentifierType, DataConverter... converters) {
         return new ConvertedPatientDataDefinition(
                 new PatientIdentifierDataDefinition(null, patientIdentifierType),
@@ -204,13 +167,6 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
     private PatientDataDefinition getMostRecentIdentifierOf(PatientIdentifierType patientIdentifierType, DataConverter... converters) {
         return getIdentifiersOf(patientIdentifierType,
                 converters(new MostRecentlyCreatedConverter(PatientIdentifier.class), converters));
-    }
-
-    private PatientDataDefinition getVitalStatus(DataConverter... converters) {
-        return new ConvertedPatientDataDefinition(
-                new PersonToPatientDataDefinition(
-                        new VitalStatusDataDefinition()),
-                converters);
     }
 
     private PatientDataDefinition getPreferredAddress(String property) {

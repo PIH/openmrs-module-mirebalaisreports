@@ -32,13 +32,13 @@ import static org.openmrs.module.emr.test.ReportingMatchers.parameterNamed;
 /**
  *
  */
-public class BasicCohortDefinitionLibraryTest {
+public class MirebalaisCohortDefinitionLibraryTest {
 
-    private BasicCohortDefinitionLibrary library;
+    private MirebalaisCohortDefinitionLibrary library;
 
     @Before
     public void setUp() throws Exception {
-        library = new BasicCohortDefinitionLibrary();
+        library = new MirebalaisCohortDefinitionLibrary();
     }
 
     @Test

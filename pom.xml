@@ -44,7 +44,7 @@
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
         <calculationVersion>1.0</calculationVersion>
         <metadatasharingVersion>1.1.7.1</metadatasharingVersion>
-        <uiframeworkVersion>3.1</uiframeworkVersion>
+        <uiframeworkVersion>3.2-SNAPSHOT</uiframeworkVersion>
         <htmlformentryVersion>2.1.4</htmlformentryVersion>
         <providerManagementVersion>2.0</providerManagementVersion>
         <patientregistrationVersion>2.0</patientregistrationVersion>

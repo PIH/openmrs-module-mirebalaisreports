@@ -14,8 +14,9 @@
 
 package org.openmrs.module.mirebalaisreports.library;
 
-import org.openmrs.annotation.Handler;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
+import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.indicator.dimension.Dimension;
@@ -26,7 +27,6 @@ import java.util.Date;
 /**
  *
  */
-@Handler(supports = Dimension.class)
 public class BasicDimensionLibrary extends BaseDefinitionLibrary<Dimension> {
 
     public static final String PREFIX = "emr.dimension.";
@@ -46,6 +46,11 @@ public class BasicDimensionLibrary extends BaseDefinitionLibrary<Dimension> {
     }
 
     @Override
+    public Class<? super Dimension> getDefinitionType() {
+        return Dimension.class;
+    }
+
+    @Override
     public String getKeyPrefix() {
         return PREFIX;
     }
@@ -53,8 +58,8 @@ public class BasicDimensionLibrary extends BaseDefinitionLibrary<Dimension> {
     @DocumentedDefinition(value = "gender", definition = "males | females")
     public CohortDefinitionDimension getGenderDimension() {
         CohortDefinitionDimension gender = new CohortDefinitionDimension();
-        gender.addCohortDefinition("female", noMappings(reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "females")));
-        gender.addCohortDefinition("male", noMappings(reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "males")));
+        gender.addCohortDefinition("female", noMappings(reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "females")));
+        gender.addCohortDefinition("male", noMappings(reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "males")));
         return gender;
     }
 
@@ -64,10 +69,10 @@ public class BasicDimensionLibrary extends BaseDefinitionLibrary<Dimension> {
         age.addParameter(new Parameter("date", "Date", Date.class));
         age.addParameter(new Parameter("cutoff", "Cutoff (< $cutoff years , >= $cutoff years)", Integer.class));
         age.addCohortDefinition("young",
-                map(reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "up to age on date"),
+                map(reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "up to age on date"),
                         "maxAge=${cutoff-1},effectiveDate=${date}"));
         age.addCohortDefinition("old",
-                map(reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "at least age on date"),
+                map(reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "at least age on date"),
                         "minAge=${cutoff},effectiveDate=${date}"));
         return age;
     }

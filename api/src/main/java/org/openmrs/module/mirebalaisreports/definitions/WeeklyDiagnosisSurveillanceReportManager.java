@@ -24,9 +24,9 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.concept.EmrConceptService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
-import org.openmrs.module.mirebalaisreports.library.BasicCohortDefinitionLibrary;
 import org.openmrs.module.mirebalaisreports.library.BasicDimensionLibrary;
 import org.openmrs.module.mirebalaisreports.library.BasicIndicatorLibrary;
+import org.openmrs.module.mirebalaisreports.library.MirebalaisCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -151,7 +151,7 @@ public class WeeklyDiagnosisSurveillanceReportManager extends BaseReportManager 
         // Patients with some diagnosis during the period (excluding Bonne Sante Apparent and Unknown), but no notifiable disease in the period
         // QUESTION: should this include non-coded diagnoses?
         {
-            CohortDefinition codedDiagnosisQuery = reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "specific coded diagnoses between dates");
+            CohortDefinition codedDiagnosisQuery = reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "specific coded diagnoses between dates");
             codedDiagnosisQuery.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
             codedDiagnosisQuery.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
             codedDiagnosisQuery.addParameter(new Parameter("codedDiagnoses", "Include Coded Diagnoses", Concept.class, List.class, null));

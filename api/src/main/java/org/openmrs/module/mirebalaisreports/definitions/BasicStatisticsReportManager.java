@@ -10,7 +10,7 @@ import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
 import org.openmrs.module.mirebalaisreports.cohort.definition.PersonAuditInfoCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
-import org.openmrs.module.mirebalaisreports.library.BasicCohortDefinitionLibrary;
+import org.openmrs.module.mirebalaisreports.library.MirebalaisCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -116,7 +116,7 @@ public class BasicStatisticsReportManager extends BaseReportManager {
 		returningPatientsOnDayQuery.addSearch("visit", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisReportsProperties.getVisitEncounterTypes()));
 		returningPatientsOnDayQuery.setCompositionString("returning AND visit");
 
-		CohortDefinition excludeTestPatientsCohortDefinition = reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "exclude test patients");
+		CohortDefinition excludeTestPatientsCohortDefinition = reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "exclude test patients");
 
 		// set up indicators
 

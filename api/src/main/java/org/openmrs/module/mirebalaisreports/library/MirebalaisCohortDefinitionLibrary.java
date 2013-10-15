@@ -15,16 +15,16 @@
 package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.Concept;
-import org.openmrs.annotation.Handler;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.DiagnosisCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
+import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -33,57 +33,25 @@ import java.util.List;
 /**
  *
  */
-@Handler(supports = CohortDefinition.class)
-public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefinition> {
+@Component
+public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefinition> {
 
-    public static final String PREFIX = "emr.cohortDefinition.";
+    public static final String PREFIX = "mirebalais.cohortDefinition.";
 
     @Autowired
     private EmrApiProperties emrApiProperties;
+
+    @Override
+    public Class<? super CohortDefinition> getDefinitionType() {
+        return CohortDefinition.class;
+    }
 
     @Override
     public String getKeyPrefix() {
         return PREFIX;
     }
 
-    @DocumentedDefinition(value = "males", definition = "Patients whose gender is M")
-    public GenderCohortDefinition getMales() {
-        GenderCohortDefinition males = new GenderCohortDefinition();
-        males.setMaleIncluded(true);
-        return males;
-    }
-
-    @DocumentedDefinition(value = "females", definition = "Patients whose gender is F")
-    public GenderCohortDefinition getFemales() {
-        GenderCohortDefinition females = new GenderCohortDefinition();
-        females.setFemaleIncluded(true);
-        return females;
-    }
-
-    @DocumentedDefinition(value = "unknown gender", definition = "Patients whose gender is neither M or F")
-    public GenderCohortDefinition getUnknownGender() {
-        GenderCohortDefinition unknownGender = new GenderCohortDefinition();
-        unknownGender.setUnknownGenderIncluded(true);
-        return unknownGender;
-    }
-
-    @DocumentedDefinition(value = "up to age on date", definition = "Patients whose age is <= $maxAge years on $effectiveDate")
-    public AgeCohortDefinition getUpToAgeOnDate() {
-        AgeCohortDefinition cd = new AgeCohortDefinition();
-        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-        cd.addParameter(new Parameter("maxAge", "Max Age (years)", Integer.class));
-        return cd;
-    }
-
-    @DocumentedDefinition(value = "at least age on date", definition = "Patients whose age is >= $minAge years on $effectiveDate")
-    public AgeCohortDefinition getAtLeastAgeOnDate() {
-        AgeCohortDefinition cd = new AgeCohortDefinition();
-        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-        cd.addParameter(new Parameter("minAge", "Min Age (years)", Integer.class));
-        return cd;
-    }
-
-    @DocumentedDefinition(value = "specific coded diagnoses between dates", definition = "Patients with any diagnosis of $codedDiagnoses between $onOrAfter and $onOrBefore")
+    @DocumentedDefinition(value = "specificCodedDiagnosesBetweenDates", definition = "Patients with any diagnosis of $codedDiagnoses between $onOrAfter and $onOrBefore")
     public DiagnosisCohortDefinition getSpecificCodedDiagnosesBetweenDates() {
         DiagnosisCohortDefinition cd = new DiagnosisCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "On or after date", Date.class));
@@ -92,7 +60,7 @@ public class BasicCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDe
         return cd;
     }
 
-    @DocumentedDefinition(value = "exclude test patients")
+    @DocumentedDefinition(value = "excludeTestPatients")
     public CohortDefinition getExcludeTestPatients() {
         PersonAttributeCohortDefinition personAttributeCohortDefinition = new PersonAttributeCohortDefinition();
         personAttributeCohortDefinition.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());

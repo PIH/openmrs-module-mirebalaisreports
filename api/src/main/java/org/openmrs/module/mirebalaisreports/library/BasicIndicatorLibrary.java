@@ -15,12 +15,12 @@
 package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.Concept;
-import org.openmrs.annotation.Handler;
 import org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
-import org.openmrs.module.reporting.indicator.Indicator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -29,7 +29,6 @@ import java.util.List;
 /**
  *
  */
-@Handler(supports = Indicator.class)
 public class BasicIndicatorLibrary extends BaseDefinitionLibrary<CohortIndicator> {
 
     public static final String PREFIX = "emr.indicator.";
@@ -45,13 +44,18 @@ public class BasicIndicatorLibrary extends BaseDefinitionLibrary<CohortIndicator
     }
 
     @Override
+    public Class<? super CohortIndicator> getDefinitionType() {
+        return CohortIndicator.class;
+    }
+
+    @Override
     public String getKeyPrefix() {
         return PREFIX;
     }
 
     @DocumentedDefinition(value = "specific coded diagnoses during period", definition = "Patients with any diagnosis of $codedDiagnoses between $startDate and $endDate")
     public CohortIndicator getSpecificCodedDiagnosesBetweenDates() {
-        CohortDefinition query = reportsService.getCohortDefinition(BasicCohortDefinitionLibrary.PREFIX + "specific coded diagnoses between dates");
+        CohortDefinition query = reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "specific coded diagnoses between dates");
 
         CohortIndicator ci = new CohortIndicator();
         ci.addParameter(new Parameter("startDate", "Start of period", Date.class));

@@ -16,15 +16,16 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
-import org.openmrs.module.mirebalaisreports.library.PatientDataLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
+import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -51,7 +52,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 	public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
     @Autowired
-    private PatientDataLibrary patientDataLibrary;
+    private AllDefinitionLibraries libraries;
 
     private String uuid;
     private String messageCodePrefix;
@@ -187,98 +188,98 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addParameter(getStartDateParameter());
         dsd.addParameter(getEndDateParameter());
 
-        dsd.addColumn("patient_id", patientDataLibrary.getDefinition("patientId"), "");
+        dsd.addColumn("patient_id", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.patientId"), "");
 
         // Most recent ZL EMR ID
         // INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
-        dsd.addColumn("zlemr", patientDataLibrary.getDefinition("mostRecentZlEmrId.identifier"), "");
+        dsd.addColumn("zlemr", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentZlEmrId.identifier"), "");
 
         // ZL EMR ID location
         // INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
-        dsd.addColumn("loc_registered", patientDataLibrary.getDefinition("mostRecentZlEmrId.location"), "");
+        dsd.addColumn("loc_registered", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentZlEmrId.location"), "");
 
         // un.value unknown_patient
         // Unknown patient
         // LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = 10 AND un.voided = 0
-        dsd.addColumn("unknown_patient", patientDataLibrary.getDefinition("unknownPatient.value"), "");
+        dsd.addColumn("unknown_patient", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.unknownPatient.value"), "");
 
         // --Number of ZL EMRs assigned to this patient
         // INNER JOIN (SELECT patient_id, COUNT(patient_identifier_id) num FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 GROUP BY patient_id) numzlemr ON p.patient_id = numzlemr.patient_id
         // TODO difference: returns 0 where the existing behavior is to leave those blank
-        dsd.addColumn("numzlemr", patientDataLibrary.getDefinition("numberOfZlEmrIds"), "");
+        dsd.addColumn("numzlemr", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.numberOfZlEmrIds"), "");
 
         // --Most recent Numero Dossier
         // LEFT OUTER JOIN (SELECT patient_id, identifier FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 ORDER BY date_created DESC) nd ON p.patient_id = nd.patient_id
-        dsd.addColumn("numero_dossier", patientDataLibrary.getDefinition("mostRecentDossierNumber.identifier"), "");
+        dsd.addColumn("numero_dossier", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentDossierNumber.identifier"), "");
 
         // --Number of Numero Dossiers
         // LEFT OUTER JOIN (SELECT patient_id, COUNT(patient_identifier_id) num FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 GROUP BY patient_id) numnd ON p.patient_id = numnd.patient_id
         // TODO difference: returns 0 where the existing behavior is to leave those blank
-        dsd.addColumn("num_nd", patientDataLibrary.getDefinition("numberOfDossierNumbers"), "");
+        dsd.addColumn("num_nd", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.numberOfDossierNumbers"), "");
 
         // --HIV EMR ID
         // LEFT OUTER JOIN (SELECT patient_id, identifier FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 ORDER BY date_created DESC) hivemr ON p.patient_id = hivemr.patient_id
-        dsd.addColumn("hivemr", patientDataLibrary.getDefinition("mostRecentHivEmrId.identifier"), "");
+        dsd.addColumn("hivemr", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentHivEmrId.identifier"), "");
 
         // --Number of HIV EMR IDs
         // LEFT OUTER JOIN (SELECT patient_id, COUNT(patient_identifier_id) num FROM patient_identifier WHERE identifier_type = 3 AND voided = 0 GROUP BY patient_id) numhiv ON p.patient_id = numhiv.patient_id
         // TODO difference: returns 0 where the existing behavior is to leave those blank
-        dsd.addColumn("num_hiv", patientDataLibrary.getDefinition("numberOfHivEmrIds"), "");
+        dsd.addColumn("num_hiv", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.numberOfHivEmrIds"), "");
 
         // pr.birthdate
-        dsd.addColumn("birthdate", patientDataLibrary.getDefinition("birthdate.ymd"), "");
+        dsd.addColumn("birthdate", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.birthdate.ymd"), "");
 
         // pr.birthdate_estimated
-        dsd.addColumn("birthdate_estimated", patientDataLibrary.getDefinition("birthdate.estimated"), "");
+        dsd.addColumn("birthdate_estimated", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.birthdate.estimated"), "");
 
         // pr.gender
-        dsd.addColumn("gender", patientDataLibrary.getDefinition("gender"), "");
+        dsd.addColumn("gender", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.gender"), "");
 
         // pr.dead
-        dsd.addColumn("dead", patientDataLibrary.getDefinition("vitalStatus.dead"), "");
+        dsd.addColumn("dead", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.vitalStatus.dead"), "");
 
         // pr.death_date
-        dsd.addColumn("death_date", patientDataLibrary.getDefinition("vitalStatus.deathDate"), "");
+        dsd.addColumn("death_date", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.vitalStatus.deathDate"), "");
 
         // --Most recent address
         // LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
         // TODO: implemented this with preferred address rather than most recent one
 
         // pa.state_province department
-        dsd.addColumn("department", patientDataLibrary.getDefinition("preferredAddress.department"), "");
+        dsd.addColumn("department", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredAddress.department"), "");
 
         // pa.city_village commune
-        dsd.addColumn("commune", patientDataLibrary.getDefinition("preferredAddress.commune"), "");
+        dsd.addColumn("commune", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredAddress.commune"), "");
 
         // pa.address3 section
-        dsd.addColumn("section", patientDataLibrary.getDefinition("preferredAddress.section"), "");
+        dsd.addColumn("section", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredAddress.section"), "");
 
         // pa.address1 locality
-        dsd.addColumn("locality", patientDataLibrary.getDefinition("preferredAddress.locality"), "");
+        dsd.addColumn("locality", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredAddress.locality"), "");
 
         // pa.address2 street_landmark
-        dsd.addColumn("street_landmark", patientDataLibrary.getDefinition("preferredAddress.streetLandmark"), "");
+        dsd.addColumn("street_landmark", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredAddress.streetLandmark"), "");
 
         // reg.encounter_datetime date_registered
         // --First registration encounter
         // LEFT OUTER JOIN (SELECT patient_id, MIN(encounter_id) encounter_id FROM encounter WHERE encounter_type = 6 AND voided = 0 GROUP BY patient_id) first_reg ON p.patient_id = first_reg.patient_id
         // LEFT OUTER JOIN encounter reg ON first_reg.encounter_id = reg.encounter_id
 
-        dsd.addColumn("date_registered", patientDataLibrary.getDefinition("registration.encounterDatetime"), "");
+        dsd.addColumn("date_registered", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.registration.encounterDatetime"), "");
 
         // regl.name reg_location
         // --Location registered
         // LEFT OUTER JOIN location regl ON reg.location_id = regl.location_id
-        dsd.addColumn("reg_location", patientDataLibrary.getDefinition("registration.location"), "");
+        dsd.addColumn("reg_location", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.registration.location"), "");
 
         // CONCAT(regn.given_name, ' ', regn.family_name) reg_by
         // --User who registered the patient
         // LEFT OUTER JOIN users u ON reg.creator = u.user_id
         // LEFT OUTER JOIN person_name regn ON u.person_id = regn.person_id
-        dsd.addColumn("reg_by", patientDataLibrary.getDefinition("registration.creator.name"), "");
+        dsd.addColumn("reg_by", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.registration.creator.name"), "");
 
         // ROUND(DATEDIFF(reg.encounter_datetime, pr.birthdate)/365.25, 1) age_at_reg
-        dsd.addColumn("age_at_reg", patientDataLibrary.getDefinition("registration.age"), "");
+        dsd.addColumn("age_at_reg", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.registration.age"), "");
 
         return dsd;
     }

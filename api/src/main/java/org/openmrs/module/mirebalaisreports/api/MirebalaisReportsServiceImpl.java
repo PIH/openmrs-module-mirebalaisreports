@@ -14,9 +14,9 @@
 package org.openmrs.module.mirebalaisreports.api;
 
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.mirebalaisreports.library.DefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.definition.DefinitionContext;
+import org.openmrs.module.reporting.definition.library.DefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.Definition;
 import org.openmrs.module.reporting.indicator.Indicator;
 import org.openmrs.module.reporting.indicator.dimension.Dimension;

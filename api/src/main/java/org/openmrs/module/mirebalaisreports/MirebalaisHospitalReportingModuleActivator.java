@@ -38,6 +38,14 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
     private ReportService reportService;
     private ReportDefinitionService reportDefinitionService;
 
+    public void setReportService(ReportService reportService) {
+        this.reportService = reportService;
+    }
+
+    public void setReportDefinitionService(ReportDefinitionService reportDefinitionService) {
+        this.reportDefinitionService = reportDefinitionService;
+    }
+
     /**
 	 * @see ModuleActivator#started()
 	 */
@@ -57,7 +65,11 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         }
     }
 
-    private void setupReport(ReportManager manager) {
+    /**
+     * This is only public for testing
+     * @param manager
+     */
+    public void setupReport(ReportManager manager) {
         ReportDefinition reportDefinition = manager.constructReportDefinition();
 
         log.info("Saving new definition of " + reportDefinition.getName());
