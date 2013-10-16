@@ -7,7 +7,6 @@ import org.openmrs.module.mirebalaisreports.definitions.AllPatientsWithIdsReport
 import org.openmrs.module.mirebalaisreports.definitions.BasicStatisticsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.LqasDiagnosesReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
-import org.openmrs.module.mirebalaisreports.definitions.WeeklyDiagnosisSurveillanceReportManager;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 
@@ -17,7 +16,6 @@ public class HomePageController {
 
     public void get(@SpringBean BasicStatisticsReportManager basicStatisticsReportManager,
 					@SpringBean NonCodedDiagnosesReportManager nonCodedDiagnosesReportManager,
-					@SpringBean WeeklyDiagnosisSurveillanceReportManager weeklyDiagnosisSurveillanceReportManager,
                     @SpringBean LqasDiagnosesReportManager lqasDiagnosesReportManager,
                     @SpringBean AllPatientsWithIdsReportManager allPatientsWithIdsReportManager,
                     @SpringBean MirebalaisReportsProperties mirebalaisReportsProperties,
@@ -27,7 +25,6 @@ public class HomePageController {
 
 		pageModel.addAttribute("basicStatisticsReport", basicStatisticsReportManager);
 		pageModel.addAttribute("nonCodedDiagnosesReport", nonCodedDiagnosesReportManager);
-		pageModel.addAttribute("weeklyDiagnosisSurveillanceReport", weeklyDiagnosisSurveillanceReportManager);
         pageModel.addAttribute("lqasDiagnosesReport", lqasDiagnosesReportManager);
         pageModel.addAttribute("allPatientsWithIdsReportManager", allPatientsWithIdsReportManager);
         pageModel.addAttribute("properties", mirebalaisReportsProperties);

@@ -18,6 +18,7 @@ import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -53,6 +54,9 @@ public class BasicStatisticsReportManager extends BaseReportManager {
 
     @Autowired
 	MirebalaisReportsService reportsService;
+
+    @Autowired
+    AllDefinitionLibraries definitionLibraries;
 
 	//***** INSTANCE METHODS *****
 
@@ -116,7 +120,7 @@ public class BasicStatisticsReportManager extends BaseReportManager {
 		returningPatientsOnDayQuery.addSearch("visit", encountersOfTypesInPeriodQuery, SimpleObject.create("onOrAfter", "${day}", "onOrBefore", "${day}", "encounterTypeList", mirebalaisReportsProperties.getVisitEncounterTypes()));
 		returningPatientsOnDayQuery.setCompositionString("returning AND visit");
 
-		CohortDefinition excludeTestPatientsCohortDefinition = reportsService.getCohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "exclude test patients");
+		CohortDefinition excludeTestPatientsCohortDefinition = definitionLibraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "excludeTestPatients");
 
 		// set up indicators
 

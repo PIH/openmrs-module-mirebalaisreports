@@ -38,14 +38,6 @@
 </div>
 
 <div style="padding-top:20px;">
-	<% if (context.hasPrivilege(weeklyDiagnosisSurveillanceReport.requiredPrivilege)) { %>
-	<div class="reportBox">
-		<p>${ ui.message("mirebalaisreports.categories.msppReports") }</p>
-		<ul>
-			<li><a id="mirebalaisreports-weeklyDiagnosisSurveillanceReport-link" href="${ ui.pageLink("mirebalaisreports", "weeklyDiagnosisSurveillance") }">${ weeklyDiagnosisSurveillanceReport.name }</a></li>
-		</ul>
-	</div>
-	<% } %>
 	<% if (context.hasPrivilege("App: mirebalaisreports.dataexports")) { %>
 	<div class="reportBox">
 		<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
