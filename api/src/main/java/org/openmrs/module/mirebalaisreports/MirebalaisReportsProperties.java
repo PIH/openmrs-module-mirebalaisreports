@@ -42,24 +42,33 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID = "d534683e-20bd-11e3-b5bd-0bec7fb71852";
     public static final String LQAS_DIAGNOSES_REPORT_DEFINITION_UUID = "f277f5b4-20bd-11e3-b5bd-0bec7fb71852";
     public static final String NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID = "3737be52-2265-11e3-818c-c7ea4184d59e";
-    public static final String WEEKLY_DIAGNOSIS_SURVEILLANCE_REPORT_DEFINITION_UUID = "c8a26f2c-2265-11e3-818c-c7ea4184d59e";
     public static final String BASIC_STATISTICS_REPORT_DEFINITION_UUID = "5650dbc4-2266-11e3-818c-c7ea4184d59e";
+    public static final String INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID = "f3bb8094-3738-11e3-b90a-a351ac6b1528";
 
 	//***** LOCATIONS *****
 
 	public static final String OUTPATIENT_CLINIC_UUID = "199e7d87-92a0-4398-a0f8-11d012178164";
+    public static final String WOMEN_CLINIC_UUID = "9b2066a2-7087-47f6-9b3a-b001037432a3";
+    public static final String EMERGENCY_DEPARTMENT_UUID = "f3a5586e-f06c-4dfb-96b0-6f3451a35e90";
+    public static final String EMERGENCY_RECEPTION_UUID = "afa09010-43b6-4f19-89e0-58d09941bcbd";
 
     public Location getOutpatientLocation() {
 		return getRequiredLocationByUuid(OUTPATIENT_CLINIC_UUID);
 	}
 
-	public static final String WOMEN_CLINIC_UUID = "9b2066a2-7087-47f6-9b3a-b001037432a3";
-
 	public Location getWomenLocation() {
 		return getRequiredLocationByUuid(WOMEN_CLINIC_UUID);
 	}
 
-	private Location getRequiredLocationByUuid(String uuid) {
+    public Location getEmergencyLocation() {
+        return getRequiredLocationByUuid(EMERGENCY_DEPARTMENT_UUID);
+    }
+
+    public Location getEmergencyReceptionLocation() {
+        return getRequiredLocationByUuid(EMERGENCY_RECEPTION_UUID);
+    }
+
+    private Location getRequiredLocationByUuid(String uuid) {
 		Location location = locationService.getLocationByUuid(uuid);
 		if (location == null) {
 			throw new IllegalStateException("Missing required location with uuid: " + uuid);
@@ -119,42 +128,42 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	//***** ENCOUNTER TYPES *****
 
 	public static final String REGISTRATION_ENCOUNTER_TYPE_UUID = "873f968a-73a8-4f9c-ac78-9f4778b751b6";
+    public static final String CHECK_IN_ENCOUNTER_TYPE_UUID = "55a0d3ea-a4d7-4e88-8f01-5aceb2d3c61b";
+    public static final String PAYMENT_ENCOUNTER_TYPE_UUID = "f1c286d0-b83f-4cd4-8348-7ea3c28ead13";
+    public static final String VITALS_ENCOUNTER_TYPE_UUID = "4fb47712-34a6-40d2-8ed3-e153abbd25b7";
+    public static final String CONSULT_ENCOUNTER_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
+    public static final String RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID = "1b3d1e13-f0b1-4b83-86ea-b1b1e2fb4efa";
+    public static final String POST_OP_NOTE_ENCOUNTER_TYPE_UUID = "c4941dee-7a9b-4c1c-aa6f-8193e9e5e4e5";
 
 	public EncounterType getRegistrationEncounterType() {
 		return getRequiredEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
 	}
 
-	public static final String CHECK_IN_ENCOUNTER_TYPE_UUID = "55a0d3ea-a4d7-4e88-8f01-5aceb2d3c61b";
-
 	public EncounterType getCheckInEncounterType() {
 		return getRequiredEncounterTypeByUuid(CHECK_IN_ENCOUNTER_TYPE_UUID);
 	}
-
-	public static final String PAYMENT_ENCOUNTER_TYPE_UUID = "f1c286d0-b83f-4cd4-8348-7ea3c28ead13";
 
 	public EncounterType getPaymentEncounterType() {
 		return getRequiredEncounterTypeByUuid(PAYMENT_ENCOUNTER_TYPE_UUID);
 	}
 
-	public static final String VITALS_ENCOUNTER_TYPE_UUID = "4fb47712-34a6-40d2-8ed3-e153abbd25b7";
-
 	public EncounterType getVitalsEncounterType() {
 		return getRequiredEncounterTypeByUuid(VITALS_ENCOUNTER_TYPE_UUID);
 	}
-
-	public static final String CONSULT_ENCOUNTER_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
 
 	public EncounterType getConsultEncounterType() {
 		return getRequiredEncounterTypeByUuid(CONSULT_ENCOUNTER_TYPE_UUID);
 	}
 
-	public static final String RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID = "1b3d1e13-f0b1-4b83-86ea-b1b1e2fb4efa";
-
 	public EncounterType getRadiologyOrderEncounterType() {
 		return getRequiredEncounterTypeByUuid(RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID);
 	}
 
-	/**
+    public EncounterType getPostOpNoteEncounterType() {
+        return getRequiredEncounterTypeByUuid(POST_OP_NOTE_ENCOUNTER_TYPE_UUID);
+    }
+
+    /**
 	 * @return all encounter types <em>except for</em> Registration, Payment, and Check-In
 	 */
 	@Transactional(readOnly = true)
@@ -347,4 +356,5 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		}
 		return c;
 	}
+
 }

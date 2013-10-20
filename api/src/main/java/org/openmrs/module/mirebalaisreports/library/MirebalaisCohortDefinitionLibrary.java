@@ -72,4 +72,5 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
         excludeTestPatientsCohortDefinition.setCompositionString("NOT test");
         return excludeTestPatientsCohortDefinition;
     }
+
 }
