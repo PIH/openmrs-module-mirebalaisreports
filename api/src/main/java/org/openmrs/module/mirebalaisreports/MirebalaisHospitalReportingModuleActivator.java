@@ -20,6 +20,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
+import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsDailyReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -54,9 +55,18 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         reportDefinitionService = Context.getService(ReportDefinitionService.class);
 
         setupFullDataExports();
+        setupOtherReports();
 
         log.info("Mirebalais Hospital Reporting Module Module started");
 	}
+
+    /**
+     * Currently we require these to be white-listed, until we've gone through all ReportManagers, and ensured they are
+     * ready to be included here
+     */
+    private void setupOtherReports() {
+        setupReport(Context.getRegisteredComponents(InpatientStatsDailyReportManager.class).get(0));
+    }
 
     private void setupFullDataExports() {
         FullDataExportBuilder fullDataExportBuilder = Context.getRegisteredComponents(FullDataExportBuilder.class).get(0);
