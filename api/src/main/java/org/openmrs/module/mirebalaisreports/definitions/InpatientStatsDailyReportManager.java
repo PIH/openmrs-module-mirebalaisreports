@@ -30,6 +30,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -95,8 +96,8 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             CohortIndicator censusStartInd = buildIndicator("Census at start: " + location.getName(), censusCohortDef, "effectiveDate=${startDate}");
             CohortIndicator censusEndInd = buildIndicator("Census at end: " + location.getName(), censusCohortDef, "effectiveDate=${endDate}");
 
-            dsd.addColumn("censusAtStart." + location.getId(), "Census at start: " + location.getName(), map(censusStartInd, "startDate=${startDate}"), "");
-            dsd.addColumn("censusAtEnd." + location.getId(), "Census at end: " + location.getName(), map(censusEndInd, "endDate=${endDate}"), "");
+            dsd.addColumn("censusAtStart:" + location.getUuid(), "Census at start: " + location.getName(), map(censusStartInd, "startDate=${startDate}"), "");
+            dsd.addColumn("censusAtEnd:" + location.getUuid(), "Census at end: " + location.getName(), map(censusEndInd, "endDate=${endDate}"), "");
 
             // number of admissions
 
@@ -107,7 +108,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             admissionDuring.addEncounterType(admissionEncounterType);
 
             CohortIndicator admissionInd = buildIndicator("Admission: " + location.getName(), admissionDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            dsd.addColumn("admission." + location.getId(), "Admission: " + location.getName(), map(admissionInd, "startDate=${startDate},endDate=${endDate}"), "");
+            dsd.addColumn("admissions:" + location.getUuid(), "Admission: " + location.getName(), map(admissionInd, "startDate=${startDate},endDate=${endDate}"), "");
             
             // number of transfer ins
 
@@ -117,7 +118,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             transferInDuring.setInToWard(location);
 
             CohortIndicator transferInInd = buildIndicator("Transfer In: " + location.getName(), transferInDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            dsd.addColumn("transferin." + location.getId(), "Transfer In: " + location.getName(), map(transferInInd, "startDate=${startDate},endDate=${endDate}"), "");
+            dsd.addColumn("transfersIn:" + location.getUuid(), "Transfer In: " + location.getName(), map(transferInInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number of transfer outs
 
@@ -127,7 +128,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             transferOutDuring.setOutOfWard(location);
 
             CohortIndicator transferOutInd = buildIndicator("Transfer Out: " + location.getName(), transferOutDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            dsd.addColumn("transferout." + location.getId(), "Transfer Out: " + location.getName(), map(transferOutInd, "startDate=${startDate},endDate=${endDate}"), "");
+            dsd.addColumn("transfersOut:" + location.getUuid(), "Transfer Out: " + location.getName(), map(transferOutInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number of exit-from-inpatient broken down by last disposition
 
@@ -158,7 +159,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         dsd.addColumn("orvolume", "OR Volume", map(surgicalNotesInd, "startDate=${startDate},endDate=${endDate}"), "");
 
 
-        rd.addDataSetDefinition("dsd", map(dsd, "startDate=${day},endDate=${day+1d-1s}"));
+        rd.addDataSetDefinition("cohorts", map(dsd, "startDate=${day},endDate=${day+1d-1s}"));
 
         return rd;
     }
@@ -182,7 +183,11 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition));
+        try {
+            return Arrays.asList(xlsReportDesign(reportDefinition, getBytesForResource("org/openmrs/module/mirebalaisreports/reportTemplates/InpatientStatsDailyReport.xls")));
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load excel template", e);
+        }
     }
 
 }

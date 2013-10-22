@@ -67,7 +67,7 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition));
+        return Arrays.asList(xlsReportDesign(reportDefinition, null));
     }
 
 }

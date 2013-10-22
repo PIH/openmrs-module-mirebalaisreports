@@ -93,7 +93,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition));
+        return Arrays.asList(xlsReportDesign(reportDefinition, null));
     }
 
 }

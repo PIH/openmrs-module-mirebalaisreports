@@ -22,10 +22,15 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.report.ReportDesign;
+import org.openmrs.module.reporting.report.ReportDesignResource;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
+import org.openmrs.util.OpenmrsUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,11 +87,20 @@ public abstract class BaseReportManager implements ReportManager {
 		return translation;
 	}
 
-    protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition) {
+    protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition, byte[] excelTemplate) {
         ReportDesign design = new ReportDesign();
         design.setName("mirebalaisreports.output.excel");
         design.setReportDefinition(reportDefinition);
         design.setRendererType(XlsReportRenderer.class);
+        if (excelTemplate != null) {
+            ReportDesignResource resource = new ReportDesignResource();
+            resource.setName("template");
+            resource.setExtension("xls");
+            resource.setContentType("application/vnd.ms-excel");
+            resource.setContents(excelTemplate);
+            resource.setReportDesign(design);
+            design.addResource(resource);
+        }
         return design;
     }
 
@@ -100,4 +114,10 @@ public abstract class BaseReportManager implements ReportManager {
         return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
     }
 
+    protected byte[] getBytesForResource(String pathToResource) throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(pathToResource);
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        OpenmrsUtil.copyFile(inputStream, bytes);
+        return bytes.toByteArray();
+    }
 }

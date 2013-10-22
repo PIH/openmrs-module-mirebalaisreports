@@ -103,7 +103,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition));
+        return Arrays.asList(xlsReportDesign(reportDefinition, null));
     }
 
 }
