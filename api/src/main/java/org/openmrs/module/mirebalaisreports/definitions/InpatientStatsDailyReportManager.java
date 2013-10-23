@@ -33,7 +33,6 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -196,7 +195,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             leftWithoutCompletingTreatment.addDisposition(leftWithoutCompletionOfTreatmentDisposition);
 
             CohortIndicator leftWithoutCompletingTreatmentInd = buildIndicator("Left Without Completing Treatment: " + location.getName(), leftWithoutCompletingTreatment, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
-            cohortDsd.addColumn("left without completing tx:" + location.getUuid(), "Left Without Completing Treatment: " + location.getName(), map(leftWithoutCompletingTreatmentInd, "startDate=${startDate},endDate=${endDate}"), "");
+            cohortDsd.addColumn("leftWithoutCompletingTx:" + location.getUuid(), "Left Without Completing Treatment: " + location.getName(), map(leftWithoutCompletingTreatmentInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number left without completing treatment
 
@@ -208,7 +207,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             leftWithoutSeeingClinician.addDisposition(leftWithoutSeeingClinicianDisposition);
 
             CohortIndicator leftWithoutSeeingClinicianInd = buildIndicator("Left Without Seeing Clinician: " + location.getName(), leftWithoutSeeingClinician, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
-            cohortDsd.addColumn("left without seeing clinician:" + location.getUuid(), "Left Without Seeing Clinician: " + location.getName(), map(leftWithoutSeeingClinicianInd, "startDate=${startDate},endDate=${endDate}"), "");
+            cohortDsd.addColumn("leftWithoutSeeingClinician:" + location.getUuid(), "Left Without Seeing Clinician: " + location.getName(), map(leftWithoutSeeingClinicianInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // length of stay of patients who exited from inpatient (by ward, and in the ER)
 
@@ -257,11 +256,14 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        try {
-            return Arrays.asList(xlsReportDesign(reportDefinition, getBytesForResource("org/openmrs/module/mirebalaisreports/reportTemplates/InpatientStatsDailyReport.xls")));
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to load excel template", e);
-        }
+        // At present we aren't maintaining an excel template for this, because we don't intend for it to be downloaded.
+        // If we commit to that decision, then remove this commented out code, as well as the xls file.
+        //try {
+        //    return Arrays.asList(xlsReportDesign(reportDefinition, getBytesForResource("org/openmrs/module/mirebalaisreports/reportTemplates/InpatientStatsDailyReport.xls")));
+        //} catch (IOException e) {
+        //    throw new IllegalStateException("Unable to load excel template", e);
+        //}
+        return Arrays.asList(xlsReportDesign(reportDefinition, null));
     }
 
 }

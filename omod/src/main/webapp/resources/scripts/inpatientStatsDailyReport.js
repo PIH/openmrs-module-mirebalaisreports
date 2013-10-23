@@ -1,5 +1,15 @@
 var app = angular.module('inpatientStatsDailyReport', [ ]).
 
+    filter('translate', function() {
+        return function(input, prefix) {
+            if (input && input.uuid) {
+                input = input.uuid;
+            }
+            var code = prefix ? prefix + input : input;
+            return emr.message(code, input);
+        }
+    }).
+
     controller('InpatientStatsDailyReportController', ['$scope', '$http', function($scope, $http) {
 
         $scope.locationIndicators = [
@@ -10,8 +20,8 @@ var app = angular.module('inpatientStatsDailyReport', [ ]).
             { name: "discharged", label: "Discharged" },
             { name: "deaths", label: "Died" },
             { name: "transfersOutOfHUM", label: "Transferred out of HUM" },
-            { name: "left without completing tx", label: "Left without completing treatment" },
-            { name: "left without seeing clinician", label: "Left without seeing a clinician" },
+            { name: "leftWithoutCompletingTx", label: "Left without completing treatment" },
+            { name: "leftWithoutSeeingClinician", label: "Left without seeing a clinician" },
             { name: "censusAtEnd", label: "Census at end" }
         ];
 
@@ -32,7 +42,7 @@ var app = angular.module('inpatientStatsDailyReport', [ ]).
 
         $scope.maxDay = moment().startOf('day'); // won't be changed
 
-        $scope.day = moment().startOf('day');
+        $scope.day = moment().subtract('day', 1).startOf('day');
 
         $scope.previousDay = function() {
             $scope.day.subtract('days', 1);
