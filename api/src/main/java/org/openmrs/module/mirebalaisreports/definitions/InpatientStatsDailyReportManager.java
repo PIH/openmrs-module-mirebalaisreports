@@ -14,12 +14,15 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientTransferCohortDefinition;
+import org.openmrs.module.mirebalaisreports.cohort.definition.LastDispositionBeforeExitCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -41,6 +44,9 @@ import java.util.List;
  */
 @Component
 public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManager {
+
+    @Autowired
+    private ConceptService conceptService;
 
     @Autowired
     private AdtService adtService;
@@ -69,6 +75,20 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         List<Location> inpatientLocations = adtService.getInpatientLocations();
         EncounterType admissionEncounterType = emrApiProperties.getAdmissionEncounterType();
         EncounterType transferWithinHospitalEncounterType = emrApiProperties.getTransferWithinHospitalEncounterType();
+        EncounterType exitEncounterType = emrApiProperties.getExitFromInpatientEncounterType();
+
+        Concept dischargedDisposition = conceptService.getConceptByMapping("DISCHARGED", "PIH");
+        Concept deathDisposition = conceptService.getConceptByMapping("DEATH", "PIH");
+        Concept transferOutDisposition = conceptService.getConceptByMapping("Transfer out of hospital", "PIH");
+        Concept leftWithoutCompletionOfTreatmentDisposition = conceptService.getConceptByMapping("Departed without medical discharge", "PIH");
+        Concept leftWithoutSeeingClinicianDisposition = conceptService.getConceptByMapping("Left without seeing a clinician", "PIH");
+        List<Concept> dispositionsToConsider = Arrays.asList(dischargedDisposition, deathDisposition, transferOutDisposition, leftWithoutCompletionOfTreatmentDisposition, leftWithoutSeeingClinicianDisposition);
+        // Dispositions we're currently ignoring: "Transfer within hospital", "Admit to hospital", "Discharged", "Emergency Department observation", "Home"
+
+//        EncounterCohortDefinition exitDuring = new EncounterCohortDefinition();
+//        exitDuring.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
+//        exitDuring.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
+//        exitDuring.addEncounterType(exitEncounterType);
 
         ReportDefinition rd = new ReportDefinition();
         rd.setName(getMessageCodePrefix() + "name");
@@ -76,14 +96,14 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         rd.setUuid(getUuid());
         rd.setParameters(getParameters());
 
+        CohortIndicatorDataSetDefinition cohortDsd = new CohortIndicatorDataSetDefinition();
+        cohortDsd.addParameter(getStartDateParameter());
+        cohortDsd.addParameter(getEndDateParameter());
 
-//        InpatientLocationCohortDefinition censusCohortDef = new InpatientLocationCohortDefinition();
-//        censusCohortDef.addParameter(getEffectiveDateParameter());
-
-
-        CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
-        dsd.addParameter(getStartDateParameter());
-        dsd.addParameter(getEndDateParameter());
+//        PatientDataSetDefinition exitingPatientsDsd = new PatientDataSetDefinition();
+//        exitingPatientsDsd.addParameter(getStartDateParameter());
+//        exitingPatientsDsd.addParameter(getEndDateParameter());
+//        exitingPatientsDsd.addRowFilter(exitDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
 
         for (Location location : inpatientLocations) {
 
@@ -96,8 +116,8 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             CohortIndicator censusStartInd = buildIndicator("Census at start: " + location.getName(), censusCohortDef, "effectiveDate=${startDate}");
             CohortIndicator censusEndInd = buildIndicator("Census at end: " + location.getName(), censusCohortDef, "effectiveDate=${endDate}");
 
-            dsd.addColumn("censusAtStart:" + location.getUuid(), "Census at start: " + location.getName(), map(censusStartInd, "startDate=${startDate}"), "");
-            dsd.addColumn("censusAtEnd:" + location.getUuid(), "Census at end: " + location.getName(), map(censusEndInd, "endDate=${endDate}"), "");
+            cohortDsd.addColumn("censusAtStart:" + location.getUuid(), "Census at start: " + location.getName(), map(censusStartInd, "startDate=${startDate}"), "");
+            cohortDsd.addColumn("censusAtEnd:" + location.getUuid(), "Census at end: " + location.getName(), map(censusEndInd, "endDate=${endDate}"), "");
 
             // number of admissions
 
@@ -108,7 +128,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             admissionDuring.addEncounterType(admissionEncounterType);
 
             CohortIndicator admissionInd = buildIndicator("Admission: " + location.getName(), admissionDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            dsd.addColumn("admissions:" + location.getUuid(), "Admission: " + location.getName(), map(admissionInd, "startDate=${startDate},endDate=${endDate}"), "");
+            cohortDsd.addColumn("admissions:" + location.getUuid(), "Admission: " + location.getName(), map(admissionInd, "startDate=${startDate},endDate=${endDate}"), "");
             
             // number of transfer ins
 
@@ -118,7 +138,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             transferInDuring.setInToWard(location);
 
             CohortIndicator transferInInd = buildIndicator("Transfer In: " + location.getName(), transferInDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            dsd.addColumn("transfersIn:" + location.getUuid(), "Transfer In: " + location.getName(), map(transferInInd, "startDate=${startDate},endDate=${endDate}"), "");
+            cohortDsd.addColumn("transfersIn:" + location.getUuid(), "Transfer In: " + location.getName(), map(transferInInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number of transfer outs
 
@@ -128,9 +148,67 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             transferOutDuring.setOutOfWard(location);
 
             CohortIndicator transferOutInd = buildIndicator("Transfer Out: " + location.getName(), transferOutDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            dsd.addColumn("transfersOut:" + location.getUuid(), "Transfer Out: " + location.getName(), map(transferOutInd, "startDate=${startDate},endDate=${endDate}"), "");
+            cohortDsd.addColumn("transfersOut:" + location.getUuid(), "Transfer Out: " + location.getName(), map(transferOutInd, "startDate=${startDate},endDate=${endDate}"), "");
 
-            // number of exit-from-inpatient broken down by last disposition
+            // number of discharges
+
+            LastDispositionBeforeExitCohortDefinition discharged = new LastDispositionBeforeExitCohortDefinition();
+            discharged.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
+            discharged.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
+            discharged.setExitFromWard(location);
+            discharged.setDispositionsToConsider(dispositionsToConsider);
+            discharged.addDisposition(dischargedDisposition);
+
+            CohortIndicator dischargedInd = buildIndicator("Discharged: " + location.getName(), discharged, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
+            cohortDsd.addColumn("discharged:" + location.getUuid(), "Discharged: " + location.getName(), map(dischargedInd, "startDate=${startDate},endDate=${endDate}"), "");
+
+            // number of deaths
+
+            LastDispositionBeforeExitCohortDefinition deaths = new LastDispositionBeforeExitCohortDefinition();
+            deaths.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
+            deaths.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
+            deaths.setExitFromWard(location);
+            deaths.setDispositionsToConsider(dispositionsToConsider);
+            deaths.addDisposition(deathDisposition);
+
+            CohortIndicator deathsInd = buildIndicator("Deaths: " + location.getName(), deaths, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
+            cohortDsd.addColumn("deaths:" + location.getUuid(), "Deaths: " + location.getName(), map(deathsInd, "startDate=${startDate},endDate=${endDate}"), "");
+
+            // number transferred out of HUM
+
+            LastDispositionBeforeExitCohortDefinition transfersOut = new LastDispositionBeforeExitCohortDefinition();
+            transfersOut.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
+            transfersOut.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
+            transfersOut.setExitFromWard(location);
+            transfersOut.setDispositionsToConsider(dispositionsToConsider);
+            transfersOut.addDisposition(transferOutDisposition);
+
+            CohortIndicator transfersOutInd = buildIndicator("Transfer Outs: " + location.getName(), transfersOut, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
+            cohortDsd.addColumn("transfersOutOfHUM:" + location.getUuid(), "Transfer Outs: " + location.getName(), map(transfersOutInd, "startDate=${startDate},endDate=${endDate}"), "");
+
+            // number left without completing treatment
+
+            LastDispositionBeforeExitCohortDefinition leftWithoutCompletingTreatment = new LastDispositionBeforeExitCohortDefinition();
+            leftWithoutCompletingTreatment.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
+            leftWithoutCompletingTreatment.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
+            leftWithoutCompletingTreatment.setExitFromWard(location);
+            leftWithoutCompletingTreatment.setDispositionsToConsider(dispositionsToConsider);
+            leftWithoutCompletingTreatment.addDisposition(leftWithoutCompletionOfTreatmentDisposition);
+
+            CohortIndicator leftWithoutCompletingTreatmentInd = buildIndicator("Left Without Completing Treatment: " + location.getName(), leftWithoutCompletingTreatment, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
+            cohortDsd.addColumn("left without completing tx:" + location.getUuid(), "Left Without Completing Treatment: " + location.getName(), map(leftWithoutCompletingTreatmentInd, "startDate=${startDate},endDate=${endDate}"), "");
+
+            // number left without completing treatment
+
+            LastDispositionBeforeExitCohortDefinition leftWithoutSeeingClinician = new LastDispositionBeforeExitCohortDefinition();
+            leftWithoutSeeingClinician.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
+            leftWithoutSeeingClinician.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
+            leftWithoutSeeingClinician.setExitFromWard(location);
+            leftWithoutSeeingClinician.setDispositionsToConsider(dispositionsToConsider);
+            leftWithoutSeeingClinician.addDisposition(leftWithoutSeeingClinicianDisposition);
+
+            CohortIndicator leftWithoutSeeingClinicianInd = buildIndicator("Left Without Seeing Clinician: " + location.getName(), leftWithoutSeeingClinician, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
+            cohortDsd.addColumn("left without seeing clinician:" + location.getUuid(), "Left Without Seeing Clinician: " + location.getName(), map(leftWithoutSeeingClinicianInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // length of stay of patients who exited from inpatient (by ward, and in the ER)
 
@@ -147,7 +225,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         edCheckIn.addLocation(mirebalaisReportsProperties.getEmergencyReceptionLocation());
 
         CohortIndicator edCheckInInd = buildIndicator("ED Check In", edCheckIn, "onOrAfter=${startDate},onOrBefore=${endDate}");
-        dsd.addColumn("edcheckin", "ED Check In", map(edCheckInInd, "startDate=${startDate},endDate=${endDate}"), "");
+        cohortDsd.addColumn("edcheckin", "ED Check In", map(edCheckInInd, "startDate=${startDate},endDate=${endDate}"), "");
 
         // number of surgical op-notes entered
         EncounterCohortDefinition surgicalNotes = new EncounterCohortDefinition();
@@ -156,17 +234,13 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         surgicalNotes.addEncounterType(mirebalaisReportsProperties.getPostOpNoteEncounterType());
 
         CohortIndicator surgicalNotesInd = buildIndicator("OR Volume", surgicalNotes, "onOrAfter=${startDate},onOrBefore=${endDate}");
-        dsd.addColumn("orvolume", "OR Volume", map(surgicalNotesInd, "startDate=${startDate},endDate=${endDate}"), "");
+        cohortDsd.addColumn("orvolume", "OR Volume", map(surgicalNotesInd, "startDate=${startDate},endDate=${endDate}"), "");
 
 
-        rd.addDataSetDefinition("cohorts", map(dsd, "startDate=${day},endDate=${day+1d-1s}"));
+        rd.addDataSetDefinition("cohorts", map(cohortDsd, "startDate=${day},endDate=${day+1d-1s}"));
 
         return rd;
     }
-
-//    private Parameter getWardParameter() {
-//        return new Parameter("ward", "Ward", Location.class);
-//    }
 
     private Parameter getEffectiveDateParameter() {
         return new Parameter("effectiveDate", "mirebalaisreports.parameter.effectiveDate", Date.class);

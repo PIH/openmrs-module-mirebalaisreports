@@ -32,6 +32,9 @@
     <encounter encounter_id="10031" visit_id="1003" encounter_type="1" patient_id="1003" location_id="10" encounter_datetime="2013-10-01 12:34:00.0" creator="1" date_created="2013-10-09 09:15:00.0" voided="false" uuid="a652e4ae-383d-11e3-9177-3bc634afd001"/>
     <encounter encounter_id="10032" visit_id="1003" encounter_type="12" patient_id="1003" location_id="33" encounter_datetime="2013-10-01 13:57:00.0" creator="1" date_created="2013-10-09 12:30:00.0" voided="false" uuid="a652e4ae-383d-11e3-9177-3bc634afd002"/>
     <encounter encounter_id="10033" visit_id="1003" encounter_type="11" patient_id="1003" location_id="33" encounter_datetime="2013-10-03 12:45:00.0" creator="1" date_created="2013-10-03 23:45:00.0" voided="false" uuid="a652e4ae-383d-11e3-9177-3bc634afd003"/>
+    <!-- consult with disposition of Discharge -->
+    <encounter encounter_id="10034" visit_id="1003" encounter_type="8" patient_id="1003" location_id="33" encounter_datetime="2013-10-03 12:15:00.0" creator="1" date_created="2013-10-03 23:45:00.0" voided="false" uuid="a652e4ae-383d-11e3-9177-3bc634afd004"/>
+    <obs obs_id="10031" encounter_id="10034" person_id="1003" concept_id="984" obs_datetime="2013-10-03 12:15:00.0" location_id="33" value_coded="1228" comments="" creator="1" date_created="2013-10-03 14:11:13.0" voided="false" uuid="a652e4ae-383d-11e3-9177-3bc634afd005"/>
 
     <!-- Begins the day of 3 Oct at Women's Inpatient (was admitted earlier), and transferred to Surgical Ward during the day -->
     <person person_id="1004" gender="F" birthdate="1900-06-07" birthdate_estimated="false" dead="false" creator="49" date_created="2013-10-01 00:00:00.0" voided="false" uuid="016f4688-36a5-11e3-b90a-a351ac6b1524"/>
