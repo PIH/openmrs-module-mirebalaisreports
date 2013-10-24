@@ -12,6 +12,11 @@ var app = angular.module('inpatientStatsDailyReport', [ ]).
 
     controller('InpatientStatsDailyReportController', ['$scope', '$http', function($scope, $http) {
 
+        $scope.indicators = [
+            { name: "edcheckin" },
+            { name: "orvolume" }
+        ];
+
         $scope.locationIndicators = [
             { name: "censusAtStart", label: "Census at start" },
             { name: "admissions", label: "Admissions" },
@@ -46,10 +51,12 @@ var app = angular.module('inpatientStatsDailyReport', [ ]).
 
         $scope.previousDay = function() {
             $scope.day.subtract('days', 1);
+            $scope.viewingCohort = null;
         };
 
         $scope.nextDay = function() {
             $scope.day.add('days', 1);
+            $scope.viewingCohort = null;
         };
 
         $scope.dataFor = function(day) {
@@ -82,10 +89,15 @@ var app = angular.module('inpatientStatsDailyReport', [ ]).
                 });
         }
 
-        $scope.viewCohort = function(day, location, locationIndicator) {
+        $scope.viewCohort = function(day, indicator, location) {
             day = day.clone(); // moment.js dates are mutable
 
-            var ptIds = $scope.dataFor(day).cohorts[locationIndicator.name + ":" + location.uuid].patientIds;
+            var indicatorName = indicator.name;
+            if (location) {
+                indicatorName += ":" + location.uuid;
+            }
+
+            var ptIds = $scope.dataFor(day).cohorts[indicatorName].patientIds;
             if (ptIds == null || ptIds.length == 0) {
                 $scope.viewingCohort = null;
                 return;
@@ -100,7 +112,7 @@ var app = angular.module('inpatientStatsDailyReport', [ ]).
                 success(function(data, status, headers, config) {
                     $scope.viewingCohort = {
                         location: location,
-                        indicator: locationIndicator,
+                        indicator: indicator,
                         members: data.members
                     };
                 });

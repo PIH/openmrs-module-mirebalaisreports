@@ -37,7 +37,9 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
         "mirebalaisreports.inpatientStatsDailyReport.transfersOutOfHUM",
         "mirebalaisreports.inpatientStatsDailyReport.leftWithoutCompletingTx",
         "mirebalaisreports.inpatientStatsDailyReport.leftWithoutSeeingClinician",
-        "mirebalaisreports.inpatientStatsDailyReport.censusAtEnd"
+        "mirebalaisreports.inpatientStatsDailyReport.censusAtEnd",
+        "mirebalaisreports.inpatientStatsDailyReport.edcheckin",
+        "mirebalaisreports.inpatientStatsDailyReport.orvolume"
     ]
 ])}
 
@@ -88,11 +90,24 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
                 <tr ng-repeat="locationIndicator in locationIndicators">
                     <th>{{ locationIndicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}</th>
                     <td ng-repeat="location in locations">
-                        <a ng-click="viewCohort(day, location, locationIndicator)">
+                        <a ng-click="viewCohort(day, locationIndicator, location)">
                             {{ dataFor(day).cohorts[locationIndicator.name + ":" + location.uuid].size }}
                         </a>
                     </td>
                 </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <tbody>
+            <tr ng-repeat="indicator in indicators">
+                <th>{{ indicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}</th>
+                <td>
+                    <a ng-click="viewCohort(day, indicator)">
+                        {{ dataFor(day).cohorts[indicator.name].size }}
+                    </a>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -102,10 +117,14 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
         <img ng-show="viewingCohort.loading" src="${ ui.resourceLink("uicommons", "images/spinner.gif") }"/>
 
         <div ng-show="viewingCohort.members">
-            <h3>{{ viewingCohort.location | translate:"ui.i18n.Location.name." }} {{ viewingCohort.indicator.label }}</h3>
+            <h3>
+                <span ng-show="viewingCohort.location">{{ viewingCohort.location | translate:"ui.i18n.Location.name." }}</span>
+                {{ viewingCohort.indicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}
+            </h3>
 
             <table>
                 <thead>
+                    <th></th>
                     <th>${ ui.message("ui.i18n.PatientIdentifierType.name.a541af1e-105c-40bf-b345-ba1fd6a59b85") }</th>
                     <th>${ ui.message("ui.i18n.PatientIdentifierType.name.e66645eb-03a8-4991-b4ce-e87318e37566") }</th>
                 </thead>
@@ -113,8 +132,11 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
                     <tr ng-repeat="member in viewingCohort.members">
                         <td>
                             <a target="_blank" href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard") }?patientId={{ member.patientId }}">
-                                {{ member.zlEmrId }}
+                                {{ member.familyName }}, {{ member.givenName }}
                             </a>
+                        </td>
+                        <td>
+                            {{ member.zlEmrId }}
                         </td>
                         <td>
                             {{ member.dossierNumber }}
