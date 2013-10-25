@@ -41,6 +41,8 @@
 
         jq(".codeDiagnosis").click(function(event) {
             createCodeDiagnosisDialog();
+            patientDashboardLink ='${ui.pageLink("coreapps", "patientdashboard/patientDashboard")}';
+            instructionsTemplate ='${ ui.escapeJs(ui.message("coreapps.dataManagement.replaceNonCoded")) }';
             var patientId = jq(event.target).attr("data-patient-id");
             var visitId = jq(event.target).attr("data-visit-id");
             var patientIdentifier = jq(event.target).attr("data-patient-identifier");
