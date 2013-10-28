@@ -340,14 +340,20 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public static final String SET_OF_EMERGENCY_DIAGNOSIS_CONCEPT_UUID = "cfe2f068-0dd1-4522-80f5-c71a5b5f2c8b";
 
 	public Concept getSetOfEmergencyDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_NON_DIAGNOSIS_CONCEPT_UUID);
+		return getRequiredConceptByUuid(SET_OF_EMERGENCY_DIAGNOSIS_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_AGE_RESTRICTED_DISEASES_CONCEPT_UUID = "2231e6b8-6259-426d-a9b2-d3cb8fbbd6a3";
 
 	public Concept getSetOfAgeRestrictedDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_NON_DIAGNOSIS_CONCEPT_UUID);
+		return getRequiredConceptByUuid(SET_OF_AGE_RESTRICTED_DISEASES_CONCEPT_UUID);
 	}
+
+    public static final String RETURN_VISIT_DATE_CONCEPT_UUID = "3ce94df0-26fe-102b-80cb-0017a47871b2";
+
+    public Concept getReturnVisitDate() {
+        return getRequiredConceptByUuid(RETURN_VISIT_DATE_CONCEPT_UUID);
+    }
 
 	private Concept getRequiredConceptByUuid(String uuid) {
 		Concept c = conceptService.getConceptByUuid(uuid);
