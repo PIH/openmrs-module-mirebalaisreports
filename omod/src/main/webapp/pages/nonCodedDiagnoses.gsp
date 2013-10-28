@@ -25,9 +25,7 @@
     };
 
     jq(function() {
-
-        jq("#non-coded-diagnoses").dataTable({});
-        
+                
         jq('#startDateField-display, #endDateField-display, #nonCodedField-display').change(toggleSubmitButton);
 
         jq('#nonCodedForm').submit(function() {
@@ -144,5 +142,17 @@
     <% } %>
     </tbody>
 </table>
+
+${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#non-coded-diagnoses",
+        options: [
+                bFilter: true,
+                bJQueryUI: true,
+                bLengthChange: false,
+                iDisplayLength: 10,
+                sPaginationType: '\"full_numbers\"',
+                bSort: false,
+                sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
+        ]
+]) }
 
 ${ ui.includeFragment("coreapps", "datamanagement/codeDiagnosisDialog") }
