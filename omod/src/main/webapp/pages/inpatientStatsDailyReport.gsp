@@ -83,7 +83,7 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="locationIndicator in locationIndicators">
+                <tr ng-repeat="locationIndicator in locationIndicators" ng-class="locationIndicator.class">
                     <th>{{ locationIndicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}</th>
                     <td ng-repeat="location in locations">
                         <a ng-click="viewCohort(day, locationIndicator, location)">

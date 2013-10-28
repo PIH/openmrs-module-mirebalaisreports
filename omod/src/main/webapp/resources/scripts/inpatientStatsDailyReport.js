@@ -13,32 +13,32 @@ var app = angular.module('inpatientStatsDailyReport', ['ui.bootstrap']).
     controller('InpatientStatsDailyReportController', ['$scope', '$http', function($scope, $http) {
 
         $scope.indicators = [
-            { name: "edcheckin" },
-            { name: "orvolume" }
+            { name: "edcheckin", class: "indicator-in" },
+            { name: "orvolume", class: "indicator-total" }
         ];
 
         $scope.locationIndicators = [
-            { name: "censusAtStart", label: "Census at start" },
-            { name: "admissions", label: "Admissions" },
-            { name: "transfersIn", label: "Transfers In" },
-            { name: "transfersOut", label: "Transfers Out" },
-            { name: "discharged", label: "Discharged" },
-            { name: "deaths", label: "Died" },
-            { name: "transfersOutOfHUM", label: "Transferred out of HUM" },
-            { name: "leftWithoutCompletingTx", label: "Left without completing treatment" },
-            { name: "leftWithoutSeeingClinician", label: "Left without seeing a clinician" },
-            { name: "censusAtEnd", label: "Census at end" }
+            { name: "censusAtStart", label: "Census at start", class: "indicator-total" },
+            { name: "admissions", label: "Admissions", class: "indicator-in" },
+            { name: "transfersIn", label: "Transfers In", class: "indicator-in" },
+            { name: "transfersOut", label: "Transfers Out", class: "indicator-out" },
+            { name: "discharged", label: "Discharged", class: "indicator-out" },
+            { name: "deaths", label: "Died", class: "indicator-out" },
+            { name: "transfersOutOfHUM", label: "Transferred out of HUM", class: "indicator-out" },
+            { name: "leftWithoutCompletingTx", label: "Left without completing treatment", class: "indicator-out" },
+            { name: "leftWithoutSeeingClinician", label: "Left without seeing a clinician", class: "indicator-out" },
+            { name: "censusAtEnd", label: "Census at end", class: "indicator-total" }
         ];
 
         $scope.locations = [
             { uuid: "272bd989-a8ee-4a16-b5aa-55bad4e84f5c", name: "Antepartum Ward" },
             { uuid: "dcfefcb7-163b-47e5-84ae-f715cf3e0e92", name: "Labor and Delivery" },
-            { uuid: "e5db0599-89e8-44fa-bfa2-07e47d63546f", name: "Men’s Internal Medicine" },
+            { uuid: "950852f3-8a96-4d82-a5f8-a68a92043164", name: "Postpartum Ward" },
             { uuid: "62a9500e-a1a5-4235-844f-3a8cc0765d53", name: "NICU" },
             { uuid: "c9ab4c5c-0a8a-4375-b986-f23c163b2f69", name: "Pediatrics" },
-            { uuid: "950852f3-8a96-4d82-a5f8-a68a92043164", name: "Postpartum Ward" },
-            { uuid: "7d6cc39d-a600-496f-a320-fd4985f07f0b", name: "Surgical Ward" },
-            { uuid: "2c93919d-7fc6-406d-a057-c0b640104790", name: "Women's Internal Medicine" }
+            { uuid: "2c93919d-7fc6-406d-a057-c0b640104790", name: "Women's Internal Medicine" },
+            { uuid: "e5db0599-89e8-44fa-bfa2-07e47d63546f", name: "Men’s Internal Medicine" },
+            { uuid: "7d6cc39d-a600-496f-a320-fd4985f07f0b", name: "Surgical Ward" }
         ];
 
         $scope.data = { };

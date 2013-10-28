@@ -15,6 +15,17 @@
 		font-size: 1.2em;
 		cursor: pointer;
 	}
+
+    .indicator-in {
+      background-color: lighten(#FFC220);
+    }
+
+    .indicator-out {
+      background-color: lighten(#9FA615);
+    }
+
+    .indicator-total {
+    }
 }
 
 #current-date {
