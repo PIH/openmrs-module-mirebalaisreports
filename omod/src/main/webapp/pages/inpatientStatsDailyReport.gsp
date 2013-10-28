@@ -4,20 +4,8 @@
     ui.includeJavascript("uicommons", "moment.min.js")
     ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("mirebalaisreports", "inpatientStatsDailyReport.js")
+    ui.includeCss("mirebalaisreports", "inpatientStatsDailyReport.css")
 %>
-<style type="text/css">
-    #date-header {
-        text-align: center;
-    }
-
-    #current-date {
-        font-size: 2em;
-    }
-
-    #view-cohort {
-        margin-top: 2em;
-    }
-</style>
 
 ${ ui.includeFragment("appui", "messages", [ codes: [
         "ui.i18n.Location.name.272bd989-a8ee-4a16-b5aa-55bad4e84f5c",
@@ -54,16 +42,16 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
 <div ng-app="inpatientStatsDailyReport" ng-controller="InpatientStatsDailyReportController" ng-init="evaluate()">
 
     <div id="date-header">
-        <button class="left" ng-click="previousDay()">
+        <h1 id="current-date">
+            ${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") },
+            {{ day.format('DD-MMM-YYYY') }}
+        </h1>
+
+        <button ng-click="previousDay()">
             ${ ui.message("uicommons.previous") }
         </button>
 
-        <span id="current-date">
-            ${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") },
-            {{ day.format('DD-MMM-YYYY') }}
-        </span>
-
-        <button class="right" ng-click="nextDay()" ng-disabled="!day.isBefore(maxDay)">
+        <button ng-click="nextDay()" ng-disabled="!day.isBefore(maxDay)">
             ${ ui.message("uicommons.next") }
         </button>
     </div>
@@ -79,7 +67,7 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
     </div>
 
     <div ng-show="hasResults(day)">
-        <table>
+        <table class="inpatients-table">
             <thead>
                 <tr>
                     <th></th>
@@ -98,7 +86,7 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
             </tbody>
         </table>
 
-        <table>
+        <table class="inpatients-table">
             <tbody>
             <tr ng-repeat="indicator in indicators">
                 <th>{{ indicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}</th>

@@ -1,0 +1,30 @@
+.inpatients-table {
+	th {
+		min-width: 85px;
+		font-size: 0.8em;
+		word-break: normal;
+		padding: 5px;
+		text-align: center;	
+	}
+
+	td {
+		text-align: center;
+	}
+
+	a {
+		font-size: 1.2em;
+		cursor: pointer;
+	}
+}
+
+#current-date {
+	display: inline-block;
+}
+
+#date-header {
+	text-align: center;
+}
+
+#view-cohort {
+	margin-top: 2em;
+}
