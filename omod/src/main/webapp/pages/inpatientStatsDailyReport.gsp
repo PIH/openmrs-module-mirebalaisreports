@@ -4,6 +4,7 @@
     ui.includeJavascript("uicommons", "moment.min.js")
     ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("mirebalaisreports", "inpatientStatsDailyReport.js")
+    ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
     ui.includeCss("mirebalaisreports", "inpatientStatsDailyReport.css")
 %>
 
@@ -46,6 +47,13 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
             ${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") },
             {{ day.format('DD-MMM-YYYY') }}
         </h1>
+        
+        <div ng-controller="DatepickerDemoCtrl">
+            <div class="form-horizontal">
+                <input type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="day" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" />
+                <button class="btn" ng-click="open()"><i class="icon-calendar"></i></button>
+            </div>
+        </div>
 
         <button ng-click="previousDay()">
             ${ ui.message("uicommons.previous") }
