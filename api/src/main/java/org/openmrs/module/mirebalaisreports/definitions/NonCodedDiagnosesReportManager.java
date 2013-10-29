@@ -17,6 +17,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
+import org.openmrs.Provider;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
@@ -77,6 +78,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 		l.add(new Parameter("fromDate", "From Date", Date.class));
 		l.add(new Parameter("toDate", "To Date", Date.class));
         l.add(new Parameter("nonCoded", "Non-Coded", String.class));
+        l.add(new Parameter("provider", "Provider", Provider.class));
 		return l;
 	}
 
@@ -95,6 +97,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 		mappings.put("fromDate", "${fromDate}");
 		mappings.put("toDate", "${toDate}");
         mappings.put("nonCoded", "${nonCoded}");
+        mappings.put("provider", "${provider}");
 
 		rd.addDataSetDefinition(DATA_SET_NAME, dsd, mappings);
 

@@ -2,6 +2,11 @@
     ui.decorateWith("appui", "standardEmrPage")
     ui.includeJavascript("coreapps", "fragments/datamanagement/codeDiagnosisDialog.js")
     ui.includeJavascript("uicommons", "datatables/jquery.dataTables.min.js")
+
+    def providerOptions = []
+    providers.each {
+        providerOptions.push( [label: ui.format(it), value: it.id])
+    }
 %>
 
 <script type="text/javascript">
@@ -16,7 +21,8 @@
 
     var toggleSubmitButton = function() {
         if (jq('#startDateField-display').val() || jq('#endDateField-display').val() ||
-                jq('#nonCodedField-display').val() ) {
+                jq('#nonCodedField-display').val() ||
+                jq('#providerField-field :selected').text()) {
             jq('#submit').prop('disabled', false).removeClass('disabled');
         }
         else {
@@ -26,7 +32,7 @@
 
     jq(function() {
                 
-        jq('#startDateField-display, #endDateField-display, #nonCodedField-display').change(toggleSubmitButton);
+        jq('#startDateField-display, #endDateField-display, #nonCodedField-display, #providerField-field').change(toggleSubmitButton);
 
         jq('#nonCodedForm').submit(function() {
             var nonCoded = jq('#nonCodedField-display').val();
@@ -83,7 +89,10 @@
                     <input type="hidden" id="nonCodedField-field" name="nonCoded" />
                 </p>
 
-            <% } %>
+             <% } else if (parameter.name == "provider") { %>
+                ${ ui.includeFragment("uicommons", "field/dropDown", [  "id": "providerField", label: ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy"), formFieldName: "provider", initialValue: '', options: providerOptions ])}
+             <% }  %>
+
         </p>
         <% } %>
 

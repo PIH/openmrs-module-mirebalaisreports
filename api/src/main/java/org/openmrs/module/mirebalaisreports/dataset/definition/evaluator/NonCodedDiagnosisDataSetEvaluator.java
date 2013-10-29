@@ -26,9 +26,11 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonName;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.UserService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -44,7 +46,9 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Handler(supports = NonCodedDiagnosisDataSetDefinition.class)
 public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
@@ -54,6 +58,9 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
 
     @Autowired
     private EmrApiProperties emrApiProperties;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private PatientService patientService;
@@ -67,13 +74,20 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
 		fromDate = DateUtil.getStartOfDay(fromDate);
 		toDate = DateUtil.getEndOfDay(toDate);
         String nonCoded = ObjectUtil.nvl(dsd.getNonCoded(),null);
+        Provider provider = ObjectUtil.nvl(dsd.getProvider(), null);
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Obs.class);
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Obs.class);
 		criteria.add(Restrictions.eq("voided", false));
 		criteria.add(Restrictions.ge("dateCreated", fromDate));
 		criteria.add(Restrictions.le("dateCreated", toDate));
         if (StringUtils.isNotBlank(nonCoded) ){
             criteria.add(Restrictions.eq("valueText", nonCoded));
+        }
+        if (provider != null) {
+            List<User> users = userService.getUsersByPerson(provider.getPerson(), true);
+            if (users !=null && users.size() > 0){
+                criteria.add(Restrictions.in("creator", users));
+            }
         }
 		criteria.add(Restrictions.eq("concept", emrApiProperties.getDiagnosisMetadata().getNonCodedDiagnosisConcept()));
 		criteria.setProjection(Projections.projectionList()

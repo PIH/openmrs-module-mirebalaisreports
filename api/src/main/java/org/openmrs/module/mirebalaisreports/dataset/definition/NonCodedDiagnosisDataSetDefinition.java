@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.dataset.definition;
 
+import org.openmrs.Provider;
 import org.openmrs.module.reporting.dataset.definition.BaseDataSetDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
@@ -34,6 +35,9 @@ public class NonCodedDiagnosisDataSetDefinition extends BaseDataSetDefinition {
 
     @ConfigurationProperty(group = "what")
     private String nonCoded;
+
+    @ConfigurationProperty(group = "who")
+    private Provider provider;
 
 	public Date getFromDate() {
 		return fromDate;
@@ -57,5 +61,13 @@ public class NonCodedDiagnosisDataSetDefinition extends BaseDataSetDefinition {
 
     public void setNonCoded(String nonCoded) {
         this.nonCoded = nonCoded;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 }

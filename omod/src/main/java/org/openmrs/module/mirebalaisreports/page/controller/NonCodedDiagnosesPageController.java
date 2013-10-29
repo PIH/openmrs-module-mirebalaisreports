@@ -16,6 +16,8 @@ package org.openmrs.module.mirebalaisreports.page.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.openmrs.Provider;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
@@ -56,8 +58,11 @@ public class NonCodedDiagnosesPageController {
 		params.put("fromDate", fromDate);
 		params.put("toDate", toDate);
         params.put("nonCoded", "");
+        params.put("provider", null);
 
-		EvaluationContext context = reportManager.initializeContext(params);
+        model.addAttribute("providers", MirebalaisReportsProperties.getAllProviders());
+
+        EvaluationContext context = reportManager.initializeContext(params);
 		ReportDefinition reportDefinition = reportManager.constructReportDefinition();
 		ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
@@ -72,6 +77,7 @@ public class NonCodedDiagnosesPageController {
                        @RequestParam(required = false, value = "fromDate") Date fromDate,
                        @RequestParam(required = false, value = "toDate") Date toDate,
                        @RequestParam(required = false, value = "nonCoded") String nonCoded,
+                       @RequestParam(required = false, value = "provider") Provider provider,
                        PageModel model) throws EvaluationException, IOException {
 
         if (fromDate == null) {
@@ -91,6 +97,11 @@ public class NonCodedDiagnosesPageController {
         } else {
             params.put("nonCoded", "");
         }
+        if ( provider != null ){
+            params.put("provider", provider);
+        }else {
+            params.put("provider", null);
+        }
         EvaluationContext context = reportManager.initializeContext(params);
         ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
@@ -99,6 +110,7 @@ public class NonCodedDiagnosesPageController {
         model.addAttribute("data", reportData.getDataSets().get(NonCodedDiagnosesReportManager.DATA_SET_NAME));
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
+        model.addAttribute("providers", MirebalaisReportsProperties.getAllProviders());
     }
 
 }

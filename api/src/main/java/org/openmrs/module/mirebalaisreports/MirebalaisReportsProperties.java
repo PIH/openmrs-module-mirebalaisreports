@@ -20,10 +20,14 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.Provider;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -76,6 +80,18 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return location;
 	}
 
+    public static List<Provider> getAllProviders(){
+        List<Provider> providers = Context.getProviderService().getAllProviders(true);
+        if (providers != null && providers.size() > 0){
+            Collections.sort(providers, new Comparator<Provider>() {
+                @Override
+                public int compare(Provider p1, Provider p2) {
+                    return p1.getName().compareTo(p2.getName());
+                }
+            });
+        }
+        return providers;
+    }
 	//***** IDENTIFIER TYPES *****
 
 	public static final String ZL_EMR_ID_UUID = "a541af1e-105c-40bf-b345-ba1fd6a59b85";
