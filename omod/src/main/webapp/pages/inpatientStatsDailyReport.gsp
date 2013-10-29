@@ -45,24 +45,14 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
 
     <div id="date-header">
         <h1 id="current-date">
-            ${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") },
+            ${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") }
         </h1>
-        <div ng-controller="Datepicker" class="angular-datepicker">
+        <div class="angular-datepicker">
             <div class="form-horizontal">
-                <input type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="day" is-open="opened" min="minDate" max="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" show-weeks="false" ng-click="evaluate(day)" />
-                <button class="btn" ng-click="open()"><i class="icon-calendar"></i></button>
+                <input type="text" class="datepicker-input" datepicker-popup="dd-MMMM-yyyy" ng-model="day" is-open="isDatePickerOpen" max="maxDay" date-disabled="disabled(date, mode)" ng-required="true" show-weeks="false" />
+                <button class="btn" ng-click="openDatePicker()"><i class="icon-calendar"></i></button>
             </div>
         </div>
-
-        <button ng-click="previousDay()">
-            ${ ui.message("uicommons.previous") }
-        </button>
-
-        <button ng-click="nextDay()" ng-disabled="!day.isBefore(maxDay)">
-            ${ ui.message("uicommons.next") }
-        </button>
-    </div>
-
     <div ng-hide="isLoading(day) || hasResults(day)">
         <button ng-click="evaluate()">
             ${ ui.message("mirebalaisreports.evaluate") }
