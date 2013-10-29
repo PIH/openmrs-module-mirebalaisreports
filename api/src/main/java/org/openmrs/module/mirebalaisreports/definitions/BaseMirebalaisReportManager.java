@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
     @Autowired
 	MirebalaisReportsProperties mirebalaisReportsProperties;
+
+    @Autowired
+    DispositionService dispositionService;
 
     @Autowired
     EmrApiProperties emrApiProperties;
@@ -84,7 +88,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "notDx", mrp.getSetOfNonDiagnoses());
         sql = replace(sql, "ed", mrp.getSetOfEmergencyDiagnoses());
         sql = replace(sql, "ageRst", mrp.getSetOfAgeRestrictedDiagnoses());
-        sql = replace(sql, "dispo", emrApiProperties.getDispositionDescriptor().getDispositionConcept());
+        sql = replace(sql, "dispo", dispositionService.getDispositionDescriptor().getDispositionConcept());
 
         log.debug("Replacing metadata references complete.");
         return sql;
