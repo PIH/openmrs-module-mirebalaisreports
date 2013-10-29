@@ -5,6 +5,7 @@
     ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("mirebalaisreports", "inpatientStatsDailyReport.js")
     ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
+     ui.includeCss("mirebalaisreports", "bootstrap-combined.min.css")
     ui.includeCss("mirebalaisreports", "inpatientStatsDailyReport.css")
 %>
 
@@ -45,12 +46,10 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
     <div id="date-header">
         <h1 id="current-date">
             ${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") },
-            {{ day.format('DD-MMM-YYYY') }}
         </h1>
-        
-        <div ng-controller="DatepickerDemoCtrl">
+        <div ng-controller="Datepicker" class="angular-datepicker">
             <div class="form-horizontal">
-                <input type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="day" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" />
+                <input type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="day" is-open="opened" min="minDate" max="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" show-weeks="false" ng-click="evaluate(day)" />
                 <button class="btn" ng-click="open()"><i class="icon-calendar"></i></button>
             </div>
         </div>

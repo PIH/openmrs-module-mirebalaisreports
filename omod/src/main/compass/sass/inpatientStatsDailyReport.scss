@@ -39,3 +39,21 @@
 #view-cohort {
 	margin-top: 2em;
 }
+
+.angular-datepicker {
+	display: inline-block;
+	
+	table {
+		td, th {
+			border: none;
+		}
+
+		td {
+			padding: 3px;
+		}
+	}
+
+	.btn-success, .divider, .btn-group {
+		display: none;
+	}
+}
