@@ -22,6 +22,7 @@ import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.cohort.definition.LastDispositionBeforeExitCohortDefinition;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -44,6 +45,9 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluator implements Cohor
 
     @Autowired
     private EmrApiProperties emrApiProperties;
+
+    @Autowired
+    private DispositionService dispositionService;
 
     @Override
     public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) throws EvaluationException {
@@ -88,7 +92,7 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluator implements Cohor
                 " and o.value_coded in (:dispositions) ";
 
         SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sql);
-        query.setInteger("dispositionConcept", emrApiProperties.getDispositionDescriptor().getDispositionConcept().getId());
+        query.setInteger("dispositionConcept", dispositionService.getDispositionDescriptor().getDispositionConcept().getId());
         query.setParameterList("dispositions", idList(dispositions));
         query.setInteger("exitEncounterType", emrApiProperties.getExitFromInpatientEncounterType().getId());
         query.setTimestamp("exitOnOrAfter", cd.getExitOnOrAfter());
