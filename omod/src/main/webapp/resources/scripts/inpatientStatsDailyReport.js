@@ -14,7 +14,8 @@ controller('InpatientStatsDailyReportController', ['$scope', '$http', '$timeout'
 
     $scope.indicators = [
         { name: "edcheckin", class: "indicator-in" },
-        { name: "orvolume", class: "indicator-total" }
+        { name: "orvolume", class: "indicator-total" },
+        { name: "possiblereadmission", class: "indicator-in" }
     ];
 
     $scope.locationIndicators = [

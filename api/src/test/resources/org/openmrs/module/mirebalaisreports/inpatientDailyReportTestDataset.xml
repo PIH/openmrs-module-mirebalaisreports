@@ -24,6 +24,10 @@
     <visit visit_id="1002" patient_id="1002" visit_type_id="1" date_started="2013-10-03 12:34:00.0" date_stopped="2013-10-07 12:45:00.0" location_id="3" creator="1" date_created="2013-10-02 09:15:00.0" voided="0" uuid="8a635d82-383d-11e3-9177-3bc634afd000" />
     <encounter encounter_id="10021" visit_id="1002" encounter_type="1" patient_id="1002" location_id="10" encounter_datetime="2013-10-03 12:34:00.0" creator="1" date_created="2013-10-09 09:15:00.0" voided="false" uuid="8a635d82-383d-11e3-9177-3bc634afd001"/>
     <encounter encounter_id="10022" visit_id="1002" encounter_type="12" patient_id="1002" location_id="33" encounter_datetime="2013-10-03 13:57:00.0" creator="1" date_created="2013-10-09 12:30:00.0" voided="false" uuid="8a635d82-383d-11e3-9177-3bc634afd002"/>
+    <!-- This was a readmission, admitted and discharged the previous day -->
+    <visit visit_id="10021" patient_id="1002" visit_type_id="1" date_started="2013-10-02 12:34:00.0" date_stopped="2013-10-02 16:45:00.0" location_id="3" creator="1" date_created="2013-10-03 09:15:00.0" voided="0" uuid="8a635d82-383d-11e3-9177-3bc634afd003" />
+    <encounter encounter_id="10023" visit_id="10021" encounter_type="12" patient_id="1002" location_id="33" encounter_datetime="2013-10-02 12:34:00.0" creator="1" date_created="2013-10-02 12:34:00.0" voided="false" uuid="8a635d82-383d-11e3-9177-3bc634afd004"/>
+    <encounter encounter_id="10024" visit_id="10021" encounter_type="11" patient_id="1002" location_id="33" encounter_datetime="2013-10-02 16:45:00.0" creator="1" date_created="2013-10-02 16:45:00.0" voided="false" uuid="8a635d82-383d-11e3-9177-3bc634afd005"/>
 
     <!-- Admitted earlier (Men's Internal Medicine), and discharged on 3 Oct  -->
     <person person_id="1003" gender="M" birthdate="1985-03-04" birthdate_estimated="false" dead="false" creator="49" date_created="2013-10-01 00:00:00.0" voided="false" uuid="016f4688-36a5-11e3-b90a-a351ac6b1523"/>

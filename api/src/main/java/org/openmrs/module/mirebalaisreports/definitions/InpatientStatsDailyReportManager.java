@@ -20,6 +20,7 @@ import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.mirebalaisreports.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientTransferCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.LastDispositionBeforeExitCohortDefinition;
@@ -84,11 +85,6 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         List<Concept> dispositionsToConsider = Arrays.asList(dischargedDisposition, deathDisposition, transferOutDisposition, leftWithoutCompletionOfTreatmentDisposition, leftWithoutSeeingClinicianDisposition);
         // Dispositions we're currently ignoring: "Transfer within hospital", "Admit to hospital", "Discharged", "Emergency Department observation", "Home"
 
-//        EncounterCohortDefinition exitDuring = new EncounterCohortDefinition();
-//        exitDuring.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-//        exitDuring.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-//        exitDuring.addEncounterType(exitEncounterType);
-
         ReportDefinition rd = new ReportDefinition();
         rd.setName(getMessageCodePrefix() + "name");
         rd.setDescription(getMessageCodePrefix() + "description");
@@ -98,11 +94,6 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         CohortIndicatorDataSetDefinition cohortDsd = new CohortIndicatorDataSetDefinition();
         cohortDsd.addParameter(getStartDateParameter());
         cohortDsd.addParameter(getEndDateParameter());
-
-//        PatientDataSetDefinition exitingPatientsDsd = new PatientDataSetDefinition();
-//        exitingPatientsDsd.addParameter(getStartDateParameter());
-//        exitingPatientsDsd.addParameter(getEndDateParameter());
-//        exitingPatientsDsd.addRowFilter(exitDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
 
         for (Location location : inpatientLocations) {
 
@@ -235,6 +226,13 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         CohortIndicator surgicalNotesInd = buildIndicator("OR Volume", surgicalNotes, "onOrAfter=${startDate},onOrBefore=${endDate}");
         cohortDsd.addColumn("orvolume", "OR Volume", map(surgicalNotesInd, "startDate=${startDate},endDate=${endDate}"), "");
 
+        // potential readmissions
+        AdmissionSoonAfterExitCohortDefinition readmission = new AdmissionSoonAfterExitCohortDefinition();
+        readmission.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
+        readmission.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
+
+        CohortIndicator readmissionInd = buildIndicator("Possible Readmission", readmission, "onOrAfter=${startDate},onOrBefore=${endDate}");
+        cohortDsd.addColumn("possiblereadmission", "Possible Readmission", map(readmissionInd, "startDate=${startDate},endDate=${endDate}"), "");
 
         rd.addDataSetDefinition("cohorts", map(cohortDsd, "startDate=${day},endDate=${day+1d-1s}"));
 
