@@ -107,7 +107,7 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
                 {{ viewingCohort.indicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}
             </h3>
 
-            <table>
+            <table class="inpatients-list-table">
                 <thead>
                     <th></th>
                     <th>${ ui.message("ui.i18n.PatientIdentifierType.name.a541af1e-105c-40bf-b345-ba1fd6a59b85") }</th>
