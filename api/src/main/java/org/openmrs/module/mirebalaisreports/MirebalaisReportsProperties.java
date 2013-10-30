@@ -379,4 +379,9 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return c;
 	}
 
+    public static final String COMMENTS_UUID = "3ce93cf2-26fe-102b-80cb-0017a47871b2";
+
+    public Concept getComments() {
+        return getRequiredConceptByUuid(COMMENTS_UUID);
+    }
 }

@@ -2,11 +2,15 @@
 <dataset>
     <person person_id="1000" gender="F" birthdate="1946-05-26" birthdate_estimated="false" dead="false" creator="49" date_created="2013-10-01 00:00:00.0" changed_by="5" date_changed="2013-09-04 10:32:00.0" voided="false" uuid="be7890be-36a4-11e3-b90a-a351ac6b1528"/>
     <patient patient_id="1000" creator="1" date_created="2013-10-01 00:00:00.0" voided="false" void_reason="" />
+    <patient_identifier patient_identifier_id="1000" patient_id="1000" identifier="Y2C4VA" identifier_type="5" preferred="1" location_id="2" creator="1" date_created="2013-10-01 00:00:00.0" voided="false" void_reason=""/>
     <visit visit_id="1000" patient_id="1000" visit_type_id="1" date_started="2013-10-02 09:15:00.0" date_stopped="2013-10-14 04:30:00.0" location_id="3" creator="1" date_created="2013-10-02 09:15:00.0" voided="0" uuid="5c9967b4-36a5-11e3-b90a-a351ac6b1521" />
     <encounter encounter_id="10001" visit_id="1000" encounter_type="1" patient_id="1000" location_id="10" encounter_datetime="2013-10-02 09:15:00.0" creator="1" date_created="2013-10-02 09:15:00.0" voided="false" uuid="5c9967b4-36a5-11e3-b90a-a351ac6b1522"/>
     <encounter encounter_id="10002" visit_id="1000" encounter_type="12" patient_id="1000" location_id="32" encounter_datetime="2013-10-02 12:30:00.0" creator="1" date_created="2013-10-02 12:30:00.0" voided="false" uuid="5c9967b4-36a5-11e3-b90a-a351ac6b1523"/>
     <encounter encounter_id="10003" visit_id="1000" encounter_type="8" patient_id="1000" location_id="32" encounter_datetime="2013-10-02 12:45:00.0" creator="1" date_created="2013-10-02 12:45:00.0" voided="false" uuid="5c9967b4-36a5-11e3-b90a-a351ac6b1524"/>
     <obs obs_id="10000" person_id="1000" concept_id="1229" encounter_id="10003" obs_datetime="2013-10-02 12:45:00.0" location_id="32" value_datetime="2013-11-02 00:00:00.0" comments="" creator="1" date_created="2013-10-02 12:45:00.0" voided="false" uuid="5c9967b4-36a5-11e3-b90a-a351ac6b1525"/>
+    <obs obs_id="10001" person_id="1000" concept_id="359" encounter_id="10003" obs_datetime="2013-10-02 12:45:00.0" location_id="32" comments="" creator="1" date_created="2013-10-02 12:45:00.0" voided="false" uuid="5c9967b4-36a5-11e3-b90a-a351ac6b1526" value_text="comment"/>
+    <obs obs_id="10002" person_id="1000" concept_id="984" encounter_id="10003" obs_datetime="2013-10-02 12:45:00.0" location_id="32" comments="" creator="1" date_created="2013-10-02 12:45:00.0" voided="false" uuid="5c9967b4-36a5-11e3-b90a-a351ac6b1527" value_coded="981"/>
+
 
     <person person_id="1001" gender="F" birthdate="1975-01-02" birthdate_estimated="false" dead="false" creator="49" date_created="2013-10-01 00:00:00.0" voided="false" uuid="d2c28390-36a4-11e3-b90a-a351ac6b1528"/>
     <patient patient_id="1001" creator="1" date_created="2013-10-01 00:00:00.0" voided="false" void_reason="" />

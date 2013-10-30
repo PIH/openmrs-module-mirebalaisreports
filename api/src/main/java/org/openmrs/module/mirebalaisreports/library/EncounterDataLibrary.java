@@ -14,9 +14,11 @@
 
 package org.openmrs.module.mirebalaisreports.library;
 
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
@@ -35,6 +37,12 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
     @Autowired
     MirebalaisReportsProperties props;
 
+    @Autowired
+    DispositionService dispositionService;
+
+    @Autowired
+    PatientDataLibrary patientDataLibrary;
+
     @Override
     public Class<? super EncounterDataDefinition> getDefinitionType() {
         return EncounterDataDefinition.class;
@@ -50,6 +58,28 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("returnVisitDate.sql", new Replacements().add("returnVisitDate", props.getReturnVisitDate().getId()));
     }
 
+    @DocumentedDefinition("comments")
+    public EncounterDataDefinition getComments() {
+        return sqlEncounterDataDefinition("comments.sql", new Replacements().add("comments", props.getComments().getId()));
+    }
+
+    @DocumentedDefinition("disposition")
+    public EncounterDataDefinition getDisposition() {
+        return sqlEncounterDataDefinition("disposition.sql", new Replacements().add("disposition", dispositionService.getDispositionDescriptor().getDispositionConcept()));
+    }
+
+    @DocumentedDefinition("mostRecentZlEmrId")
+    public EncounterDataDefinition getMostRecentZLEmrId() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getMostRecentZlEmrIdIdentifier());
+    }
+
+    @DocumentedDefinition("mostRecentZlEmrIdLocation")
+    public EncounterDataDefinition getMostRecentZLEmrIdLocation() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getMostRecentZlEmrIdLocation());
+    }
+
+
+
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
@@ -60,6 +90,7 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         definition.setSql(sql);
         return definition;
     }
+
 
     private class Replacements extends HashMap<String, String> {
         public Replacements add(String key, Object replacement) {

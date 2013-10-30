@@ -21,6 +21,7 @@ import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.encounter.EvaluatedEncounterData;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.service.EncounterDataService;
+import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.context.EncounterEvaluationContext;
 import org.openmrs.module.reporting.query.encounter.EncounterIdSet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,4 +61,43 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((Timestamp) data.getData().get(10003), is(new Timestamp(DateUtil.parseDate("2013-11-02", "yyyy-MM-dd").getTime())));
     }
 
+    @Test
+    public void testComments() throws Exception {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getComments();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String) data.getData().get(10003), is("comment"));
+    }
+
+    @Test
+    public void testDisposition() throws Exception {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getDisposition();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String) data.getData().get(10003), is("Transfer within hospital"));
+    }
+
+    @Test
+    public void testMostRecentZlEmrId() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getMostRecentZLEmrId();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("Y2C4VA"));
+        assertThat((String)data.getData().get(10002), is("Y2C4VA"));
+        assertThat((String) data.getData().get(10003), is("Y2C4VA"));
+    }
+
+    @Test
+    public void testMostRecentZlEmrIdLocation() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getMostRecentZLEmrIdLocation();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("Antepartum Ward"));
+        assertThat((String)data.getData().get(10002), is("Antepartum Ward"));
+        assertThat((String) data.getData().get(10003), is("Antepartum Ward"));
+    }
 }
