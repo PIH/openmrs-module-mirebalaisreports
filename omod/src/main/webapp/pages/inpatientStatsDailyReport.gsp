@@ -90,9 +90,12 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
             <tr ng-repeat="indicator in indicators">
                 <th>{{ indicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}</th>
                 <td>
-                    <a ng-click="viewCohort(day, indicator)">
+                    <a ng-click="viewCohort(day, indicator)" ng-show="dataFor(day).cohorts[indicator.name].size > 0">
                         {{ dataFor(day).cohorts[indicator.name].size }}
-                    </a>
+                    </a>   
+                    <span ng-click="viewCohort(day, indicator)" ng-show="dataFor(day).cohorts[indicator.name].size <= 0">
+                        {{ dataFor(day).cohorts[indicator.name].size }}
+                    </span>
                 </td>
             </tr>
             </tbody>
