@@ -21,10 +21,12 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.cohort.definition.DiedSoonAfterEncounterCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientTransferCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.LastDispositionBeforeExitCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -95,6 +97,11 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         cohortDsd.addParameter(getStartDateParameter());
         cohortDsd.addParameter(getEndDateParameter());
 
+        DiedSoonAfterEncounterCohortDefinition diedSoonAfterAdmission = new DiedSoonAfterEncounterCohortDefinition();
+        diedSoonAfterAdmission.setEncounterType(emrApiProperties.getAdmissionEncounterType());
+        diedSoonAfterAdmission.addParameter(new Parameter("diedOnOrAfter", "Died on or after", Date.class));
+        diedSoonAfterAdmission.addParameter(new Parameter("diedOnOrBefore", "Died on or before", Date.class));
+
         for (Location location : inpatientLocations) {
 
             // census at start, census at end
@@ -161,8 +168,27 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             deaths.setDispositionsToConsider(dispositionsToConsider);
             deaths.addDisposition(deathDisposition);
 
-            CohortIndicator deathsInd = buildIndicator("Deaths: " + location.getName(), deaths, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
-            cohortDsd.addColumn("deaths:" + location.getUuid(), "Deaths: " + location.getName(), map(deathsInd, "startDate=${startDate},endDate=${endDate}"), "");
+            // -> split deaths into within-48-hours and later
+            CompositionCohortDefinition deathsEarly = new CompositionCohortDefinition();
+            deathsEarly.addParameter(getStartDateParameter());
+            deathsEarly.addParameter(getEndDateParameter());
+            deathsEarly.addSearch("died", this.<CohortDefinition>map(deaths, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}"));
+            deathsEarly.addSearch("diedSoon", this.<CohortDefinition>map(diedSoonAfterAdmission, "diedOnOrAfter=${startDate},diedOnOrBefore=${endDate}"));
+            deathsEarly.setCompositionString("died AND diedSoon");
+
+            CohortIndicator deathsEarlyInd = buildIndicator("Deaths within 48h: " + location.getName(), deathsEarly, "startDate=${startDate},endDate=${endDate}");
+            cohortDsd.addColumn("deathsWithin48:" + location.getUuid(), "Deaths within 48h: " + location.getName(), map(deathsEarlyInd, "startDate=${startDate},endDate=${endDate}"), "");
+
+            CompositionCohortDefinition deathsLate = new CompositionCohortDefinition();
+            deathsLate.addParameter(getStartDateParameter());
+            deathsLate.addParameter(getEndDateParameter());
+            deathsLate.addSearch("died", this.<CohortDefinition>map(deaths, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}"));
+            deathsLate.addSearch("diedSoon", this.<CohortDefinition>map(diedSoonAfterAdmission, "diedOnOrAfter=${startDate},diedOnOrBefore=${endDate}"));
+            deathsLate.setCompositionString("died AND NOT diedSoon");
+
+            CohortIndicator deathsLateInd = buildIndicator("Deaths after 48h: " + location.getName(), deathsLate, "startDate=${startDate},endDate=${endDate}");
+            cohortDsd.addColumn("deathsAfter48:" + location.getUuid(), "Deaths after 48h: " + location.getName(), map(deathsLateInd, "startDate=${startDate},endDate=${endDate}"), "");
+
 
             // number transferred out of HUM
 
