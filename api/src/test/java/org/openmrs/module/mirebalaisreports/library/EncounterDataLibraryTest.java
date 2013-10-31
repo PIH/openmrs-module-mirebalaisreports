@@ -52,10 +52,11 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    public void testName() throws Exception {
-        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+    public void testReturnVisitDate() throws Exception {
+        context.setBaseEncounters(new EncounterIdSet(10002, 10003));
         EncounterDataDefinition definition = library.getReturnVisitDate();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().size(), is(1));
         assertThat(data.getData().get(10001), nullValue());
         assertThat(data.getData().get(10002), nullValue());
         assertThat((Timestamp) data.getData().get(10003), is(new Timestamp(DateUtil.parseDate("2013-11-02", "yyyy-MM-dd").getTime())));
@@ -120,4 +121,36 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((String)data.getData().get(10002), is("Outpatient Clinic"));
         assertThat((String)data.getData().get(10003), is("Unknown Location"));
     }
+
+    @Test
+    public void testPersonRecordGender() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPersonRecordGender();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("F"));
+        assertThat((String)data.getData().get(10002), is("F"));
+        assertThat((String)data.getData().get(10003), is("F"));
+    }
+
+    @Test
+    public void testPersonRecordBirthDate() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPersonRecordBirthDateYMD();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("1946-05-26"));
+        assertThat((String)data.getData().get(10002), is("1946-05-26"));
+        assertThat((String)data.getData().get(10003), is("1946-05-26"));
+    }
+
+    @Test
+    public void testPersonRecordDeathDate() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPersonRecordDeathDate();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((Timestamp) data.getData().get(10001), is(new Timestamp(DateUtil.parseDate("1996-05-26", "yyyy-MM-dd").getTime())));
+        assertThat((Timestamp) data.getData().get(10002), is(new Timestamp(DateUtil.parseDate("1996-05-26", "yyyy-MM-dd").getTime())));
+        assertThat((Timestamp) data.getData().get(10003), is(new Timestamp(DateUtil.parseDate("1996-05-26", "yyyy-MM-dd").getTime())));
+    }
+
+
 }

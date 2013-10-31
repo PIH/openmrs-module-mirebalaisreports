@@ -20,6 +20,7 @@ import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDefinition;
+import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     @Autowired
     PatientDataLibrary patientDataLibrary;
+
+    @Autowired
+    BuiltInPatientDataLibrary builtInPatientDataLibrary;
 
     @Override
     public Class<? super EncounterDataDefinition> getDefinitionType() {
@@ -89,6 +93,21 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("locationOfConsultationEncounter.sql",null);
     }
 
+    @DocumentedDefinition("personRecordGender")
+    public EncounterDataDefinition getPersonRecordGender() {
+        return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getGender());
+    }
+
+    @DocumentedDefinition("personRecordBirthDate")
+    public EncounterDataDefinition getPersonRecordBirthDateYMD() {
+        return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getBirthdateYmd());
+    }
+
+    @DocumentedDefinition("PersonRecordDeathDate")
+    public EncounterDataDefinition getPersonRecordDeathDate() {
+        return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getVitalStatusDeathDate());
+    }
+
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);
@@ -102,7 +121,6 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         definition.setSql(sql);
         return definition;
     }
-
 
     private class Replacements extends HashMap<String, String> {
         public Replacements add(String key, Object replacement) {
