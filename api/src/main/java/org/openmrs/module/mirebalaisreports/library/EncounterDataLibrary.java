@@ -86,14 +86,16 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     @DocumentedDefinition("locationOfConsultationEncounter")
     public EncounterDataDefinition getLocationOfConsultationEncounter() {
-        return sqlEncounterDataDefinition("locationOfConsultationEncounter.sql", new Replacements().add("locationOfConsultationEncounter", props.getLocationOfConsultationEncounter().getName()));
+        return sqlEncounterDataDefinition("locationOfConsultationEncounter.sql",null);
     }
 
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            sql = sql.replaceAll(":" + entry.getKey(), entry.getValue());
+        if(replacements != null){
+            for (Map.Entry<String, String> entry : replacements.entrySet()) {
+                sql = sql.replaceAll(":" + entry.getKey(), entry.getValue());
+             }
         }
 
         SqlEncounterDataDefinition definition = new SqlEncounterDataDefinition();

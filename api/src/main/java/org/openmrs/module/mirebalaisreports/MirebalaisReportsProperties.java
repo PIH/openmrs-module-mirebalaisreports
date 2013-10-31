@@ -379,15 +379,11 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return c;
 	}
 
-    public static final String COMMENTS_UUID = "3ce93cf2-26fe-102b-80cb-0017a47871b2";
+    public static final String CONSULTATION_COMMENTS_UUID = "3ce93cf2-26fe-102b-80cb-0017a47871b2";
 
     public Concept getComments() {
-        return getRequiredConceptByUuid(COMMENTS_UUID);
+        return getRequiredConceptByUuid(CONSULTATION_COMMENTS_UUID);
     }
 
-    public static final String LOCATION_OF_CONSULTATION_ENCOUNTER = "199e7d87-92a0-4398-a0f8-11d012178164";
 
-    public Location getLocationOfConsultationEncounter() {
-        return getRequiredLocationByUuid(LOCATION_OF_CONSULTATION_ENCOUNTER);
-    }
 }
