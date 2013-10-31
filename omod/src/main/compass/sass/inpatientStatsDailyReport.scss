@@ -48,11 +48,13 @@
 	table {
 		td, th, tr {
 			border: none;
+			padding: 5px;
+			background-color: white;
 		}
+	}
 
-		td {
-			padding: 3px;
-		}
+	.muted {
+		color: #ccc;
 	}
 
 	.btn-success, .divider, .btn-group, li:last-child {
@@ -66,7 +68,29 @@
 		width: auto;
 	}
 
+	.datepicker-input, .icon-calendar {
+		top: -2px;
+		position: relative;
+	}
+
 	.btn {
-		margin: 0 0 8px 0;
+		padding: 3px;
+		background: white;
+		border: 0;
+
+		&:hover {
+			background: #ddd;
+		}
+	}
+	
+	.btn-info, .btn-info:hover {
+		color: white;
+		background-color: #0044cc;
+		background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+	}
+
+	.btn-block {
+		margin: 0 auto;
+		display: block;
 	}
 }

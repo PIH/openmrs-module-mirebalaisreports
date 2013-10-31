@@ -5,7 +5,6 @@
     ui.includeJavascript("uicommons", "angular.min.js")
     ui.includeJavascript("mirebalaisreports", "inpatientStatsDailyReport.js")
     ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
-     ui.includeCss("mirebalaisreports", "bootstrap-combined.min.css")
     ui.includeCss("mirebalaisreports", "inpatientStatsDailyReport.css")
 %>
 
