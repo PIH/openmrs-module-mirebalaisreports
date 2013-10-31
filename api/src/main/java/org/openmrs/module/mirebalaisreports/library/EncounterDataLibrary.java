@@ -78,6 +78,12 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return new PatientToEncounterDataDefinition(patientDataLibrary.getMostRecentZlEmrIdLocation());
     }
 
+    @DocumentedDefinition("unknownPatient")
+    public EncounterDataDefinition getUnknownPatient() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getUnknownPatient());
+
+    }
+
 
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
