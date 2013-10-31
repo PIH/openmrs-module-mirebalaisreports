@@ -110,4 +110,14 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((String)data.getData().get(10002), is("Unknown Patient"));
         assertThat((String) data.getData().get(10003), is("Unknown Patient"));
     }
+
+    @Test
+    public void testLocationOfConsultationEncounter() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getLocationOfConsultationEncounter();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("Outpatient Clinic"));
+        assertThat((String)data.getData().get(10002), is("Outpatient Clinic"));
+        assertThat((String)data.getData().get(10003), is("Outpatient Clinic"));
+    }
 }

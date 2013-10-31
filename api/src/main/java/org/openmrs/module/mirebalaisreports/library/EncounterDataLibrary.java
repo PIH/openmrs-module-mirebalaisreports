@@ -84,6 +84,10 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     }
 
+    @DocumentedDefinition("locationOfConsultationEncounter")
+    public EncounterDataDefinition getLocationOfConsultationEncounter() {
+        return sqlEncounterDataDefinition("locationOfConsultationEncounter.sql", new Replacements().add("locationOfConsultationEncounter", props.getLocationOfConsultationEncounter().getName()));
+    }
 
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {

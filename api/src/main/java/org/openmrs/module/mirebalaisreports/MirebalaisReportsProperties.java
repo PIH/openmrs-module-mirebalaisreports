@@ -384,4 +384,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public Concept getComments() {
         return getRequiredConceptByUuid(COMMENTS_UUID);
     }
+
+    public static final String LOCATION_OF_CONSULTATION_ENCOUNTER = "199e7d87-92a0-4398-a0f8-11d012178164";
+
+    public Location getLocationOfConsultationEncounter() {
+        return getRequiredLocationByUuid(LOCATION_OF_CONSULTATION_ENCOUNTER);
+    }
 }
