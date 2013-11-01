@@ -103,11 +103,35 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getBirthdateYmd());
     }
 
-    @DocumentedDefinition("PersonRecordDeathDate")
+    @DocumentedDefinition("personRecordDeathDate")
     public EncounterDataDefinition getPersonRecordDeathDate() {
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getVitalStatusDeathDate());
     }
 
+    @DocumentedDefinition("preferredAddressDepartment")
+    public EncounterDataDefinition getPreferredAddressDepartment() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressDepartment());
+    }
+
+    @DocumentedDefinition("preferredAddressCommune")
+    public EncounterDataDefinition getPreferredAddressCommune() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressCommune());
+    }
+
+    @DocumentedDefinition("preferredAddressSection")
+    public EncounterDataDefinition getPreferredAddressSection() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressSection());
+    }
+
+    @DocumentedDefinition("preferredAddressLocality")
+    public EncounterDataDefinition getPreferredAddressLocality() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressLocality());
+    }
+
+    @DocumentedDefinition("preferredAddressStreetLandmark")
+    public EncounterDataDefinition getPreferredAddressStreetLandmark() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressStreetLandmark());
+    }
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);

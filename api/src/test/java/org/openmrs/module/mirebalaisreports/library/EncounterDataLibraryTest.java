@@ -152,5 +152,55 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((Timestamp) data.getData().get(10003), is(new Timestamp(DateUtil.parseDate("1996-05-26", "yyyy-MM-dd").getTime())));
     }
 
+    @Test
+    public void testPreferredAddressDepartment() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPreferredAddressDepartment();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("IN"));
+        assertThat((String)data.getData().get(10002), is("IN"));
+        assertThat((String)data.getData().get(10003), is("IN"));
+    }
+
+    @Test
+    public void testPreferredAddressCommune() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPreferredAddressCommune();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("Indianapolis"));
+        assertThat((String)data.getData().get(10002), is("Indianapolis"));
+        assertThat((String)data.getData().get(10003), is("Indianapolis"));
+    }
+
+    @Test
+    public void testPreferredAddressSection() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPreferredAddressSection();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("RBI"));
+        assertThat((String)data.getData().get(10002), is("RBI"));
+        assertThat((String)data.getData().get(10003), is("RBI"));
+    }
+
+    @Test
+    public void testPreferredAddressLocality() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPreferredAddressLocality();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("1050 Wishard Blvd."));
+        assertThat((String)data.getData().get(10002), is("1050 Wishard Blvd."));
+        assertThat((String)data.getData().get(10003), is("1050 Wishard Blvd."));
+    }
+
+    @Test
+    public void testPreferredAddressStreetLandmark() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getPreferredAddressStreetLandmark();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is("RG5"));
+        assertThat((String)data.getData().get(10002), is("RG5"));
+        assertThat((String)data.getData().get(10003), is("RG5"));
+    }
+
 
 }
