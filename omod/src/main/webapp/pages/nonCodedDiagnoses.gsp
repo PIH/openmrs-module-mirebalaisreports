@@ -97,7 +97,7 @@
         <% } %>
 
         <p>
-            <button id="submit" type="submit" class="disabled" disabled>${ ui.message("mirebalaisreports.general.runReport") }</button>
+            <button id="submit" type="submit" class="disabled confirm" disabled>${ ui.message("mirebalaisreports.general.runReport") }</button>
         </p>
     </fieldset>
 
