@@ -113,9 +113,9 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    public void testLocationOfConsultationEncounter() throws EvaluationException {
+    public void testLocationName() throws EvaluationException {
         context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
-        EncounterDataDefinition definition = library.getLocationOfConsultationEncounter();
+        EncounterDataDefinition definition = library.getLocationName();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat((String)data.getData().get(10001), is("Clinic Registration"));
         assertThat((String)data.getData().get(10002), is("Outpatient Clinic"));
@@ -123,9 +123,9 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    public void testPersonRecordGender() throws EvaluationException {
+    public void testGender() throws EvaluationException {
         context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
-        EncounterDataDefinition definition = library.getPersonRecordGender();
+        EncounterDataDefinition definition = library.getGender();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat((String)data.getData().get(10001), is("F"));
         assertThat((String)data.getData().get(10002), is("F"));
@@ -133,9 +133,9 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    public void testPersonRecordBirthDate() throws EvaluationException {
+    public void testBirthDateYMD() throws EvaluationException {
         context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
-        EncounterDataDefinition definition = library.getPersonRecordBirthDateYMD();
+        EncounterDataDefinition definition = library.getBirthDateYMD();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat((String)data.getData().get(10001), is("1946-05-26"));
         assertThat((String)data.getData().get(10002), is("1946-05-26"));
@@ -143,9 +143,9 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    public void testPersonRecordDeathDate() throws EvaluationException {
+    public void testVitalStatusDeathDate() throws EvaluationException {
         context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
-        EncounterDataDefinition definition = library.getPersonRecordDeathDate();
+        EncounterDataDefinition definition = library.getVitalStatusDeathDate();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat((Timestamp) data.getData().get(10001), is(new Timestamp(DateUtil.parseDate("1996-05-26", "yyyy-MM-dd").getTime())));
         assertThat((Timestamp) data.getData().get(10002), is(new Timestamp(DateUtil.parseDate("1996-05-26", "yyyy-MM-dd").getTime())));

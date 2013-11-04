@@ -88,47 +88,47 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     }
 
-    @DocumentedDefinition("locationOfConsultationEncounter")
-    public EncounterDataDefinition getLocationOfConsultationEncounter() {
-        return sqlEncounterDataDefinition("locationOfConsultationEncounter.sql",null);
+    @DocumentedDefinition("location.name")
+    public EncounterDataDefinition getLocationName() {
+        return sqlEncounterDataDefinition("locationName.sql",null);
     }
 
-    @DocumentedDefinition("personRecordGender")
-    public EncounterDataDefinition getPersonRecordGender() {
+    @DocumentedDefinition("gender")
+    public EncounterDataDefinition getGender() {
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getGender());
     }
 
-    @DocumentedDefinition("personRecordBirthDate")
-    public EncounterDataDefinition getPersonRecordBirthDateYMD() {
+    @DocumentedDefinition("birthDate.YMD")
+    public EncounterDataDefinition getBirthDateYMD() {
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getBirthdateYmd());
     }
 
-    @DocumentedDefinition("personRecordDeathDate")
-    public EncounterDataDefinition getPersonRecordDeathDate() {
+    @DocumentedDefinition("vitalStatus.deathDate")
+    public EncounterDataDefinition getVitalStatusDeathDate() {
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getVitalStatusDeathDate());
     }
 
-    @DocumentedDefinition("preferredAddressDepartment")
+    @DocumentedDefinition("preferredAddress.department")
     public EncounterDataDefinition getPreferredAddressDepartment() {
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressDepartment());
     }
 
-    @DocumentedDefinition("preferredAddressCommune")
+    @DocumentedDefinition("preferredAddress.commune")
     public EncounterDataDefinition getPreferredAddressCommune() {
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressCommune());
     }
 
-    @DocumentedDefinition("preferredAddressSection")
+    @DocumentedDefinition("preferredAddress.section")
     public EncounterDataDefinition getPreferredAddressSection() {
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressSection());
     }
 
-    @DocumentedDefinition("preferredAddressLocality")
+    @DocumentedDefinition("preferredAddress.locality")
     public EncounterDataDefinition getPreferredAddressLocality() {
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressLocality());
     }
 
-    @DocumentedDefinition("preferredAddressStreetLandmark")
+    @DocumentedDefinition("preferredAddress.streetLandmark")
     public EncounterDataDefinition getPreferredAddressStreetLandmark() {
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressStreetLandmark());
     }
