@@ -3,6 +3,7 @@
 
     ui.includeJavascript("uicommons", "moment.min.js")
     ui.includeJavascript("uicommons", "angular.min.js")
+    ui.includeJavascript("uicommons", "angular-i18n/angular-locale_es.js")
     ui.includeJavascript("mirebalaisreports", "inpatientStatsDailyReport.js")
     ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
     ui.includeCss("mirebalaisreports", "inpatientStatsDailyReport.css")
@@ -22,7 +23,8 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
         "mirebalaisreports.inpatientStatsDailyReport.transfersIn",
         "mirebalaisreports.inpatientStatsDailyReport.transfersOut",
         "mirebalaisreports.inpatientStatsDailyReport.discharged",
-        "mirebalaisreports.inpatientStatsDailyReport.deaths",
+        "mirebalaisreports.inpatientStatsDailyReport.deathsWithin48",
+        "mirebalaisreports.inpatientStatsDailyReport.deathsAfter48",
         "mirebalaisreports.inpatientStatsDailyReport.transfersOutOfHUM",
         "mirebalaisreports.inpatientStatsDailyReport.leftWithoutCompletingTx",
         "mirebalaisreports.inpatientStatsDailyReport.leftWithoutSeeingClinician",
