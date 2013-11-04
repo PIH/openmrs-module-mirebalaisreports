@@ -1,9 +1,11 @@
 <%
+    def angularLocale = context.locale.toString().toLowerCase();
+
     ui.decorateWith("appui", "standardEmrPage")
 
     ui.includeJavascript("uicommons", "moment.min.js")
     ui.includeJavascript("uicommons", "angular.min.js")
-    ui.includeJavascript("uicommons", "angular-i18n/angular-locale_es.js")
+    ui.includeJavascript("uicommons", "i18n/angular-locale_" + angularLocale + ".js")
     ui.includeJavascript("mirebalaisreports", "inpatientStatsDailyReport.js")
     ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
     ui.includeCss("mirebalaisreports", "inpatientStatsDailyReport.css")
