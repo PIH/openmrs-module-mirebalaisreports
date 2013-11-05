@@ -133,6 +133,16 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressStreetLandmark());
     }
 
+    @DocumentedDefinition("registration.creator.name")
+    public EncounterDataDefinition getRegistrationCreatorName() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getRegistrationCreatorName());
+    }
+
+    @DocumentedDefinition("transferOutLocation")
+    public EncounterDataDefinition TransferOutLocation() {
+        return sqlEncounterDataDefinition("transferOutLocation.sql", new Replacements().add("transfOut", props.getTransferOutLocation()));
+    }
+
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);
         if(replacements != null){

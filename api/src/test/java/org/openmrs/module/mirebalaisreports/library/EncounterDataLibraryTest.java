@@ -15,6 +15,7 @@
 package org.openmrs.module.mirebalaisreports.library;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -200,6 +201,27 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((String)data.getData().get(10001), is("RG5"));
         assertThat((String)data.getData().get(10002), is("RG5"));
         assertThat((String)data.getData().get(10003), is("RG5"));
+    }
+
+    @Test
+    @Ignore
+    public void testRegistrationCreatorName() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getRegistrationCreatorName();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is(""));
+        assertThat((String)data.getData().get(10002), is(""));
+        assertThat((String)data.getData().get(10003), is(""));
+    }
+
+    @Test
+    public void testTransferOutLocation() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.TransferOutLocation();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String)data.getData().get(10003), is("Site not supported by Zanmi Lasante"));
     }
 
 

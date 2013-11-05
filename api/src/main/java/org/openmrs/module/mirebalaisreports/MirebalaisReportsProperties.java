@@ -371,19 +371,24 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(RETURN_VISIT_DATE_CONCEPT_UUID);
     }
 
-	private Concept getRequiredConceptByUuid(String uuid) {
-		Concept c = conceptService.getConceptByUuid(uuid);
-		if (c == null) {
-			throw new IllegalStateException("Missing required concept with uuid: " + uuid);
-		}
-		return c;
-	}
-
     public static final String CONSULTATION_COMMENTS_UUID = "3ce93cf2-26fe-102b-80cb-0017a47871b2";
 
     public Concept getComments() {
         return getRequiredConceptByUuid(CONSULTATION_COMMENTS_UUID);
     }
 
+    public static final String TRANSFER_OUT_LOCATION = "5b1f137c-b757-46c3-9735-c2fcb6ba221d";
 
+    public Concept getTransferOutLocation() {
+        return getRequiredConceptByUuid(TRANSFER_OUT_LOCATION);
+    }
+
+
+    private Concept getRequiredConceptByUuid(String uuid) {
+        Concept c = conceptService.getConceptByUuid(uuid);
+        if (c == null) {
+            throw new IllegalStateException("Missing required concept with uuid: " + uuid);
+        }
+        return c;
+    }
 }
