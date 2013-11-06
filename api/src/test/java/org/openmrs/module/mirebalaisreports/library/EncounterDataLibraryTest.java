@@ -264,5 +264,48 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((BigInteger) data.getData().get(10003), is(new BigInteger("2")));
     }
 
+    @Test
+    public void testEncounterID() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getEncounterID();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((Integer) data.getData().get(10001), is(10001));
+        assertThat((Integer) data.getData().get(10002), is(10002));
+        assertThat((Integer) data.getData().get(10003), is(10003));
+    }
+
+    @Test
+    public void testEncounterName() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getEncounterName();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String) data.getData().get(10001), is("Exit from Inpatient"));
+        assertThat((String) data.getData().get(10002), is("Admission"));
+        assertThat((String) data.getData().get(10003), is("Transfer"));
+    }
+
+    @Test
+    public void testEncounterLocation() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getEncounterLocation();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String) data.getData().get(10001), is("Clinic Registration"));
+        assertThat((String) data.getData().get(10002), is("Outpatient Clinic"));
+        assertThat((String) data.getData().get(10003), is("Unknown Location"));
+    }
+
+    @Test
+    public void testEncounterDateCreated() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getEncounterDateCreated();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((Timestamp) data.getData().get(10001), is(new Timestamp(DateUtil.parseDate("2013-10-01", "yyyy-MM-dd").getTime())));
+        assertThat((Timestamp) data.getData().get(10002), is(new Timestamp(DateUtil.parseDate("2013-10-03", "yyyy-MM-dd").getTime())));
+        assertThat((Timestamp) data.getData().get(10003), is(new Timestamp(DateUtil.parseDate("2013-10-02", "yyyy-MM-dd").getTime())));
+    }
+
+
+
+
 
 }

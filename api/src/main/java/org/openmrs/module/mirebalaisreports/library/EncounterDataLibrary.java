@@ -163,49 +163,24 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("diagnosis.sql", new Replacements().add("diagnosis", props.getNonCodedDiagnosis()));
     }
 
-    @DocumentedDefinition("admissionEncounterID")
-    public EncounterDataDefinition getAdmissionEncounterID() {
-        return sqlEncounterDataDefinition("encounterID.sql", new Replacements().add("encounterType", props.getAdmissionEncounter()));
+    @DocumentedDefinition("encounterID")
+    public EncounterDataDefinition getEncounterID() {
+        return sqlEncounterDataDefinition("encounterID.sql", null);
     }
 
-    @DocumentedDefinition("dischargeEncounterID")
-    public EncounterDataDefinition getDischargeEncounterID() {
-        return sqlEncounterDataDefinition("encounterID.sql", new Replacements().add("encounterType", props.getDischargeEncounter()));
+    @DocumentedDefinition("encounterName")
+    public EncounterDataDefinition getEncounterName() {
+        return sqlEncounterDataDefinition("encounterName.sql", null);
     }
 
-    @DocumentedDefinition("transferEncounterID")
-    public EncounterDataDefinition getTransferEncounterID() {
-        return sqlEncounterDataDefinition("encounterID.sql", new Replacements().add("encounterType", props.getTransferEncounter()));
+    @DocumentedDefinition("encounterLocation")
+    public EncounterDataDefinition getEncounterLocation() {
+        return sqlEncounterDataDefinition("encounterLocation.sql", null);
     }
 
-    @DocumentedDefinition("admissionEncounterLocation")
-    public EncounterDataDefinition getAdmissionEncounterLocation() {
-        return sqlEncounterDataDefinition("encounterLocation.sql", new Replacements().add("encounterType", props.getAdmissionEncounter()));
-    }
-
-    @DocumentedDefinition("dischargeEncounterLocation")
-    public EncounterDataDefinition getDischargeEncounterLocation() {
-        return sqlEncounterDataDefinition("encounterLocation.sql", new Replacements().add("encounterType", props.getDischargeEncounter()));
-    }
-
-    @DocumentedDefinition("transferEncounterLocation")
-    public EncounterDataDefinition getTransferEncounterLocation() {
-        return sqlEncounterDataDefinition("encounterLocation.sql", new Replacements().add("encounterType", props.getTransferEncounter()));
-    }
-
-    @DocumentedDefinition("admissionEncounterDateCreated")
-    public EncounterDataDefinition getAdmissionEncounterDateCreated() {
-        return sqlEncounterDataDefinition("encounterDateCreated.sql", new Replacements().add("encounterType", props.getAdmissionEncounter()));
-    }
-
-    @DocumentedDefinition("dischargeEncounterDateCreated")
-    public EncounterDataDefinition getDischargeEncounterDateCreated() {
-        return sqlEncounterDataDefinition("encounterDateCreated.sql", new Replacements().add("encounterType", props.getDischargeEncounter()));
-    }
-
-    @DocumentedDefinition("transferEncounterDateCreated")
-    public EncounterDataDefinition getTransferEncounterDateCreated() {
-        return sqlEncounterDataDefinition("encounterDateCreated.sql", new Replacements().add("encounterType", props.getTransferEncounter()));
+    @DocumentedDefinition("encounterDateCreated")
+    public EncounterDataDefinition getEncounterDateCreated() {
+        return sqlEncounterDataDefinition("encounterDateCreated.sql", null);
     }
 
 

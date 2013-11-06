@@ -407,24 +407,6 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(NON_CODED);
     }
 
-    public static final String ADMISSION_ENCOUNTER = "260566e1-c909-4d61-a96f-c1019291a09d";
-
-    public Concept getAdmissionEncounter() {
-        return getRequiredConceptByUuid(ADMISSION_ENCOUNTER);
-    }
-
-    public static final String DISCHARGE_ENCOUNTER = "b6631959-2105-49dd-b154-e1249e0fbcd7";
-
-    public Concept getDischargeEncounter() {
-        return getRequiredConceptByUuid(DISCHARGE_ENCOUNTER);
-    }
-
-    public static final String TRANSFER_ENCOUNTER = "436cfe33-6b81-40ef-a455-f134a9f7e580";
-
-    public Concept getTransferEncounter() {
-        return getRequiredConceptByUuid(TRANSFER_ENCOUNTER);
-    }
-
 
     private Concept getRequiredConceptByUuid(String uuid) {
         Concept c = conceptService.getConceptByUuid(uuid);
