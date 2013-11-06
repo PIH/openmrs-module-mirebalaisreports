@@ -139,9 +139,75 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
     }
 
     @DocumentedDefinition("transferOutLocation")
-    public EncounterDataDefinition TransferOutLocation() {
+    public EncounterDataDefinition getTransferOutLocation() {
         return sqlEncounterDataDefinition("transferOutLocation.sql", new Replacements().add("transfOut", props.getTransferOutLocation()));
     }
+
+    @DocumentedDefinition("traumaType")
+    public EncounterDataDefinition getTraumaType() {
+        return sqlEncounterDataDefinition("traumaType.sql", new Replacements().add("traumaType", props.getTraumaType()));
+    }
+
+    @DocumentedDefinition("transferOutLocationTraumaName")
+    public EncounterDataDefinition getTraumaName() {
+        return sqlEncounterDataDefinition("transferOutLocationTraumaName.sql", new Replacements().add("traumaName", props.getTransferOutLocationTraumaName()));
+    }
+
+    @DocumentedDefinition("codedDiagnosis")
+    public EncounterDataDefinition getCodedDiagnosis() {
+        return sqlEncounterDataDefinition("diagnosis.sql", new Replacements().add("diagnosis", props.getCodedDiagnosis()));
+    }
+
+    @DocumentedDefinition("nonCodedDiagnosis")
+    public EncounterDataDefinition getNonCodedDiagnosis() {
+        return sqlEncounterDataDefinition("diagnosis.sql", new Replacements().add("diagnosis", props.getNonCodedDiagnosis()));
+    }
+
+    @DocumentedDefinition("admissionEncounterID")
+    public EncounterDataDefinition getAdmissionEncounterID() {
+        return sqlEncounterDataDefinition("encounterID.sql", new Replacements().add("encounterType", props.getAdmissionEncounter()));
+    }
+
+    @DocumentedDefinition("dischargeEncounterID")
+    public EncounterDataDefinition getDischargeEncounterID() {
+        return sqlEncounterDataDefinition("encounterID.sql", new Replacements().add("encounterType", props.getDischargeEncounter()));
+    }
+
+    @DocumentedDefinition("transferEncounterID")
+    public EncounterDataDefinition getTransferEncounterID() {
+        return sqlEncounterDataDefinition("encounterID.sql", new Replacements().add("encounterType", props.getTransferEncounter()));
+    }
+
+    @DocumentedDefinition("admissionEncounterLocation")
+    public EncounterDataDefinition getAdmissionEncounterLocation() {
+        return sqlEncounterDataDefinition("encounterLocation.sql", new Replacements().add("encounterType", props.getAdmissionEncounter()));
+    }
+
+    @DocumentedDefinition("dischargeEncounterLocation")
+    public EncounterDataDefinition getDischargeEncounterLocation() {
+        return sqlEncounterDataDefinition("encounterLocation.sql", new Replacements().add("encounterType", props.getDischargeEncounter()));
+    }
+
+    @DocumentedDefinition("transferEncounterLocation")
+    public EncounterDataDefinition getTransferEncounterLocation() {
+        return sqlEncounterDataDefinition("encounterLocation.sql", new Replacements().add("encounterType", props.getTransferEncounter()));
+    }
+
+    @DocumentedDefinition("admissionEncounterDateCreated")
+    public EncounterDataDefinition getAdmissionEncounterDateCreated() {
+        return sqlEncounterDataDefinition("encounterDateCreated.sql", new Replacements().add("encounterType", props.getAdmissionEncounter()));
+    }
+
+    @DocumentedDefinition("dischargeEncounterDateCreated")
+    public EncounterDataDefinition getDischargeEncounterDateCreated() {
+        return sqlEncounterDataDefinition("encounterDateCreated.sql", new Replacements().add("encounterType", props.getDischargeEncounter()));
+    }
+
+    @DocumentedDefinition("transferEncounterDateCreated")
+    public EncounterDataDefinition getTransferEncounterDateCreated() {
+        return sqlEncounterDataDefinition("encounterDateCreated.sql", new Replacements().add("encounterType", props.getTransferEncounter()));
+    }
+
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);

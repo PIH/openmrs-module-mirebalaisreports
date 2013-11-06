@@ -27,6 +27,7 @@ import org.openmrs.module.reporting.evaluation.context.EncounterEvaluationContex
 import org.openmrs.module.reporting.query.encounter.EncounterIdSet;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 
 import static org.hamcrest.core.Is.is;
@@ -57,7 +58,6 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         context.setBaseEncounters(new EncounterIdSet(10002, 10003));
         EncounterDataDefinition definition = library.getReturnVisitDate();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
-        assertThat(data.getData().size(), is(1));
         assertThat(data.getData().get(10001), nullValue());
         assertThat(data.getData().get(10002), nullValue());
         assertThat((Timestamp) data.getData().get(10003), is(new Timestamp(DateUtil.parseDate("2013-11-02", "yyyy-MM-dd").getTime())));
@@ -217,11 +217,51 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     @Test
     public void testTransferOutLocation() throws EvaluationException {
         context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
-        EncounterDataDefinition definition = library.TransferOutLocation();
+        EncounterDataDefinition definition = library.getTransferOutLocation();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(10001), nullValue());
         assertThat(data.getData().get(10002), nullValue());
         assertThat((String)data.getData().get(10003), is("Site not supported by Zanmi Lasante"));
+    }
+
+    @Test
+    public void testTraumaType() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getTraumaType();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String)data.getData().get(10003), is("Type of trauma"));
+    }
+
+    @Test
+    public void testTransferOutLocationTraumaName() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getTraumaName();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String)data.getData().get(10003), is("HUM Surgery sets"));
+    }
+
+    @Test
+    public void testCodedDiagnosis() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getCodedDiagnosis();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((BigInteger) data.getData().get(10003), is(new BigInteger("2")));
+    }
+
+    @Test
+    public void testNonCodedDiagnosis() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getNonCodedDiagnosis();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((BigInteger) data.getData().get(10003), is(new BigInteger("2")));
     }
 
 

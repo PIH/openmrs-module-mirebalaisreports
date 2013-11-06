@@ -383,6 +383,48 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(TRANSFER_OUT_LOCATION);
     }
 
+    public static final String TRAUMA_TYPE = "7c5ef8cd-3c2b-46c1-b995-20e52c11ce94";
+
+    public Concept getTraumaType() {
+        return getRequiredConceptByUuid(TRAUMA_TYPE);
+    }
+
+    public static final String TRAUMA_NAME = "438dbb55-1fd1-45b5-8b72-8bced44b38a5";
+
+    public Concept getTransferOutLocationTraumaName() {
+        return getRequiredConceptByUuid(TRAUMA_NAME);
+    }
+
+    public static final String CODED = "226ed7ad-b776-4b99-966d-fd818d3302c2";
+
+    public Concept getCodedDiagnosis() {
+        return getRequiredConceptByUuid(CODED);
+    }
+
+    public static final String NON_CODED = "970d41ce-5098-47a4-8872-4dd843c0df3f";
+
+    public Concept getNonCodedDiagnosis() {
+        return getRequiredConceptByUuid(NON_CODED);
+    }
+
+    public static final String ADMISSION_ENCOUNTER = "260566e1-c909-4d61-a96f-c1019291a09d";
+
+    public Concept getAdmissionEncounter() {
+        return getRequiredConceptByUuid(ADMISSION_ENCOUNTER);
+    }
+
+    public static final String DISCHARGE_ENCOUNTER = "b6631959-2105-49dd-b154-e1249e0fbcd7";
+
+    public Concept getDischargeEncounter() {
+        return getRequiredConceptByUuid(DISCHARGE_ENCOUNTER);
+    }
+
+    public static final String TRANSFER_ENCOUNTER = "436cfe33-6b81-40ef-a455-f134a9f7e580";
+
+    public Concept getTransferEncounter() {
+        return getRequiredConceptByUuid(TRANSFER_ENCOUNTER);
+    }
+
 
     private Concept getRequiredConceptByUuid(String uuid) {
         Concept c = conceptService.getConceptByUuid(uuid);
