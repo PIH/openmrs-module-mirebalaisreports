@@ -407,6 +407,11 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(NON_CODED);
     }
 
+    public static final String SURGICAL_SERVICE = "84834856-23f3-4885-994e-33091d587964";
+
+    public Concept getSurgicalService() {
+        return getRequiredConceptByUuid(SURGICAL_SERVICE);
+    }
 
     private Concept getRequiredConceptByUuid(String uuid) {
         Concept c = conceptService.getConceptByUuid(uuid);

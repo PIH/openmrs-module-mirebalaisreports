@@ -304,6 +304,16 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((Timestamp) data.getData().get(10003), is(new Timestamp(DateUtil.parseDate("2013-10-02", "yyyy-MM-dd").getTime())));
     }
 
+    @Test
+    public void testSurgicalService() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getSurgicalService();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String) data.getData().get(10003), is("Surgical Service"));
+    }
+
 
 
 

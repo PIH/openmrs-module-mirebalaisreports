@@ -183,6 +183,10 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("encounterDateCreated.sql", null);
     }
 
+    @DocumentedDefinition("surgicalService")
+    public EncounterDataDefinition getSurgicalService() {
+        return sqlEncounterDataDefinition("surgicalService.sql", new Replacements().add("surgicalService", props.getSurgicalService()));
+    }
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);

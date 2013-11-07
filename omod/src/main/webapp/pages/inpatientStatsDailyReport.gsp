@@ -1,11 +1,13 @@
 <%
+    def angularLocale = context.locale.toString().toLowerCase();
+
     ui.decorateWith("appui", "standardEmrPage")
 
     ui.includeJavascript("uicommons", "moment.min.js")
     ui.includeJavascript("uicommons", "angular.min.js")
+    ui.includeJavascript("uicommons", "i18n/angular-locale_" + angularLocale + ".js")
     ui.includeJavascript("mirebalaisreports", "inpatientStatsDailyReport.js")
     ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
-     ui.includeCss("mirebalaisreports", "bootstrap-combined.min.css")
     ui.includeCss("mirebalaisreports", "inpatientStatsDailyReport.css")
 %>
 
@@ -23,7 +25,8 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
         "mirebalaisreports.inpatientStatsDailyReport.transfersIn",
         "mirebalaisreports.inpatientStatsDailyReport.transfersOut",
         "mirebalaisreports.inpatientStatsDailyReport.discharged",
-        "mirebalaisreports.inpatientStatsDailyReport.deaths",
+        "mirebalaisreports.inpatientStatsDailyReport.deathsWithin48",
+        "mirebalaisreports.inpatientStatsDailyReport.deathsAfter48",
         "mirebalaisreports.inpatientStatsDailyReport.transfersOutOfHUM",
         "mirebalaisreports.inpatientStatsDailyReport.leftWithoutCompletingTx",
         "mirebalaisreports.inpatientStatsDailyReport.leftWithoutSeeingClinician",
@@ -91,9 +94,12 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
             <tr ng-repeat="indicator in indicators">
                 <th>{{ indicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}</th>
                 <td>
-                    <a ng-click="viewCohort(day, indicator)">
+                    <a ng-click="viewCohort(day, indicator)" ng-show="dataFor(day).cohorts[indicator.name].size > 0">
                         {{ dataFor(day).cohorts[indicator.name].size }}
-                    </a>
+                    </a>   
+                    <span ng-click="viewCohort(day, indicator)" ng-show="dataFor(day).cohorts[indicator.name].size <= 0">
+                        {{ dataFor(day).cohorts[indicator.name].size }}
+                    </span>
                 </td>
             </tr>
             </tbody>
