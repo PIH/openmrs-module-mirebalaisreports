@@ -54,8 +54,8 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         reportService = Context.getService(ReportService.class);
         reportDefinitionService = Context.getService(ReportDefinitionService.class);
 
-        setupFullDataExports();
-        setupOtherReports();
+        //setupFullDataExports();
+        //setupOtherReports();
 
         log.info("Mirebalais Hospital Reporting Module Module started");
 	}

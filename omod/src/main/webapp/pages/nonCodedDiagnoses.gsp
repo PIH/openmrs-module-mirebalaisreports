@@ -33,6 +33,7 @@
     jq(function() {
                 
         jq('#startDateField-display, #endDateField-display, #nonCodedField-display, #providerField-field').change(toggleSubmitButton);
+        jq('#startDateField-display, #endDateField-display, #nonCodedField-display, #providerField-field').click(toggleSubmitButton);
 
         jq('#nonCodedForm').submit(function() {
             var nonCoded = jq('#nonCodedField-display').val();
@@ -44,6 +45,7 @@
         })
 
         jq(".codeDiagnosis").click(function(event) {
+
             createCodeDiagnosisDialog();
             patientDashboardLink ='${ui.pageLink("coreapps", "patientdashboard/patientDashboard")}';
             instructionsTemplate ='${ ui.escapeJs(ui.message("coreapps.dataManagement.replaceNonCoded")) }';
@@ -71,29 +73,30 @@
         <legend>
             ${ ui.message("mirebalaisreports.general.runReport") }
         </legend>
+
         <% for (int i=0; i<reportManager.parameters.size(); i++) {
             def parameter = reportManager.parameters.get(i); %>
-        <p id="parameter${i}Section">
-            <% if (parameter.name == "fromDate") { %>
-            ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "startDateField", "label": parameter.label, "formFieldName": "fromDate", "useTime": false ]) }
-            <% } else if (parameter.name == "toDate") { %>
-            ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "endDateField", "label": parameter.label, "formFieldName": "toDate", "useTime": false ]) }
-            <% } else if (parameter.name == "nonCoded") { %>
+            <p id="parameter${i}Section">
+                <% if (parameter.name == "fromDate") { %>
+                ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "startDateField", "label": parameter.label, "formFieldName": "fromDate", "defaultDate": fromDate, "useTime": false ]) }
+                <% } else if (parameter.name == "toDate") { %>
+                ${ ui.includeFragment("uicommons", "field/datetimepicker", [ "id": "endDateField", "label": parameter.label, "formFieldName": "toDate", "defaultDate": toDate, "useTime": false ]) }
+                <% } else if (parameter.name == "nonCoded") { %>
                 <p id="nonCodedField">
                     <label for="nonCodedField-display">
                         ${ ui.message("mirebalaisreports.noncodeddiagnoses.nonCodedDiagnosis") }
                     </label>
                     <span id="nonCodedField-wrapper">
-                        <input type="text" id="nonCodedField-display" value=""  />
+                        <input type="text" id="nonCodedField-display" value="${nonCoded}"  />
                     </span>
                     <input type="hidden" id="nonCodedField-field" name="nonCoded" />
                 </p>
 
-             <% } else if (parameter.name == "provider") { %>
-                ${ ui.includeFragment("uicommons", "field/dropDown", [  "id": "providerField", label: ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy"), formFieldName: "provider", initialValue: '', options: providerOptions ])}
-             <% }  %>
+                <% } else if (parameter.name == "provider") { %>
+                ${ ui.includeFragment("uicommons", "field/dropDown", [  "id": "providerField", label: ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy"), formFieldName: "provider", initialValue: providerId, options: providerOptions ])}
+                <% }  %>
 
-        </p>
+            </p>
         <% } %>
 
         <p>
@@ -103,65 +106,68 @@
 
 </form>
 
-<h3>
-    ${ ui.message("mirebalaisreports.noncodeddiagnoses.subtitle", ui.format(fromDate), ui.format(toDate)) }
-</h3>
+<% if (fromDate != null || toDate != null) { %>
+    <h3>
+        ${ ui.message("mirebalaisreports.noncodeddiagnoses.subtitle", ui.format(fromDate), ui.format(toDate)) }
+    </h3>
 
-<table id="non-coded-diagnoses">
-    <thead>
-        <tr>
-            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.nonCodedDiagnosis") }</th>
-            <th>${ ui.message("coreapps.patient.identifier") }</th>
-            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy") }</th>
-            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.entryDate") }</th>
-            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.encounterDateTime") }</th>
-            <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.createDiagnosis") }</th>
-        </tr>
-    </thead>
-    <tbody>
-    <% if (!data) { %>
-        <tr>
-            <td colspan="3">${ ui.message("mirebalaisreports.none") }</td>
-        </tr>
+    <table id="non-coded-diagnoses" width="100%" border="1" cellspacing="0" cellpadding="2">
+        <thead>
+            <tr>
+                <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.nonCodedDiagnosis") }</th>
+                <th>${ ui.message("coreapps.patient.identifier") }</th>
+                <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.enteredBy") }</th>
+                <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.entryDate") }</th>
+                <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.encounterDateTime") }</th>
+                <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.createDiagnosis") }</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% if (nonCodedRows == null ) { %>
+            <tr>
+                <td colspan="3">${ ui.message("mirebalaisreports.none") }</td>
+            </tr>
+        <% } else nonCodedRows.each { %>
+            <tr id="obs-id-${ it.getColumnValue("obsId") }">
+                <td class="non-coded-diagnoses-td">${ ui.escapeHtml(it.getColumnValue("nonCodedDiagnosis")) }</td>
+                <td>
+                    <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: it.getColumnValue("patientId") , visitId: it.getColumnValue("visitId") ]) }">
+                        ${ ui.format(it.getColumnValue("patientIdentifier")) }
+                    </a>
+                </td>
+                <td>${ ui.format(it.getColumnValue("creatorFirstName") + " " + it.getColumnValue("creatorLastName")) }</td>
+                <td>${ ui.format(it.getColumnValue("dateCreated")) }</td>
+                <td>${ ui.format(it.getColumnValue("encounterDateTime")) }</td>
+                <td>
+                    <a class="codeDiagnosis"
+                       data-patient-identifier="${ it.getColumnValue("patientIdentifier") }"
+                       data-patient-id="${ it.getColumnValue("patientId") }"
+                       data-visit-id="${ it.getColumnValue("visitId") }"
+                       data-person-name="${ it.getColumnValue("creatorFirstName") } ${ it.getColumnValue("creatorLastName") }"
+                       data-nonCoded-Diagnosis="${ ui.escapeHtml(it.getColumnValue("nonCodedDiagnosis")) }"
+                       data-obs-id ="${ it.getColumnValue("obsId")}"
+                       href="#${ it.getColumnValue("patientId") }">
+                        ${ ui.message("coreapps.dataManagement.codeDiagnosis.title") }
+                    </a>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+    <% if (nonCodedRows != null ) { %>
+        ${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#non-coded-diagnoses",
+                options: [
+                        bFilter: true,
+                        bJQueryUI: true,
+                        bLengthChange: false,
+                        iDisplayLength: 10,
+                        sPaginationType: '\"full_numbers\"',
+                        bSort: false,
+                        sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
+                ]
+        ]) }
+
+        ${ ui.includeFragment("coreapps", "datamanagement/codeDiagnosisDialog") }
     <% } %>
-    <% data.each { %>
-        <tr>
-            <td class="non-coded-diagnoses-td">${ ui.escapeHtml(it.getColumnValue("diagnosis")) }</td>
-            <td>
-                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: it.getColumnValue("patientId") , visitId: it.getColumnValue("visitId") ]) }">
-                    ${ ui.format(it.getColumnValue("patientIdentifier")) }
-                </a>
-            </td>
-            <td>${ ui.format(it.getColumnValue("creator")) }</td>
-            <td>${ ui.format(it.getColumnValue("dateCreated")) }</td>
-            <td>${ ui.format(it.getColumnValue("encounterDateTime")) }</td>
-            <td>
-                <a class="codeDiagnosis"
-                   data-patient-identifier="${ it.getColumnValue("patientIdentifier") }"
-                   data-patient-id="${ it.getColumnValue("patientId") }"
-                   data-visit-id="${ it.getColumnValue("visitId") }"
-                   data-person-name="${ it.getColumnValue("personName") }"
-                   data-nonCoded-Diagnosis="${ ui.escapeHtml(it.getColumnValue("diagnosis")) }"
-                   data-obs-id ="${ it.getColumnValue("obsId") }"
-                   href="#${ it.getColumnValue("patientId") }">
-                    ${ ui.message("coreapps.dataManagement.codeDiagnosis.title") }
-                </a>
-            </td>
-        </tr>
-    <% } %>
-    </tbody>
-</table>
-
-${ ui.includeFragment("uicommons", "widget/dataTable", [ object: "#non-coded-diagnoses",
-        options: [
-                bFilter: true,
-                bJQueryUI: true,
-                bLengthChange: false,
-                iDisplayLength: 10,
-                sPaginationType: '\"full_numbers\"',
-                bSort: false,
-                sDom: '\'ft<\"fg-toolbar ui-toolbar ui-corner-bl ui-corner-br ui-helper-clearfix datatables-info-and-pg \"ip>\''
-        ]
-]) }
-
-${ ui.includeFragment("coreapps", "datamanagement/codeDiagnosisDialog") }
+<% } %>

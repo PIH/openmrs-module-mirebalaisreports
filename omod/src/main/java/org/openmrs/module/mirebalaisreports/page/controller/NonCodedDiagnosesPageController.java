@@ -16,7 +16,10 @@ package org.openmrs.module.mirebalaisreports.page.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Provider;
+import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -38,9 +41,11 @@ import java.util.Map;
  *
  */
 public class NonCodedDiagnosesPageController {
+    private final Log log = LogFactory.getLog(getClass());
 
     public void get(@SpringBean NonCodedDiagnosesReportManager reportManager,
 					@SpringBean ReportDefinitionService reportDefinitionService,
+                    @SpringBean EmrService emrService,
                     @RequestParam(required = false, value = "fromDate") Date fromDate,
                     @RequestParam(required = false, value = "toDate") Date toDate,
                     PageModel model) throws EvaluationException, IOException {
@@ -54,22 +59,14 @@ public class NonCodedDiagnosesPageController {
         fromDate = DateUtil.getStartOfDay(fromDate);
         toDate = DateUtil.getEndOfDay(toDate);
 
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("fromDate", fromDate);
-		params.put("toDate", toDate);
-        params.put("nonCoded", "");
-        params.put("provider", null);
-
+        model.addAttribute("nonCodedRows", null);
         model.addAttribute("providers", MirebalaisReportsProperties.getAllProviders());
-
-        EvaluationContext context = reportManager.initializeContext(params);
-		ReportDefinition reportDefinition = reportManager.constructReportDefinition();
-		ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
-
         model.addAttribute("reportManager", reportManager);
-        model.addAttribute("data", reportData.getDataSets().get(NonCodedDiagnosesReportManager.DATA_SET_NAME));
-        model.addAttribute("fromDate", fromDate);
-        model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
+        model.addAttribute("fromDate", null);
+        model.addAttribute("toDate", null);
+        model.addAttribute("nonCoded", "");
+        model.addAttribute("providerId", null);
+
     }
 
     public void post(@SpringBean NonCodedDiagnosesReportManager reportManager,
@@ -79,6 +76,7 @@ public class NonCodedDiagnosesPageController {
                        @RequestParam(required = false, value = "nonCoded") String nonCoded,
                        @RequestParam(required = false, value = "provider") Provider provider,
                        PageModel model) throws EvaluationException, IOException {
+
 
         if (fromDate == null) {
             fromDate = DateUtils.addDays(new Date(), -21);
@@ -92,25 +90,31 @@ public class NonCodedDiagnosesPageController {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("fromDate", fromDate);
         params.put("toDate", toDate);
-        if(StringUtils.isNotBlank(nonCoded)){
-            params.put("nonCoded", nonCoded);
-        } else {
-            params.put("nonCoded", "");
+        if(StringUtils.isBlank(nonCoded)){
+            nonCoded = "";
         }
+        params.put("nonCoded", nonCoded);
+        model.addAttribute("nonCoded", nonCoded);
+
+        Integer providerId = null;
         if ( provider != null ){
             params.put("provider", provider);
+            providerId =  provider.getId();
         }else {
             params.put("provider", null);
         }
+        model.addAttribute("providerId", providerId);
+
         EvaluationContext context = reportManager.initializeContext(params);
         ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
+        model.addAttribute("nonCodedRows", reportData.getDataSets().get(NonCodedDiagnosesReportManager.DATA_SET_NAME));
 
         model.addAttribute("reportManager", reportManager);
-        model.addAttribute("data", reportData.getDataSets().get(NonCodedDiagnosesReportManager.DATA_SET_NAME));
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
         model.addAttribute("providers", MirebalaisReportsProperties.getAllProviders());
+
     }
 
 }
