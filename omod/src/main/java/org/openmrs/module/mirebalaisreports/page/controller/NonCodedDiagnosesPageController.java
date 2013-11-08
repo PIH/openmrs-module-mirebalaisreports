@@ -19,7 +19,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Provider;
-import org.openmrs.module.emr.api.EmrService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -44,8 +43,6 @@ public class NonCodedDiagnosesPageController {
     private final Log log = LogFactory.getLog(getClass());
 
     public void get(@SpringBean NonCodedDiagnosesReportManager reportManager,
-					@SpringBean ReportDefinitionService reportDefinitionService,
-                    @SpringBean EmrService emrService,
                     @RequestParam(required = false, value = "fromDate") Date fromDate,
                     @RequestParam(required = false, value = "toDate") Date toDate,
                     PageModel model) throws EvaluationException, IOException {
