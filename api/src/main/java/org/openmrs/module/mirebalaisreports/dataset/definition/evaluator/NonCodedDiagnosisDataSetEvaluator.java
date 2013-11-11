@@ -101,12 +101,15 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
                 "    id1.identifier as 'patientIdentifier', " +
                 "    o.obs_id as 'obsId', " +
                 "    e.visit_id as 'visitId', " +
-                "    e.encounter_datetime as 'encounterDateTime'");
+                "    e.encounter_datetime as 'encounterDateTime', " +
+                "    n1.given_name as 'patientFirstName', " +
+                "    n1.family_name as 'patientLastName'");
         sqlQuery.append(" from obs o ");
         sqlQuery.append(" inner join patient_identifier as id1 on (o.person_id = id1.patient_id and id1.identifier_type = :primaryIdentifierType ) ");
         sqlQuery.append(" inner join encounter as e on (o.encounter_id = e.encounter_id) ");
         sqlQuery.append(" inner join users as u on (o.creator = u.user_id) ");
         sqlQuery.append(" inner join person_name as n on (u.person_id = n.person_id and n.voided=0) " );
+        sqlQuery.append(" inner join person_name as n1 on (o.person_id = n1.person_id and n1.voided=0) " );
         sqlQuery.append(" ");
         sqlQuery.append(" where o.voided = 0  ");
         sqlQuery.append(" and o.concept_id = :nonCodedConcept " );
@@ -149,7 +152,8 @@ public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
             row.addColumnValue(new DataSetColumn("obsId", "obsId", String.class), o[7]);
             row.addColumnValue(new DataSetColumn("visitId", "visitId", String.class), o[8]);
             row.addColumnValue(new DataSetColumn("encounterDateTime", "encounterDateTime", String.class), o[9]);
-
+            row.addColumnValue(new DataSetColumn("patientFirstName", "patientFirstName", String.class), o[10]);
+            row.addColumnValue(new DataSetColumn("patientLastName", "patientLastName", String.class), o[11]);
             dataSet.addRow(row);
         }
 		return dataSet;

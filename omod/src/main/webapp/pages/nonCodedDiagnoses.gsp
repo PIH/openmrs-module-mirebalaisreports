@@ -143,7 +143,7 @@
                        data-patient-identifier="${ it.getColumnValue("patientIdentifier") }"
                        data-patient-id="${ it.getColumnValue("patientId") }"
                        data-visit-id="${ it.getColumnValue("visitId") }"
-                       data-person-name="${ it.getColumnValue("creatorFirstName") } ${ it.getColumnValue("creatorLastName") }"
+                       data-person-name="${ it.getColumnValue("patientFirstName") } ${ it.getColumnValue("patientLastName") }"
                        data-nonCoded-Diagnosis="${ ui.escapeHtml(it.getColumnValue("nonCodedDiagnosis")) }"
                        data-obs-id ="${ it.getColumnValue("obsId")}"
                        href="#${ it.getColumnValue("patientId") }">
