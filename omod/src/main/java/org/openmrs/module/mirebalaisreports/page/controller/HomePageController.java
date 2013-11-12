@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.AllPatientsWithIdsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.BasicStatisticsReportManager;
+import org.openmrs.module.mirebalaisreports.definitions.DailyRegistrationsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.LqasDiagnosesReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -15,6 +16,7 @@ public class HomePageController {
 	private final Log log = LogFactory.getLog(getClass());
 
     public void get(@SpringBean BasicStatisticsReportManager basicStatisticsReportManager,
+                    @SpringBean DailyRegistrationsReportManager dailyRegistrationsReportManager,
 					@SpringBean NonCodedDiagnosesReportManager nonCodedDiagnosesReportManager,
                     @SpringBean LqasDiagnosesReportManager lqasDiagnosesReportManager,
                     @SpringBean AllPatientsWithIdsReportManager allPatientsWithIdsReportManager,
@@ -24,6 +26,7 @@ public class HomePageController {
 		// TODO: Move this all into the reports or some external configuration
 
 		pageModel.addAttribute("basicStatisticsReport", basicStatisticsReportManager);
+		pageModel.addAttribute("dailyRegistrationsReport", dailyRegistrationsReportManager);
 		pageModel.addAttribute("nonCodedDiagnosesReport", nonCodedDiagnosesReportManager);
         pageModel.addAttribute("lqasDiagnosesReport", lqasDiagnosesReportManager);
         pageModel.addAttribute("allPatientsWithIdsReportManager", allPatientsWithIdsReportManager);

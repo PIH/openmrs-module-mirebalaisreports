@@ -23,13 +23,13 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
     protected final Log log = LogFactory.getLog(getClass());
 
     @Autowired
-	MirebalaisReportsProperties mirebalaisReportsProperties;
+	protected MirebalaisReportsProperties mirebalaisReportsProperties;
 
     @Autowired
-    DispositionService dispositionService;
+    protected DispositionService dispositionService;
 
     @Autowired
-    EmrApiProperties emrApiProperties;
+    protected EmrApiProperties emrApiProperties;
 
     public abstract String getUuid();
 

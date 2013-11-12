@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- Sets up test data for running this report on 3 Oct 2013 -->
+<dataset>
+
+    <!-- never registered or seen -->
+    <person person_id="1000" gender="F" birthdate="1946-05-26" birthdate_estimated="false" dead="false" creator="49" date_created="2013-10-01 00:00:00.0" changed_by="5" date_changed="2013-09-04 10:32:00.0" voided="false" uuid="be7890be-36a4-11e3-b90a-a351ac6b1528"/>
+    <patient patient_id="1000" creator="1" date_created="2013-10-01 00:00:00.0" voided="false" void_reason="" />
+
+    <!-- registered at Clinic Registration, checked in at Outpatient Clinic -->
+    <person person_id="1001" gender="F" birthdate="1975-01-02" birthdate_estimated="false" dead="false" creator="49" date_created="2013-10-01 00:00:00.0" voided="false" uuid="d2c28390-36a4-11e3-b90a-a351ac6b1528"/>
+    <patient patient_id="1001" creator="1" date_created="2013-10-01 00:00:00.0" voided="false" void_reason="" />
+    <visit visit_id="1001" patient_id="1001" visit_type_id="1" date_started="2013-10-01 09:30:00.0" date_stopped="2013-10-01 16:45:00.0" location_id="3" creator="1" date_created="2013-10-02 09:15:00.0" voided="0" uuid="76ef1136-36cd-11e3-b90a-a351ac6b1521" />
+    <encounter encounter_id="10011" visit_id="1001" encounter_type="6" patient_id="1001" location_id="22" encounter_datetime="2013-10-01 09:30:00.0" creator="1" date_created="2013-10-02 09:15:00.0" voided="false" uuid="76ef1136-36cd-11e3-b90a-a351ac6b1522"/>
+    <encounter encounter_id="10012" visit_id="1001" encounter_type="1" patient_id="1001" location_id="32" encounter_datetime="2013-10-01 09:45:00.0" creator="1" date_created="2013-10-02 12:30:00.0" voided="false" uuid="76ef1136-36cd-11e3-b90a-a351ac6b1523"/>
+
+    <!-- registered long ago, checked in at Outpatient Clinic -->
+    <person person_id="1002" gender="M" birthdate="1985-01-02" birthdate_estimated="false" dead="false" creator="49" date_created="2013-01-01 00:00:00.0" voided="false" uuid="a2f5cee6-4672-11e3-a5b7-ca9baa818a00"/>
+    <patient patient_id="1002" creator="1" date_created="2013-10-01 00:00:00.0" voided="false" void_reason="" />
+    <encounter encounter_id="10021" encounter_type="6" patient_id="1002" location_id="22" encounter_datetime="2013-01-01 09:30:00.0" creator="1" date_created="2013-01-02 09:15:00.0" voided="false" uuid="a2f5cee6-4672-11e3-a5b7-ca9baa818a01"/>
+    <visit visit_id="1002" patient_id="1002" visit_type_id="1" date_started="2013-10-01 10:30:00.0" date_stopped="2013-10-01 16:45:00.0" location_id="3" creator="1" date_created="2013-10-02 09:15:00.0" voided="0" uuid="a2f5cee6-4672-11e3-a5b7-ca9baa818a02"/>
+    <encounter encounter_id="10022" visit_id="1002" encounter_type="1" patient_id="1002" location_id="32" encounter_datetime="2013-10-01 10:45:00.0" creator="1" date_created="2013-10-02 12:30:00.0" voided="false" uuid="a2f5cee6-4672-11e3-a5b7-ca9baa818a03"/>
+
+</dataset>

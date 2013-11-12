@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.mirebalaisreports.definitions.DailyRegistrationsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
 import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsDailyReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
@@ -66,6 +67,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
      */
     private void setupOtherReports() {
         setupReport(Context.getRegisteredComponents(InpatientStatsDailyReportManager.class).get(0));
+        setupReport(Context.getRegisteredComponents(DailyRegistrationsReportManager.class).get(0));
     }
 
     private void setupFullDataExports() {

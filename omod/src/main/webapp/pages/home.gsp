@@ -15,6 +15,10 @@
             reportDefinition: properties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID,
             breadcrumb: breadcrumb
     ])
+
+    def dailyReportLink = { reportManager ->
+        ui.pageLink("mirebalaisreports", "dailyReport", [ reportDefinition: reportManager.uuid ])
+    }
 %>
 
 <script type="text/javascript">
@@ -28,6 +32,8 @@
 	<p>${ ui.message("mirebalaisreports.categories.overviewReports") }</p>
 	<ul>
 		<li><a id="mirebalaisreports-basicStatisticsReport-link" href="${ ui.pageLink("mirebalaisreports", "basicStatistics") }">${ basicStatisticsReport.name }</a></li>
+        <li><a id="mirebalaisreports-dailyRegistrationsReport-link" href="${ dailyReportLink(dailyRegistrationsReport)} ">${ ui.message(dailyRegistrationsReport.name) }</a></li>
+        <li><a id="mirebalaisreports-inpatientDataExportReport-link" href="${ ui.pageLink("mirebalaisreports", "inpatientStatsDailyReport") }">${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") }</a></li>
 	</ul>
 </div>
 <div class="reportBox">
@@ -48,8 +54,7 @@
             <li><a id="mirebalaisreports-surgeryDataExportReport-link" href="${ linkFor(properties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.surgerydataexport.name") }</a></li>
             <li><a id="mirebalaisreports-hospitalizationsDataExportReport-link" href="${ linkFor(properties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.hospitalizationsdataexport.name") }</a></li>
             <li><a id="mirebalaisreports-consultationsDataExportReport-link" href="${ linkFor(properties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.consultationsdataexport.name") }</a></li>
-            <li><a id="mirebalaisreports-inpatientDataExportReport-link" href="${ ui.pageLink("mirebalaisreports", "inpatientStatsDailyReport") }">${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") }</a></li>
-            
+
             <li><a id="mirebalaisreports-lqasDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "lqasDiagnoses") }">${ lqasDiagnosesReport.name }</a></li>
             <li><a id="mirebalaisreports-allPatientsWithIdsReport-link" href="${ ui.pageLink("mirebalaisreports", "allPatientsWithIds") }">${ allPatientsWithIdsReportManager.name }</a></li>
 		</ul>
