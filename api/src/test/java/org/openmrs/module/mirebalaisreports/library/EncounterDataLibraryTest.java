@@ -204,17 +204,6 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    @Ignore
-    public void testRegistrationCreatorName() throws EvaluationException {
-        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
-        EncounterDataDefinition definition = library.getRegistrationCreatorName();
-        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
-        assertThat((String)data.getData().get(10001), is(""));
-        assertThat((String)data.getData().get(10002), is(""));
-        assertThat((String)data.getData().get(10003), is(""));
-    }
-
-    @Test
     public void testTransferOutLocation() throws EvaluationException {
         context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
         EncounterDataDefinition definition = library.getTransferOutLocation();
@@ -311,7 +300,53 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(10001), nullValue());
         assertThat(data.getData().get(10002), nullValue());
-        assertThat((String) data.getData().get(10003), is("Surgical Service"));
+        assertThat((String) data.getData().get(10003), is("Surgical service"));
+    }
+
+    @Test
+    @Ignore
+    public void testOtherAssistant() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getOtherAssistant();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String) data.getData().get(10003), is(""));
+    }
+
+
+
+    @Test
+    @Ignore
+    public void testRegistrationCreatorName() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getRegistrationCreatorName();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((String)data.getData().get(10001), is(""));
+        assertThat((String)data.getData().get(10002), is(""));
+        assertThat((String)data.getData().get(10003), is(""));
+    }
+
+    @Test
+    @Ignore
+    public void testAttending() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getAttending();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String) data.getData().get(10003), is(""));
+    }
+
+    @Test
+    @Ignore
+    public void testAssistantOne() throws EvaluationException {
+        context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
+        EncounterDataDefinition definition = library.getAssistantOne();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat(data.getData().get(10001), nullValue());
+        assertThat(data.getData().get(10002), nullValue());
+        assertThat((String) data.getData().get(10003), is(""));
     }
 
 

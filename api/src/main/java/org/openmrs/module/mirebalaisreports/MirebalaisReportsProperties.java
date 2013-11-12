@@ -413,6 +413,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(SURGICAL_SERVICE);
     }
 
+    public static final String OTHER_ASSISTANT = "bb34602b-0d91-4fe9-a88e-ff86c4af913d";
+
+    public Concept getOtherAssistant() {
+        return getRequiredConceptByUuid(OTHER_ASSISTANT);
+    }
+
     private Concept getRequiredConceptByUuid(String uuid) {
         Concept c = conceptService.getConceptByUuid(uuid);
         if (c == null) {
