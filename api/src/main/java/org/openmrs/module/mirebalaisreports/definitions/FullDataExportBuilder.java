@@ -55,6 +55,8 @@ public class FullDataExportBuilder {
                 Arrays.asList("consultations", "diagnoses")));
         configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dashboarddataexport.",
                 Arrays.asList("patients", "checkins", "vitals", "consultations", "diagnoses", "visits", "hospitalizations", "postOpNote1", "postOpNote2")));
+        configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.patientsdataexport.",
+                Arrays.asList("patients")));
     }
 
     public List<FullDataExportReportManager> getAllReportManagers() {
