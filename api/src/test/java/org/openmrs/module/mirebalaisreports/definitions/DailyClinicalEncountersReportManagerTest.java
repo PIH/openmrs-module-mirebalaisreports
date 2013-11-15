@@ -9,21 +9,19 @@ import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.test.SkipBaseSetup;
+import org.openmrs.module.reporting.report.renderer.TsvReportRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyIds;
 
 /**
  *
  */
-@SkipBaseSetup
-public class DailyRegistrationsReportManagerTest extends BaseMirebalaisReportTest {
+public class DailyClinicalEncountersReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired
-    DailyRegistrationsReportManager manager;
+    DailyClinicalEncountersReportManager manager;
 
     @Before
     public void setUp() throws Exception {
@@ -37,20 +35,19 @@ public class DailyRegistrationsReportManagerTest extends BaseMirebalaisReportTes
 
         ReportDefinition reportDefinition = manager.constructReportDefinition();
         ReportData data = reportDefinitionService.evaluate(reportDefinition, context);
+        new TsvReportRenderer().render(data, null, System.out);
 
         DataSet byLocation = data.getDataSets().get("byLocation");
         for (DataSetRow row : byLocation) {
-            if (row.getColumnValue("rowLabel").equals("ui.i18n.Location.name.787a2422-a7a2-400e-bdbb-5c54b2691af5")) {
-                assertThat((Cohort) row.getColumnValue("registrations"), isCohortWithExactlyIds(1001));
-            } else {
-                assertThat((Cohort) row.getColumnValue("registrations"), isCohortWithExactlyIds());
+            if (row.getColumnValue("rowLabel").equals("ui.i18n.Location.name.2c93919d-7fc6-406d-a057-c0b640104790")) {
+                assertThat((Cohort) row.getColumnValue("vitals"), isCohortWithExactlyIds(1001, 1002));
+                assertThat((Cohort) row.getColumnValue("consults"), isCohortWithExactlyIds(1001));
+            }
+            else {
+                assertThat((Cohort) row.getColumnValue("vitals"), isCohortWithExactlyIds());
+                assertThat((Cohort) row.getColumnValue("consults"), isCohortWithExactlyIds());
             }
         }
-
-        DataSet overall = data.getDataSets().get("overall");
-        assertThat(overall.getMetaData().getColumnCount(), is(1));
-        DataSetRow overallRow = overall.iterator().next();
-        assertThat((Cohort) overallRow.getColumnValue("mirebalaisreports.dailyRegistrations.overall"), isCohortWithExactlyIds(1001));
     }
 
 }

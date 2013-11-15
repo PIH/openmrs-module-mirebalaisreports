@@ -4,8 +4,6 @@ import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.mirebalaismetadata.MirebalaisMetadataProperties;
 import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportManager;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.dataset.definition.CohortsWithVaryingParametersDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -24,9 +22,11 @@ import java.util.Map;
  */
 public abstract class DailyIndicatorByLocationReportDefinition extends BaseMirebalaisReportManager {
 
+    public static final String MAP_DAY_TO_START_AND_END_DATE = "startDate=${day},endDate=${day+1d-1s}";
+
     public abstract String getNameOfLocationParameterOnCohortDefinition();
 
-    public abstract CohortDefinition getByLocationCohortDefinition();
+    public abstract void addDataSetDefinitions(ReportDefinition reportDefinition);
 
     @Autowired
     LocationService locationService;
@@ -57,34 +57,9 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
         rd.setDescription(getMessageCodePrefix() + "description");
         rd.setUuid(getUuid());
         rd.setParameters(getParameters());
-
-        CohortDefinition byLocationCohortDefinition = getByLocationCohortDefinition();
-        if (byLocationCohortDefinition != null) {
-            CohortsWithVaryingParametersDataSetDefinition dsd = new CohortsWithVaryingParametersDataSetDefinition();
-            dsd.addParameter(getStartDateParameter());
-            dsd.addParameter(getEndDateParameter());
-            if (byLocationCohortDefinition.getName() == null) {
-                throw new IllegalStateException("cohort definition must have a name");
-            }
-            dsd.addCohortDefinition(byLocationCohortDefinition);
-
-            List<Location> locations = getLocations();
-            for (Location location : locations) {
-                Map<String, Object> option = new HashMap<String, Object>();
-                option.put(getNameOfLocationParameterOnCohortDefinition(), location);
-                dsd.addVaryingParameters(option);
-            }
-
-            rd.addDataSetDefinition("byLocation", map(dsd, "startDate=${day},endDate=${day+1d-1s}"));
-        }
-
-        addAdditionalDataSetDefinitions(rd);
+        addDataSetDefinitions(rd);
 
         return rd;
-    }
-
-    public void addAdditionalDataSetDefinitions(ReportDefinition reportDefinition) {
-        // Default implementation is a NO-OP
     }
 
     /**
@@ -110,4 +85,14 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
         return new ArrayList<ReportDesign>();
     }
 
+    protected List<Map<String, Object>> getParameterOptions() {
+        List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
+        List<Location> locations = getLocations();
+        for (Location location : locations) {
+            Map<String, Object> option = new HashMap<String, Object>();
+            option.put(getNameOfLocationParameterOnCohortDefinition(), location);
+            options.add(option);
+        }
+        return options;
+    }
 }

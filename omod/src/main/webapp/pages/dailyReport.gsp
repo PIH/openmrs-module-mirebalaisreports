@@ -11,13 +11,14 @@
     ui.includeCss("mirebalaisreports", "dailyReport.css")
 %>
 
-${ ui.includeFragment("appui", "messages", [ codes: [
+<%= ui.includeFragment("appui", "messages", [ codes: [
         reportDefinition.name,
         reportDefinition.description,
         "mirebalaisreports.dailyRegistrations.overall",
         context.locationService.allLocations.collect { "ui.i18n.Location.name." + it.uuid },
+        context.encounterService.allEncounterTypes.collect { "ui.i18n.EncounterType.name." + it.uuid }
     ].flatten()
-])}
+]) %>
 
 <script type="text/javascript">
     var breadcrumbs = [
@@ -54,30 +55,9 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
     </div>
 
     <div ng-show="hasResults()">
-        <table class="results-table">
-            <tbody>
-                <tr ng-repeat="column in currentData().dataSets[0].metadata.columns" ng-show="currentData().dataSets[0].rows[0][column.name].size > 0">
-                    <th>
-                        {{ column.label | translate }}
-                    </th>
-                    <td>
-                        <a ng-click="viewCohort(day, 0, column)">
-                            {{ currentData().dataSets[0].rows[0][column.name].size }}
-                        </a>
-                    </td>
-                </tr>
-                <tr ng-repeat="column in currentData().dataSets[1].metadata.columns">
-                    <th>
-                        {{ column.label | translate }}
-                    </th>
-                    <td>
-                        <a ng-click="viewCohort(day, 1, column)">
-                            {{ currentData().dataSets[1].rows[0][column.name].size }}
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div ng-repeat="dataset in currentData().dataSets">
+            <div ng-include=" 'include/' + dataset.definition.name + '.page' "></div>
+        </div>
     </div>
 
     <div id="view-cohort" ng-show="viewingCohort">
@@ -86,7 +66,11 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
 
         <div ng-show="viewingCohort.members">
             <h3>
-                {{ viewingCohort.column.label | translate }} - {{ viewingCohort.day | date }}
+                {{ viewingCohort.column.label | translate }} -
+                <span ng-show="viewingCohort.row['rowLabel']">
+                    {{ viewingCohort.row['rowLabel'] | translate }} -
+                </span>
+                {{ viewingCohort.day | date }}
             </h3>
 
             <table class="patient-list-table">

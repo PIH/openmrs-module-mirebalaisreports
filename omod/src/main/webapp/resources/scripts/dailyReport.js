@@ -69,6 +69,24 @@ var app = angular.module('dailyReport', ['ui.bootstrap']).
             return false;
         }
 
+        $scope.hasAnyNonEmptyCohort = function(rowOrDataset) {
+            if (rowOrDataset.rows) { // it's a dataset
+                for (var i = 0; i < rowOrDataset.rows.length; ++i) {
+                    if ($scope.hasAnyNonEmptyCohort(rowOrDataset.rows[i])) {
+                        return true;
+                    }
+                }
+                return false;
+            } else { // it's a row
+                for (key in rowOrDataset) {
+                    if (rowOrDataset[key].size) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
         function evaluate(day) {
             var forDay = new Date(day.getTime());
             if (dataFor(forDay)) {
@@ -83,10 +101,10 @@ var app = angular.module('dailyReport', ['ui.bootstrap']).
                 });
         }
 
-        $scope.viewCohort = function(day, dataset, column) {
+        $scope.viewCohort = function(day, row, column) {
             day = new Date(day.getTime());
 
-            var ptIds = dataFor(day).dataSets[dataset].rows[0][column.name].memberIds;
+            var ptIds = row[column.name].memberIds;
             if (ptIds == null || ptIds.length == 0) {
                 $scope.viewingCohort = null;
                 return;
@@ -100,6 +118,7 @@ var app = angular.module('dailyReport', ['ui.bootstrap']).
                     })).
                 success(function(data, status, headers, config) {
                     $scope.viewingCohort = {
+                        row: row,
                         column: column,
                         day: day,
                         members: data.members

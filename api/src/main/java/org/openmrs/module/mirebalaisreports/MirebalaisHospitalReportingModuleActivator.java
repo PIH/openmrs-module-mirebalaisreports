@@ -17,12 +17,14 @@ package org.openmrs.module.mirebalaisreports;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.SerializedObject;
+import org.openmrs.api.db.SerializedObjectDAO;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
-import org.openmrs.module.mirebalaisreports.definitions.DailyRegistrationsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
 import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsDailyReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
+import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
@@ -39,6 +41,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
 
     private ReportService reportService;
     private ReportDefinitionService reportDefinitionService;
+    private SerializedObjectDAO serializedObjectDAO;
 
     public void setReportService(ReportService reportService) {
         this.reportService = reportService;
@@ -48,12 +51,17 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         this.reportDefinitionService = reportDefinitionService;
     }
 
+    public void setSerializedObjectDAO(SerializedObjectDAO serializedObjectDAO) {
+        this.serializedObjectDAO = serializedObjectDAO;
+    }
+
     /**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
         reportService = Context.getService(ReportService.class);
         reportDefinitionService = Context.getService(ReportDefinitionService.class);
+        serializedObjectDAO = Context.getRegisteredComponents(SerializedObjectDAO.class).get(0);
 
         setupFullDataExports();
         setupOtherReports();
@@ -67,7 +75,9 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
      */
     private void setupOtherReports() {
         setupReport(Context.getRegisteredComponents(InpatientStatsDailyReportManager.class).get(0));
-        setupReport(Context.getRegisteredComponents(DailyRegistrationsReportManager.class).get(0));
+        for (DailyIndicatorByLocationReportDefinition manager : Context.getRegisteredComponents(DailyIndicatorByLocationReportDefinition.class)) {
+            setupReport(manager);
+        }
     }
 
     private void setupFullDataExports() {
@@ -92,6 +102,16 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
             log.debug("overwriting existing ReportDefinition");
             reportDefinition.setId(existing.getId());
             Context.evictFromSession(existing);
+        }
+        else {
+            // incompatible class changes for a serialized object could mean that getting the definition return null
+            // and some serialization error gets logged. In that case we want to overwrite the invalid serialized definition
+            SerializedObject invalidSerializedObject = serializedObjectDAO.getSerializedObjectByUuid(reportDefinition.getUuid());
+            if (invalidSerializedObject != null) {
+                reportDefinition.setId(invalidSerializedObject.getId());
+                Context.evictFromSession(invalidSerializedObject);
+            }
+//            serializedObjectDAO.purgeObject(invalidSerializedObject.getId());
         }
 
         reportDefinitionService.saveDefinition(reportDefinition);
@@ -118,5 +138,5 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
 	public void stopped() {
 		log.info("Mirebalais Hospital Reporting Module Module stopped");
 	}
-		
+
 }
