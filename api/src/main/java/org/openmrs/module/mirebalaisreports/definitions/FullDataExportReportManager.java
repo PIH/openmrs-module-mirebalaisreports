@@ -21,12 +21,15 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.EncounterDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.query.encounter.definition.SqlEncounterQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
@@ -155,6 +158,10 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             if ("patients".equals(key)) {
                 dsd = constructPatientsDataSetDefinition();
             }
+            else if ("consultations-new".equals(key)) {
+                dsd = constructConsultationsDataSetDefinition();
+                key = "consultations";
+            }
             else {
                 dsd = constructSqlDataSetDefinition(key);
             }
@@ -172,6 +179,33 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 		return rd;
 	}
+
+    private DataSetDefinition constructConsultationsDataSetDefinition() {
+        EncounterDataSetDefinition dsd = new EncounterDataSetDefinition();
+
+        dsd.addParameter(getStartDateParameter());
+        dsd.addParameter(getEndDateParameter());
+
+        String sql = "select encounter_id " +
+                "from encounter " +
+                "where voided = 0 " +
+                "and encounter_type = :consultation " +
+                "and encounter_datetime >= :startDate AND encounter_datetime < :endDate";
+        sql = sql.replaceAll(":consultation", mirebalaisReportsProperties.getConsultEncounterType().getId().toString());
+
+        SqlEncounterQuery encounterQuery = new SqlEncounterQuery(sql);
+        encounterQuery.addParameter(getStartDateParameter());
+        encounterQuery.addParameter(getEndDateParameter());
+        dsd.addRowFilter(encounterQuery, "startDate=${startDate},endDate=${endDate + 1d}");
+
+        dsd.addColumn("patient_id", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.patientId"), "");
+        dsd.addColumn("zlemr", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.mostRecentZlEmrId"), "");
+        dsd.addColumn("loc_registered", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.mostRecentZlEmrIdLocation"), "");
+        dsd.addColumn("unknown_patient", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.unknownPatient"), "");
+        dsd.addColumn("gender", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.gender"), "");
+
+        return dsd;
+    }
 
     private SqlDataSetDefinition constructSqlDataSetDefinition(String key) {
         SqlDataSetDefinition sqlDsd = new SqlDataSetDefinition();

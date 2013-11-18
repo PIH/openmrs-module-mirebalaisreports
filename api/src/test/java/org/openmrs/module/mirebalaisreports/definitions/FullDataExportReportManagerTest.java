@@ -57,4 +57,37 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         Assert.assertEquals(1, wb.getNumberOfSheets());
         Assert.assertEquals("patients", wb.getSheetName(0));
     }
+
+    @Test
+    public void shouldSuccessfullyRenderConsultationsToExcel() throws Exception {
+        executeDataSet("org/openmrs/module/mirebalaisreports/consultationsExportTestData.xml");
+
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("consultations-new"));
+        FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
+
+        EvaluationContext context = new EvaluationContext();
+        context.addParameterValue("startDate", DateUtil.parseDate("2013-10-01", "yyyy-MM-dd"));
+        context.addParameterValue("endDate", DateUtil.parseDate("2013-10-31", "yyyy-MM-dd"));
+
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
+        RenderingMode mode = reportManager.getRenderingModes().get(0);
+        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
+
+        new TsvReportRenderer().render(reportData, null, System.out);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mode.getRenderer().render(reportData, mode.getArgument(), out);
+        File outputFile = new File(System.getProperty("java.io.tmpdir"), "test.xls");
+        ReportUtil.writeByteArrayToFile(outputFile, out.toByteArray());
+
+        System.out.println("Wrote to " + outputFile.getAbsolutePath());
+
+        InputStream is = new FileInputStream(outputFile);
+        POIFSFileSystem fs = new POIFSFileSystem(is);
+        HSSFWorkbook wb = new HSSFWorkbook(fs);
+
+        Assert.assertEquals(1, wb.getNumberOfSheets());
+        Assert.assertEquals("consultations", wb.getSheetName(0));
+    }
+
 }

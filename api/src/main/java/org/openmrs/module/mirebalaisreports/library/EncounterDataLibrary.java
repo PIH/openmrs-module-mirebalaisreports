@@ -93,6 +93,11 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("locationName.sql",null);
     }
 
+    @DocumentedDefinition("patientId")
+    public EncounterDataDefinition getPatientId() {
+        return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getPatientId());
+    }
+
     @DocumentedDefinition("gender")
     public EncounterDataDefinition getGender() {
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getGender());
