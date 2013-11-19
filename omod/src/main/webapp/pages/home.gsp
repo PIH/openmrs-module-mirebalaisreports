@@ -36,30 +36,27 @@
         <li><a id="mirebalaisreports-dailyClinicalEncountersReport-link" href="${ dailyReportLink(dailyClinicalEncountersReport)} ">${ ui.message(dailyClinicalEncountersReport.name) }</a></li>
         <li><a id="mirebalaisreports-inpatientDataExportReport-link" href="${ ui.pageLink("mirebalaisreports", "inpatientStatsDailyReport") }">${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") }</a></li>
 	</ul>
+
+    <p>${ ui.message("mirebalaisreports.categories.dataQualityReports") }</p>
+    <ul>
+        <li><a id="mirebalaisreports-nonCodedDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "nonCodedDiagnoses") }">${ nonCodedDiagnosesReport.name }</a></li>
+    </ul>
 </div>
+
+<% if (context.hasPrivilege("App: mirebalaisreports.dataexports")) { %>
 <div class="reportBox">
-	<p>${ ui.message("mirebalaisreports.categories.dataQualityReports") }</p>
+	<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
 	<ul>
-		<li><a id="mirebalaisreports-nonCodedDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "nonCodedDiagnoses") }">${ nonCodedDiagnosesReport.name }</a></li>
+		<li><a id="mirebalaisreports-fullDataExportReport-link" href="${ linkFor(properties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.fulldataexport.name") }</a></li>
+        <li><a id="mirebalaisreports-dashboardDataExportReport-link" href="${ linkFor(properties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.dashboarddataexport.name") }</a></li>
+        <li><a id="mirebalaisreports-radiologyDataExportReport-link" href="${ linkFor(properties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.radiologydataexport.name") }</a></li>
+        <li><a id="mirebalaisreports-surgeryDataExportReport-link" href="${ linkFor(properties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.surgerydataexport.name") }</a></li>
+        <li><a id="mirebalaisreports-hospitalizationsDataExportReport-link" href="${ linkFor(properties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.hospitalizationsdataexport.name") }</a></li>
+        <li><a id="mirebalaisreports-consultationsDataExportReport-link" href="${ linkFor(properties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.consultationsdataexport.name") }</a></li>
+        <li><a id="mirebalaisreports-patientsDataExportReport-link" href="${ linkFor(properties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.patientsdataexport.name") }</a></li>
+
+        <li><a id="mirebalaisreports-lqasDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "lqasDiagnoses") }">${ lqasDiagnosesReport.name }</a></li>
+        <li><a id="mirebalaisreports-allPatientsWithIdsReport-link" href="${ ui.pageLink("mirebalaisreports", "allPatientsWithIds") }">${ allPatientsWithIdsReportManager.name }</a></li>
 	</ul>
 </div>
-
-<div style="padding-top:20px;">
-	<% if (context.hasPrivilege("App: mirebalaisreports.dataexports")) { %>
-	<div class="reportBox">
-		<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
-		<ul>
-			<li><a id="mirebalaisreports-fullDataExportReport-link" href="${ linkFor(properties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.fulldataexport.name") }</a></li>
-            <li><a id="mirebalaisreports-dashboardDataExportReport-link" href="${ linkFor(properties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.dashboarddataexport.name") }</a></li>
-            <li><a id="mirebalaisreports-radiologyDataExportReport-link" href="${ linkFor(properties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.radiologydataexport.name") }</a></li>
-            <li><a id="mirebalaisreports-surgeryDataExportReport-link" href="${ linkFor(properties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.surgerydataexport.name") }</a></li>
-            <li><a id="mirebalaisreports-hospitalizationsDataExportReport-link" href="${ linkFor(properties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.hospitalizationsdataexport.name") }</a></li>
-            <li><a id="mirebalaisreports-consultationsDataExportReport-link" href="${ linkFor(properties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.consultationsdataexport.name") }</a></li>
-            <li><a id="mirebalaisreports-patientsDataExportReport-link" href="${ linkFor(properties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.patientsdataexport.name") }</a></li>
-
-            <li><a id="mirebalaisreports-lqasDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "lqasDiagnoses") }">${ lqasDiagnosesReport.name }</a></li>
-            <li><a id="mirebalaisreports-allPatientsWithIdsReport-link" href="${ ui.pageLink("mirebalaisreports", "allPatientsWithIds") }">${ allPatientsWithIdsReportManager.name }</a></li>
-		</ul>
-	</div>
-	<% } %>
-</div>
+<% } %>
