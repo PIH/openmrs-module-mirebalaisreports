@@ -6,7 +6,6 @@ inner join encounter_provider asst_1
   and asst_1.encounter_role_id = 8
   inner join provider asst_1_p
     on asst_1.provider_id = asst_1_p.provider_id
-    and asst_1_p.retired = 0
     inner join person_name asst_1_n
     on asst_1_p.person_id = asst_1_n.person_id
     and asst_1_n.voided = 0

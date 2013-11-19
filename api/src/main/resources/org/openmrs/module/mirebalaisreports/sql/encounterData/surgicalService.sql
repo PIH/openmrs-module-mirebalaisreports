@@ -9,5 +9,4 @@ inner join obs ssrv
     and ssrv_n.locale = 'en'
     and ssrv_n.locale_preferred = true
     and ssrv_n.voided = 0
-    and ssrv_n.concept_name_type = 'FULLY_SPECIFIED'
 where e.encounter_id in (:encounterIds)
