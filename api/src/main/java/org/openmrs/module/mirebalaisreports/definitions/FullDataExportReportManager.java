@@ -203,6 +203,25 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("loc_registered", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.mostRecentZlEmrIdLocation"), "");
         dsd.addColumn("unknown_patient", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.unknownPatient"), "");
         dsd.addColumn("gender", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.gender"), "");
+        dsd.addColumn("age_at_enc", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.birthdate.YMD"), "");
+        dsd.addColumn("department", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.department"), "");
+        dsd.addColumn("commune", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.commune"), "");
+        dsd.addColumn("section", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.section"), "");
+        dsd.addColumn("locality", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.locality"), "");
+        dsd.addColumn("street_landmark", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.streetLandmark"), "");
+        dsd.addColumn("encounter_id", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterID"), "");
+        dsd.addColumn("encounter_datetime", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterDateCreated"), "");
+        dsd.addColumn("encounter_location", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterLocation"), "");
+        dsd.addColumn("provider", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.registration.creator.name"), "");
+        dsd.addColumn("num_coded", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.codedDiagnosis"), "");
+        dsd.addColumn("num_non_coded", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.nonCodedDiagnosis"), "");
+        dsd.addColumn("disposition", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.disposition"), "");
+        dsd.addColumn("transfer_out_location", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.transferOutLocationTraumaName"), "");
+        dsd.addColumn("trauma", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.traumaType"), "");
+        dsd.addColumn("trauma_type", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.traumaName"), "");
+        dsd.addColumn("appointment", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.returnVisitDate"), "");
+        dsd.addColumn("comments", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.comments"), "");
+        dsd.addColumn("death_date", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.vitalStatus.deathDate"), "");
 
         return dsd;
     }
