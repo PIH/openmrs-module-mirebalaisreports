@@ -2,8 +2,12 @@
   display: inline-block;
 }
 
-#date-header {
+#date-header, #view-cohort {
   text-align: center;
+
+  p {
+    margin-bottom: 10px;
+  }
 }
 
 #view-cohort {

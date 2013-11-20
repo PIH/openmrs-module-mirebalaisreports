@@ -45,9 +45,9 @@
                 <button class="btn" ng-click="openDatePicker()"><i class="icon-calendar"></i></button>
             </div>
         </div>
-        <h5>
+        <p>
             ${ ui.message(reportDefinition.description) }
-        </h5>
+        </p>
     </div>
 
     <div ng-show="isLoading()">
@@ -65,13 +65,13 @@
         <img ng-show="viewingCohort.loading" src="${ ui.resourceLink("uicommons", "images/spinner.gif") }"/>
 
         <div ng-show="viewingCohort.members">
-            <h3>
+            <p>
                 {{ viewingCohort.column.label | translate }} -
                 <span ng-show="viewingCohort.row['rowLabel']">
                     {{ viewingCohort.row['rowLabel'] | translate }} -
                 </span>
                 {{ viewingCohort.day | date }}
-            </h3>
+            </p>
 
             <table class="patient-list-table">
                 <thead>
