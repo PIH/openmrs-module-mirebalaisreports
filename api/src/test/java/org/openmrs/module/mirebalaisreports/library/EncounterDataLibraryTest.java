@@ -328,14 +328,13 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    @Ignore
     public void testAttending() throws EvaluationException {
         context.setBaseEncounters(new EncounterIdSet(10001, 10002, 10003));
         EncounterDataDefinition definition = library.getAttending();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(10001), nullValue());
         assertThat(data.getData().get(10002), nullValue());
-        assertThat((String) data.getData().get(10003), is(""));
+        assertThat((String) data.getData().get(10003), is("Paula Morris"));
     }
 
     @Test

@@ -195,12 +195,12 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     @DocumentedDefinition("attending")
     public EncounterDataDefinition getAttending() {
-        return sqlEncounterDataDefinition("attending.sql", null);
+        return sqlEncounterDataDefinition("attending.sql", new Replacements().add("attending", props.getAttending()));
     }
 
     @DocumentedDefinition("assistantOne")
     public EncounterDataDefinition getAssistantOne() {
-        return sqlEncounterDataDefinition("assistantOne.sql", null);
+        return sqlEncounterDataDefinition("assistantOne.sql", new Replacements().add("assistantOne", props.getAssistantOne()));
     }
 
     @DocumentedDefinition("otherAssistant")

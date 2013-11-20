@@ -419,6 +419,18 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(OTHER_ASSISTANT);
     }
 
+    public static final String ASSISTANT_ONE = "";
+
+    public Concept getAssistantOne() {
+        return getRequiredConceptByUuid(ASSISTANT_ONE);
+    }
+
+    public static final String ATTENDING = "fca9c942-1a36-11e2-a310-aa00f871a3e1";
+
+    public Concept getAttending() {
+        return getRequiredConceptByUuid(ATTENDING);
+    }
+
     private Concept getRequiredConceptByUuid(String uuid) {
         Concept c = conceptService.getConceptByUuid(uuid);
         if (c == null) {

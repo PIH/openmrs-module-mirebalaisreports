@@ -3,7 +3,7 @@ from encounter e
 inner join encounter_provider asst_1
   on e.encounter_id = asst_1.encounter_id
   and asst_1.voided = 0
-  and asst_1.encounter_role_id = 8
+  and asst_1.encounter_role_id = :assistantOne
   inner join provider asst_1_p
     on asst_1.provider_id = asst_1_p.provider_id
     inner join person_name asst_1_n
