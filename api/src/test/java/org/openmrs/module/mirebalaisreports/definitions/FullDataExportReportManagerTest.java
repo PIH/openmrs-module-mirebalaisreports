@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Patient;
-import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
@@ -29,12 +28,10 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     @Autowired
     FullDataExportBuilder builder;
 
-    @Autowired
-    TestDataManager data;
-
 	@Test
 	public void shouldSuccessfullyRenderToExcel() throws Exception {
-        executeDataSet("org/openmrs/module/mirebalaisreports/patientsBasedOnCoreMetadata.xml");
+
+        setUpPatientsBasedOnCoreMetadata();
 
         FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("patients"));
         FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
@@ -82,5 +79,16 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
         new TsvReportRenderer().render(reportData, null, System.out);
+    }
+
+    private void setUpPatientsBasedOnCoreMetadata() {
+        Patient patient = data.patient().name("Christy","Lee").gender("F")
+                .identifier(mirebalaisReportsProperties.getZlEmrIdentifierType(), "TT200E", mirebalaisReportsProperties.getOutpatientLocation())
+                .address("1050 Wishard Blvd", "RG5", "Indianapolis", "IN").save();
+        data.patient().name("Bobby", "Joe").gender("M")
+                .identifier(mirebalaisReportsProperties.getZlEmrIdentifierType(), "TT201C", mirebalaisReportsProperties.getOutpatientLocation())
+                .address("", "", "Kapina").save();
+        data.encounter().patient(patient).encounterType(mirebalaisReportsProperties.getRegistrationEncounterType())
+                .encounterDatetime("2013-09-08").location(mirebalaisReportsProperties.getOutpatientLocation()).save();
     }
 }
