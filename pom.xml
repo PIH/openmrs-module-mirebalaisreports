@@ -51,6 +51,7 @@
         <appframeworkVersion>2.0</appframeworkVersion>
         <eventVersion>2.1</eventVersion>
         <supercsvVersion>2.1.0</supercsvVersion>
+        <openmrsTestutilsVersion>1.0-SNAPSHOT</openmrsTestutilsVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -235,6 +236,13 @@
             <artifactId>sass</artifactId>
             <version>3.2.10</version>
             <type>gem</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.contrib</groupId>
+            <artifactId>testutils</artifactId>
+            <version>${openmrsTestutilsVersion}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
