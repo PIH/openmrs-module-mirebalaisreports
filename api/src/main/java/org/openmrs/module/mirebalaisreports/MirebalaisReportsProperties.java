@@ -51,6 +51,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID = "f3bb8094-3738-11e3-b90a-a351ac6b1528";
     public static final String DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID = "2e91bd04-4c7a-11e3-9325-f3ae8db9f6a7";
     public static final String DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID = "5dd60b6c-4d45-11e3-9325-f3ae8db9f6a7";
+    public static final String DAILY_CHECK_INS_REPORT_DEFINITION_UUID = "f170699a-50af-11e3-ba00-27a0ac7f78d9";
 
 	//***** LOCATIONS *****
 
@@ -58,6 +59,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String WOMEN_CLINIC_UUID = "9b2066a2-7087-47f6-9b3a-b001037432a3";
     public static final String EMERGENCY_DEPARTMENT_UUID = "f3a5586e-f06c-4dfb-96b0-6f3451a35e90";
     public static final String EMERGENCY_RECEPTION_UUID = "afa09010-43b6-4f19-89e0-58d09941bcbd";
+    public static final String MIREBALAIS_HOSPITAL_UUID = "a084f714-a536-473b-94e6-ec317b152b43";
+    public static final String CLINIC_REGISTRATION_UUID = "787a2422-a7a2-400e-bdbb-5c54b2691af5";
+    public static final String WOMENS_INTERNAL_MEDICINE_UUID = "2c93919d-7fc6-406d-a057-c0b640104790";
+    public static final String MENS_INTERNAL_MEDICINE_UUID = "e5db0599-89e8-44fa-bfa2-07e47d63546f";
 
     public Location getOutpatientLocation() {
 		return getRequiredLocationByUuid(OUTPATIENT_CLINIC_UUID);
@@ -73,6 +78,22 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public Location getEmergencyReceptionLocation() {
         return getRequiredLocationByUuid(EMERGENCY_RECEPTION_UUID);
+    }
+
+    public Location getMirebalaisHospitalLocation() {
+        return getRequiredLocationByUuid(MIREBALAIS_HOSPITAL_UUID);
+    }
+
+    public Location getClinicRegistrationLocation() {
+        return getRequiredLocationByUuid(CLINIC_REGISTRATION_UUID);
+    }
+
+    public Location getWomensInternalMedicineLocation() {
+        return getRequiredLocationByUuid(WOMENS_INTERNAL_MEDICINE_UUID);
+    }
+
+    public Location getMensInternalMedicineLocation() {
+        return getRequiredLocationByUuid(MENS_INTERNAL_MEDICINE_UUID);
     }
 
     private Location getRequiredLocationByUuid(String uuid) {
@@ -153,6 +174,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String CONSULT_ENCOUNTER_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
     public static final String RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID = "1b3d1e13-f0b1-4b83-86ea-b1b1e2fb4efa";
     public static final String POST_OP_NOTE_ENCOUNTER_TYPE_UUID = "c4941dee-7a9b-4c1c-aa6f-8193e9e5e4e5";
+    public static final String ADMISSION_ENCOUNTER_TYPE_UUID = "260566e1-c909-4d61-a96f-c1019291a09d";
 
 	public EncounterType getRegistrationEncounterType() {
 		return getRequiredEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
@@ -180,6 +202,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterType getPostOpNoteEncounterType() {
         return getRequiredEncounterTypeByUuid(POST_OP_NOTE_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getAdmissionEncounterType() {
+        return getRequiredEncounterTypeByUuid(ADMISSION_ENCOUNTER_TYPE_UUID);
     }
 
     /**
