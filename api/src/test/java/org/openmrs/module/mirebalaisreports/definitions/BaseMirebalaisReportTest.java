@@ -25,7 +25,7 @@ public abstract class BaseMirebalaisReportTest extends BaseModuleContextSensitiv
     protected EmrApiProperties emrApiProperties;
 
     @Autowired
-    TestDataManager data;
+    protected TestDataManager data;
 
     @Before
     public void setup() throws Exception {
