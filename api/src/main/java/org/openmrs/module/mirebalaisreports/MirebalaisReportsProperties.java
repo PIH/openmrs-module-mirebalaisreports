@@ -175,6 +175,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID = "1b3d1e13-f0b1-4b83-86ea-b1b1e2fb4efa";
     public static final String POST_OP_NOTE_ENCOUNTER_TYPE_UUID = "c4941dee-7a9b-4c1c-aa6f-8193e9e5e4e5";
     public static final String ADMISSION_ENCOUNTER_TYPE_UUID = "260566e1-c909-4d61-a96f-c1019291a09d";
+    public static final String EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID = "b6631959-2105-49dd-b154-e1249e0fbcd7";
+    public static final String TRANSFER_ENCOUNTER_TYPE_UUID = "436cfe33-6b81-40ef-a455-f134a9f7e580";
 
 	public EncounterType getRegistrationEncounterType() {
 		return getRequiredEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
@@ -206,6 +208,14 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterType getAdmissionEncounterType() {
         return getRequiredEncounterTypeByUuid(ADMISSION_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getExitFromInpatientEncounterType() {
+        return getRequiredEncounterTypeByUuid(EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getTransferEncounterType() {
+        return getRequiredEncounterTypeByUuid(TRANSFER_ENCOUNTER_TYPE_UUID);
     }
 
     /**
