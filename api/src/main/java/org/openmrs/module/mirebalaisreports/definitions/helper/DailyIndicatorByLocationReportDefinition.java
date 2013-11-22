@@ -1,6 +1,7 @@
 package org.openmrs.module.mirebalaisreports.definitions.helper;
 
 import org.openmrs.Location;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.mirebalaismetadata.MirebalaisMetadataProperties;
 import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportManager;
@@ -29,7 +30,10 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
     public abstract void addDataSetDefinitions(ReportDefinition reportDefinition);
 
     @Autowired
-    LocationService locationService;
+    protected LocationService locationService;
+
+    @Autowired
+    protected ConceptService conceptService;
 
     @Override
     public List<Parameter> getParameters() {
