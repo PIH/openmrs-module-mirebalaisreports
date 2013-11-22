@@ -50,7 +50,7 @@ public class InpatientLocationCohortDefinitionEvaluatorTest extends BaseInpatien
         definition.addParameter(new Parameter("ward", "Ward", Location.class));
         definition.addParameter(new Parameter("effectiveDate", "Date", Date.class));
 
-        Location womensInternalMedicine = locationService.getLocation(32);
+        Location womensInternalMedicine = mirebalaisReportsProperties.getWomensInternalMedicineLocation();
 
         EvaluationContext ec = new EvaluationContext();
         ec.addParameterValue("ward", womensInternalMedicine);
@@ -67,7 +67,7 @@ public class InpatientLocationCohortDefinitionEvaluatorTest extends BaseInpatien
         definition.addParameter(new Parameter("ward", "Ward", Location.class));
         definition.addParameter(new Parameter("effectiveDate", "Date", Date.class));
 
-        Location womensInternalMedicine = locationService.getLocation(32);
+        Location womensInternalMedicine = mirebalaisReportsProperties.getWomensInternalMedicineLocation();
 
         EvaluationContext ec = new EvaluationContext();
         ec.addParameterValue("ward", womensInternalMedicine);

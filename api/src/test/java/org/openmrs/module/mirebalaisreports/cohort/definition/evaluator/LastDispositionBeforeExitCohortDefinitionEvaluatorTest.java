@@ -48,7 +48,7 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluatorTest extends Base
 
     @Test
     public void testEvaluate() throws Exception {
-        Location mensInternalMedicine = locationService.getLocation(33);
+        Location mensInternalMedicine = mirebalaisReportsProperties.getMensInternalMedicineLocation();
         Date startDate = DateUtil.parseDate("2013-10-03 00:00:00", "yyyy-MM-dd HH:mm:ss");
         Date endDate = DateUtil.parseDate("2013-10-03 23:59:59", "yyyy-MM-dd HH:mm:ss");
 

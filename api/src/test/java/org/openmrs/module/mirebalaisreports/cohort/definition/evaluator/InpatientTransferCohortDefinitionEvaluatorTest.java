@@ -43,7 +43,7 @@ public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseInpatien
 
     @Test
     public void testEvaluateTransferOut() throws Exception {
-        Location womensInternalMedicine = locationService.getLocation(32);
+        Location womensInternalMedicine = mirebalaisReportsProperties.getWomensInternalMedicineLocation();
         Date startDate = DateUtil.parseDate("2013-10-03 00:00:00", "yyyy-MM-dd HH:mm:ss");
         Date endDate = DateUtil.parseDate("2013-10-03 23:59:59", "yyyy-MM-dd HH:mm:ss");
 
@@ -59,7 +59,7 @@ public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseInpatien
 
     @Test
     public void testEvaluateTransferIn() throws Exception {
-        Location surgicalWard = locationService.getLocation(17);
+        Location surgicalWard = mirebalaisReportsProperties.getSurgicalWardLocation();
         Date startDate = DateUtil.parseDate("2013-10-03 00:00:00", "yyyy-MM-dd HH:mm:ss");
         Date endDate = DateUtil.parseDate("2013-10-03 23:59:59", "yyyy-MM-dd HH:mm:ss");
 
