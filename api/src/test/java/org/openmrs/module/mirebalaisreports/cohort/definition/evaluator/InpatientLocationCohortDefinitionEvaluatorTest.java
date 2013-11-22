@@ -14,12 +14,11 @@
 
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
-import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportTest;
+import org.openmrs.module.mirebalaisreports.definitions.BaseInpatientReportTest;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -37,18 +36,13 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
  *
  */
 @SkipBaseSetup
-public class InpatientLocationCohortDefinitionEvaluatorTest extends BaseMirebalaisReportTest {
+public class InpatientLocationCohortDefinitionEvaluatorTest extends BaseInpatientReportTest {
 
     @Autowired
     LocationService locationService;
 
     @Autowired
     CohortDefinitionService cohortDefinitionService;
-
-    @Before
-    public void setUp() throws Exception {
-        executeDataSet("org/openmrs/module/mirebalaisreports/inpatientDailyReportTestDataset.xml");
-    }
 
     @Test
     public void testEvaluate() throws Exception {
@@ -64,7 +58,7 @@ public class InpatientLocationCohortDefinitionEvaluatorTest extends BaseMirebala
 
         EvaluatedCohort result = cohortDefinitionService.evaluate(definition, ec);
 
-        assertThat(result, isCohortWithExactlyIds(1000, 1004));
+        assertThat(result, isCohortWithExactlyIds(patient1.getId(), patient5.getId()));
     }
 
     @Test
@@ -82,6 +76,6 @@ public class InpatientLocationCohortDefinitionEvaluatorTest extends BaseMirebala
 
         EvaluatedCohort result = cohortDefinitionService.evaluate(definition, ec);
 
-        assertThat(result, isCohortWithExactlyIds(1000));
+        assertThat(result, isCohortWithExactlyIds(patient1.getId()));
     }
 }

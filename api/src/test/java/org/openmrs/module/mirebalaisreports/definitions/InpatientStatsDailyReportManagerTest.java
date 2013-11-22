@@ -14,7 +14,6 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -40,18 +39,15 @@ import java.util.Map;
  */
 @Ignore("This report now has a query that doesn't work against H2")
 @SkipBaseSetup
-public class InpatientStatsDailyReportManagerTest extends BaseMirebalaisReportTest {
+public class InpatientStatsDailyReportManagerTest extends BaseInpatientReportTest {
+
+    // TODO when we re-enable this test, if it still fails, note that we have refactoring the test data set, so there could be an issue there
 
     @Autowired
     private InpatientStatsDailyReportManager manager;
 
     @Autowired
     private ReportDefinitionService reportDefinitionService;
-
-    @Before
-    public void setUp() throws Exception {
-        executeDataSet("org/openmrs/module/mirebalaisreports/inpatientDailyReportTestDataset.xml");
-    }
 
     @Test
     public void testRunningReport() throws Exception {
