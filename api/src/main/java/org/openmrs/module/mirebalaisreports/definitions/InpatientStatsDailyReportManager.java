@@ -269,15 +269,6 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         return new Parameter("effectiveDate", "mirebalaisreports.parameter.effectiveDate", Date.class);
     }
 
-    private CohortIndicator buildIndicator(String name, CohortDefinition cd, String mappings) {
-        CohortIndicator indicator = new CohortIndicator(name);
-        indicator.addParameter(getStartDateParameter());
-        indicator.addParameter(getEndDateParameter());
-        indicator.addParameter(getLocationParameter());
-        indicator.setCohortDefinition(map(cd, mappings));
-        return indicator;
-    }
-
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         // At present we aren't maintaining an excel template for this, because we don't intend for it to be downloaded.
