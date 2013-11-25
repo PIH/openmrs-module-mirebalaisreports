@@ -211,7 +211,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("street_landmark", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.streetLandmark"), "");
         dsd.addColumn("encounter_id", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterID"), "");
         dsd.addColumn("encounter_datetime", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterDateCreated"), "");
-        dsd.addColumn("encounter_location", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterLocation"), "");
+        dsd.addColumn("encounter_location", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.location.name"), "");
         dsd.addColumn("provider", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.registration.creator.name"), "");
         dsd.addColumn("num_coded", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.codedDiagnosis"), "");
         dsd.addColumn("num_non_coded", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.nonCodedDiagnosis"), "");

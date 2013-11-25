@@ -168,9 +168,9 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("diagnosis.sql", new Replacements().add("diagnosis", props.getNonCodedDiagnosis()));
     }
 
-    @DocumentedDefinition("encounterID")
+    @DocumentedDefinition("relatedADTEncounterID")
     public EncounterDataDefinition getEncounterID() {
-        return sqlEncounterDataDefinition("encounterID.sql", null);
+        return sqlEncounterDataDefinition("related_adt_encounterID.sql", null);
     }
 
     @DocumentedDefinition("encounterName")
@@ -178,9 +178,9 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("encounterName.sql", null);
     }
 
-    @DocumentedDefinition("encounterLocation")
+    @DocumentedDefinition("relatedADT.location")
     public EncounterDataDefinition getEncounterLocation() {
-        return sqlEncounterDataDefinition("encounterLocation.sql", null);
+        return sqlEncounterDataDefinition("related_adt_location.sql", null);
     }
 
     @DocumentedDefinition("encounterDateCreated")
