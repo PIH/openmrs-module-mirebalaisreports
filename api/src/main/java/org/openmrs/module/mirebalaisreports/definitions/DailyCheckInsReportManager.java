@@ -8,6 +8,7 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterWithCodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
+import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortsWithVaryingParametersDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -42,13 +43,22 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         priorConsultAtLocation.addParameter(new Parameter("locationList", "Location List", Location.class));
         priorConsultAtLocation.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
 
+        EncounterCohortDefinition overall = new EncounterCohortDefinition();
+        overall.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
+        overall.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+        overall.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+        CohortCrossTabDataSetDefinition overallDsd = new CohortCrossTabDataSetDefinition();
+        overallDsd.setName("overall");
+        overallDsd.addParameter(getStartDateParameter());
+        overallDsd.addParameter(getEndDateParameter());
+        overallDsd.addColumn(getMessageCodePrefix() + "overall", map(overall, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
         CohortsWithVaryingParametersDataSetDefinition byLocationDsd = new CohortsWithVaryingParametersDataSetDefinition();
         byLocationDsd.setName("byLocation");
         byLocationDsd.addParameter(getStartDateParameter());
         byLocationDsd.addParameter(getEndDateParameter());
-        // byLocationDsd.addColumn(checkInWithReason("PIH:CLINICAL")); // TODO split this
-        byLocationDsd.addColumn(checkInSplitByPriorConsultation("PIH:CLINICAL-new", checkInWithReason("PIH:CLINICAL"), priorConsultAtLocation, false));
-        byLocationDsd.addColumn(checkInSplitByPriorConsultation("PIH:CLINICAL-return", checkInWithReason("PIH:CLINICAL"), priorConsultAtLocation, true));
+        byLocationDsd.addColumn(checkInSplitByPriorConsultation("CLINICAL_new", checkInWithReason("PIH:CLINICAL"), priorConsultAtLocation, false));
+        byLocationDsd.addColumn(checkInSplitByPriorConsultation("CLINICAL_return", checkInWithReason("PIH:CLINICAL"), priorConsultAtLocation, true));
         byLocationDsd.addColumn(checkInWithReason("PIH:Lab only"));
         byLocationDsd.addColumn(checkInWithReason("PIH:Pharmacy only"));
         byLocationDsd.addColumn(checkInWithReason("PIH:Procedure only"));
@@ -61,12 +71,14 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         byLocationDsd.setVaryingParameters(getParameterOptions());
         byLocationDsd.setRowLabelTemplate("{{ message location.uuid prefix=\"ui.i18n.Location.name.\" }}");
 
+        reportDefinition.addDataSetDefinition("overall", map(overallDsd, MAP_DAY_TO_START_AND_END_DATE));
         reportDefinition.addDataSetDefinition("byLocation", map(byLocationDsd, MAP_DAY_TO_START_AND_END_DATE));
     }
 
     private CohortDefinition checkInSplitByPriorConsultation(String columnName, CohortDefinition checkInWithReason, EncounterCohortDefinition priorConsult, boolean included) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.setName(columnName);
+        cd.setName(getMessageCodePrefix() + columnName);
+        cd.setDescription(getMessageCodePrefix() + columnName);
         cd.addParameter(getStartDateParameter());
         cd.addParameter(getEndDateParameter());
         cd.addParameter(getLocationParameter());
@@ -80,7 +92,7 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         CodeAndSource value = new CodeAndSource(valueCoded);
         EncounterWithCodedObsCohortDefinition cd = new EncounterWithCodedObsCohortDefinition();
         cd.setName(value.getCode());
-        cd.setDescription(value.getCode());
+        cd.setDescription("{{ conceptName \"" + value.getSource() + ":" + value.getCode() + "\" }}");
         cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
         cd.addParameter(new Parameter("locationList", "Locations", Location.class));
@@ -92,8 +104,8 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
 
     private CohortDefinition checkInWithOtherOrMissingReasons(String... excludeValues) {
         EncounterWithCodedObsCohortDefinition cd = new EncounterWithCodedObsCohortDefinition();
-        cd.setName("OTHER");
-        cd.setDescription("OTHER");
+        cd.setName("mirebalaisreports.otherOrUnspecified");
+        cd.setDescription("{{ message \"mirebalaisreports.otherOrUnspecified\" }}");
         cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
         cd.addParameter(new Parameter("locationList", "Locations", Location.class));
@@ -135,4 +147,5 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
             return code;
         }
     }
+
 }

@@ -15,6 +15,9 @@
         reportDefinition.name,
         reportDefinition.description,
         "mirebalaisreports.dailyRegistrations.overall",
+        "mirebalaisreports.dailyCheckInEncounters.overall",
+        "mirebalaisreports.dailyCheckInEncounters.CLINICAL_new",
+        "mirebalaisreports.dailyCheckInEncounters.CLINICAL_return",
         context.locationService.allLocations.collect { "ui.i18n.Location.name." + it.uuid },
         context.encounterService.allEncounterTypes.collect { "ui.i18n.EncounterType.name." + it.uuid }
     ].flatten()
@@ -56,7 +59,7 @@
 
     <div ng-show="hasResults()">
         <div ng-repeat="dataset in currentData().dataSets">
-            <div ng-include=" 'include/' + dataset.definition.name + '.page' "></div>
+            <div ng-include=" 'include/' + dataset.definition.name + '.page' " class="dataset"></div>
         </div>
     </div>
 

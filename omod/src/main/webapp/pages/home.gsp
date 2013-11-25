@@ -33,6 +33,7 @@
 	<ul>
 		<li><a id="mirebalaisreports-basicStatisticsReport-link" href="${ ui.pageLink("mirebalaisreports", "basicStatistics") }">${ basicStatisticsReport.name }</a></li>
         <li><a id="mirebalaisreports-dailyRegistrationsReport-link" href="${ dailyReportLink(dailyRegistrationsReport)} ">${ ui.message(dailyRegistrationsReport.name) }</a></li>
+        <li><a id="mirebalaisreports-dailyCheckInsReport-link" href="${ dailyReportLink(dailyCheckInsReport)} ">${ ui.message(dailyCheckInsReport.name) }</a></li>
         <li><a id="mirebalaisreports-dailyClinicalEncountersReport-link" href="${ dailyReportLink(dailyClinicalEncountersReport)} ">${ ui.message(dailyClinicalEncountersReport.name) }</a></li>
         <li><a id="mirebalaisreports-inpatientDataExportReport-link" href="${ ui.pageLink("mirebalaisreports", "inpatientStatsDailyReport") }">${ ui.message("mirebalaisreports.inpatientStatsDailyReport.name") }</a></li>
 	</ul>
