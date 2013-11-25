@@ -80,19 +80,16 @@ public class DailyCheckInsReportManagerTest extends BaseMirebalaisReportTest {
         for (DataSetRow row : byLocation) {
             if (row.getColumnValue("rowLabel").equals("ui.i18n.Location.name.199e7d87-92a0-4398-a0f8-11d012178164")) {
                 for (Map.Entry<String, Object> e : row.getColumnValuesByKey().entrySet()) {
-                    if ("PIH:CLINICAL-new".equals(e.getKey())) {
+                    if ("mirebalaisreports.dailyCheckInEncounters.CLINICAL_new".equals(e.getKey())) {
                         assertThat((Cohort) e.getValue(), isCohortWithExactlyMembers(p2));
                     }
-                    else if ("PIH:CLINICAL-return".equals(e.getKey())) {
+                    else if ("mirebalaisreports.dailyCheckInEncounters.CLINICAL_return".equals(e.getKey())) {
                         assertThat((Cohort) e.getValue(), isCohortWithExactlyMembers(p4));
                     }
                     else if ("Pharmacy only".equals(e.getKey())) {
                         assertThat((Cohort) e.getValue(), isCohortWithExactlyMembers(p3));
                     }
                     else if (!"rowLabel".equals(e.getKey())) {
-                        if (((Cohort) e.getValue()).size() != 0) {
-                            System.out.println("oops");
-                        }
                         assertThat((Cohort) e.getValue(), isCohortWithExactlyIds());
                     }
                 }

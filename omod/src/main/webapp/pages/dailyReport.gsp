@@ -16,6 +16,7 @@
         reportDefinition.description,
         "mirebalaisreports.dailyRegistrations.overall",
         "mirebalaisreports.dailyCheckInEncounters.overall",
+        "mirebalaisreports.dailyCheckInEncounters.dataQuality.multipleCheckins",
         "mirebalaisreports.dailyCheckInEncounters.CLINICAL_new",
         "mirebalaisreports.dailyCheckInEncounters.CLINICAL_return",
         context.locationService.allLocations.collect { "ui.i18n.Location.name." + it.uuid },
