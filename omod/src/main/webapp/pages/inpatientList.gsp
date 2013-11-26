@@ -13,24 +13,35 @@
     ];
 
     var WARD_COLUMN_INDEX = 4;
+    var inpatientsTable = jq("#active-visits").dataTable();
 
-    jq(function() {
+    jq(document).ready(function() {
+        var ward= "";
+        jq.fn.dataTableExt.afnFiltering.push(
+                function (oSettings, aData, iDataIndex) {
+                    var currentWard = aData[WARD_COLUMN_INDEX];
+                    currentWard = currentWard.replace(/'/g, "\\’");
+                    if (ward.length < 1 ){
+                        return true;
+                    }else if (currentWard.match(new RegExp(ward)) != null ){
+                        return true;
+                    }
+                    return false;
+                }
+        );
         jq("#inpatients-filterByLocation").change(function(event){
-            var ward= "";
             var selectedItemId="";
-            var inpatientsTable = jq("#active-visits").dataTable();
             jq("select option:selected").each(function(){
                 ward = jq(this).text();
-                //ward = "Men"; //jq(this).text();
                 ward = ward.replace(/'/g, "\\’");
                 selectedItemId =this.value;
                 if (ward.length > 0) {
-                    console.log("ward=" + ward);
-                    inpatientsTable.fnFilter(ward, WARD_COLUMN_INDEX);
-                }else {
-                    inpatientsTable.fnFilter('', WARD_COLUMN_INDEX);
+                    jq('#active-visits').dataTable({ "bRetrieve": true }).fnDraw();
+                } else {
+                    jq('#active-visits').dataTable({ "bRetrieve": true }).fnFilter('', WARD_COLUMN_INDEX);
                 }
-                jq("#listSize").text(inpatientsTable.fnSettings().fnRecordsDisplay());
+
+                jq("#listSize").text(jq('#active-visits').dataTable({ "bRetrieve": true }).fnSettings().fnRecordsDisplay());
             });
         });
     });
