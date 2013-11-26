@@ -32,7 +32,8 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
         "mirebalaisreports.inpatientStatsDailyReport.leftWithoutSeeingClinician",
         "mirebalaisreports.inpatientStatsDailyReport.censusAtEnd",
         "mirebalaisreports.inpatientStatsDailyReport.edcheckin",
-        "mirebalaisreports.inpatientStatsDailyReport.orvolume"
+        "mirebalaisreports.inpatientStatsDailyReport.orvolume",
+        "mirebalaisreports.inpatientStatsDailyReport.possiblereadmission"
     ]
 ])}
 
