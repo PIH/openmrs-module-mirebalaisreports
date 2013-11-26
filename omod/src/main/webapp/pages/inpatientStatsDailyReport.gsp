@@ -20,6 +20,7 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
         "ui.i18n.Location.name.c9ab4c5c-0a8a-4375-b986-f23c163b2f69",
         "ui.i18n.Location.name.950852f3-8a96-4d82-a5f8-a68a92043164",
         "ui.i18n.Location.name.7d6cc39d-a600-496f-a320-fd4985f07f0b",
+        "ui.i18n.Location.name.29437276-aeae-4ea8-8219-720886cdc87f",
         "mirebalaisreports.inpatientStatsDailyReport.censusAtStart",
         "mirebalaisreports.inpatientStatsDailyReport.admissions",
         "mirebalaisreports.inpatientStatsDailyReport.transfersIn",
