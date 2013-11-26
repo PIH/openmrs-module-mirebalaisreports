@@ -58,11 +58,13 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         multipleCheckIns.setAtLeastCount(2);
         multipleCheckIns.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
         multipleCheckIns.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
-        CohortCrossTabDataSetDefinition dataQualityDsd = new CohortCrossTabDataSetDefinition();
-        dataQualityDsd.setName("dataQuality");
-        dataQualityDsd.addParameter(getStartDateParameter());
-        dataQualityDsd.addParameter(getEndDateParameter());
-        dataQualityDsd.addColumn(getMessageCodePrefix() + "dataQuality.multipleCheckins", map(multipleCheckIns, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        overallDsd.addColumn(getMessageCodePrefix() + "dataQuality.multipleCheckins", map(multipleCheckIns, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+        //CohortCrossTabDataSetDefinition dataQualityDsd = new CohortCrossTabDataSetDefinition();
+        //dataQualityDsd.setName("dataQuality");
+        //dataQualityDsd.addParameter(getStartDateParameter());
+        //dataQualityDsd.addParameter(getEndDateParameter());
+        //dataQualityDsd.addColumn(getMessageCodePrefix() + "dataQuality.multipleCheckins", map(multipleCheckIns, "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
         CohortsWithVaryingParametersDataSetDefinition byLocationDsd = new CohortsWithVaryingParametersDataSetDefinition();
         byLocationDsd.setName("byLocation");
@@ -83,7 +85,7 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         byLocationDsd.setRowLabelTemplate("{{ message location.uuid prefix=\"ui.i18n.Location.name.\" }}");
 
         reportDefinition.addDataSetDefinition("overall", map(overallDsd, MAP_DAY_TO_START_AND_END_DATE));
-        reportDefinition.addDataSetDefinition("dataQuality", map(dataQualityDsd, MAP_DAY_TO_START_AND_END_DATE));
+        //reportDefinition.addDataSetDefinition("dataQuality", map(dataQualityDsd, MAP_DAY_TO_START_AND_END_DATE));
         reportDefinition.addDataSetDefinition("byLocation", map(byLocationDsd, MAP_DAY_TO_START_AND_END_DATE));
     }
 
