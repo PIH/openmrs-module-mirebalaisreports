@@ -22,7 +22,7 @@ var app = angular.module('dailyReport', ['ui.bootstrap']).
 
         $scope.maxDay = moment().startOf('day').toDate();
 
-        $scope.day = moment().subtract('day', 1).startOf('day').toDate();
+        $scope.day = moment().startOf('day').toDate(); // default to today
 
         $scope.$watch('day', function() {
             $scope.viewingCohort = null;
