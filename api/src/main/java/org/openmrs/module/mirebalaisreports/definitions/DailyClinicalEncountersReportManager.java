@@ -5,6 +5,7 @@ import org.openmrs.Location;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortsWithVaryingParametersDataSetDefinition;
@@ -42,6 +43,10 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
         EncounterType vitalsEncounterType = mirebalaisReportsProperties.getVitalsEncounterType();
         EncounterType consultEncounterType = mirebalaisReportsProperties.getConsultEncounterType();
 
+        CohortDefinition clinicalCheckIns = definitionLibraries.getDefinition(CohortDefinition.class, "mirebalais.cohortDefinition.clinicalCheckInAtLocation");
+        clinicalCheckIns.setName("clinicalCheckIns");
+        clinicalCheckIns.setDescription(getMessageCodePrefix() + "clinicalCheckIns");
+
         EncounterCohortDefinition vitals = new EncounterCohortDefinition();
         vitals.setName("vitals");
         vitals.setDescription("ui.i18n.EncounterType.name." + vitalsEncounterType.getUuid());
@@ -58,12 +63,24 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
         consults.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
         consults.addEncounterType(consultEncounterType);
 
+        CompositionCohortDefinition consultWithoutVitals = new CompositionCohortDefinition();
+        consultWithoutVitals.setName("consultWithoutVitals");
+        consultWithoutVitals.setDescription(getMessageCodePrefix() + "consultWithoutVitals");
+        consultWithoutVitals.addParameter(getStartDateParameter());
+        consultWithoutVitals.addParameter(getEndDateParameter());
+        consultWithoutVitals.addParameter(new Parameter("location", "Location", Location.class));
+        consultWithoutVitals.addSearch("consult", map(consults, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}"));
+        consultWithoutVitals.addSearch("vitals", map(vitals, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}"));
+        consultWithoutVitals.setCompositionString("consult AND NOT vitals");
+
         CohortsWithVaryingParametersDataSetDefinition byLocationDsd = new CohortsWithVaryingParametersDataSetDefinition();
         byLocationDsd.setName("byLocation");
         byLocationDsd.addParameter(getStartDateParameter());
         byLocationDsd.addParameter(getEndDateParameter());
+        byLocationDsd.addColumn(clinicalCheckIns);
         byLocationDsd.addColumn(renameParameters(vitals));
         byLocationDsd.addColumn(renameParameters(consults));
+        byLocationDsd.addColumn(consultWithoutVitals);
         byLocationDsd.setVaryingParameters(getParameterOptions());
         byLocationDsd.setRowLabelTemplate("{{ message location.uuid prefix=\"ui.i18n.Location.name.\" }}");
 

@@ -15,10 +15,15 @@
 package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.Concept;
+import org.openmrs.Location;
+import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.DiagnosisCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterWithCodedObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
@@ -40,6 +45,12 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
 
     @Autowired
     private EmrApiProperties emrApiProperties;
+
+    @Autowired
+    private MirebalaisReportsProperties mirebalaisReportsProperties;
+
+    @Autowired
+    private ConceptService conceptService;
 
     @Override
     public Class<? super CohortDefinition> getDefinitionType() {
@@ -71,6 +82,19 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
         excludeTestPatientsCohortDefinition.addSearch("test", map((CohortDefinition) personAttributeCohortDefinition, ""));
         excludeTestPatientsCohortDefinition.setCompositionString("NOT test");
         return excludeTestPatientsCohortDefinition;
+    }
+
+    @DocumentedDefinition(value = "clinicalCheckInAtLocation")
+    public CohortDefinition getClinicalCheckInAtLocation() {
+        EncounterWithCodedObsCohortDefinition cd = new EncounterWithCodedObsCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
+        cd.addParameter(new Parameter("locationList", "Locations", Location.class));
+        cd.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
+        cd.setConcept(conceptService.getConceptByMapping("Type of HUM visit", "PIH"));
+        cd.addIncludeCodedValue(conceptService.getConceptByMapping("CLINICAL", "PIH"));
+
+        return new MappedParametersCohortDefinition(cd, "onOrAfter", "startDate", "onOrBefore", "endDate", "locationList", "location");
     }
 
 }

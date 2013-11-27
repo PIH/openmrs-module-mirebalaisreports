@@ -15,6 +15,8 @@
         reportDefinition.name,
         reportDefinition.description,
         "mirebalaisreports.dailyRegistrations.overall",
+        "mirebalaisreports.dailyClinicalEncounters.clinicalCheckIns",
+        "mirebalaisreports.dailyClinicalEncounters.consultWithoutVitals",
         "mirebalaisreports.dailyCheckInEncounters.overall",
         "mirebalaisreports.dailyCheckInEncounters.dataQuality.multipleCheckins",
         "mirebalaisreports.dailyCheckInEncounters.CLINICAL_new",
