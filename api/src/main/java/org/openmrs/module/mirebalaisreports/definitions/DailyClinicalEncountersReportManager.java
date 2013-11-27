@@ -69,8 +69,8 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
         consultWithoutVitals.addParameter(getStartDateParameter());
         consultWithoutVitals.addParameter(getEndDateParameter());
         consultWithoutVitals.addParameter(new Parameter("location", "Location", Location.class));
-        consultWithoutVitals.addSearch("consult", map(consults, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}"));
-        consultWithoutVitals.addSearch("vitals", map(vitals, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}"));
+        consultWithoutVitals.addSearch("consult", consults, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}");
+        consultWithoutVitals.addSearch("vitals", vitals, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}");
         consultWithoutVitals.setCompositionString("consult AND NOT vitals");
 
         CohortsWithVaryingParametersDataSetDefinition byLocationDsd = new CohortsWithVaryingParametersDataSetDefinition();
