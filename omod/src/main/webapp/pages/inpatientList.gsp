@@ -9,7 +9,7 @@
 <script type="text/javascript">
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.message("emr.app.inpatients.label")}"}
+        { label: "${ ui.message("mirebalaisreports.app.inpatients.label")}"}
     ];
 
     var WARD_COLUMN_INDEX = 4;

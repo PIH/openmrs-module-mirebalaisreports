@@ -17,7 +17,6 @@ import org.openmrs.module.reporting.indicator.dimension.CohortIndicatorAndDimens
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
-import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 
@@ -40,7 +39,6 @@ public class InpatientListPageController {
         ReportDefinition reportDefinition = reportDefinitionService.getDefinitionByUuid(MirebalaisReportsProperties.INPATIENT_LIST_REPORT_DEFINITION_UUID);
         ReportData data = reportDefinitionService.evaluate(reportDefinition, context);
 
-        SimpleObject cohortResults = new SimpleObject();
         MapDataSet cohortDataSet = (MapDataSet) data.getDataSets().get("cohorts");
         CohortIndicatorAndDimensionResult censusAtStart = (CohortIndicatorAndDimensionResult) cohortDataSet.getData().getColumnValue("censusAtStart");
         Cohort cohort = censusAtStart.getCohortIndicatorAndDimensionCohort();
