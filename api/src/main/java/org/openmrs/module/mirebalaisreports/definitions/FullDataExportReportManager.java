@@ -148,7 +148,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             PersonAttributeCohortDefinition testPatient = new PersonAttributeCohortDefinition();
             testPatient.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
             testPatient.addValue("true");
-            baseCohortDefinition.addSearch("testPatient", testPatient, null);
+            baseCohortDefinition.addSearch("testPatient", testPatient, "");
 
             baseCohortDefinition.setCompositionString("(visitDuringPeriod OR registrationEncounterDuringPeriod) AND NOT testPatient");
             rd.setBaseCohortDefinition(this.<CohortDefinition>map(baseCohortDefinition, "startDate=${startDate},endDate=${endDate}"));
