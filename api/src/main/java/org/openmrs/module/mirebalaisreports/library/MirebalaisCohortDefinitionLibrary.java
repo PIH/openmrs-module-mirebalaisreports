@@ -62,7 +62,7 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
         return PREFIX;
     }
 
-    @DocumentedDefinition(value = "specificCodedDiagnosesBetweenDates", definition = "Patients with any diagnosis of $codedDiagnoses between $onOrAfter and $onOrBefore")
+    @DocumentedDefinition(value = "specificCodedDiagnosesBetweenDates")
     public DiagnosisCohortDefinition getSpecificCodedDiagnosesBetweenDates() {
         DiagnosisCohortDefinition cd = new DiagnosisCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "On or after date", Date.class));
