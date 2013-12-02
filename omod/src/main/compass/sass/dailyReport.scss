@@ -72,8 +72,12 @@
 
   .datepicker-input {
     margin: 0 0 7px 5px;
-    text-align: center;
+    text-align: left;
     width: auto;
+  }
+
+  .form-horizontal {
+    margin-right: 20px;
   }
 
   .datepicker-input, .icon-calendar {
