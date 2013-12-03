@@ -32,6 +32,7 @@ import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -40,12 +41,7 @@ import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Responsible for defining the full data export report
@@ -148,7 +144,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             PersonAttributeCohortDefinition testPatient = new PersonAttributeCohortDefinition();
             testPatient.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
             testPatient.addValue("true");
-            baseCohortDefinition.addSearch("testPatient", testPatient, "");
+            baseCohortDefinition.addSearch("testPatient", Mapped.map(testPatient, ""));
 
             baseCohortDefinition.setCompositionString("(visitDuringPeriod OR registrationEncounterDuringPeriod) AND NOT testPatient");
             rd.setBaseCohortDefinition(this.<CohortDefinition>map(baseCohortDefinition, "startDate=${startDate},endDate=${endDate}"));

@@ -9,6 +9,7 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortsWithVaryingParametersDataSetDefinition;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.stereotype.Component;
@@ -69,8 +70,8 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
         consultWithoutVitals.addParameter(getStartDateParameter());
         consultWithoutVitals.addParameter(getEndDateParameter());
         consultWithoutVitals.addParameter(new Parameter("location", "Location", Location.class));
-        consultWithoutVitals.addSearch("consult", consults, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}");
-        consultWithoutVitals.addSearch("vitals", vitals, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}");
+        consultWithoutVitals.addSearch("consult", Mapped.map(consults, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}"));
+        consultWithoutVitals.addSearch("vitals", Mapped.map(vitals, "onOrAfter=${startDate},onOrBefore=${endDate},locationList=${location}"));
         consultWithoutVitals.setCompositionString("consult AND NOT vitals");
 
         CohortsWithVaryingParametersDataSetDefinition byLocationDsd = new CohortsWithVaryingParametersDataSetDefinition();
