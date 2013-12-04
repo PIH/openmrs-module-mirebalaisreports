@@ -50,6 +50,7 @@
         <idgenVersion>2.5</idgenVersion>
         <appframeworkVersion>2.0</appframeworkVersion>
         <eventVersion>2.1</eventVersion>
+        <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <supercsvVersion>2.1.0</supercsvVersion>
         <openmrsTestutilsVersion>1.0-SNAPSHOT</openmrsTestutilsVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -211,6 +212,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>appframework-api</artifactId>
             <version>${appframeworkVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>dispensing-api</artifactId>
+            <version>${dispensingVersion}</version>
             <scope>provided</scope>
         </dependency>
 

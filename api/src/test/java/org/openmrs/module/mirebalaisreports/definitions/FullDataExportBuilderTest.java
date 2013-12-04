@@ -19,7 +19,7 @@ public class FullDataExportBuilderTest extends BaseMirebalaisReportTest {
     public void shouldSetupTheReportWithAllDataSets() throws Exception {
         FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", null);
         ReportDefinition reportDefinition = builder.buildReportManager(configuration).constructReportDefinition();
-        Assert.assertEquals(13, reportDefinition.getDataSetDefinitions().size());
+        Assert.assertEquals(14, reportDefinition.getDataSetDefinitions().size());
     }
 
     @Test
