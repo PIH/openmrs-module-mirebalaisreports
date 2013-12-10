@@ -15,7 +15,10 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.Concept;
-import org.openmrs.api.context.Context;
+import org.openmrs.Location;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.module.dispensing.DispensingProperties;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -23,11 +26,18 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
+import org.openmrs.module.reporting.data.converter.DateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.converter.ObsValueTextAsCodedConverter;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterDatetimeDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterLocationDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterProviderDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.ObsForEncounterDataDefinition;
 import org.openmrs.module.reporting.data.obs.definition.GroupMemberObsDataDefinition;
 import org.openmrs.module.reporting.data.obs.definition.ObsIdDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.EncounterDataSetDefinition;
@@ -64,6 +74,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Autowired
     private AllDefinitionLibraries libraries;
+
+    @Autowired
+    private DispensingProperties dispensingProperties;
 
     private String uuid;
     private String messageCodePrefix;
@@ -192,6 +205,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 	}
 
     private DataSetDefinition constructDispensingDataSetDefinition() {
+
         ObsDataSetDefinition dsd = new ObsDataSetDefinition();
         dsd.addParameter(getStartDateParameter());
         dsd.addParameter(getEndDateParameter());
@@ -199,17 +213,51 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         BasicObsQuery query = new BasicObsQuery();
         query.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
         query.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-        query.addConcept(mirebalaisReportsProperties.getCodedDiagnosisConcept()); // TODO fix this
+        query.addConcept(dispensingProperties.getDispensingConstructConcept());
         dsd.addRowFilter(query, "onOrAfter=${startDate},onOrBefore=${endDate}");
 
-        dsd.addColumn("obsId", new ObsIdDataDefinition(), "");
-        dsd.addColumn("frequency", groupMemberData("9363", "PIH"), "", new ObjectFormatter());
+        dsd.addColumn("medication", constructGroupMemberObsDataDefinition(dispensingProperties.getMedicationConcept())
+                , "", new ObjectFormatter());
+        dsd.addColumn("dosage", constructGroupMemberObsDataDefinition(dispensingProperties.getDosageConcept())
+                , "", new ObjectFormatter());
+        dsd.addColumn("dosageUnits", constructGroupMemberObsDataDefinition(dispensingProperties.getDosageUnitsConcept())
+                , "", new ObjectFormatter());
+        dsd.addColumn("frequency", constructGroupMemberObsDataDefinition(dispensingProperties.getMedicationFrequencyConcept())
+                , "", new ObjectFormatter());
+        dsd.addColumn("duration", constructGroupMemberObsDataDefinition(dispensingProperties.getMedicationDurationConcept())
+                , "", new ObjectFormatter());
+        dsd.addColumn("durationUnits", constructGroupMemberObsDataDefinition(dispensingProperties.getMedicationDurationUnitsConcept())
+                , "", new ObjectFormatter());
+        dsd.addColumn("amount", constructGroupMemberObsDataDefinition(dispensingProperties.getDispensedAmountConcept()),
+                "", new ObjectFormatter());
+        dsd.addColumn("instructions", constructGroupMemberObsDataDefinition(dispensingProperties.getAdministrationInstructions()),
+                "", new ObjectFormatter());
+        dsd.addColumn("patientIdentifier", constructPatientIdentifierDataDefinition(emrApiProperties.getPrimaryIdentifierType()),
+                "", new ObjectFormatter());
+        dsd.addColumn("dispensedLocation", new EncounterLocationDataDefinition(), "", new ObjectFormatter());
+        dsd.addColumn("dispensedDatetime", new EncounterDatetimeDataDefinition(), "", new DateConverter(MirebalaisReportsProperties.DATETIME_FORMAT));
+
+        EncounterProviderDataDefinition dispensedByDef = new EncounterProviderDataDefinition();
+        dispensedByDef.setEncounterRole(mirebalaisReportsProperties.getDispenserEncounterRole());
+        dsd.addColumn("dispensedBy", dispensedByDef, "", new ObjectFormatter());
+
+        EncounterProviderDataDefinition prescribedByDef = new EncounterProviderDataDefinition();
+        prescribedByDef.setEncounterRole(mirebalaisReportsProperties.getPrescribedByEncounterRole());
+        dsd.addColumn("prescribedBy", prescribedByDef, "", new ObjectFormatter());
+
+        ObsForEncounterDataDefinition typeOfPrescriptionDef = new ObsForEncounterDataDefinition();
+        typeOfPrescriptionDef.setQuestion(mirebalaisReportsProperties.getTimingOfPrescriptionConcept());
+        dsd.addColumn("typeOfPrescription", typeOfPrescriptionDef, "", new ObjectFormatter());
+
+        ObsForEncounterDataDefinition locationOfPrescriptionDef = new ObsForEncounterDataDefinition();
+        locationOfPrescriptionDef.setQuestion(mirebalaisReportsProperties.getDischargeLocationConcept());
+        dsd.addColumn("locationOfPrescription", locationOfPrescriptionDef, "",
+                new ObsValueTextAsCodedConverter<Location>(Location.class), new ObjectFormatter());
 
         return dsd;
     }
 
-    private GroupMemberObsDataDefinition groupMemberData(String code, String sourceName) {
-        Concept concept = Context.getConceptService().getConceptByMapping(sourceName, code);
+    private GroupMemberObsDataDefinition constructGroupMemberObsDataDefinition(Concept concept) {
         GroupMemberObsDataDefinition groupMemberObsDataDefinition = new GroupMemberObsDataDefinition();
         groupMemberObsDataDefinition.setQuestion(concept);
         return groupMemberObsDataDefinition;
@@ -263,6 +311,13 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("retrospective", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.retrospective"), "");
 
         return dsd;
+    }
+    
+    private PatientIdentifierDataDefinition constructPatientIdentifierDataDefinition(PatientIdentifierType type) {
+        PatientIdentifierDataDefinition patientIdentifierDataDefinition = new PatientIdentifierDataDefinition();
+        patientIdentifierDataDefinition.addType(type);
+        patientIdentifierDataDefinition.setIncludeFirstNonNullOnly(true);
+        return patientIdentifierDataDefinition;
     }
 
     private SqlDataSetDefinition constructSqlDataSetDefinition(String key) {

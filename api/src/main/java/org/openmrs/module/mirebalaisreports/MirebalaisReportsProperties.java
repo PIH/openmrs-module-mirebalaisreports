@@ -37,6 +37,10 @@ import java.util.List;
 @Component("mirebalaisReportsProperties")
 public class MirebalaisReportsProperties extends EmrProperties {
 
+    //***** DATE FORMATS ******
+    public static final String DATE_FORMAT = "dd MMM yyyy";
+    public static final String DATETIME_FORMAT= "dd MMM yyyy hh:mm aa";
+
     //***** REPORT DEFINITIONS *****
     public static final String FULL_DATA_EXPORT_REPORT_DEFINITION_UUID = "8c3752e2-20bb-11e3-b5bd-0bec7fb71852";
     public static final String DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID = "6d9b292a-2aad-11e3-a840-5b9e0b589afb";
@@ -54,6 +58,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID = "2e91bd04-4c7a-11e3-9325-f3ae8db9f6a7";
     public static final String DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID = "5dd60b6c-4d45-11e3-9325-f3ae8db9f6a7";
     public static final String DAILY_CHECK_INS_REPORT_DEFINITION_UUID = "f170699a-50af-11e3-ba00-27a0ac7f78d9";
+    public static final String DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID = "8b2f46e0-5d13-11e3-949a-0800200c9a66";
 
 	//***** LOCATIONS *****
 
@@ -443,6 +448,46 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(RETURN_VISIT_DATE_CONCEPT_UUID);
     }
 
+    public static final String TIMING_OF_PRESCRIPTION_CONCEPT_MAP = "9292";
+
+    public Concept getTimingOfPrescriptionConcept() {
+        return getSingleConceptByMapping(getPihConceptSource(), TIMING_OF_PRESCRIPTION_CONCEPT_MAP);
+    }
+
+    public static final String DISCHARGE_LOCATION_CONCEPT_MAP = "9293";
+
+    public Concept getDischargeLocationConcept() {
+        return getSingleConceptByMapping(getPihConceptSource(), DISCHARGE_LOCATION_CONCEPT_MAP);
+    }
+
+	private Concept getRequiredConceptByUuid(String uuid) {
+		Concept c = conceptService.getConceptByUuid(uuid);
+		if (c == null) {
+			throw new IllegalStateException("Missing required concept with uuid: " + uuid);
+		}
+		return c;
+	}
+
+
+    // ****** ENCOUNTER ROLES ****
+    public static final String ENCOUNTER_ROLE_DISPENSER_UUID = "bad21515-fd04-4ff6-bfcd-78456d12f168";
+    public static final String ENCOUNTER_ROLE_PRESCRIBED_BY_UUID = "c458d78e-8374-4767-ad58-9f8fe276e01c";
+
+    public EncounterRole getDispenserEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
+    }
+
+    public EncounterRole getPrescribedByEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_PRESCRIBED_BY_UUID);
+    }
+
+    private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {
+        EncounterRole role = encounterService.getEncounterRoleByUuid(uuid);
+        if (role== null) {
+            throw new IllegalStateException("Missing required encounter role with uuid: " + uuid);
+        }
+        return role;
+    }
     public static final String TRANSFER_OUT_LOCATION_CONCEPT_UUID = "113a5ce0-6487-4f45-964d-2dcbd7d23b67";
 
     public Concept getTransferOutLocationConcept() {

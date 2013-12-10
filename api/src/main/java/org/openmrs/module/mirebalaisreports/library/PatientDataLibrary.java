@@ -8,6 +8,7 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.User;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.MappedData;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.converter.CountConverter;
@@ -226,15 +227,15 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
     private PatientDataDefinition getAdmissionEncounter(DataConverter... converters) {
         EncountersForPatientDataDefinition admissionEncounters = new EncountersForPatientDataDefinition();
         admissionEncounters.setTypes(Arrays.asList(emrApiProperties.getAdmissionEncounterType()));
-
-        return new ConvertedPatientDataDefinition(admissionEncounters,
-                converters(new EarliestCreatedConverter(Encounter.class), converters));
+        admissionEncounters.setOnlyInActiveVisit(true);
+        admissionEncounters.setWhich(TimeQualifier.FIRST);
+        return new ConvertedPatientDataDefinition(admissionEncounters, converters);
     }
     private PatientDataDefinition getAdmissionOrTransferEncounter(DataConverter... converters) {
         EncountersForPatientDataDefinition adtEncounters = new EncountersForPatientDataDefinition();
         adtEncounters.setTypes(Arrays.asList(emrApiProperties.getAdmissionEncounterType(),emrApiProperties.getTransferWithinHospitalEncounterType()));
-
-        return new ConvertedPatientDataDefinition(adtEncounters,
-                converters(new MostRecentlyCreatedConverter(Encounter.class), converters));
+        adtEncounters.setOnlyInActiveVisit(true);
+        adtEncounters.setWhich(TimeQualifier.LAST);
+        return new ConvertedPatientDataDefinition(adtEncounters,converters);
     }
 }
