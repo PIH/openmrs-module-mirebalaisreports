@@ -69,6 +69,13 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
         return getIdentifiersOf(mirebalaisReportsProperties.getHivEmrIdentifierType(), new CountConverter());
     }
 
+    @DocumentedDefinition("preferredZlEmrId.identifier")
+    public PatientDataDefinition getPreferredZlEmrIdIdentifier() {
+        return getPreferredIdentifierOf(
+                mirebalaisReportsProperties.getZlEmrIdentifierType(),
+                new PropertyConverter(PatientIdentifier.class, "identifier"));
+    }
+
     @DocumentedDefinition("mostRecentZlEmrId.identifier")
     public PatientDataDefinition getMostRecentZlEmrIdIdentifier() {
         return getMostRecentIdentifierOf(
@@ -185,6 +192,17 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
         return new ConvertedPatientDataDefinition(
                 new PatientIdentifierDataDefinition(null, patientIdentifierType),
                 converters);
+    }
+
+    private PatientDataDefinition getPreferredIdentifierOf(PatientIdentifierType patientIdentifierType, DataConverter... converters) {
+        PatientIdentifierDataDefinition dd = new PatientIdentifierDataDefinition(null, patientIdentifierType);
+        dd.setIncludeFirstNonNullOnly(true);
+        if (converters.length > 0) {
+            return new ConvertedPatientDataDefinition(dd, converters);
+        }
+        else {
+            return dd;
+        }
     }
 
     private PatientDataDefinition getMostRecentIdentifierOf(PatientIdentifierType patientIdentifierType, DataConverter... converters) {

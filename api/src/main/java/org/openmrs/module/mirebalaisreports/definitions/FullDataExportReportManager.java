@@ -34,16 +34,20 @@ import org.openmrs.module.reporting.data.encounter.definition.EncounterLocationD
 import org.openmrs.module.reporting.data.encounter.definition.EncounterProviderDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.ObsForEncounterDataDefinition;
 import org.openmrs.module.reporting.data.obs.definition.GroupMemberObsDataDefinition;
+import org.openmrs.module.reporting.data.obs.definition.ObsIdDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.EncounterDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
+import org.openmrs.module.reporting.query.encounter.definition.SqlEncounterQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
@@ -178,6 +182,10 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             else if ("dispensing".equals(key)) {
                 dsd = constructDispensingDataSetDefinition();
             }
+            else if ("consultations-new".equals(key)) {
+                dsd = constructConsultationsDataSetDefinition();
+                key = "consultations";
+            }
             else {
                 dsd = constructSqlDataSetDefinition(key);
             }
@@ -253,6 +261,56 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         GroupMemberObsDataDefinition groupMemberObsDataDefinition = new GroupMemberObsDataDefinition();
         groupMemberObsDataDefinition.setQuestion(concept);
         return groupMemberObsDataDefinition;
+    }
+
+    private DataSetDefinition constructConsultationsDataSetDefinition() {
+        EncounterDataSetDefinition dsd = new EncounterDataSetDefinition();
+
+        dsd.addParameter(getStartDateParameter());
+        dsd.addParameter(getEndDateParameter());
+
+        String sql = "select encounter_id " +
+                "from encounter " +
+                "where voided = 0 " +
+                "and encounter_type = :consultation " +
+                "and encounter_datetime >= :startDate AND encounter_datetime < :endDate ";
+        sql = sql.replaceAll(":consultation", mirebalaisReportsProperties.getConsultEncounterType().getId().toString());
+
+        SqlEncounterQuery encounterQuery = new SqlEncounterQuery(sql);
+        encounterQuery.addParameter(getStartDateParameter());
+        encounterQuery.addParameter(getEndDateParameter());
+        dsd.addRowFilter(encounterQuery, "startDate=${startDate},endDate=${endDate + 1d}");
+
+        dsd.addColumn("patient_id", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.patientId"), "");
+        dsd.addColumn("zlemr", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredZlEmrId"), "");
+        dsd.addColumn("loc_registered", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.mostRecentZlEmrIdLocation"), "");
+        dsd.addColumn("unknown_patient", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.unknownPatient"), "");
+        dsd.addColumn("gender", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.gender"), "");
+        dsd.addColumn("age_at_enc", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.ageAtEncounter"), "");
+        dsd.addColumn("department", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.department"), "");
+        dsd.addColumn("commune", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.commune"), "");
+        dsd.addColumn("section", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.section"), "");
+        dsd.addColumn("locality", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.locality"), "");
+        dsd.addColumn("street_landmark", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.streetLandmark"), "");
+        dsd.addColumn("encounter_id", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterId"), "");
+        dsd.addColumn("encounter_datetime", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.encounterDatetime"), "");
+        dsd.addColumn("encounter_location", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.location.name"), "");
+        dsd.addColumn("provider", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.creator"), "");
+        dsd.addColumn("num_coded", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.codedDiagnosis"), "");
+        dsd.addColumn("num_non_coded", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.nonCodedDiagnosis"), "");
+        dsd.addColumn("disposition", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.disposition"), "");
+        dsd.addColumn("transfer_out_location", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.transferOutLocation"), "");
+        dsd.addColumn("trauma", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.traumaOccurrence"), "");
+        dsd.addColumn("trauma_type", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.traumaType"), "");
+        dsd.addColumn("appointment", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.returnVisitDate"), "");
+        dsd.addColumn("comments", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.consultationComments"), "");
+        dsd.addColumn("death_date", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.vitalStatus.deathDate"), "");
+        dsd.addColumn("dispo_encounter", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.associatedAdtEncounter.encounterType"), "");
+        dsd.addColumn("dispo_location", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.associatedAdtEncounter.location"), "");
+        dsd.addColumn("date_created", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.dateCreated"), "");
+        dsd.addColumn("retrospective", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.retrospective"), "");
+
+        return dsd;
     }
     
     private PatientIdentifierDataDefinition constructPatientIdentifierDataDefinition(PatientIdentifierType type) {

@@ -71,6 +71,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String WOMENS_INTERNAL_MEDICINE_UUID = "2c93919d-7fc6-406d-a057-c0b640104790";
     public static final String MENS_INTERNAL_MEDICINE_UUID = "e5db0599-89e8-44fa-bfa2-07e47d63546f";
     public static final String SURGICAL_WARD_UUID = "7d6cc39d-a600-496f-a320-fd4985f07f0b";
+
     public Location getOutpatientLocation() {
 		return getRequiredLocationByUuid(OUTPATIENT_CLINIC_UUID);
 	}
@@ -127,6 +128,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
         }
         return providers;
     }
+
+
 	//***** IDENTIFIER TYPES *****
 
 	public static final String ZL_EMR_ID_UUID = "a541af1e-105c-40bf-b345-ba1fd6a59b85";
@@ -155,10 +158,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return t;
 	}
 
+
 	//***** PERSON ATTRIBUTE TYPES
 
 	public static final String TEST_PERSON_ATTRIBUTE_UUID = "4f07985c-88a5-4abd-aa0c-f3ec8324d8e7";
     public static final String TELEPHONE_PERSON_ATTRIBUTE_UUID = "14d4f066-15f5-102d-96e4-000c29c2a5d7";
+    public static final String UNKNOWN_PATIENT_PERSON_ATTRIBUTE_UUID = "8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47";
 
 	public PersonAttributeType getTestPatientPersonAttributeType() {
 		return getRequiredPersonAttributeTypeByUuid(TEST_PERSON_ATTRIBUTE_UUID);
@@ -168,6 +173,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredPersonAttributeTypeByUuid(TELEPHONE_PERSON_ATTRIBUTE_UUID);
     }
 
+    public PersonAttributeType getUnknownPatientPersonAttributeType() {
+        return getRequiredPersonAttributeTypeByUuid(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_UUID);
+    }
+
 	private PersonAttributeType getRequiredPersonAttributeTypeByUuid(String uuid) {
 		PersonAttributeType t = personService.getPersonAttributeTypeByUuid(uuid);
 		if (t == null) {
@@ -175,6 +184,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		}
 		return t;
 	}
+
 
 	//***** ENCOUNTER TYPES *****
 
@@ -259,7 +269,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return encounterType;
 	}
 
-	//***** CONCEPT SOURCES *****
+
+    //***** CONCEPT SOURCES *****
 
 	public static final String ICD10_CONCEPT_SOURCE_UUID = "3f65bd34-26fe-102b-80cb-0017a47871b2";
 
@@ -274,6 +285,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public ConceptSource getMirebalaisReportsConceptSource() {
 		return conceptService.getConceptSourceByName("org.openmrs.module.mirebalaisreports");
 	}
+
 
 	//***** CONCEPTS *****
 
@@ -433,6 +445,48 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getSingleConceptByMapping(getPihConceptSource(), DISCHARGE_LOCATION_CONCEPT_MAP);
     }
 
+    public static final String TRANSFER_OUT_LOCATION_CONCEPT_UUID = "113a5ce0-6487-4f45-964d-2dcbd7d23b67";
+
+    public Concept getTransferOutLocationConcept() {
+        return getRequiredConceptByUuid(TRANSFER_OUT_LOCATION_CONCEPT_UUID);
+    }
+
+    public static final String OCCURRENCE_OF_TRAUMA_CONCEPT_UUID = "f8134959-62d2-4f94-af6c-3580312b07a0";
+
+    public Concept getOccurrenceOfTraumaConcept() {
+        return getRequiredConceptByUuid(OCCURRENCE_OF_TRAUMA_CONCEPT_UUID);
+    }
+
+    public static final String TRAUMA_TYPE_CONCEPT_UUID = "7c5ef8cd-3c2b-46c1-b995-20e52c11ce94";
+
+    public Concept getTraumaTypeConcept() {
+        return getRequiredConceptByUuid(TRAUMA_TYPE_CONCEPT_UUID);
+    }
+
+    public static final String CODED_DIAGNOSIS_CONCEPT_UUID = "226ed7ad-b776-4b99-966d-fd818d3302c2";
+
+    public Concept getCodedDiagnosis() {
+        return getRequiredConceptByUuid(CODED_DIAGNOSIS_CONCEPT_UUID);
+    }
+
+    public static final String NON_CODED_DIAGNOSIS_CONCEPT_UUID = "970d41ce-5098-47a4-8872-4dd843c0df3f";
+
+    public Concept getNonCodedDiagnosis() {
+        return getRequiredConceptByUuid(NON_CODED_DIAGNOSIS_CONCEPT_UUID);
+    }
+
+    public static final String SURGICAL_SERVICE_CONCEPT_UUID = "84834856-23f3-4885-994e-33091d587964";
+
+    public Concept getSurgicalService() {
+        return getRequiredConceptByUuid(SURGICAL_SERVICE_CONCEPT_UUID);
+    }
+
+    public static final String OTHER_ASSISTANT_CONCEPT_UUID = "bb34602b-0d91-4fe9-a88e-ff86c4af913d";
+
+    public Concept getOtherAssistant() {
+        return getRequiredConceptByUuid(OTHER_ASSISTANT_CONCEPT_UUID);
+    }
+
 	private Concept getRequiredConceptByUuid(String uuid) {
 		Concept c = conceptService.getConceptByUuid(uuid);
 		if (c == null) {
@@ -443,8 +497,11 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
 
     // ****** ENCOUNTER ROLES ****
+
     public static final String ENCOUNTER_ROLE_DISPENSER_UUID = "bad21515-fd04-4ff6-bfcd-78456d12f168";
     public static final String ENCOUNTER_ROLE_PRESCRIBED_BY_UUID = "c458d78e-8374-4767-ad58-9f8fe276e01c";
+    public static final String CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID = "4f10ad1a-ec49-48df-98c7-1391c6ac7f05";
+    public static final String ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID = "9b135b19-7ebe-4a51-aea2-69a53f9383af";
 
     public EncounterRole getDispenserEncounterRole() {
         return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
@@ -452,6 +509,14 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterRole getPrescribedByEncounterRole() {
         return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_PRESCRIBED_BY_UUID);
+    }
+
+    public EncounterRole getConsultingClinicianEncounterRole() {
+        return getRequiredEncounterRoleByUuid(CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getAttendingSurgeonEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
     }
 
     private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {
