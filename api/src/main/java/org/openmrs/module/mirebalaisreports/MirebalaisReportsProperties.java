@@ -128,6 +128,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
         }
         return providers;
     }
+
+
 	//***** IDENTIFIER TYPES *****
 
 	public static final String ZL_EMR_ID_UUID = "a541af1e-105c-40bf-b345-ba1fd6a59b85";
@@ -156,6 +158,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return t;
 	}
 
+
 	//***** PERSON ATTRIBUTE TYPES
 
 	public static final String TEST_PERSON_ATTRIBUTE_UUID = "4f07985c-88a5-4abd-aa0c-f3ec8324d8e7";
@@ -181,6 +184,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		}
 		return t;
 	}
+
 
 	//***** ENCOUNTER TYPES *****
 
@@ -265,26 +269,6 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return encounterType;
 	}
 
-    //***** ENCOUNTER ROLES *****
-
-    public static final String CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID = "4f10ad1a-ec49-48df-98c7-1391c6ac7f05";
-    public static final String ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID = "9b135b19-7ebe-4a51-aea2-69a53f9383af";
-
-    public EncounterRole getConsultingClinicianEncounterRole() {
-        return getRequiredEncounterRoleByUuid(CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID);
-    }
-
-    public EncounterRole getAttendingSurgeonEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
-    }
-
-    private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {
-        EncounterRole encounterRole = encounterService.getEncounterRoleByUuid(uuid);
-        if (encounterRole == null) {
-            throw new IllegalStateException("Missing required encounter role with uuid: " + uuid);
-        }
-        return encounterRole;
-    }
 
     //***** CONCEPT SOURCES *****
 
@@ -301,6 +285,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public ConceptSource getMirebalaisReportsConceptSource() {
 		return conceptService.getConceptSourceByName("org.openmrs.module.mirebalaisreports");
 	}
+
 
 	//***** CONCEPTS *****
 
@@ -460,34 +445,6 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getSingleConceptByMapping(getPihConceptSource(), DISCHARGE_LOCATION_CONCEPT_MAP);
     }
 
-	private Concept getRequiredConceptByUuid(String uuid) {
-		Concept c = conceptService.getConceptByUuid(uuid);
-		if (c == null) {
-			throw new IllegalStateException("Missing required concept with uuid: " + uuid);
-		}
-		return c;
-	}
-
-
-    // ****** ENCOUNTER ROLES ****
-    public static final String ENCOUNTER_ROLE_DISPENSER_UUID = "bad21515-fd04-4ff6-bfcd-78456d12f168";
-    public static final String ENCOUNTER_ROLE_PRESCRIBED_BY_UUID = "c458d78e-8374-4767-ad58-9f8fe276e01c";
-
-    public EncounterRole getDispenserEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
-    }
-
-    public EncounterRole getPrescribedByEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_PRESCRIBED_BY_UUID);
-    }
-
-    private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {
-        EncounterRole role = encounterService.getEncounterRoleByUuid(uuid);
-        if (role== null) {
-            throw new IllegalStateException("Missing required encounter role with uuid: " + uuid);
-        }
-        return role;
-    }
     public static final String TRANSFER_OUT_LOCATION_CONCEPT_UUID = "113a5ce0-6487-4f45-964d-2dcbd7d23b67";
 
     public Concept getTransferOutLocationConcept() {
@@ -530,11 +487,44 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(OTHER_ASSISTANT_CONCEPT_UUID);
     }
 
-    private Concept getRequiredConceptByUuid(String uuid) {
-        Concept c = conceptService.getConceptByUuid(uuid);
-        if (c == null) {
-            throw new IllegalStateException("Missing required concept with uuid: " + uuid);
-        }
-        return c;
+	private Concept getRequiredConceptByUuid(String uuid) {
+		Concept c = conceptService.getConceptByUuid(uuid);
+		if (c == null) {
+			throw new IllegalStateException("Missing required concept with uuid: " + uuid);
+		}
+		return c;
+	}
+
+
+    // ****** ENCOUNTER ROLES ****
+
+    public static final String ENCOUNTER_ROLE_DISPENSER_UUID = "bad21515-fd04-4ff6-bfcd-78456d12f168";
+    public static final String ENCOUNTER_ROLE_PRESCRIBED_BY_UUID = "c458d78e-8374-4767-ad58-9f8fe276e01c";
+    public static final String CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID = "4f10ad1a-ec49-48df-98c7-1391c6ac7f05";
+    public static final String ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID = "9b135b19-7ebe-4a51-aea2-69a53f9383af";
+
+    public EncounterRole getDispenserEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
     }
+
+    public EncounterRole getPrescribedByEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_PRESCRIBED_BY_UUID);
+    }
+
+    public EncounterRole getConsultingClinicianEncounterRole() {
+        return getRequiredEncounterRoleByUuid(CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getAttendingSurgeonEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
+    }
+
+    private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {
+        EncounterRole role = encounterService.getEncounterRoleByUuid(uuid);
+        if (role== null) {
+            throw new IllegalStateException("Missing required encounter role with uuid: " + uuid);
+        }
+        return role;
+    }
+
 }
