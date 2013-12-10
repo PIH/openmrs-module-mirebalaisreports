@@ -59,12 +59,17 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
         sql = replace(sql, "testPt", mrp.getTestPatientPersonAttributeType());
         sql = replace(sql, "phoneType", mrp.getTelephoneNumberPersonAttributeType());
+        sql = replace(sql, "unknownPt", mrp.getUnknownPatientPersonAttributeType());
 
         sql = replace(sql, "regEnc", mrp.getRegistrationEncounterType());
         sql = replace(sql, "chkEnc", mrp.getCheckInEncounterType());
         sql = replace(sql, "vitEnc", mrp.getVitalsEncounterType());
         sql = replace(sql, "consEnc", mrp.getConsultEncounterType());
         sql = replace(sql, "radEnc", mrp.getRadiologyOrderEncounterType());
+        sql = replace(sql, "admitEnc", mrp.getAdmissionEncounterType());
+        sql = replace(sql, "exitEnc", mrp.getExitFromInpatientEncounterType());
+        sql = replace(sql, "transferEnc", mrp.getTransferEncounterType());
+
         sql = replace(sql, "paid", mrp.getAmountPaidConcept());
         sql = replace(sql, "wt", mrp.getWeightConcept());
         sql = replace(sql, "ht", mrp.getHeightConcept());
@@ -89,6 +94,10 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "ed", mrp.getSetOfEmergencyDiagnoses());
         sql = replace(sql, "ageRst", mrp.getSetOfAgeRestrictedDiagnoses());
         sql = replace(sql, "dispo", dispositionService.getDispositionDescriptor().getDispositionConcept());
+        sql = replace(sql, "transfOut", mrp.getTransferOutLocationConcept());
+        sql = replace(sql, "traumaOccur", mrp.getOccurrenceOfTraumaConcept());
+        sql = replace(sql, "traumaType", mrp.getTraumaTypeConcept());
+        sql = replace(sql, "rvd", mrp.getReturnVisitDate());
 
         log.debug("Replacing metadata references complete.");
         return sql;

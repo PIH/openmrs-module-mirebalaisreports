@@ -1,4 +1,4 @@
-select e.encounter_id, o.value_datetime
+select e.encounter_id, DATE(o.value_datetime)
 from encounter e
 inner join obs o
   on e.encounter_id = o.encounter_id

@@ -124,6 +124,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
 	public static final String TEST_PERSON_ATTRIBUTE_UUID = "4f07985c-88a5-4abd-aa0c-f3ec8324d8e7";
     public static final String TELEPHONE_PERSON_ATTRIBUTE_UUID = "14d4f066-15f5-102d-96e4-000c29c2a5d7";
+    public static final String UNKNOWN_PATIENT_PERSON_ATTRIBUTE_UUID = "8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47";
 
 	public PersonAttributeType getTestPatientPersonAttributeType() {
 		return getRequiredPersonAttributeTypeByUuid(TEST_PERSON_ATTRIBUTE_UUID);
@@ -131,6 +132,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public PersonAttributeType getTelephoneNumberPersonAttributeType() {
         return getRequiredPersonAttributeTypeByUuid(TELEPHONE_PERSON_ATTRIBUTE_UUID);
+    }
+
+    public PersonAttributeType getUnknownPatientPersonAttributeType() {
+        return getRequiredPersonAttributeTypeByUuid(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_UUID);
     }
 
 	private PersonAttributeType getRequiredPersonAttributeTypeByUuid(String uuid) {
@@ -150,6 +155,9 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String CONSULT_ENCOUNTER_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
     public static final String RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID = "1b3d1e13-f0b1-4b83-86ea-b1b1e2fb4efa";
     public static final String POST_OP_NOTE_ENCOUNTER_TYPE_UUID = "c4941dee-7a9b-4c1c-aa6f-8193e9e5e4e5";
+    public static final String ADMISSION_ENCOUNTER_TYPE_UUID = "260566e1-c909-4d61-a96f-c1019291a09d";
+    public static final String EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID = "b6631959-2105-49dd-b154-e1249e0fbcd7";
+    public static final String TRANSFER_ENCOUNTER_TYPE_UUID = "436cfe33-6b81-40ef-a455-f134a9f7e580";
 
 	public EncounterType getRegistrationEncounterType() {
 		return getRequiredEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
@@ -177,6 +185,18 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterType getPostOpNoteEncounterType() {
         return getRequiredEncounterTypeByUuid(POST_OP_NOTE_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getAdmissionEncounterType() {
+        return getRequiredEncounterTypeByUuid(ADMISSION_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getExitFromInpatientEncounterType() {
+        return getRequiredEncounterTypeByUuid(EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getTransferEncounterType() {
+        return getRequiredEncounterTypeByUuid(TRANSFER_ENCOUNTER_TYPE_UUID);
     }
 
     /**
@@ -371,28 +391,22 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(RETURN_VISIT_DATE_CONCEPT_UUID);
     }
 
-    public static final String CONSULTATION_COMMENTS_UUID = "3ce93cf2-26fe-102b-80cb-0017a47871b2";
+    public static final String TRANSFER_OUT_LOCATION_CONCEPT_UUID = "5b1f137c-b757-46c3-9735-c2fcb6ba221d";
 
-    public Concept getComments() {
-        return getRequiredConceptByUuid(CONSULTATION_COMMENTS_UUID);
+    public Concept getTransferOutLocationConcept() {
+        return getRequiredConceptByUuid(TRANSFER_OUT_LOCATION_CONCEPT_UUID);
     }
 
-    public static final String TRANSFER_OUT_LOCATION = "5b1f137c-b757-46c3-9735-c2fcb6ba221d";
+    public static final String OCCURRENCE_OF_TRAUMA_CONCEPT_UUID = "f8134959-62d2-4f94-af6c-3580312b07a0";
 
-    public Concept getTransferOutLocation() {
-        return getRequiredConceptByUuid(TRANSFER_OUT_LOCATION);
+    public Concept getOccurrenceOfTraumaConcept() {
+        return getRequiredConceptByUuid(OCCURRENCE_OF_TRAUMA_CONCEPT_UUID);
     }
 
-    public static final String TRAUMA_TYPE = "7c5ef8cd-3c2b-46c1-b995-20e52c11ce94";
+    public static final String TRAUMA_TYPE_CONCEPT_UUID = "7c5ef8cd-3c2b-46c1-b995-20e52c11ce94";
 
-    public Concept getTraumaType() {
-        return getRequiredConceptByUuid(TRAUMA_TYPE);
-    }
-
-    public static final String TRAUMA_NAME = "438dbb55-1fd1-45b5-8b72-8bced44b38a5";
-
-    public Concept getTransferOutLocationTraumaName() {
-        return getRequiredConceptByUuid(TRAUMA_NAME);
+    public Concept getTraumaTypeConcept() {
+        return getRequiredConceptByUuid(TRAUMA_TYPE_CONCEPT_UUID);
     }
 
     public static final String CODED = "226ed7ad-b776-4b99-966d-fd818d3302c2";

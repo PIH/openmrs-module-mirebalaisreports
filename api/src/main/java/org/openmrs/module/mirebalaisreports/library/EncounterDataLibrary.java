@@ -14,11 +14,24 @@
 
 package org.openmrs.module.mirebalaisreports.library;
 
+import org.openmrs.Encounter;
+import org.openmrs.User;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
+import org.openmrs.module.reporting.common.AuditInfo;
+import org.openmrs.module.reporting.data.converter.AgeConverter;
+import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.converter.PropertyConverter;
+import org.openmrs.module.reporting.data.encounter.definition.AgeAtEncounterDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.AuditInfoEncounterDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterDatetimeDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterIdDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.SimultaneousEncountersDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
@@ -57,19 +70,44 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return "mirebalais.encounterDataCalculation.";
     }
 
+    @DocumentedDefinition("encounterId")
+    public EncounterDataDefinition getEncounterId() {
+        return new EncounterIdDataDefinition();
+    }
+
+    @DocumentedDefinition("encounterDatetime")
+    public EncounterDataDefinition getEncounterDatetimeYmd() {
+        return new EncounterDatetimeDataDefinition();
+    }
+
+    @DocumentedDefinition("creator")
+    public EncounterDataDefinition getCreator() {
+        return auditInfo(new PropertyConverter(AuditInfo.class, "creator"), new PropertyConverter(User.class, "personName"));
+    }
+
+    @DocumentedDefinition("dateCreated")
+    public EncounterDataDefinition getDateCreated() {
+        return auditInfo(new PropertyConverter(AuditInfo.class, "dateCreated"));
+    }
+
     @DocumentedDefinition("returnVisitDate")
     public EncounterDataDefinition getReturnVisitDate() {
         return sqlEncounterDataDefinition("returnVisitDate.sql", new Replacements().add("returnVisitDate", props.getReturnVisitDate().getId()));
     }
 
-    @DocumentedDefinition("comments")
+    @DocumentedDefinition("consultationComments")
     public EncounterDataDefinition getComments() {
-        return sqlEncounterDataDefinition("comments.sql", new Replacements().add("comments", props.getComments().getId()));
+        return sqlEncounterDataDefinition("comments.sql", new Replacements().add("comments", props.getClinicalImpressionsConcept().getId()));
     }
 
     @DocumentedDefinition("disposition")
     public EncounterDataDefinition getDisposition() {
         return sqlEncounterDataDefinition("disposition.sql", new Replacements().add("disposition", dispositionService.getDispositionDescriptor().getDispositionConcept()));
+    }
+
+    @DocumentedDefinition("preferredZlEmrId")
+    public EncounterDataDefinition getPreferredZLEmrId() {
+        return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredZlEmrIdIdentifier());
     }
 
     @DocumentedDefinition("mostRecentZlEmrId")
@@ -103,9 +141,14 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getGender());
     }
 
-    @DocumentedDefinition("birthDate.YMD")
+    @DocumentedDefinition("birthdate.YMD")
     public EncounterDataDefinition getBirthDateYMD() {
         return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getBirthdateYmd());
+    }
+
+    @DocumentedDefinition("ageAtEncounter")
+    public EncounterDataDefinition getAgeAtEncounter() {
+        return new ConvertedEncounterDataDefinition(new AgeAtEncounterDataDefinition(), new AgeConverter(AgeConverter.YEARS_TO_ONE_DECIMAL_PLACE));
     }
 
     @DocumentedDefinition("vitalStatus.deathDate")
@@ -138,24 +181,19 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredAddressStreetLandmark());
     }
 
-    @DocumentedDefinition("registration.creator.name")
-    public EncounterDataDefinition getRegistrationCreatorName() {
-        return new PatientToEncounterDataDefinition(patientDataLibrary.getRegistrationCreatorName());
-    }
-
     @DocumentedDefinition("transferOutLocation")
     public EncounterDataDefinition getTransferOutLocation() {
-        return sqlEncounterDataDefinition("transferOutLocation.sql", new Replacements().add("transfOut", props.getTransferOutLocation()));
+        return sqlEncounterDataDefinition("transferOutLocation.sql", new Replacements().add("transfOut", props.getTransferOutLocationConcept()));
+    }
+
+    @DocumentedDefinition("traumaOccurrence")
+    public EncounterDataDefinition getTraumaOccurrence() {
+        return sqlEncounterDataDefinition("traumaOccurrence.sql", new Replacements().add("trauma", props.getOccurrenceOfTraumaConcept()));
     }
 
     @DocumentedDefinition("traumaType")
     public EncounterDataDefinition getTraumaType() {
-        return sqlEncounterDataDefinition("traumaType.sql", new Replacements().add("traumaType", props.getTraumaType()));
-    }
-
-    @DocumentedDefinition("transferOutLocationTraumaName")
-    public EncounterDataDefinition getTraumaName() {
-        return sqlEncounterDataDefinition("transferOutLocationTraumaName.sql", new Replacements().add("traumaName", props.getTransferOutLocationTraumaName()));
+        return sqlEncounterDataDefinition("traumaType.sql", new Replacements().add("traumaType", props.getTraumaTypeConcept()));
     }
 
     @DocumentedDefinition("codedDiagnosis")
@@ -183,11 +221,6 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("related_adt_location.sql", null);
     }
 
-    @DocumentedDefinition("encounterDateCreated")
-    public EncounterDataDefinition getEncounterDateCreated() {
-        return sqlEncounterDataDefinition("encounterDateCreated.sql", null);
-    }
-
     @DocumentedDefinition("surgicalService")
     public EncounterDataDefinition getSurgicalService() {
         return sqlEncounterDataDefinition("surgicalService.sql", new Replacements().add("surgicalService", props.getSurgicalService()));
@@ -208,9 +241,37 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("otherAssistant.sql", new Replacements().add("otherAssistant", props.getOtherAssistant()));
     }
 
+    @DocumentedDefinition("associatedAdtEncounter.encounterType")
+    public EncounterDataDefinition getAssociatedAdtEncounterType() {
+        return associatedAdtEncounter(new PropertyConverter(Encounter.class, "encounterType"), new ObjectFormatter());
+    }
+
+    @DocumentedDefinition("associatedAdtEncounter.location")
+    public EncounterDataDefinition getAssociatedAdtEncounterLocation() {
+        return associatedAdtEncounter(new PropertyConverter(Encounter.class, "location"), new ObjectFormatter());
+    }
+
+    @DocumentedDefinition("retrospective")
+    public EncounterDataDefinition getRetrospective() {
+        return sqlEncounterDataDefinition("retrospective.sql", null);
+    }
+
+    private ConvertedEncounterDataDefinition associatedAdtEncounter(DataConverter... converters) {
+        SimultaneousEncountersDataDefinition associated = new SimultaneousEncountersDataDefinition();
+        associated.addEncounterType(props.getAdmissionEncounterType());
+        associated.addEncounterType(props.getTransferEncounterType());
+        associated.addEncounterType(props.getExitFromInpatientEncounterType());
+
+        return new ConvertedEncounterDataDefinition(associated, converters);
+    }
+
+    private ConvertedEncounterDataDefinition auditInfo(DataConverter... converters) {
+        return new ConvertedEncounterDataDefinition(new AuditInfoEncounterDataDefinition(), converters);
+    }
+
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
         String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);
-        if(replacements != null){
+        if (replacements != null) {
             for (Map.Entry<String, String> entry : replacements.entrySet()) {
                 sql = sql.replaceAll(":" + entry.getKey(), entry.getValue());
              }
@@ -227,4 +288,5 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
             return this;
         }
     }
+
 }
