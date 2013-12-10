@@ -15,6 +15,7 @@
 package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.Encounter;
+import org.openmrs.OpenmrsObject;
 import org.openmrs.User;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
@@ -82,7 +83,9 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     @DocumentedDefinition("creator")
     public EncounterDataDefinition getCreator() {
-        return auditInfo(new PropertyConverter(AuditInfo.class, "creator"), new PropertyConverter(User.class, "personName"));
+        return auditInfo(new PropertyConverter(AuditInfo.class, "creator"),
+                new PropertyConverter(User.class, "personName"),
+                new ObjectFormatter("{givenName} {familyName}"));
     }
 
     @DocumentedDefinition("dateCreated")
@@ -198,27 +201,17 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     @DocumentedDefinition("codedDiagnosis")
     public EncounterDataDefinition getCodedDiagnosis() {
-        return sqlEncounterDataDefinition("diagnosis.sql", new Replacements().add("diagnosis", props.getCodedDiagnosis()));
+        return sqlEncounterDataDefinition("countOfObs.sql", new Replacements().add("conceptId", props.getCodedDiagnosis()));
     }
 
     @DocumentedDefinition("nonCodedDiagnosis")
     public EncounterDataDefinition getNonCodedDiagnosis() {
-        return sqlEncounterDataDefinition("diagnosis.sql", new Replacements().add("diagnosis", props.getNonCodedDiagnosis()));
+        return sqlEncounterDataDefinition("countOfObs.sql", new Replacements().add("conceptId", props.getNonCodedDiagnosis()));
     }
 
-    @DocumentedDefinition("relatedADTEncounterID")
-    public EncounterDataDefinition getEncounterID() {
-        return sqlEncounterDataDefinition("related_adt_encounterID.sql", null);
-    }
-
-    @DocumentedDefinition("encounterName")
-    public EncounterDataDefinition getEncounterName() {
-        return sqlEncounterDataDefinition("encounterName.sql", null);
-    }
-
-    @DocumentedDefinition("relatedADT.location")
-    public EncounterDataDefinition getEncounterLocation() {
-        return sqlEncounterDataDefinition("related_adt_location.sql", null);
+    @DocumentedDefinition("encounterType.name")
+    public EncounterDataDefinition getEncounterTypeName() {
+        return sqlEncounterDataDefinition("encounterTypeName.sql", null);
     }
 
     @DocumentedDefinition("surgicalService")
@@ -226,15 +219,15 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("surgicalService.sql", new Replacements().add("surgicalService", props.getSurgicalService()));
     }
 
-    @DocumentedDefinition("attending")
-    public EncounterDataDefinition getAttending() {
-        return sqlEncounterDataDefinition("attending.sql", new Replacements().add("attending", props.getAttending()));
+    @DocumentedDefinition("attendingSurgeon.name")
+    public EncounterDataDefinition getAttendingSurgeonName() {
+        return sqlEncounterDataDefinition("attending.sql", new Replacements().add("attending", props.getAttendingSurgeonEncounterRole()));
     }
 
-    @DocumentedDefinition("assistantOne")
-    public EncounterDataDefinition getAssistantOne() {
-        return sqlEncounterDataDefinition("assistantOne.sql", new Replacements().add("assistantOne", props.getAssistantOne()));
-    }
+//    @DocumentedDefinition("assistantOne")
+//    public EncounterDataDefinition getAssistantOne() {
+//        return sqlEncounterDataDefinition("assistantOne.sql", new Replacements().add("assistantOne", props.getAssistantOne()));
+//    }
 
     @DocumentedDefinition("otherAssistant")
     public EncounterDataDefinition getOtherAssistant() {
@@ -284,7 +277,8 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     private class Replacements extends HashMap<String, String> {
         public Replacements add(String key, Object replacement) {
-            super.put(key, replacement.toString());
+            String asString = replacement instanceof OpenmrsObject ? ((OpenmrsObject) replacement).getId().toString() : replacement.toString();
+            super.put(key, asString);
             return this;
         }
     }

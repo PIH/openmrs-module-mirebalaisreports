@@ -3,6 +3,6 @@ from encounter e
 inner join obs o
 on e.encounter_id = o.encounter_id
 and o.voided = false
-and o.concept_id = :diagnosis
+and o.concept_id = :conceptId
 where e.encounter_id in (:encounterIds)
 group by e.encounter_id

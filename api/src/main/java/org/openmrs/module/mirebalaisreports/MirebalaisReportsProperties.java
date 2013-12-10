@@ -16,6 +16,7 @@ package org.openmrs.module.mirebalaisreports;
 
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
+import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
@@ -259,7 +260,28 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return encounterType;
 	}
 
-	//***** CONCEPT SOURCES *****
+    //***** ENCOUNTER ROLES *****
+
+    public static final String CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID = "4f10ad1a-ec49-48df-98c7-1391c6ac7f05";
+    public static final String ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID = "9b135b19-7ebe-4a51-aea2-69a53f9383af";
+
+    public EncounterRole getConsultingClinicianEncounterRole() {
+        return getRequiredEncounterRoleByUuid(CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getAttendingSurgeonEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
+    }
+
+    private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {
+        EncounterRole encounterRole = encounterService.getEncounterRoleByUuid(uuid);
+        if (encounterRole == null) {
+            throw new IllegalStateException("Missing required encounter role with uuid: " + uuid);
+        }
+        return encounterRole;
+    }
+
+    //***** CONCEPT SOURCES *****
 
 	public static final String ICD10_CONCEPT_SOURCE_UUID = "3f65bd34-26fe-102b-80cb-0017a47871b2";
 
@@ -421,7 +443,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(RETURN_VISIT_DATE_CONCEPT_UUID);
     }
 
-    public static final String TRANSFER_OUT_LOCATION_CONCEPT_UUID = "5b1f137c-b757-46c3-9735-c2fcb6ba221d";
+    public static final String TRANSFER_OUT_LOCATION_CONCEPT_UUID = "113a5ce0-6487-4f45-964d-2dcbd7d23b67";
 
     public Concept getTransferOutLocationConcept() {
         return getRequiredConceptByUuid(TRANSFER_OUT_LOCATION_CONCEPT_UUID);
@@ -439,40 +461,28 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(TRAUMA_TYPE_CONCEPT_UUID);
     }
 
-    public static final String CODED = "226ed7ad-b776-4b99-966d-fd818d3302c2";
+    public static final String CODED_DIAGNOSIS_CONCEPT_UUID = "226ed7ad-b776-4b99-966d-fd818d3302c2";
 
     public Concept getCodedDiagnosis() {
-        return getRequiredConceptByUuid(CODED);
+        return getRequiredConceptByUuid(CODED_DIAGNOSIS_CONCEPT_UUID);
     }
 
-    public static final String NON_CODED = "970d41ce-5098-47a4-8872-4dd843c0df3f";
+    public static final String NON_CODED_DIAGNOSIS_CONCEPT_UUID = "970d41ce-5098-47a4-8872-4dd843c0df3f";
 
     public Concept getNonCodedDiagnosis() {
-        return getRequiredConceptByUuid(NON_CODED);
+        return getRequiredConceptByUuid(NON_CODED_DIAGNOSIS_CONCEPT_UUID);
     }
 
-    public static final String SURGICAL_SERVICE = "84834856-23f3-4885-994e-33091d587964";
+    public static final String SURGICAL_SERVICE_CONCEPT_UUID = "84834856-23f3-4885-994e-33091d587964";
 
     public Concept getSurgicalService() {
-        return getRequiredConceptByUuid(SURGICAL_SERVICE);
+        return getRequiredConceptByUuid(SURGICAL_SERVICE_CONCEPT_UUID);
     }
 
-    public static final String OTHER_ASSISTANT = "bb34602b-0d91-4fe9-a88e-ff86c4af913d";
+    public static final String OTHER_ASSISTANT_CONCEPT_UUID = "bb34602b-0d91-4fe9-a88e-ff86c4af913d";
 
     public Concept getOtherAssistant() {
-        return getRequiredConceptByUuid(OTHER_ASSISTANT);
-    }
-
-    public static final String ASSISTANT_ONE = "";
-
-    public Concept getAssistantOne() {
-        return getRequiredConceptByUuid(ASSISTANT_ONE);
-    }
-
-    public static final String ATTENDING = "fca9c942-1a36-11e2-a310-aa00f871a3e1";
-
-    public Concept getAttending() {
-        return getRequiredConceptByUuid(ATTENDING);
+        return getRequiredConceptByUuid(OTHER_ASSISTANT_CONCEPT_UUID);
     }
 
     private Concept getRequiredConceptByUuid(String uuid) {

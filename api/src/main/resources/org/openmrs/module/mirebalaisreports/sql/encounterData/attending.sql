@@ -1,4 +1,4 @@
-select e.encounter_id, CONCAT(attending_n.given_name, ' ',  attending_n.family_name)
+select e.encounter_id, CONCAT(attending_n.given_name, ' ', attending_n.family_name)
 from encounter e
 inner join encounter_provider attending
   on e.encounter_id = attending.encounter_id
