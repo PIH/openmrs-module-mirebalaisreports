@@ -59,19 +59,16 @@ public class InpatientLocationCohortDefinitionEvaluator implements CohortDefinit
         }
 
         Location ward = cd.getWard();
-        if (ward == null) {
-            throw new IllegalArgumentException("ward is required");
-        }
-        Location visitLocation = adtService.getLocationThatSupportsVisits(ward);
-        if (visitLocation == null) {
-            throw new IllegalArgumentException(ward + " and its ancestor locations don't support visits");
+
+        Location visitLocation = null ;
+        if (ward != null ) {
+            visitLocation = adtService.getLocationThatSupportsVisits(ward);
         }
 
         EncounterType admissionEncounterType = emrApiProperties.getAdmissionEncounterType();
         EncounterType dischargeEncounterType = emrApiProperties.getExitFromInpatientEncounterType();
         EncounterType transferEncounterType = emrApiProperties.getTransferWithinHospitalEncounterType();
-
-        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery("select distinct v.patient_id " +
+        StringBuilder sb = new StringBuilder("select distinct v.patient_id " +
                 "from visit v " +
                 "inner join encounter admission " +
                 "  on v.visit_id = admission.visit_id " +
@@ -89,18 +86,27 @@ public class InpatientLocationCohortDefinitionEvaluator implements CohortDefinit
                 "    and voided = false " +
                 "    and encounter_type in (:adtEncounterTypes) " +
                 "    and encounter_datetime <= :onDate " +
-                "  ) " +
-                "where v.voided = false" +
-                "  and v.location_id = :visitLocation " +
-                "  and v.date_started <= :onDate " +
-                "  and (v.date_stopped is null or v.date_stopped > :onDate) " +
-                "  and mostRecentAdt.location_id = :ward " +
-                "  and mostRecentAdt.encounter_type in (:admitOrTransferEncounterTypes)");
-
+                "  ) ");
+        sb.append("where v.voided = false");
+        if (visitLocation != null) {
+            sb.append("  and v.location_id = :visitLocation ");
+        }
+        sb.append("  and v.date_started <= :onDate ");
+        sb.append("  and (v.date_stopped is null or v.date_stopped > :onDate) ");
+        if (ward != null ){
+            sb.append("  and mostRecentAdt.location_id = :ward ");
+        }
+        sb.append("  and mostRecentAdt.encounter_type in (:admitOrTransferEncounterTypes)");
+        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sb.toString());
+       
         query.setInteger("admissionEncounterType", admissionEncounterType.getId());
         query.setTimestamp("onDate", onDate);
-        query.setInteger("visitLocation", visitLocation.getId());
-        query.setInteger("ward", ward.getId());
+        if (visitLocation != null) {
+            query.setInteger("visitLocation", visitLocation.getId());
+        }
+        if (ward != null ) {
+            query.setInteger("ward", ward.getId());
+        }
         query.setParameterList("adtEncounterTypes", new Integer[]{admissionEncounterType.getId(), dischargeEncounterType.getId(), transferEncounterType.getId()});
         query.setParameterList("admitOrTransferEncounterTypes", new Integer[] { admissionEncounterType.getId(), transferEncounterType.getId() });
 

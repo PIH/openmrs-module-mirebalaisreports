@@ -1,6 +1,9 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Before;
+import org.openmrs.contrib.testdata.TestDataManager;
+import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
@@ -14,6 +17,15 @@ public abstract class BaseMirebalaisReportTest extends BaseModuleContextSensitiv
 
     @Autowired
     protected ReportDefinitionService reportDefinitionService;
+
+    @Autowired
+    protected MirebalaisReportsProperties mirebalaisReportsProperties;
+
+    @Autowired
+    protected EmrApiProperties emrApiProperties;
+
+    @Autowired
+    protected TestDataManager data;
 
     @Before
     public void setup() throws Exception {

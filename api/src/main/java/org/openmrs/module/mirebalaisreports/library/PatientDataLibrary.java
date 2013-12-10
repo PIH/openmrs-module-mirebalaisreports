@@ -142,6 +142,28 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
         return getRegistrationEncounter(new PropertyConverter(Encounter.class, "encounterDatetime"));
     }
 
+    @DocumentedDefinition("admission.location")
+    public PatientDataDefinition getAdmissionLocation() {
+        return getAdmissionEncounter(new PropertyConverter(Encounter.class, "location"),
+                new ObjectFormatter());
+    }
+
+    @DocumentedDefinition("admission.encounterDatetime")
+    public PatientDataDefinition getAdmissionDatetime() {
+        return getAdmissionEncounter(new PropertyConverter(Encounter.class, "encounterDatetime"));
+    }
+
+    @DocumentedDefinition("inpatient.location")
+    public PatientDataDefinition getInpatientLocation() {
+        return getAdmissionOrTransferEncounter(new PropertyConverter(Encounter.class, "location"),
+                new ObjectFormatter());
+    }
+
+    @DocumentedDefinition("inpatient.encounterDatetime")
+    public PatientDataDefinition getInpatientDatetime() {
+        return getAdmissionOrTransferEncounter(new PropertyConverter(Encounter.class, "encounterDatetime"));
+    }
+
     @DocumentedDefinition("registration.location")
     public PatientDataDefinition getRegistrationLocation() {
         return getRegistrationEncounter(new PropertyConverter(Encounter.class, "location"),
@@ -201,5 +223,18 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
         return new ConvertedPatientDataDefinition(registrationEncounters,
                 converters(new EarliestCreatedConverter(Encounter.class), converters));
     }
+    private PatientDataDefinition getAdmissionEncounter(DataConverter... converters) {
+        EncountersForPatientDataDefinition admissionEncounters = new EncountersForPatientDataDefinition();
+        admissionEncounters.setTypes(Arrays.asList(emrApiProperties.getAdmissionEncounterType()));
 
+        return new ConvertedPatientDataDefinition(admissionEncounters,
+                converters(new EarliestCreatedConverter(Encounter.class), converters));
+    }
+    private PatientDataDefinition getAdmissionOrTransferEncounter(DataConverter... converters) {
+        EncountersForPatientDataDefinition adtEncounters = new EncountersForPatientDataDefinition();
+        adtEncounters.setTypes(Arrays.asList(emrApiProperties.getAdmissionEncounterType(),emrApiProperties.getTransferWithinHospitalEncounterType()));
+
+        return new ConvertedPatientDataDefinition(adtEncounters,
+                converters(new MostRecentlyCreatedConverter(Encounter.class), converters));
+    }
 }

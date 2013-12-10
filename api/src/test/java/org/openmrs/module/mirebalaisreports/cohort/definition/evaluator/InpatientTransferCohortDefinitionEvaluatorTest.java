@@ -14,12 +14,11 @@
 
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientTransferCohortDefinition;
-import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportTest;
+import org.openmrs.module.mirebalaisreports.definitions.BaseInpatientReportTest;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -34,7 +33,7 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
 /**
  *
  */
-public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseMirebalaisReportTest {
+public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseInpatientReportTest {
 
     @Autowired
     LocationService locationService;
@@ -42,14 +41,9 @@ public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseMirebala
     @Autowired
     CohortDefinitionService cohortDefinitionService;
 
-    @Before
-    public void setUp() throws Exception {
-        executeDataSet("org/openmrs/module/mirebalaisreports/inpatientDailyReportTestDataset.xml");
-    }
-
     @Test
     public void testEvaluateTransferOut() throws Exception {
-        Location womensInternalMedicine = locationService.getLocation(32);
+        Location womensInternalMedicine = mirebalaisReportsProperties.getWomensInternalMedicineLocation();
         Date startDate = DateUtil.parseDate("2013-10-03 00:00:00", "yyyy-MM-dd HH:mm:ss");
         Date endDate = DateUtil.parseDate("2013-10-03 23:59:59", "yyyy-MM-dd HH:mm:ss");
 
@@ -60,12 +54,12 @@ public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseMirebala
 
         EvaluatedCohort result = cohortDefinitionService.evaluate(definition, new EvaluationContext());
 
-        assertThat(result, isCohortWithExactlyIds(1004));
+        assertThat(result, isCohortWithExactlyIds(patient5.getId()));
     }
 
     @Test
     public void testEvaluateTransferIn() throws Exception {
-        Location surgicalWard = locationService.getLocation(17);
+        Location surgicalWard = mirebalaisReportsProperties.getSurgicalWardLocation();
         Date startDate = DateUtil.parseDate("2013-10-03 00:00:00", "yyyy-MM-dd HH:mm:ss");
         Date endDate = DateUtil.parseDate("2013-10-03 23:59:59", "yyyy-MM-dd HH:mm:ss");
 
@@ -76,7 +70,7 @@ public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseMirebala
 
         EvaluatedCohort result = cohortDefinitionService.evaluate(definition, new EvaluationContext());
 
-        assertThat(result, isCohortWithExactlyIds(1004));
+        assertThat(result, isCohortWithExactlyIds(patient5.getId()));
     }
 
 }

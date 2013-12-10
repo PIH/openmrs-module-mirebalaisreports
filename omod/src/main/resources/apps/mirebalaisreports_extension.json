@@ -6,7 +6,7 @@
         "label": "mirebalaisreports.app.reports.label",
         "url": "mirebalaisreports/home.page",
         "icon": "icon-list-alt",
-        "order": 4,
+        "order": 5,
         "requiredPrivilege": "App: mirebalaisreports.Reports"
     }
 ]

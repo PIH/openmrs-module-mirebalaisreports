@@ -37,11 +37,12 @@ import java.io.FileWriter;
 public class CreateCoreMetadata extends BaseModuleContextSensitiveTest {
 
 	public String getOutputDirectory() {
-		return "/home/mseaton/code/mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
+		//return "/home/mseaton/code/mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
+		return "/Users/djazayeri/Documents/git-repositories/openmrs-module-mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
 		//return "";
 	}
 
-	@Test
+    @Test
 	public void run() throws Exception {
 
 		// only run this test if it is being run alone and if an output directory has been specified
@@ -87,6 +88,7 @@ public class CreateCoreMetadata extends BaseModuleContextSensitiveTest {
 		initialDataSet.addTable("role_role", "SELECT * FROM role_role");
 		initialDataSet.addTable("user_role", "SELECT * FROM user_role");
 		initialDataSet.addTable("visit_type", "SELECT * FROM visit_type");
+        initialDataSet.addTable("global_property", "SELECT * FROM global_property WHERE property like 'emr.%' or property like 'emrapi.%'");
 
 		File outputFile = new File(getOutputDirectory(), "coreMetadata.xml");
 

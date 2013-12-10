@@ -7,7 +7,9 @@ import org.openmrs.OpenmrsObject;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -23,13 +25,13 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
     protected final Log log = LogFactory.getLog(getClass());
 
     @Autowired
-	MirebalaisReportsProperties mirebalaisReportsProperties;
+	protected MirebalaisReportsProperties mirebalaisReportsProperties;
 
     @Autowired
-    DispositionService dispositionService;
+    protected DispositionService dispositionService;
 
     @Autowired
-    EmrApiProperties emrApiProperties;
+    protected EmrApiProperties emrApiProperties;
 
     public abstract String getUuid();
 
@@ -47,6 +49,15 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
     public Parameter getLocationParameter() {
         return new Parameter("location", "mirebalaisreports.parameter.location", Location.class);
+    }
+
+    public CohortIndicator buildIndicator(String name, CohortDefinition cd, String mappings) {
+        CohortIndicator indicator = new CohortIndicator(name);
+        indicator.addParameter(getStartDateParameter());
+        indicator.addParameter(getEndDateParameter());
+        indicator.addParameter(getLocationParameter());
+        indicator.setCohortDefinition(map(cd, mappings));
+        return indicator;
     }
 
     protected String applyMetadataReplacements(String sql) {

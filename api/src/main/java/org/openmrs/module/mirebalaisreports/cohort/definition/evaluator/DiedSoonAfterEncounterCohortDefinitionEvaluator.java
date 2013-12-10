@@ -35,7 +35,7 @@ import java.util.List;
 public class DiedSoonAfterEncounterCohortDefinitionEvaluator implements CohortDefinitionEvaluator {
 
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     @Override
     public EvaluatedCohort evaluate(CohortDefinition def, EvaluationContext context) throws EvaluationException {

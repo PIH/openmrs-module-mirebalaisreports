@@ -40,7 +40,8 @@ controller('InpatientStatsDailyReportController', ['$scope', '$http', '$timeout'
         { uuid: "c9ab4c5c-0a8a-4375-b986-f23c163b2f69", name: "Pediatrics" },
         { uuid: "2c93919d-7fc6-406d-a057-c0b640104790", name: "Women's Internal Medicine" },
         { uuid: "e5db0599-89e8-44fa-bfa2-07e47d63546f", name: "Men’s Internal Medicine" },
-        { uuid: "7d6cc39d-a600-496f-a320-fd4985f07f0b", name: "Surgical Ward" }
+        { uuid: "7d6cc39d-a600-496f-a320-fd4985f07f0b", name: "Surgical Ward" },
+        { uuid: "29437276-aeae-4ea8-8219-720886cdc87f", name: "Isolation" }
     ];
 
     $scope.data = { };

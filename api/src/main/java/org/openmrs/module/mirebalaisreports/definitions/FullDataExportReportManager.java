@@ -14,6 +14,8 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.openmrs.Concept;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -21,14 +23,20 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.obs.definition.GroupMemberObsDataDefinition;
+import org.openmrs.module.reporting.data.obs.definition.ObsIdDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.EncounterDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
 import org.openmrs.module.reporting.query.encounter.definition.SqlEncounterQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -144,7 +152,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             PersonAttributeCohortDefinition testPatient = new PersonAttributeCohortDefinition();
             testPatient.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
             testPatient.addValue("true");
-            baseCohortDefinition.addSearch("testPatient", testPatient, null);
+            baseCohortDefinition.addSearch("testPatient", Mapped.map(testPatient, ""));
 
             baseCohortDefinition.setCompositionString("(visitDuringPeriod OR registrationEncounterDuringPeriod) AND NOT testPatient");
             rd.setBaseCohortDefinition(this.<CohortDefinition>map(baseCohortDefinition, "startDate=${startDate},endDate=${endDate}"));
@@ -157,6 +165,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             DataSetDefinition dsd;
             if ("patients".equals(key)) {
                 dsd = constructPatientsDataSetDefinition();
+            }
+            else if ("dispensing".equals(key)) {
+                dsd = constructDispensingDataSetDefinition();
             }
             else if ("consultations-new".equals(key)) {
                 dsd = constructConsultationsDataSetDefinition();
@@ -179,6 +190,30 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 		return rd;
 	}
+
+    private DataSetDefinition constructDispensingDataSetDefinition() {
+        ObsDataSetDefinition dsd = new ObsDataSetDefinition();
+        dsd.addParameter(getStartDateParameter());
+        dsd.addParameter(getEndDateParameter());
+
+        BasicObsQuery query = new BasicObsQuery();
+        query.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
+        query.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
+        query.addConcept(mirebalaisReportsProperties.getCodedDiagnosisConcept()); // TODO fix this
+        dsd.addRowFilter(query, "onOrAfter=${startDate},onOrBefore=${endDate}");
+
+        dsd.addColumn("obsId", new ObsIdDataDefinition(), "");
+        dsd.addColumn("frequency", groupMemberData("9363", "PIH"), "", new ObjectFormatter());
+
+        return dsd;
+    }
+
+    private GroupMemberObsDataDefinition groupMemberData(String code, String sourceName) {
+        Concept concept = Context.getConceptService().getConceptByMapping(sourceName, code);
+        GroupMemberObsDataDefinition groupMemberObsDataDefinition = new GroupMemberObsDataDefinition();
+        groupMemberObsDataDefinition.setQuestion(concept);
+        return groupMemberObsDataDefinition;
+    }
 
     private DataSetDefinition constructConsultationsDataSetDefinition() {
         EncounterDataSetDefinition dsd = new EncounterDataSetDefinition();

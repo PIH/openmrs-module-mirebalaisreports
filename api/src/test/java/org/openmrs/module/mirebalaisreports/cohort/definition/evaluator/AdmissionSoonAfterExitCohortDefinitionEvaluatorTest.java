@@ -1,10 +1,9 @@
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.mirebalaisreports.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
-import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportTest;
+import org.openmrs.module.mirebalaisreports.definitions.BaseInpatientReportTest;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -20,15 +19,12 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
  *
  */
 @Ignore("The underlying query uses a MySQL-specific date function")
-public class AdmissionSoonAfterExitCohortDefinitionEvaluatorTest extends BaseMirebalaisReportTest {
+public class AdmissionSoonAfterExitCohortDefinitionEvaluatorTest extends BaseInpatientReportTest {
+
+    // TODO when we re-enable this test, if it still fails, note that we have refactoring the test data set, so there could be an issue there
 
     @Autowired
     CohortDefinitionService cohortDefinitionService;
-
-    @Before
-    public void setUp() throws Exception {
-        executeDataSet("org/openmrs/module/mirebalaisreports/inpatientDailyReportTestDataset.xml");
-    }
 
     @Test
     public void testEvaluate() throws Exception {

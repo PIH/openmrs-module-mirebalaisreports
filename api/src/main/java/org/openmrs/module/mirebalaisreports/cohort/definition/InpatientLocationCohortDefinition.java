@@ -30,7 +30,7 @@ public class InpatientLocationCohortDefinition extends BaseCohortDefinition {
 
     public static final long serialVersionUID = 1L;
 
-    @ConfigurationProperty(required = true)
+    @ConfigurationProperty
     private Location ward;
 
     @ConfigurationProperty

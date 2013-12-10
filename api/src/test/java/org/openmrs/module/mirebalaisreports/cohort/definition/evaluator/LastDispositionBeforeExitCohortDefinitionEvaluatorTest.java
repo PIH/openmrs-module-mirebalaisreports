@@ -14,14 +14,13 @@
 
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
+import org.openmrs.module.mirebalaisreports.definitions.BaseInpatientReportTest;
 import org.openmrs.module.mirebalaisreports.cohort.definition.LastDispositionBeforeExitCohortDefinition;
-import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportTest;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -36,7 +35,7 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
 /**
  *
  */
-public class LastDispositionBeforeExitCohortDefinitionEvaluatorTest extends BaseMirebalaisReportTest {
+public class LastDispositionBeforeExitCohortDefinitionEvaluatorTest extends BaseInpatientReportTest {
 
     @Autowired
     ConceptService conceptService;
@@ -47,14 +46,9 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluatorTest extends Base
     @Autowired
     CohortDefinitionService cohortDefinitionService;
 
-    @Before
-    public void setUp() throws Exception {
-        executeDataSet("org/openmrs/module/mirebalaisreports/inpatientDailyReportTestDataset.xml");
-    }
-
     @Test
     public void testEvaluate() throws Exception {
-        Location mensInternalMedicine = locationService.getLocation(33);
+        Location mensInternalMedicine = mirebalaisReportsProperties.getMensInternalMedicineLocation();
         Date startDate = DateUtil.parseDate("2013-10-03 00:00:00", "yyyy-MM-dd HH:mm:ss");
         Date endDate = DateUtil.parseDate("2013-10-03 23:59:59", "yyyy-MM-dd HH:mm:ss");
 
@@ -67,7 +61,7 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluatorTest extends Base
         definition.addDisposition(discharged);
 
         EvaluatedCohort result = cohortDefinitionService.evaluate(definition, new EvaluationContext());
-        assertThat(result, isCohortWithExactlyIds(1003));
+        assertThat(result, isCohortWithExactlyIds(patient4.getId()));
     }
 
 }
