@@ -17,9 +17,15 @@ package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Cohort;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
+import org.openmrs.VisitType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.UserService;
+import org.openmrs.api.VisitService;
+import org.openmrs.contrib.testdata.TestDataManager;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -35,9 +41,7 @@ import static org.junit.Assert.assertThat;
 /**
  *
  */
-public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensitiveTest {
-
-    VisitCohortDefinition cd;
+public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensitiveTest {;
 
     @Autowired
     LocationService locationService;
@@ -49,11 +53,28 @@ public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensiti
     UserService userService;
 
     @Autowired
+    VisitService visitService;
+
+    @Autowired
     CohortDefinitionService cohortDefinitionService;
+
+    @Autowired
+    EmrApiProperties emrApiProperties;
+
+    @Autowired
+    TestDataManager data;
+
+    VisitCohortDefinition cd;
+
+    VisitType someVisitType;
 
     @Before
     public void setUp() throws Exception {
         cd = new VisitCohortDefinition();
+
+        someVisitType = new VisitType();
+        someVisitType.setName("Some visit type");
+        visitService.saveVisitType(someVisitType);
     }
 
     @Test
@@ -79,6 +100,208 @@ public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensiti
         Cohort c = cohortDefinitionService.evaluate(cd, null);
         assertThat(c.size(), is(3));
         assertThat(c.getMemberIds(), not(containsInAnyOrder(2)));
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeWithinVisit() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1999-01-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1999-01-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(1));
+        assertThat(c.getMemberIds(), containsInAnyOrder(patient.getId()));
+
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeStartBeforeVisitAndRangeEndDuringVisit() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1998-12-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1999-01-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(1));
+        assertThat(c.getMemberIds(), containsInAnyOrder(patient.getId()));
+
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeStartDuringVisitAndRangeEndAfterVisit() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1999-01-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1999-02-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(1));
+        assertThat(c.getMemberIds(), containsInAnyOrder(patient.getId()));
+
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeStartBeforeVisitAndRangeEndAfterVisit() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1998-12-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1999-02-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(1));
+        assertThat(c.getMemberIds(), containsInAnyOrder(patient.getId()));
+
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeEndSameAsVisitStart() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1998-12-01", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1999-01-01", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(1));
+        assertThat(c.getMemberIds(), containsInAnyOrder(patient.getId()));
+
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeStartSameAsVisitEnd() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1999-02-02", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1999-03-01", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(1));
+        assertThat(c.getMemberIds(), containsInAnyOrder(patient.getId()));
+
+    }
+
+
+    @Test
+    public void shouldNotIncludeVisit_ifActiveVisitRangeStartBeforeVisitAndRangeEndBeforeVisit() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1998-12-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1998-12-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(0));
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeStartAfterVisitAndRangeEndAfterVisit() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .stopped("1999-02-02")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("2000-12-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("2000-12-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(0));
+    }
+
+    @Test
+    public void shouldIncludeVisit_ifActiveVisitRangeStartAfterVisitStartAndVisitCurrentlyActive() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("2000-12-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("2000-12-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(1));
+        assertThat(c.getMemberIds(), containsInAnyOrder(patient.getId()));
+    }
+
+    @Test
+    public void shouldNotIncludeVisit_ifActiveVisitRangeEndBeforeVisitStartAndVisitCurrentlyActive() throws Exception {
+
+        Patient patient = data.randomPatient().save();
+        // early dates to avoid active visits in standard test dataset
+        Visit visit = data.visit()
+                .started("1999-01-01")
+                .visitType(someVisitType)
+                .patient(patient)
+                .save();
+
+        cd.setActiveOnOrAfter(DateUtil.parseDate("1998-12-10", "yyyy-MM-dd"));
+        cd.setActiveOnOrBefore(DateUtil.parseDate("1998-12-15", "yyyy-MM-dd"));
+
+        Cohort c = cohortDefinitionService.evaluate(cd, null);
+        assertThat(c.size(), is(0));
     }
 
     private void setManyProperties() {

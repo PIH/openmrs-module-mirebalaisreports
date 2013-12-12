@@ -29,25 +29,24 @@ import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.data.converter.DateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.converter.ObsValueTextAsCodedConverter;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDatetimeDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterLocationDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterProviderDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.ObsForEncounterDataDefinition;
 import org.openmrs.module.reporting.data.obs.definition.GroupMemberObsDataDefinition;
-import org.openmrs.module.reporting.data.obs.definition.ObsIdDataDefinition;
-import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
-import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.EncounterDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
 import org.openmrs.module.reporting.query.encounter.definition.SqlEncounterQuery;
+import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
@@ -142,6 +141,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             baseCohortDefinition.addParameter(getStartDateParameter());
             baseCohortDefinition.addParameter(getEndDateParameter());
 
+            // TODO--this is no longer accurate, remove?
             // --Only show patients with a visit or registration encounter during the period
             // INNER JOIN (
             // SELECT patient_id, date_started FROM visit WHERE voided = 0 AND date_started BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
@@ -150,9 +150,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             // ) list ON p.patient_id = list.patient_id
 
             VisitCohortDefinition visitDuringPeriod = new VisitCohortDefinition();
-            visitDuringPeriod.addParameter(new Parameter("startedOnOrAfter", "", Date.class));
-            visitDuringPeriod.addParameter(new Parameter("startedOnOrBefore", "", Date.class));
-            baseCohortDefinition.addSearch("visitDuringPeriod", this.<CohortDefinition>map(visitDuringPeriod, "startedOnOrAfter=${startDate},startedOnOrBefore=${endDate}"));
+            visitDuringPeriod.addParameter(new Parameter("activeOnOrAfter", "", Date.class));
+            visitDuringPeriod.addParameter(new Parameter("activeOnOrBefore", "", Date.class));
+            baseCohortDefinition.addSearch("visitDuringPeriod", this.<CohortDefinition>map(visitDuringPeriod, "activeOnOrAfter=${startDate},activeOnOrBefore=${endDate}"));
 
             EncounterCohortDefinition registrationEncounterDuringPeriod = new EncounterCohortDefinition();
             registrationEncounterDuringPeriod.addEncounterType(mirebalaisReportsProperties.getRegistrationEncounterType());

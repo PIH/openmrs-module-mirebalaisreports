@@ -67,6 +67,14 @@ public class VisitCohortDefinitionEvaluator implements CohortDefinitionEvaluator
         if (cd.getStoppedOnOrBefore() != null) {
             crit.add(Restrictions.le("stopDatetime", DateUtil.getEndOfDayIfTimeExcluded(cd.getStoppedOnOrBefore())));
         }
+        if (cd.getActiveOnOrAfter() != null) {
+            crit.add(Restrictions.or(
+                    Restrictions.ge("stopDatetime", cd.getActiveOnOrAfter()),
+                    Restrictions.isNull("stopDatetime")));
+        }
+        if (cd.getActiveOnOrBefore() != null) {
+            crit.add(Restrictions.le("startDatetime", DateUtil.getEndOfDayIfTimeExcluded(cd.getActiveOnOrBefore())));
+        }
         if (cd.getVisitTypeList() != null) {
             crit.add(Restrictions.in("visitType", cd.getVisitTypeList()));
         }
