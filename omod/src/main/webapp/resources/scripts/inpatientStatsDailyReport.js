@@ -18,30 +18,52 @@ controller('InpatientStatsDailyReportController', ['$scope', '$http', '$timeout'
         { name: "possiblereadmission", class: "indicator-in" }
     ];
 
+    $scope.getResults = function (location, day, locationIndicator) {
+         if ($scope.hasValidData(day, locationIndicator.name, location.uuid)) {
+            return $scope.dataFor(day).cohorts[locationIndicator.name + ":" + location.uuid].size;
+         }
+         return 0;
+    };
+
+    $scope.availableBeds = function (location) {
+        return $scope.locations.filter(function(loc){
+            return loc.name == location.name
+        })[0].beds;
+    }
+
+    $scope.calculatePercentageOfOccupancy = function (location, day) {
+        var censusAtEnd = $scope.getResults(location, day, { name: "censusAtEnd" });
+        var availableBeds = $scope.availableBeds(location);
+
+        return censusAtEnd * 100 / availableBeds;
+    }
+
     $scope.locationIndicators = [
-        { name: "censusAtStart", label: "Census at start", class: "indicator-total" },
-        { name: "admissions", label: "Admissions", class: "indicator-in" },
-        { name: "transfersIn", label: "Transfers In", class: "indicator-in" },
-        { name: "transfersOut", label: "Transfers Out", class: "indicator-out" },
-        { name: "discharged", label: "Discharged", class: "indicator-out" },
-        { name: "deathsWithin48", label: "Died", class: "indicator-out" },
-        { name: "deathsAfter48", label: "Died", class: "indicator-out" },
-        { name: "transfersOutOfHUM", label: "Transferred out of HUM", class: "indicator-out" },
-        { name: "leftWithoutCompletingTx", label: "Left without completing treatment", class: "indicator-out" },
-        { name: "leftWithoutSeeingClinician", label: "Left without seeing a clinician", class: "indicator-out" },
-        { name: "censusAtEnd", label: "Census at end", class: "indicator-total" }
+        { name: "censusAtStart", label: "Census at start", class: "indicator-total", evaluator: $scope.getResults, link: true },
+        { name: "admissions", label: "Admissions", class: "indicator-in", evaluator: $scope.getResults, link: true },
+        { name: "transfersIn", label: "Transfers In", class: "indicator-in", evaluator: $scope.getResults, link: true },
+        { name: "transfersOut", label: "Transfers Out", class: "indicator-out", evaluator: $scope.getResults, link: true },
+        { name: "discharged", label: "Discharged", class: "indicator-out", evaluator: $scope.getResults, link: true },
+        { name: "deathsWithin48", label: "Died", class: "indicator-out", evaluator: $scope.getResults, link: true },
+        { name: "deathsAfter48", label: "Died", class: "indicator-out", evaluator: $scope.getResults, link: true },
+        { name: "transfersOutOfHUM", label: "Transferred out of HUM", class: "indicator-out", evaluator: $scope.getResults, link: true },
+        { name: "leftWithoutCompletingTx", label: "Left without completing treatment", class: "indicator-out", evaluator: $scope.getResults, link: true },
+        { name: "leftWithoutSeeingClinician", label: "Left without seeing a clinician", class: "indicator-out", evaluator: $scope.getResults, link: true  },
+        { name: "censusAtEnd", label: "Census at end", class: "indicator-total", evaluator: $scope.getResults, link: true },
+        { name: "availableBeds", label: "Available Beds", class: "indicator-total", evaluator: $scope.availableBeds, link: false },
+        { name: "percentageOfOccupancy", label: "Percentage Of Occupancy", class: "indicator-total", evaluator: $scope.calculatePercentageOfOccupancy, link: false }
     ];
 
     $scope.locations = [
-        { uuid: "272bd989-a8ee-4a16-b5aa-55bad4e84f5c", name: "Antepartum Ward" },
-        { uuid: "dcfefcb7-163b-47e5-84ae-f715cf3e0e92", name: "Labor and Delivery" },
-        { uuid: "950852f3-8a96-4d82-a5f8-a68a92043164", name: "Postpartum Ward" },
-        { uuid: "62a9500e-a1a5-4235-844f-3a8cc0765d53", name: "NICU" },
-        { uuid: "c9ab4c5c-0a8a-4375-b986-f23c163b2f69", name: "Pediatrics" },
-        { uuid: "2c93919d-7fc6-406d-a057-c0b640104790", name: "Women's Internal Medicine" },
-        { uuid: "e5db0599-89e8-44fa-bfa2-07e47d63546f", name: "Men’s Internal Medicine" },
-        { uuid: "7d6cc39d-a600-496f-a320-fd4985f07f0b", name: "Surgical Ward" },
-        { uuid: "29437276-aeae-4ea8-8219-720886cdc87f", name: "Isolation" }
+        { uuid: "272bd989-a8ee-4a16-b5aa-55bad4e84f5c", name: "Antepartum Ward", beds: 10 },
+        { uuid: "dcfefcb7-163b-47e5-84ae-f715cf3e0e92", name: "Labor and Delivery", beds: 12 },
+        { uuid: "950852f3-8a96-4d82-a5f8-a68a92043164", name: "Postpartum Ward", beds: 20 },
+        { uuid: "62a9500e-a1a5-4235-844f-3a8cc0765d53", name: "NICU", beds: 16 },
+        { uuid: "c9ab4c5c-0a8a-4375-b986-f23c163b2f69", name: "Pediatrics", beds: 36 },
+        { uuid: "2c93919d-7fc6-406d-a057-c0b640104790", name: "Women's Internal Medicine", beds: 18 },
+        { uuid: "e5db0599-89e8-44fa-bfa2-07e47d63546f", name: "Men’s Internal Medicine", beds: 18 },
+        { uuid: "7d6cc39d-a600-496f-a320-fd4985f07f0b", name: "Surgical Ward", beds: 19 },
+        { uuid: "29437276-aeae-4ea8-8219-720886cdc87f", name: "Isolation", beds: 10 }
     ];
 
     $scope.data = { };
@@ -77,6 +99,10 @@ controller('InpatientStatsDailyReportController', ['$scope', '$http', '$timeout'
     $scope.hasResults = function(day) {
         return $scope.dataFor(day) && $scope.dataFor(day).evaluationContext;
     };
+
+    $scope.hasValidData = function(day, name, uuid) {
+        return $scope.hasResults(day) && $scope.dataFor(day).cohorts[name + ":" + uuid];
+    }
 
     function evaluate(forDay) {
         forDay = new Date(forDay.getTime());

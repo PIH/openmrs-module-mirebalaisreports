@@ -80,11 +80,11 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
                 <tr ng-repeat="locationIndicator in locationIndicators" ng-class="locationIndicator.class">
                     <th>{{ locationIndicator.name | translate:"mirebalaisreports.inpatientStatsDailyReport." }}</th>
                     <td ng-repeat="location in locations">
-                        <a ng-click="viewCohort(day, locationIndicator, location)" ng-show="dataFor(day).cohorts[locationIndicator.name + ':' + location.uuid].size > 0">
-                            {{ dataFor(day).cohorts[locationIndicator.name + ":" + location.uuid].size }} 
+                        <a ng-click="viewCohort(day, locationIndicator, location)" ng-show="locationIndicator.evaluator(location, day, locationIndicator) > 0 && locationIndicator.link">
+                            {{ locationIndicator.evaluator(location, day, locationIndicator) }}
                         </a>
-                        <span ng-show="dataFor(day).cohorts[locationIndicator.name + ':' + location.uuid].size <= 0">
-                            {{ dataFor(day).cohorts[locationIndicator.name + ":" + location.uuid].size }} 
+                        <span ng-show="locationIndicator.evaluator(location, day, locationIndicator) <= 0 || !locationIndicator.link">
+                            {{ locationIndicator.evaluator(location, day, locationIndicator) }}
                         </span>
                     </td>
                 </tr>
