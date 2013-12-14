@@ -34,8 +34,8 @@ controller('InpatientStatsDailyReportController', ['$scope', '$http', '$timeout'
     $scope.calculatePercentageOfOccupancy = function (location, day) {
         var censusAtEnd = $scope.getResults(location, day, { name: "censusAtEnd" });
         var availableBeds = $scope.availableBeds(location);
-
-        return censusAtEnd * 100 / availableBeds;
+        var result = censusAtEnd * 100 / availableBeds;   
+        return result.toPrecision(3);
     }
 
     $scope.locationIndicators = [
