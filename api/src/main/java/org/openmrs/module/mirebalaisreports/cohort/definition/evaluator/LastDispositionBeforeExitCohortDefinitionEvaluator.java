@@ -70,7 +70,7 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluator implements Cohor
         sql += "inner join encounter obs_encounter " +
                 " on obs_encounter.visit_id = v.visit_id " +
                 " and obs_encounter.encounter_datetime = (" +
-                "   select max(obs_encounter.encounter_datetime) " +
+                "   select find_obs_encounter.encounter_id " +
                 "   from encounter find_obs_encounter " +
                 "   inner join obs has_obs " +
                 "     on has_obs.encounter_id = find_obs_encounter.encounter_id " +
@@ -81,6 +81,7 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluator implements Cohor
         }
         sql += "    where find_obs_encounter.visit_id = v.visit_id " +
                 "     and find_obs_encounter.voided = false " +
+                "    order by find_obs_encounter.encounter_datetime desc, find_obs_encounter.date_created desc limit 1 " +
                 // if we wanted to require disposition at the same location as exit
                 // "     and find_obs_encounter.location_id = :exitFromWard " +
                 " )" +
