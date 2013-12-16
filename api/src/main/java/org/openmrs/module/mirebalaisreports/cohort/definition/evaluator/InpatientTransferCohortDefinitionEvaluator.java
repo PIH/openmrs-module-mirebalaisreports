@@ -87,13 +87,14 @@ public class InpatientTransferCohortDefinitionEvaluator implements CohortDefinit
                 "  on v.visit_id = adtBeforeTransfer.visit_id " +
                 "  and adtBeforeTransfer.voided = false " +
                 "  and adtBeforeTransfer.encounter_type in (:adtEncounterTypes) " +
-                "  and adtBeforeTransfer.encounter_datetime = ( " +
-                "    select max(encounter_datetime) " +
+                "  and adtBeforeTransfer.encounter_id = ( " +
+                "    select encounter_id " +
                 "    from encounter " +
                 "    where visit_id = v.visit_id " +
                 "    and voided = false " +
                 "    and encounter_type in (:adtEncounterTypes) " +
                 "    and encounter_datetime < transfer.encounter_datetime " +
+                "    order by encounter_datetime desc, date_created desc limit 1" +
                 "  ) " +
                 "where v.voided = false" +
                 "  and v.location_id = :visitLocation " +

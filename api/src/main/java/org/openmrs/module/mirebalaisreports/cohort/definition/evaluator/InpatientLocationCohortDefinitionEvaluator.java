@@ -77,15 +77,14 @@ public class InpatientLocationCohortDefinitionEvaluator implements CohortDefinit
                 "  and admission.encounter_datetime <= :onDate " +
                 "inner join encounter mostRecentAdt " +
                 "  on v.visit_id = mostRecentAdt.visit_id " +
-                "  and mostRecentAdt.voided = false " +
-                "  and mostRecentAdt.encounter_type in (:adtEncounterTypes) " +
-                "  and mostRecentAdt.encounter_datetime = ( " +
-                "    select max(encounter_datetime) " +
+                "  and mostRecentAdt.encounter_id = ( " +
+                "    select encounter_id " +
                 "    from encounter " +
                 "    where visit_id = v.visit_id " +
                 "    and voided = false " +
                 "    and encounter_type in (:adtEncounterTypes) " +
                 "    and encounter_datetime <= :onDate " +
+                "    order by encounter_datetime desc, date_created desc limit 1" +
                 "  ) ");
         sb.append("where v.voided = false");
         if (visitLocation != null) {
