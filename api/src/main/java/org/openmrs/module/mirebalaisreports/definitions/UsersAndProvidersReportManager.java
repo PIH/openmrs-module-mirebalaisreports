@@ -1,22 +1,22 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
-
+@Component
 public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager {
-
-    public static final String USERS_AND_PROVIDERS_REPORT_UUID = "e4d1d6b0-642d-11e3-949a-0800200c9a66";
 
     @Override
     public String getUuid() {
-        return USERS_AND_PROVIDERS_REPORT_UUID;
+        return MirebalaisReportsProperties.USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID;
     }
 
     @Override
@@ -29,10 +29,9 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
 
         SqlDataSetDefinition sqlDsd = new SqlDataSetDefinition();
         sqlDsd.setName(MessageUtil.translate(getMessageCodePrefix() + "name"));
-        sqlDsd.setDescription(MessageUtil.translate(getMessageCodePrefix() +  "description"));
+        sqlDsd.setDescription(MessageUtil.translate(getMessageCodePrefix() + "description"));
 
-        String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "AllUsersAndProviders.sql");
-        sql = applyMetadataReplacements(sql);
+        String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "allUsersAndProviders.sql");
         sqlDsd.setSqlQuery(sql);
 
         rd.addDataSetDefinition("usersAndProviders", sqlDsd, null);

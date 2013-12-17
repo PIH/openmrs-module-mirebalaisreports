@@ -55,8 +55,8 @@
         <li><a id="mirebalaisreports-hospitalizationsDataExportReport-link" href="${ linkFor(properties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.hospitalizationsdataexport.name") }</a></li>
         <li><a id="mirebalaisreports-consultationsDataExportReport-link" href="${ linkFor(properties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.consultationsdataexport.name") }</a></li>
         <li><a id="mirebalaisreports-patientsDataExportReport-link" href="${ linkFor(properties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.patientsdataexport.name") }</a></li>
-        <li><a id="mirebalaisreports-dispensingDataExportReport-link" href="${ linkFor(properties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID)}">${ ui.message("mirebalaisreports.dispensingdataexport.name") }</a></li>
-
+        <li><a id="mirebalaisreports-dispensingDataExportReport-link" href="${ linkFor(properties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.dispensingdataexport.name") }</a></li>
+        <li><a id="mirebalaisreports-usersAndProvidersReport-link" href="${ linkFor(properties.USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID) }">${ ui.message("tyuytuy")} </a></li>
         <li><a id="mirebalaisreports-lqasDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "lqasDiagnoses") }">${ lqasDiagnosesReport.name }</a></li>
         <li><a id="mirebalaisreports-allPatientsWithIdsReport-link" href="${ ui.pageLink("mirebalaisreports", "allPatientsWithIds") }">${ allPatientsWithIdsReportManager.name }</a></li>
 	</ul>
