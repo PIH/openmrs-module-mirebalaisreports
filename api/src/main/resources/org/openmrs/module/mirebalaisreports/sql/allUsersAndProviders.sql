@@ -1,9 +1,9 @@
-select distinct concat(pe.given_name, ' ' ,pe.family_name) as 'Person name',
+select distinct pe.given_name as 'Person name',
                 u.username as 'User name',
                 u.retired as 'User inactive',
-                u.date_created as 'Date user account created',
+                u.date_created as 'Date created',
                 (select group_concat(role) from user_role where user_id = u.user_id ) as 'Roles associated',
-                pp.name as 'Provider type'
+                pp.name as 'Provider role associated'
            from person_name pe
 
            inner join users u
