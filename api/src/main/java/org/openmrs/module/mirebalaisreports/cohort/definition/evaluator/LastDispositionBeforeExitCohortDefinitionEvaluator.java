@@ -69,7 +69,7 @@ public class LastDispositionBeforeExitCohortDefinitionEvaluator implements Cohor
         }
         sql += "inner join encounter obs_encounter " +
                 " on obs_encounter.visit_id = v.visit_id " +
-                " and obs_encounter.encounter_datetime = (" +
+                " and obs_encounter.encounter_id = (" +
                 "   select find_obs_encounter.encounter_id " +
                 "   from encounter find_obs_encounter " +
                 "   inner join obs has_obs " +
