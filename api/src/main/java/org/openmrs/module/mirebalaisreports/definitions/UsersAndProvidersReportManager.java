@@ -46,6 +46,6 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
 
     @Override
     protected String getMessageCodePrefix() {
-        return "mirebalaisreports.manager.userAndProviders.";
+        return "mirebalaisreports.userAndProviders.";
     }
 }
