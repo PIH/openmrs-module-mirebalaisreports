@@ -24,6 +24,7 @@ import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.renderer.CsvReportRenderer;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.openmrs.util.OpenmrsUtil;
@@ -101,6 +102,14 @@ public abstract class BaseReportManager implements ReportManager {
             resource.setReportDesign(design);
             design.addResource(resource);
         }
+        return design;
+    }
+
+    protected ReportDesign csvReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign design = new ReportDesign();
+        design.setName("mirebalaisreports.output.csv");
+        design.setReportDefinition(reportDefinition);
+        design.setRendererType(CsvReportRenderer.class);
         return design;
     }
 
