@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.encounter_datetime, el.name encounter_location, CONCAT(pn.given_name, ' ', pn.family_name) provider, ocn_en.name radiology_order_en, ocn_fr.name radiology_order_fr, o.accession_number, o.urgency
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.encounter_datetime, el.name encounter_location, CONCAT(pn.given_name, ' ', pn.family_name) entered_by, CONCAT(provn.given_name, ' ', provn.family_name) provider, ocn_en.name radiology_order_en, ocn_fr.name radiology_order_fr, o.accession_number, o.urgency
 
 FROM patient p
 
@@ -26,6 +26,11 @@ INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.enc
 --User who created the encounter
 INNER JOIN users u ON e.creator = u.user_id
 INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
+
+--Provider with Ordering Provider encounter role on associated radiology order encounter
+INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = 5
+INNER JOIN provider epp ON ep.provider_id = epp.provider_id
+INNER JOIN person_name provn ON epp.person_id = provn.person_id AND provn.voided = 0
 
 --Location of encounter
 INNER JOIN location el ON e.location_id = el.location_id

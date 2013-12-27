@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.encounter_datetime, el.name encounter_location, CONCAT(pn.given_name, ' ', pn.family_name) provider, wt.value_numeric weight_kg, ht.value_numeric ht_cm, ROUND(wt.value_numeric/((ht.value_numeric/100)*(ht.value_numeric/100)),1) bmi, muac.value_numeric muac, temp.value_numeric temp_c, hr.value_numeric heart_rate, rr.value_numeric resp_rate, sbp.value_numeric sys_bp, dbp.value_numeric dia_bp, o2.value_numeric o2_sat, e.date_created,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.encounter_datetime, el.name encounter_location, CONCAT(pn.given_name, ' ', pn.family_name) entered_by, CONCAT(provn.given_name, ' ', provn.family_name) provider, wt.value_numeric weight_kg, ht.value_numeric ht_cm, ROUND(wt.value_numeric/((ht.value_numeric/100)*(ht.value_numeric/100)),1) bmi, muac.value_numeric muac, temp.value_numeric temp_c, hr.value_numeric heart_rate, rr.value_numeric resp_rate, sbp.value_numeric sys_bp, dbp.value_numeric dia_bp, o2.value_numeric o2_sat, e.date_created,
 
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective
@@ -29,6 +29,11 @@ INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.enc
 --User who created vitals encounter
 INNER JOIN users u ON e.creator = u.user_id
 INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
+
+--Provider with Nurse encounter role in vitals encounters
+INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = 3
+INNER JOIN provider epp ON ep.provider_id = epp.provider_id
+INNER JOIN person_name provn ON epp.person_id = provn.person_id AND provn.voided = 0
 
 --Location of vitals encounter
 INNER JOIN location el ON e.location_id = el.location_id

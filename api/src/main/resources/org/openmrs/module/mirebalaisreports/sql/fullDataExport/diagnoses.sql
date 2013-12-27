@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) provider, IF(o.concept_id = 357, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = 357, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_fr, icd.code icd10_code,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) entered_by, CONCAT(provn.given_name, ' ', provn.family_name) provider, IF(o.concept_id = 357, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = 357, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_fr, icd.code icd10_code,
 
 --Checks to see if diagnosis is a member of a variety of concept sets
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = 340), TRUE, FALSE) notifiable,
@@ -39,9 +39,10 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 --Consultation encounter
 INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = 8
 
---User who created consultation encounter
-INNER JOIN users u ON e.creator = u.user_id
-INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
+--Provider with Consulting Clinician encounter role on consultation encounter
+INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = 4
+INNER JOIN provider epp ON ep.provider_id = epp.provider_id
+INNER JOIN person_name provn ON epp.person_id = provn.person_id AND provn.voided = 0
 
 --Location of consultation encounter
 INNER JOIN location el ON e.location_id = el.location_id
@@ -52,7 +53,7 @@ INNER JOIN obs o ON e.encounter_id = o.encounter_id AND o.voided = 0 AND o.conce
 --Diagnosis name chosen by the user
 LEFT OUTER JOIN concept_name dn ON o.value_coded_name_id = dn.concept_name_id
 
---English diagnosis name
+--French diagnosis name
 LEFT OUTER JOIN concept_name en ON o.value_coded = en.concept_id AND en.locale = 'fr' AND en.locale_preferred = 1 AND en.voided = 0
 
 --Diagnosis order (primary or secondary)
@@ -65,6 +66,10 @@ LEFT OUTER JOIN concept_name scn ON sc.value_coded = scn.concept_id AND scn.loca
 
 --ICD 10 code
 LEFT OUTER JOIN (SELECT crm.concept_id, crt.code FROM concept_reference_map crm INNER JOIN concept_reference_term crt ON crm.concept_reference_term_id = crt.concept_reference_term_id AND crt.concept_source_id = (SELECT concept_source_id FROM concept_reference_source WHERE concept_source_id = 4) AND crt.retired = 0) icd ON o.value_coded = icd.concept_id
+
+--User who created diagnosis obs
+INNER JOIN users u ON o.creator = u.user_id
+INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
 
 WHERE p.voided = 0
 

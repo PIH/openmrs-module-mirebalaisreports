@@ -51,9 +51,10 @@ INNER JOIN encounter cons_adm ON v.visit_id = cons_adm.visit_id AND cons_adm.voi
 INNER JOIN obs dispo_adm ON cons_adm.encounter_id = dispo_adm.encounter_id AND dispo_adm.concept_id = 985 AND dispo_adm.voided = 0 AND dispo_adm.value_coded = 1221
 INNER JOIN encounter adm ON v.visit_id = adm.visit_id AND adm.voided = 0 AND adm.encounter_type = 12
 
---User who created admission encounter
-INNER JOIN users u ON adm.creator = u.user_id
-INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
+--Provider with Consulting Clinician encounter role on admission encounter
+INNER JOIN encounter_provider ep ON adm.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = 4
+INNER JOIN provider epp ON ep.provider_id = epp.provider_id
+INNER JOIN person_name pn ON epp.person_id = pn.person_id AND pn.voided = 0
 
 --Location patient was admitted to
 INNER JOIN location adm_l ON adm.location_id = adm_l.location_id
@@ -61,14 +62,16 @@ INNER JOIN location adm_l ON adm.location_id = adm_l.location_id
 --Find next internal transfer encounter (1)
 LEFT OUTER JOIN (SELECT * from encounter WHERE voided = 0 AND encounter_type = 13 ORDER BY encounter_datetime ASC) transf_1 ON v.visit_id = transf_1.visit_id AND transf_1.encounter_datetime > adm.encounter_datetime
 LEFT OUTER JOIN location transf_1_l ON transf_1.location_id = transf_1_l.location_id
-LEFT OUTER JOIN users transf_1_u ON transf_1.creator = transf_1_u.user_id
-LEFT OUTER JOIN person_name transf_1_pn ON transf_1_u.person_id = transf_1_pn.person_id AND transf_1_pn.voided = 0
+LEFT OUTER JOIN encounter_provider transf_1_ep ON transf_1.encounter_id = transf_1_ep.encounter_id AND transf_1_ep.voided = 0 AND transf_1_ep.encounter_role_id = 4
+LEFT OUTER JOIN provider transf_1_epp ON transf_1_ep.provider_id = transf_1_epp.provider_id
+LEFT OUTER JOIN person_name transf_1_pn ON transf_1_epp.person_id = transf_1_pn.person_id AND transf_1_pn.voided = 0
 
 --Find next internal transfer encounter (2)
 LEFT OUTER JOIN (SELECT * from encounter WHERE voided = 0 AND encounter_type = 13 ORDER BY encounter_datetime ASC) transf_2 ON v.visit_id = transf_2.visit_id AND transf_2.encounter_datetime > transf_1.encounter_datetime
 LEFT OUTER JOIN location transf_2_l ON transf_2.location_id = transf_2_l.location_id
-LEFT OUTER JOIN users transf_2_u ON transf_2.creator = transf_2_u.user_id
-LEFT OUTER JOIN person_name transf_2_pn ON transf_2_u.person_id = transf_2_pn.person_id AND transf_2_pn.voided = 0
+LEFT OUTER JOIN encounter_provider transf_2_ep ON transf_2.encounter_id = transf_2_ep.encounter_id AND transf_2_ep.voided = 0 AND transf_2_ep.encounter_role_id = 4
+LEFT OUTER JOIN provider transf_2_epp ON transf_2_ep.provider_id = transf_2_epp.provider_id
+LEFT OUTER JOIN person_name transf_2_pn ON transf_2_epp.person_id = transf_2_pn.person_id AND transf_2_pn.voided = 0
 
 --Commenting these out in hopes that the query runs faster...
 --Find next internal transfer encounter (3)
@@ -87,7 +90,6 @@ LEFT OUTER JOIN person_name transf_2_pn ON transf_2_u.person_id = transf_2_pn.pe
 LEFT OUTER JOIN encounter dis ON v.visit_id = dis.visit_id AND dis.voided = 0 AND dis.encounter_type = 11
 LEFT OUTER JOIN location dis_l ON dis.location_id = dis_l.location_id
 LEFT OUTER JOIN users dis_u ON dis.creator = dis_u.user_id
-LEFT OUTER JOIN person_name dis_pn ON dis_u.person_id = dis_pn.person_id AND dis_pn.voided = 0
 
 --Find associated discharge disposition encounter
 LEFT OUTER JOIN (SELECT e.visit_id, e.encounter_datetime, e.location_id, e.creator, n.name disposition, dispo_loc_n.name disposition_location
