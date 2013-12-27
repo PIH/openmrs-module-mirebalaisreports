@@ -6,6 +6,6 @@ inner join obs o
   and o.concept_id = :trauma
 inner join concept_name c
     on o.value_coded = c.concept_id
-    and c.locale = 'en'
+    and c.locale = 'fr'
     and c.locale_preferred = true
 where e.encounter_id in (:encounterIds)

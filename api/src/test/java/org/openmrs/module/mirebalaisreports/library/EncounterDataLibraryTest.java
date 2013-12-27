@@ -169,7 +169,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(e1.getId()), nullValue());
         assertThat(data.getData().get(e2.getId()), nullValue());
-        assertThat((String) data.getData().get(e3.getId()), is("Transfer within hospital"));
+        assertThat((String) data.getData().get(e3.getId()), is("Transfert dans l’hopital"));
     }
 
     @Test
@@ -289,7 +289,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(e1.getId()), nullValue());
         assertThat(data.getData().get(e2.getId()), nullValue());
-        assertThat((String)data.getData().get(e3.getId()), is("Site not supported by Zanmi Lasante"));
+        assertThat((String)data.getData().get(e3.getId()), is("Sites non ZL"));
     }
 
     @Test
@@ -299,7 +299,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(e1.getId()), nullValue());
         assertThat(data.getData().get(e2.getId()), nullValue());
-        assertThat((String)data.getData().get(e3.getId()), is("Transport accident"));
+        assertThat((String)data.getData().get(e3.getId()), is("Accident de transport"));
     }
 
     @Test
@@ -359,7 +359,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(e1.getId()), nullValue());
         assertThat(data.getData().get(e2.getId()), nullValue());
-        assertThat((String) data.getData().get(e3.getId()), is("Vascular Surgery"));
+        assertThat((String) data.getData().get(e3.getId()), is("Chirurgie Vasculaire"));
     }
 
     @Test

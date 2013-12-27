@@ -6,7 +6,7 @@ inner join obs ssrv
   and ssrv.concept_id = :surgicalService
   inner join concept_name ssrv_n
     on ssrv.value_coded = ssrv_n.concept_id
-    and ssrv_n.locale = 'en'
+    and ssrv_n.locale = 'fr'
     and ssrv_n.locale_preferred = true
     and ssrv_n.voided = 0
 where e.encounter_id in (:encounterIds)
