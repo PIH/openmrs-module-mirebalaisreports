@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) provider, IF(o.concept_id = 357, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = 357, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_en, icd.code icd10_code,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) provider, IF(o.concept_id = 357, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = 357, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_fr, icd.code icd10_code,
 
 --Checks to see if diagnosis is a member of a variety of concept sets
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = 340), TRUE, FALSE) notifiable,
@@ -53,15 +53,15 @@ INNER JOIN obs o ON e.encounter_id = o.encounter_id AND o.voided = 0 AND o.conce
 LEFT OUTER JOIN concept_name dn ON o.value_coded_name_id = dn.concept_name_id
 
 --English diagnosis name
-LEFT OUTER JOIN concept_name en ON o.value_coded = en.concept_id AND en.locale = 'en' AND en.concept_name_type = 'FULLY_SPECIFIED' AND en.voided = 0
+LEFT OUTER JOIN concept_name en ON o.value_coded = en.concept_id AND en.locale = 'fr' AND en.locale_preferred = 1 AND en.voided = 0
 
 --Diagnosis order (primary or secondary)
 LEFT OUTER JOIN obs ps ON o.obs_group_id = ps.obs_group_id AND ps.concept_id = 350 AND ps.voided = 0
-LEFT OUTER JOIN concept_name psn ON ps.value_coded = psn.concept_id AND psn.locale = 'en'
+LEFT OUTER JOIN concept_name psn ON ps.value_coded = psn.concept_id AND psn.locale = 'fr' AND psn.locale_preferred = 1
 
 --Diagnosis certainty
 LEFT OUTER JOIN obs sc ON o.obs_group_id = sc.obs_group_id AND sc.concept_id = 354 AND sc.voided = 0
-LEFT OUTER JOIN concept_name scn ON sc.value_coded = scn.concept_id AND scn.locale = 'en'
+LEFT OUTER JOIN concept_name scn ON sc.value_coded = scn.concept_id AND scn.locale = 'fr' AND scn.locale_preferred = 1
 
 --ICD 10 code
 LEFT OUTER JOIN (SELECT crm.concept_id, crt.code FROM concept_reference_map crm INNER JOIN concept_reference_term crt ON crm.concept_reference_term_id = crt.concept_reference_term_id AND crt.concept_source_id = (SELECT concept_source_id FROM concept_reference_source WHERE concept_source_id = 4) AND crt.retired = 0) icd ON o.value_coded = icd.concept_id

@@ -41,19 +41,19 @@ LEFT OUTER JOIN (SELECT encounter_id, COUNT(obs_id) num FROM obs WHERE voided = 
 
 --Disposition
 LEFT OUTER JOIN obs dispo ON e.encounter_id = dispo.encounter_id AND dispo.voided = 0 AND dispo.concept_id = :dispo
-LEFT OUTER JOIN concept_name dispo_n ON dispo.value_coded = dispo_n.concept_id AND dispo_n.locale = 'en'
+LEFT OUTER JOIN concept_name dispo_n ON dispo.value_coded = dispo_n.concept_id AND dispo_n.locale = 'fr' AND dispo_n.locale_preferred = 1
 
 --Transfer out location (for transfers out of the hospital)
 LEFT OUTER JOIN obs transf_out ON e.encounter_id = transf_out.encounter_id AND transf_out.voided = 0 AND transf_out.concept_id = :transfOut
-LEFT OUTER JOIN concept_name transf_out_n ON transf_out.value_coded = transf_out_n.concept_id AND transf_out_n.locale = 'en'
+LEFT OUTER JOIN concept_name transf_out_n ON transf_out.value_coded = transf_out_n.concept_id AND transf_out_n.locale = 'fr' AND transf_out_n.locale_preferred = 1
 
 --Occurrence of trauma (ED only)
 LEFT OUTER JOIN obs trauma ON e.encounter_id = trauma.encounter_id AND trauma.voided = 0 AND trauma.concept_id = :traumaOccur
-LEFT OUTER JOIN concept_name trauma_n ON trauma.value_coded = trauma_n.concept_id AND trauma_n.locale = 'en'
+LEFT OUTER JOIN concept_name trauma_n ON trauma.value_coded = trauma_n.concept_id AND trauma_n.locale = 'fr' AND trauma_n.locale_preferred = 1
 
 --Trauma Type
 LEFT OUTER JOIN obs trauma_type ON e.encounter_id = trauma_type.encounter_id AND trauma_type.voided = 0 AND trauma_type.concept_id = :traumaType
-LEFT OUTER JOIN concept_name trauma_type_n ON trauma_type.value_coded = trauma_type_n.concept_id AND trauma_type_n.locale = 'en'
+LEFT OUTER JOIN concept_name trauma_type_n ON trauma_type.value_coded = trauma_type_n.concept_id AND trauma_type_n.locale = 'fr' AND trauma_type_n.locale_preferred = 1
 
 --Return visit date
 LEFT OUTER JOIN obs rvd ON e.encounter_id = rvd.encounter_id AND rvd.voided = 0 AND rvd.concept_id = :rvd

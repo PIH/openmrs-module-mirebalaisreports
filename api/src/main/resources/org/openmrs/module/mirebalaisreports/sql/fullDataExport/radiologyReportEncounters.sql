@@ -41,11 +41,11 @@ LEFT OUTER JOIN obs ran ON rrc.obs_id = ran.obs_group_id AND ran.concept_id = 62
 
 --Report type
 LEFT OUTER JOIN obs report_type ON rrc.obs_id = report_type.obs_group_id AND report_type.concept_id = 630 AND report_type.voided = 0
-LEFT OUTER JOIN concept_name report_type_n ON report_type.value_coded = report_type_n.concept_id AND report_type_n.voided = 0 AND report_type_n.locale = 'en'
+LEFT OUTER JOIN concept_name report_type_n ON report_type.value_coded = report_type_n.concept_id AND report_type_n.voided = 0 AND report_type_n.locale = 'fr' AND report_type_n.locale_preferred = 1
 
 --Procedure performed
 LEFT OUTER JOIN obs proc_perf ON rrc.obs_id = proc_perf.obs_group_id AND proc_perf.concept_id = 977 AND proc_perf.voided = 0
-LEFT OUTER JOIN concept_name proc_perf_n ON proc_perf.value_coded = proc_perf_n.concept_id AND proc_perf_n.voided = 0 AND proc_perf_n.locale = 'en'
+LEFT OUTER JOIN concept_name proc_perf_n ON proc_perf.value_coded = proc_perf_n.concept_id AND proc_perf_n.voided = 0 AND proc_perf_n.locale = 'fr' AND proc_perf_n.locale_preferred = 1
 
 --Comments
 LEFT OUTER JOIN obs comments ON rrc.obs_id = comments.obs_group_id AND comments.concept_id = 625 AND comments.voided = 0

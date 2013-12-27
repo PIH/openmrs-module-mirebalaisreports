@@ -93,9 +93,9 @@ LEFT OUTER JOIN person_name dis_pn ON dis_u.person_id = dis_pn.person_id AND dis
 LEFT OUTER JOIN (SELECT e.visit_id, e.encounter_datetime, e.location_id, e.creator, n.name disposition, dispo_loc_n.name disposition_location
 FROM encounter e
 INNER JOIN obs o ON e.encounter_id = o.encounter_id AND o.voided = 0 AND o.concept_id = 985 AND o.value_coded IN (461, 984, 983, 981, 1220, 1228)
-INNER JOIN concept_name n ON o.value_coded = n.concept_id AND n.locale = 'en' AND n.concept_name_type = 'FULLY_SPECIFIED'
+INNER JOIN concept_name n ON o.value_coded = n.concept_id AND n.locale = 'fr' AND n.locale_preferred = 1
 LEFT OUTER JOIN obs dispo_loc ON e.encounter_id = dispo_loc.encounter_id AND dispo_loc.concept_id = 1223 AND dispo_loc.voided = 0
-LEFT OUTER JOIN concept_name dispo_loc_n ON dispo_loc.value_coded = dispo_loc_n.concept_id AND dispo_loc_n.locale = 'en' AND dispo_loc_n.concept_name_type = 'FULLY_SPECIFIED'
+LEFT OUTER JOIN concept_name dispo_loc_n ON dispo_loc.value_coded = dispo_loc_n.concept_id AND dispo_loc_n.locale = 'fr' AND dispo_loc_n.locale_preferred = 1
 WHERE e.encounter_type = 8) dis_dispo ON v.visit_id = dis_dispo.visit_id
 
 WHERE p.voided = 0

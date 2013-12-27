@@ -41,11 +41,11 @@ LEFT OUTER JOIN obs ran ON rsc.obs_id = ran.obs_group_id AND ran.concept_id = 62
 
 --Images available
 LEFT OUTER JOIN obs images ON rsc.obs_id = images.obs_group_id AND images.concept_id = 626 AND images.voided = 0
-LEFT OUTER JOIN concept_name images_n ON images.value_coded = images_n.concept_id AND images_n.voided = 0 AND images_n.locale = 'en'
+LEFT OUTER JOIN concept_name images_n ON images.value_coded = images_n.concept_id AND images_n.voided = 0 AND images_n.locale = 'fr' and images_n.locale_preferred = 1
 
 --Procedure performed
 LEFT OUTER JOIN obs proc_perf ON rsc.obs_id = proc_perf.obs_group_id AND proc_perf.concept_id = 977 AND proc_perf.voided = 0
-LEFT OUTER JOIN concept_name proc_perf_n ON proc_perf.value_coded = proc_perf_n.concept_id AND proc_perf_n.voided = 0 AND proc_perf_n.locale = 'en'
+LEFT OUTER JOIN concept_name proc_perf_n ON proc_perf.value_coded = proc_perf_n.concept_id AND proc_perf_n.voided = 0 AND proc_perf_n.locale = 'fr' AND proc_perf_n.locale_preferred = 1
 
 WHERE p.voided = 0
 

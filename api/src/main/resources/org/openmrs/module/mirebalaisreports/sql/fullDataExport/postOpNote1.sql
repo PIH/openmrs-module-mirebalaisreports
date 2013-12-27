@@ -48,7 +48,7 @@ INNER JOIN location el ON e.location_id = el.location_id
 
 --Surgical service
 LEFT OUTER JOIN obs ssrv ON e.encounter_id = ssrv.encounter_id AND ssrv.concept_id = 487 AND ssrv.voided = 0
-LEFT OUTER JOIN concept_name ssrv_n ON ssrv.value_coded = ssrv_n.concept_id AND ssrv_n.locale = 'en' AND ssrv_n.voided = 0 AND ssrv_n.concept_name_type = 'FULLY_SPECIFIED'
+LEFT OUTER JOIN concept_name ssrv_n ON ssrv.value_coded = ssrv_n.concept_id AND ssrv_n.locale = 'fr' AND ssrv_n.voided = 0 AND ssrv_n.locale_preferred = 1
 
 --Attending
 LEFT OUTER JOIN encounter_provider attending ON e.encounter_id = attending.encounter_id AND attending.voided = 0 AND attending.encounter_role_id = 6
@@ -90,35 +90,35 @@ LEFT OUTER JOIN person_name nurse_2_n ON nurse_2_p.person_id = nurse_2_n.person_
 
 --Pre-op Dx
 LEFT OUTER JOIN obs preop_1 ON e.encounter_id = preop_1.encounter_id AND preop_1.concept_id = 445 AND preop_1.voided = 0
-LEFT OUTER JOIN concept_name preop_1_n ON preop_1.value_coded = preop_1_n.concept_id AND preop_1_n.locale = 'en' AND preop_1_n.concept_name_type = 'FULLY_SPECIFIED' AND preop_1_n.voided = 0
+LEFT OUTER JOIN concept_name preop_1_n ON preop_1.value_coded = preop_1_n.concept_id AND preop_1_n.locale = 'fr' AND preop_1_n.locale_preferred = 1 AND preop_1_n.voided = 0
 LEFT OUTER JOIN obs preop_2 ON e.encounter_id = preop_2.encounter_id AND preop_2.concept_id = 445 AND preop_2.voided = 0 AND preop_2.obs_id != preop_1.obs_id
-LEFT OUTER JOIN concept_name preop_2_n ON preop_2.value_coded = preop_2_n.concept_id AND preop_2_n.locale = 'en' AND preop_2_n.concept_name_type = 'FULLY_SPECIFIED' AND preop_2_n.voided = 0
+LEFT OUTER JOIN concept_name preop_2_n ON preop_2.value_coded = preop_2_n.concept_id AND preop_2_n.locale = 'fr' AND preop_2_n.locale_preferred = 1 AND preop_2_n.voided = 0
 LEFT OUTER JOIN obs preop_3 ON e.encounter_id = preop_3.encounter_id AND preop_3.concept_id = 445 AND preop_3.voided = 0 AND preop_3.obs_id NOT IN (preop_1.obs_id, preop_2.obs_id)
-LEFT OUTER JOIN concept_name preop_3_n ON preop_3.value_coded = preop_3_n.concept_id AND preop_3_n.locale = 'en' AND preop_3_n.concept_name_type = 'FULLY_SPECIFIED' AND preop_3_n.voided = 0
+LEFT OUTER JOIN concept_name preop_3_n ON preop_3.value_coded = preop_3_n.concept_id AND preop_3_n.locale = 'fr' AND preop_3_n.locale_preferred = 1 AND preop_3_n.voided = 0
 
 --Post-op Dx
 LEFT OUTER JOIN obs postop_1 ON e.encounter_id = postop_1.encounter_id AND postop_1.concept_id = 523 AND postop_1.voided = 0
-LEFT OUTER JOIN concept_name postop_1_n ON postop_1.value_coded = postop_1_n.concept_id AND postop_1_n.locale = 'en' AND postop_1_n.concept_name_type = 'FULLY_SPECIFIED' AND postop_1_n.voided = 0
+LEFT OUTER JOIN concept_name postop_1_n ON postop_1.value_coded = postop_1_n.concept_id AND postop_1_n.locale = 'fr' AND postop_1_n.locale_preferred = 1 AND postop_1_n.voided = 0
 LEFT OUTER JOIN obs postop_2 ON e.encounter_id = postop_2.encounter_id AND postop_2.concept_id = 523 AND postop_2.voided = 0 AND postop_2.obs_id != postop_1.obs_id
-LEFT OUTER JOIN concept_name postop_2_n ON postop_2.value_coded = postop_2_n.concept_id AND postop_2_n.locale = 'en' AND postop_2_n.concept_name_type = 'FULLY_SPECIFIED' AND postop_2_n.voided = 0
+LEFT OUTER JOIN concept_name postop_2_n ON postop_2.value_coded = postop_2_n.concept_id AND postop_2_n.locale = 'fr' AND postop_2_n.locale_preferred = 1 AND postop_2_n.voided = 0
 LEFT OUTER JOIN obs postop_3 ON e.encounter_id = postop_3.encounter_id AND postop_3.concept_id = 523 AND postop_3.voided = 0 AND postop_3.obs_id NOT IN (postop_1.obs_id, postop_2.obs_id)
-LEFT OUTER JOIN concept_name postop_3_n ON postop_3.value_coded = postop_3_n.concept_id AND postop_3_n.locale = 'en' AND postop_3_n.concept_name_type = 'FULLY_SPECIFIED' AND postop_3_n.voided = 0
+LEFT OUTER JOIN concept_name postop_3_n ON postop_3.value_coded = postop_3_n.concept_id AND postop_3_n.locale = 'fr' AND postop_3_n.locale_preferred = 1 AND postop_3_n.voided = 0
 
 --Procedures
 LEFT OUTER JOIN obs procedure_1 ON e.encounter_id = procedure_1.encounter_id AND procedure_1.concept_id = 470 AND procedure_1.voided = 0
-LEFT OUTER JOIN concept_name procedure_1_n ON procedure_1.value_coded = procedure_1_n.concept_id AND procedure_1_n.locale = 'en' AND procedure_1_n.concept_name_type = 'FULLY_SPECIFIED' AND procedure_1_n.voided = 0
+LEFT OUTER JOIN concept_name procedure_1_n ON procedure_1.value_coded = procedure_1_n.concept_id AND procedure_1_n.locale = 'fr' AND procedure_1_n.locale_preferred = 1 AND procedure_1_n.voided = 0
 LEFT OUTER JOIN obs procedure_2 ON e.encounter_id = procedure_2.encounter_id AND procedure_2.concept_id = 470 AND procedure_2.voided = 0 AND procedure_2.obs_id != procedure_1.obs_id
-LEFT OUTER JOIN concept_name procedure_2_n ON procedure_2.value_coded = procedure_2_n.concept_id AND procedure_2_n.locale = 'en' AND procedure_2_n.concept_name_type = 'FULLY_SPECIFIED' AND procedure_2_n.voided = 0
+LEFT OUTER JOIN concept_name procedure_2_n ON procedure_2.value_coded = procedure_2_n.concept_id AND procedure_2_n.locale = 'fr' AND procedure_2_n.locale_preferred = 1 AND procedure_2_n.voided = 0
 LEFT OUTER JOIN obs procedure_3 ON e.encounter_id = procedure_3.encounter_id AND procedure_3.concept_id = 470 AND procedure_3.voided = 0 AND procedure_3.obs_id NOT IN (procedure_1.obs_id, procedure_2.obs_id)
-LEFT OUTER JOIN concept_name procedure_3_n ON procedure_3.value_coded = procedure_3_n.concept_id AND procedure_3_n.locale = 'en' AND procedure_3_n.concept_name_type = 'FULLY_SPECIFIED' AND procedure_3_n.voided = 0
+LEFT OUTER JOIN concept_name procedure_3_n ON procedure_3.value_coded = procedure_3_n.concept_id AND procedure_3_n.locale = 'fr' AND procedure_3_n.locale_preferred = 1 AND procedure_3_n.voided = 0
 LEFT OUTER JOIN obs procedure_4 ON e.encounter_id = procedure_4.encounter_id AND procedure_4.concept_id = 470 AND procedure_4.voided = 0 AND procedure_4.obs_id NOT IN (procedure_1.obs_id, procedure_2.obs_id, procedure_3.obs_id)
-LEFT OUTER JOIN concept_name procedure_4_n ON procedure_4.value_coded = procedure_4_n.concept_id AND procedure_4_n.locale = 'en' AND procedure_4_n.concept_name_type = 'FULLY_SPECIFIED' AND procedure_4_n.voided = 0
+LEFT OUTER JOIN concept_name procedure_4_n ON procedure_4.value_coded = procedure_4_n.concept_id AND procedure_4_n.locale = 'fr' AND procedure_4_n.locale_preferred = 1 AND procedure_4_n.voided = 0
 LEFT OUTER JOIN obs procedure_5 ON e.encounter_id = procedure_5.encounter_id AND procedure_5.concept_id = 470 AND procedure_5.voided = 0 AND procedure_5.obs_id NOT IN (procedure_1.obs_id, procedure_2.obs_id, procedure_3.obs_id, procedure_4.obs_id)
-LEFT OUTER JOIN concept_name procedure_5_n ON procedure_5.value_coded = procedure_5_n.concept_id AND procedure_5_n.locale = 'en' AND procedure_5_n.concept_name_type = 'FULLY_SPECIFIED' AND procedure_5_n.voided = 0
+LEFT OUTER JOIN concept_name procedure_5_n ON procedure_5.value_coded = procedure_5_n.concept_id AND procedure_5_n.locale = 'fr' AND procedure_5_n.locale_preferred = 1 AND procedure_5_n.voided = 0
 
 --Anesthesia
 LEFT OUTER JOIN obs anesthesia ON e.encounter_id = anesthesia.encounter_id AND anesthesia.concept_id = 508 AND anesthesia.voided = 0
-LEFT OUTER JOIN concept_name anesthesia_n ON anesthesia.value_coded = anesthesia_n.concept_id AND anesthesia_n.locale = 'en' AND anesthesia_n.concept_name_type = 'FULLY_SPECIFIED' AND anesthesia_n.voided = 0
+LEFT OUTER JOIN concept_name anesthesia_n ON anesthesia.value_coded = anesthesia_n.concept_id AND anesthesia_n.locale = 'fr' AND anesthesia_n.locale_preferred = 1 AND anesthesia_n.voided = 0
 
 WHERE p.voided = 0
 

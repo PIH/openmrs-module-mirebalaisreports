@@ -39,7 +39,7 @@ LEFT OUTER JOIN obs pd ON e.encounter_id = pd.encounter_id AND pd.voided = 0 AND
 
 --Type of visit
 LEFT OUTER JOIN obs reason ON e.encounter_id = reason.encounter_id AND reason.voided = 0 AND reason.concept_id = 1244
-LEFT OUTER JOIN concept_name reason_n ON reason.value_coded = reason_n.concept_id AND reason_n.voided = 0 AND reason_n.locale = 'en' AND reason_n.concept_name_type = 'FULLY_SPECIFIED'
+LEFT OUTER JOIN concept_name reason_n ON reason.value_coded = reason_n.concept_id AND reason_n.voided = 0 AND reason_n.locale = 'fr' AND reason_n.locale_preferred = 1
 
 WHERE p.voided = 0
 
