@@ -2,6 +2,7 @@ package org.openmrs.module.mirebalaisreports;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.db.SerializedObjectDAO;
 import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportTest;
 import org.openmrs.module.mirebalaisreports.definitions.DailyRegistrationsReportManager;
@@ -31,12 +32,16 @@ public class MirebalaisHospitalReportingModuleActivatorTest extends BaseMirebala
     @Autowired
     ReportService reportService;
 
+    @Autowired
+    AdministrationService administrationService;
+
     @Before
     public void setUp() throws Exception {
         activator = new MirebalaisHospitalReportingModuleActivator();
         activator.setReportDefinitionService(reportDefinitionService);
         activator.setReportService(reportService);
         activator.setSerializedObjectDAO(serializedObjectDAO);
+        activator.setAdministrationService(administrationService);
     }
 
     /**
