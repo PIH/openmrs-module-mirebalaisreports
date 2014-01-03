@@ -48,7 +48,6 @@
 	<p>${ ui.message("mirebalaisreports.categories.dataExports") }</p>
 	<ul>
 		<li><a id="mirebalaisreports-fullDataExportReport-link" href="${ linkFor(properties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.fulldataexport.name") }</a></li>
-        <li><a id="mirebalaisreports-adhocreport-link" href="${ ui.pageLink("reportingui", "adHocHome") }">${ ui.message("mirebalaisreports.adhocreport") }</a></li>
         <li><a id="mirebalaisreports-dashboardDataExportReport-link" href="${ linkFor(properties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.dashboarddataexport.name") }</a></li>
         <li><a id="mirebalaisreports-radiologyDataExportReport-link" href="${ linkFor(properties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.radiologydataexport.name") }</a></li>
         <li><a id="mirebalaisreports-surgeryDataExportReport-link" href="${ linkFor(properties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.surgerydataexport.name") }</a></li>
@@ -59,6 +58,7 @@
         <li><a id="mirebalaisreports-usersAndProvidersReport-link" href="${ linkFor(properties.USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID) }">${ ui.message("mirebalaisreports.userAndProviders.name")} </a></li>
         <li><a id="mirebalaisreports-lqasDiagnosesReport-link" href="${ ui.pageLink("mirebalaisreports", "lqasDiagnoses") }">${ lqasDiagnosesReport.name }</a></li>
         <li><a id="mirebalaisreports-allPatientsWithIdsReport-link" href="${ ui.pageLink("mirebalaisreports", "allPatientsWithIds") }">${ allPatientsWithIdsReportManager.name }</a></li>
+        <li><a id="mirebalaisreports-adhocreport-link" href="${ ui.pageLink("reportingui", "adHocHome") }">${ ui.message("mirebalaisreports.adhocdataexport") }</a></li>
 	</ul>
 </div>
 <% } %>
