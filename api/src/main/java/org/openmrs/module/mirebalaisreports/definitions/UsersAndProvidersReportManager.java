@@ -20,6 +20,11 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
     }
 
     @Override
+    public String getVersion() {
+        return "1.0";
+    }
+
+    @Override
     public ReportDefinition constructReportDefinition() {
         ReportDefinition rd = new ReportDefinition();
         rd.setName(getMessageCodePrefix() + "name");

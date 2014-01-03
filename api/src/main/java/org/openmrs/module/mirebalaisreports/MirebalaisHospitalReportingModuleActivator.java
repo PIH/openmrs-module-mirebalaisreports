@@ -16,12 +16,17 @@ package org.openmrs.module.mirebalaisreports;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.db.SerializedObject;
 import org.openmrs.api.db.SerializedObjectDAO;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
-import org.openmrs.module.mirebalaisreports.definitions.*;
+import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
+import org.openmrs.module.mirebalaisreports.definitions.InpatientListReportManager;
+import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsDailyReportManager;
+import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
+import org.openmrs.module.mirebalaisreports.definitions.UsersAndProvidersReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -40,6 +45,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
     private ReportService reportService;
     private ReportDefinitionService reportDefinitionService;
     private SerializedObjectDAO serializedObjectDAO;
+    private AdministrationService administrationService;
 
     public void setReportService(ReportService reportService) {
         this.reportService = reportService;
@@ -53,6 +59,10 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         this.serializedObjectDAO = serializedObjectDAO;
     }
 
+    public void setAdministrationService(AdministrationService administrationService) {
+        this.administrationService = administrationService;
+    }
+
     /**
 	 * @see ModuleActivator#started()
 	 */
@@ -60,6 +70,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         reportService = Context.getService(ReportService.class);
         reportDefinitionService = Context.getService(ReportDefinitionService.class);
         serializedObjectDAO = Context.getRegisteredComponents(SerializedObjectDAO.class).get(0);
+        administrationService = Context.getAdministrationService();
 
         setupFullDataExports();
         setupOtherReports();
@@ -92,6 +103,10 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
      * @param manager
      */
     public void setupReport(ReportManager manager) {
+        if (alreadyAtLatestVersion(manager)) {
+            return;
+        }
+
         ReportDefinition reportDefinition = manager.constructReportDefinition();
 
         log.info("Saving new definition of " + reportDefinition.getName());
@@ -130,6 +145,19 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
             reportService.saveReportDesign(design);
         }
 
+        administrationService.setGlobalProperty(globalPropertyFor(manager), manager.getVersion());
+    }
+
+    private boolean alreadyAtLatestVersion(ReportManager manager) {
+        String newVersion = manager.getVersion();
+        String existingVersion = administrationService.getGlobalProperty(globalPropertyFor(manager));
+        return existingVersion != null &&
+                existingVersion.equals(newVersion) &&
+                !newVersion.contains("-SNAPSHOT");
+    }
+
+    private String globalPropertyFor(ReportManager manager) {
+        return "mirebalaisreports." + manager.getUuid() + ".version";
     }
 
     /**

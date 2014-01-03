@@ -80,4 +80,13 @@ public interface ReportManager {
      */
     List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition);
 
+    /**
+     * This is used to determine whether to build/save the report definition on module startup. Version should be something
+     * like "1.0" or "1.1-SNAPSHOT". (Any version with "-SNAPSHOT" indicates it is under active development and will be
+     * built/saved every time the module is started.)
+     *
+     * @return what version of this report we are at
+     */
+    String getVersion();
+
 }

@@ -59,6 +59,11 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
     }
 
     @Override
+    public String getVersion() {
+        return "1.0";
+    }
+
+    @Override
     protected String getMessageCodePrefix() {
         return "mirebalaisreports.inpatientStatsDaily.";
     }

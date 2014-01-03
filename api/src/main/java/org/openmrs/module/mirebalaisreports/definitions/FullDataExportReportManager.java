@@ -92,6 +92,11 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         return uuid;
     }
 
+    @Override
+    public String getVersion() {
+        return "1.0";
+    }
+
 	//***** INSTANCE METHODS
 
 	@Override

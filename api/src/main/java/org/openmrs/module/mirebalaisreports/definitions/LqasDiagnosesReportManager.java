@@ -31,6 +31,11 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
     }
 
     @Override
+    public String getVersion() {
+        return "1.0";
+    }
+
+    @Override
     protected String getMessageCodePrefix() {
         return "mirebalaisreports.lqasdiagnoses.";
     }

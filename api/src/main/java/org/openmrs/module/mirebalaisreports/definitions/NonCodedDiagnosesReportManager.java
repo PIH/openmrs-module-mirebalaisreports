@@ -57,6 +57,10 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
         return MirebalaisReportsProperties.NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID;
     }
 
+    @Override
+    public String getVersion() {
+        return "1.0";
+    }
 	public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
 		this.emrApiProperties = emrApiProperties;
 	}
