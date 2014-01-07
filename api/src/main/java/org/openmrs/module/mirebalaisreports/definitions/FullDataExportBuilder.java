@@ -53,6 +53,8 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
 
     public FullDataExportBuilder() {
         configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.fulldataexport.", null));
+        configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dashboarddataexport.",
+                Arrays.asList("patients", "checkins", "vitals", "consultations", "diagnoses", "visits", "hospitalizations", "postOpNote1", "postOpNote2")));
         configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.radiologydataexport.",
                 Arrays.asList("radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters")));
         configurations.add(new Configuration(MirebalaisReportsProperties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.surgerydataexport.",
@@ -61,8 +63,6 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
                 Arrays.asList("hospitalizations", "postOpNote1", "postOpNote2")));
         configurations.add(new Configuration(MirebalaisReportsProperties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.consultationsdataexport.",
                 Arrays.asList("consultations", "diagnoses")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dashboarddataexport.",
-                Arrays.asList("patients", "checkins", "vitals", "consultations", "diagnoses", "visits", "hospitalizations", "postOpNote1", "postOpNote2")));
         configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.patientsdataexport.",
                 Arrays.asList("patients")));
         configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dispensingdataexport.",
@@ -78,7 +78,7 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
                     null, // appId
                     "org.openmrs.module.reportingui.reports.dataexport", // extensionPointId
                     "link", // type
-                    c.getMessageCodePrefix() + ".name", // label
+                    c.getMessageCodePrefix() + "name", // label
                     "/reportingui/runReport.page?reportDefinition=" + c.getUuid(), // url
                     i, // order
                     "App: mirebalaisreports.dataexports", // required privilege

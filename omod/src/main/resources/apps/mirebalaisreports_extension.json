@@ -65,5 +65,34 @@
     },
 
 
-    {}
+    {
+        "id": "mirebalaisreports.dataExports.usersAndProviders",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.dataexport",
+        "type": "link",
+        "label": "mirebalaisreports.userAndProviders.name",
+        "url": "reportingui/runReport.page?reportDefinition=e4d1d6b0-642d-11e3-949a-0800200c9a66",
+        "order": 100,
+        "requiredPrivilege": "App: mirebalaisreports.dataexports",
+        "extensionParams": { "linkId": "mirebalaisreports-usersAndProvidersReport-link" }
+    },
+    {
+        "id": "mirebalaisreports.dataExports.lqasDiagnoses",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.dataexport",
+        "type": "link",
+        "label": "mirebalaisreports.lqasdiagnoses.name",
+        "url": "mirebalaisreports/lqasDiagnoses.page",
+        "order": 101,
+        "requiredPrivilege": "App: mirebalaisreports.dataexports",
+        "extensionParams": { "linkId": "mirebalaisreports-lqasDiagnosesReport-link" }
+    },
+    {
+        "id": "mirebalaisreports.dataExports.allPatientsWithIds",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.dataexport",
+        "type": "link",
+        "label": "mirebalaisreports.allpatientswithids.name",
+        "url": "mirebalaisreports/allPatientsWithIds.page",
+        "order": 102,
+        "requiredPrivilege": "App: mirebalaisreports.dataexports",
+        "extensionParams": { "linkId": "mirebalaisreports-allPatientsWithIdsReport-link" }
+    }
 ]
