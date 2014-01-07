@@ -1,17 +1,5 @@
 [
     {
-        "id": "mirebalaisreports.Reports",
-        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
-        "type": "link",
-        "label": "mirebalaisreports.app.reports.label",
-        "url": "mirebalaisreports/home.page",
-        "icon": "icon-list-alt",
-        "order": 5,
-        "requiredPrivilege": "App: mirebalaisreports.Reports"
-    },
-
-
-    {
         "id": "mirebalaisreports.overview.dailyRegistrations",
         "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
         "type": "link",
@@ -46,7 +34,7 @@
         "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
         "type": "link",
         "label": "mirebalaisreports.inpatientStatsDailyReport.name",
-        "url": "mirebalaisreports/dailyReport.page?reportDefinition=@INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID",
+        "url": "mirebalaisreports/inpatientStatsDailyReport.page",
         "order": 4,
         "requiredPrivilege": "App: mirebalaisreports.Reports",
         "extensionParams": { "linkId": "mirebalaisreports-inpatientDataExportReport-link" }
