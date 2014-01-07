@@ -8,5 +8,62 @@
         "icon": "icon-list-alt",
         "order": 5,
         "requiredPrivilege": "App: mirebalaisreports.Reports"
-    }
+    },
+
+
+    {
+        "id": "mirebalaisreports.overview.dailyRegistrations",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
+        "type": "link",
+        "label": "mirebalaisreports.dailyRegistrations.name",
+        "url": "mirebalaisreports/dailyReport.page?reportDefinition=@DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID",
+        "order": 1,
+        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "extensionParams": { "linkId": "mirebalaisreports-dailyRegistrationsReport-link" }
+    },
+    {
+        "id": "mirebalaisreports.overview.dailyCheckIns",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
+        "type": "link",
+        "label": "mirebalaisreports.dailyCheckInEncounters.name",
+        "url": "mirebalaisreports/dailyReport.page?reportDefinition=@DAILY_CHECK_INS_REPORT_DEFINITION_UUID",
+        "order": 2,
+        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "extensionParams": { "linkId": "mirebalaisreports-dailyCheckInsReport-link" }
+    },
+    {
+        "id": "mirebalaisreports.overview.dailyClinicalEncounters",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
+        "type": "link",
+        "label": "mirebalaisreports.dailyClinicalEncounters.name",
+        "url": "mirebalaisreports/dailyReport.page?reportDefinition=@DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID",
+        "order": 3,
+        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "extensionParams": { "linkId": "mirebalaisreports-dailyClinicalEncountersReport-link" }
+    },
+    {
+        "id": "mirebalaisreports.overview.inpatientDaily",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
+        "type": "link",
+        "label": "mirebalaisreports.inpatientStatsDailyReport.name",
+        "url": "mirebalaisreports/dailyReport.page?reportDefinition=@INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID",
+        "order": 4,
+        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "extensionParams": { "linkId": "mirebalaisreports-inpatientDataExportReport-link" }
+    },
+
+
+    {
+        "id": "mirebalaisreports.dataQuality.nonCodedDiagnoses",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.dataquality",
+        "type": "link",
+        "label": "mirebalaisreports.noncodeddiagnoses.name",
+        "url": "mirebalaisreports/nonCodedDiagnoses.page",
+        "order": 4,
+        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "extensionParams": { "linkId": "mirebalaisreports-nonCodedDiagnosesReport-link" }
+    },
+
+
+    {}
 ]

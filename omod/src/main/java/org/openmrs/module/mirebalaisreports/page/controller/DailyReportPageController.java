@@ -1,5 +1,6 @@
 package org.openmrs.module.mirebalaisreports.page.controller;
 
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -13,8 +14,12 @@ public class DailyReportPageController {
 
     public void get(@SpringBean ReportDefinitionService reportDefinitionService,
                     @RequestParam("reportDefinition") String reportDefinitionUuid,
-                    PageModel model) {
+                    PageModel model) throws Exception {
 
+        if (reportDefinitionUuid.startsWith("@")) {
+            // References a public static field on MirebalaisProperties, e.g. @DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID
+            reportDefinitionUuid = (String) MirebalaisReportsProperties.class.getField(reportDefinitionUuid.substring(1)).get(null);
+        }
         ReportDefinition reportDefinition = reportDefinitionService.getDefinitionByUuid(reportDefinitionUuid);
         if (reportDefinition == null) {
             throw new IllegalArgumentException("No reportDefinition with the given uuid");

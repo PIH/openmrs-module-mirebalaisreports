@@ -14,20 +14,28 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.openmrs.module.appframework.domain.AppDescriptor;
+import org.openmrs.module.appframework.domain.AppTemplate;
+import org.openmrs.module.appframework.domain.Extension;
+import org.openmrs.module.appframework.factory.AppFrameworkFactory;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Helper that <em>builds</em> FullDataExportReportManagers with specific combinations of datasets
+ * Helper that <em>builds</em> FullDataExportReportManagers with specific combinations of datasets.
+ *
+ * This implements AppFrameworkFactory, to provide link extensions on the reportingui homepage.
+ * TODO figure out why this is not working
  */
 @Component
-public class FullDataExportBuilder {
+public class FullDataExportBuilder implements AppFrameworkFactory {
 
     @Autowired
     ApplicationContext applicationContext;
@@ -59,6 +67,37 @@ public class FullDataExportBuilder {
                 Arrays.asList("patients")));
         configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dispensingdataexport.",
                 Arrays.asList("dispensing")));
+    }
+
+    @Override
+    public List<Extension> getExtensions() throws IOException {
+        ArrayList<Extension> extensions = new ArrayList<Extension>();
+        int i = 0;
+        for (Configuration c : configurations) {
+            Extension ext = new Extension("mirebalaisreports.dataExports." + (++i), // id
+                    null, // appId
+                    "org.openmrs.module.reportingui.reports.dataexport", // extensionPointId
+                    "link", // type
+                    c.getMessageCodePrefix() + ".name", // label
+                    "/reportingui/runReport.page?reportDefinition=" + c.getUuid(), // url
+                    i, // order
+                    "App: mirebalaisreports.dataexports", // required privilege
+                    null); // extensionParams
+            // ideally set extensionParams['linkId'] (but this is not a priority)
+            extensions.add(ext);
+        }
+
+        return extensions;
+    }
+
+    @Override
+    public List<AppDescriptor> getAppDescriptors() throws IOException {
+        return null;
+    }
+
+    @Override
+    public List<AppTemplate> getAppTemplates() throws IOException {
+        return null;
     }
 
     public List<FullDataExportReportManager> getAllReportManagers() {
