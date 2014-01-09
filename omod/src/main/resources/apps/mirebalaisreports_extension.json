@@ -6,7 +6,7 @@
         "label": "mirebalaisreports.dailyRegistrations.name",
         "url": "mirebalaisreports/dailyReport.page?reportDefinition=@DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID",
         "order": 1,
-        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "requiredPrivilege": "App: reportingui.reports",
         "extensionParams": { "linkId": "mirebalaisreports-dailyRegistrationsReport-link" }
     },
     {
@@ -16,7 +16,7 @@
         "label": "mirebalaisreports.dailyCheckInEncounters.name",
         "url": "mirebalaisreports/dailyReport.page?reportDefinition=@DAILY_CHECK_INS_REPORT_DEFINITION_UUID",
         "order": 2,
-        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "requiredPrivilege": "App: reportingui.reports",
         "extensionParams": { "linkId": "mirebalaisreports-dailyCheckInsReport-link" }
     },
     {
@@ -26,7 +26,7 @@
         "label": "mirebalaisreports.dailyClinicalEncounters.name",
         "url": "mirebalaisreports/dailyReport.page?reportDefinition=@DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID",
         "order": 3,
-        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "requiredPrivilege": "App: reportingui.reports",
         "extensionParams": { "linkId": "mirebalaisreports-dailyClinicalEncountersReport-link" }
     },
     {
@@ -36,7 +36,7 @@
         "label": "mirebalaisreports.inpatientStatsDailyReport.name",
         "url": "mirebalaisreports/inpatientStatsDailyReport.page",
         "order": 4,
-        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "requiredPrivilege": "App: reportingui.reports",
         "extensionParams": { "linkId": "mirebalaisreports-inpatientDataExportReport-link" }
     },
 
@@ -48,7 +48,7 @@
         "label": "mirebalaisreports.noncodeddiagnoses.name",
         "url": "mirebalaisreports/nonCodedDiagnoses.page",
         "order": 4,
-        "requiredPrivilege": "App: mirebalaisreports.Reports",
+        "requiredPrivilege": "App: reportingui.reports",
         "extensionParams": { "linkId": "mirebalaisreports-nonCodedDiagnosesReport-link" }
     },
 
