@@ -52,7 +52,7 @@
         <eventVersion>2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <supercsvVersion>2.1.0</supercsvVersion>
-        <openmrsTestutilsVersion>1.0-SNAPSHOT</openmrsTestutilsVersion>
+        <openmrsTestutilsVersion>1.1-SNAPSHOT</openmrsTestutilsVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
