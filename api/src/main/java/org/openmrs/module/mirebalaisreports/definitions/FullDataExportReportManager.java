@@ -94,7 +94,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1"; // last change: setting design property on CSV exports to blacklist non-latin-1 characters
     }
 
 	//***** INSTANCE METHODS
