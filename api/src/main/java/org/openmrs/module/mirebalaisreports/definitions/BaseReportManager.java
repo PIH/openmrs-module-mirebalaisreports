@@ -110,7 +110,7 @@ public abstract class BaseReportManager implements ReportManager {
         design.setName("mirebalaisreports.output.csv");
         design.setReportDefinition(reportDefinition);
         design.setRendererType(CsvReportRenderer.class);
-        design.addPropertyValue("blacklistRegex", "[^\\p{InBasicLatin}\\p{InLatin-1Supplement}]");
+        design.addPropertyValue("blacklistRegex", "[^\\p{InBasicLatin}\\p{L}]");
         return design;
     }
 
