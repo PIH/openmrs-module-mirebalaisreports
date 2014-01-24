@@ -108,26 +108,31 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     @Test
     public void testEncountersExport() throws Exception {
         Patient patient = data.randomPatient()
+                .birthdate("2001-02-03")
+                .gender("F")
                 .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", mirebalaisReportsProperties.getMirebalaisHospitalLocation())
                 .save();
 
-        Date date = DateUtil.parseYmdhms("2013-08-30 09:00:00");
-
         User checkinUser = data.user().personName("Checkin", null, "Clerk").gender("M").username("checkin").save();
-        User nurseUser = data.user().personName("Nurse", null, "Nursing").gender("F").username("nurse").save();
+        Provider checkInProvider = data.provider().person(checkinUser.getPerson()).save();
 
-        Visit visit = data.visit().patient(patient).started(date).visitType(emrApiProperties.getAtFacilityVisitType()).save();
+        User nurseUser = data.user().personName("Nurse", null, "Nursing").gender("F").username("nurse").save();
+        Provider nurseProvider = data.provider().person(nurseUser.getPerson()).save();
+
+        Visit visit = data.visit().patient(patient).started(DateUtil.parseYmdhms("2013-08-30 09:00:00")).visitType(emrApiProperties.getAtFacilityVisitType()).save();
 
         Encounter e1 = data.encounter().visit(visit)
                 .encounterType(emrApiProperties.getCheckInEncounterType())
                 .location(mirebalaisReportsProperties.getClinicRegistrationLocation())
                 .encounterDatetime("2013-08-30 09:00:00")
+                .provider(mirebalaisReportsProperties.getAdministrativeClerkEncounterRole(), checkInProvider)
                 .creator(checkinUser).save();
 
         Encounter e2 = data.encounter().visit(visit)
                 .encounterType(mirebalaisReportsProperties.getVitalsEncounterType())
                 .location(mirebalaisReportsProperties.getOutpatientLocation())
                 .encounterDatetime("2013-08-30 09:15:00")
+                .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
                 .creator(nurseUser).save();
 
         Visit oldVisit = data.visit().patient(patient).started(DateUtil.parseYmdhms("2012-01-01 09:00:00")).stopped(DateUtil.parseYmdhms("2012-01-01 12:00:00")).visitType(emrApiProperties.getAtFacilityVisitType()).save();
@@ -135,6 +140,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .encounterType(emrApiProperties.getCheckInEncounterType())
                 .location(mirebalaisReportsProperties.getClinicRegistrationLocation())
                 .encounterDatetime(oldVisit.getStartDatetime())
+                .provider(mirebalaisReportsProperties.getAdministrativeClerkEncounterRole(), checkInProvider)
                 .creator(checkinUser).save();
 
         FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList("encounters"));
@@ -153,18 +159,32 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         new TsvReportRenderer().render(reportData, null, System.out);
 
         DataSetRow row = rows.next();
+        assertThat((String) row.getColumnValue("zlEmrId"), is("2AA00V"));
+        assertThat((Double) row.getColumnValue("age"), is(12.6));
+        assertThat((String) row.getColumnValue("gender"), is("F"));
+        assertThat((Integer) row.getColumnValue("visitId"), is(visit.getId()));
         assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
         assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
         assertThat((String) row.getColumnValue("location"), is("Clinic Registration"));
         assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
         assertThat((String) row.getColumnValue("enteredBy"), is("Checkin Clerk"));
+        assertThat((String) row.getColumnValue("administrativeClerk"), is("Checkin Clerk"));
+        assertThat((String) row.getColumnValue("nurse"), is(""));
+        assertThat((String) row.getColumnValue("consultingClinician"), is(""));
 
         row = rows.next();
+        assertThat((String) row.getColumnValue("zlEmrId"), is("2AA00V"));
+        assertThat((Double) row.getColumnValue("age"), is(12.6));
+        assertThat((String) row.getColumnValue("gender"), is("F"));
+        assertThat((Integer) row.getColumnValue("visitId"), is(visit.getId()));
         assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
         assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
         assertThat((String) row.getColumnValue("location"), is("Outpatient Clinic"));
         assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
         assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
+        assertThat((String) row.getColumnValue("administrativeClerk"), is(""));
+        assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
+        assertThat((String) row.getColumnValue("consultingClinician"), is(""));
 
         assertFalse(rows.hasNext());
     }

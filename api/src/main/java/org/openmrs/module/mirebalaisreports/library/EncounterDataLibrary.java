@@ -15,7 +15,10 @@
 package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
 import org.openmrs.OpenmrsObject;
+import org.openmrs.Person;
+import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
@@ -29,6 +32,7 @@ import org.openmrs.module.reporting.data.encounter.definition.AgeAtEncounterData
 import org.openmrs.module.reporting.data.encounter.definition.AuditInfoEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.EncounterProviderDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SimultaneousEncountersDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDefinition;
@@ -227,6 +231,34 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
     @DocumentedDefinition("retrospective")
     public EncounterDataDefinition getRetrospective() {
         return sqlEncounterDataDefinition("retrospective.sql", null);
+    }
+
+    @DocumentedDefinition("visitId")
+    public EncounterDataDefinition getVisitId() {
+        return sqlEncounterDataDefinition("visitId.sql", null);
+    }
+
+    @DocumentedDefinition("administrativeClerk.name")
+    public EncounterDataDefinition getClerk() {
+        return getProvider(props.getAdministrativeClerkEncounterRole());
+    }
+
+    @DocumentedDefinition("nurse.name")
+    public EncounterDataDefinition getNurse() {
+        return getProvider(props.getNurseEncounterRole());
+    }
+
+    @DocumentedDefinition("consultingClinician.name")
+    public EncounterDataDefinition getConsultingClinician() {
+        return getProvider(props.getConsultingClinicianEncounterRole());
+    }
+
+    private EncounterDataDefinition getProvider(EncounterRole encounterRole) {
+        EncounterProviderDataDefinition dd = new EncounterProviderDataDefinition();
+        dd.setEncounterRole(encounterRole);
+
+        return new ConvertedEncounterDataDefinition(dd, new PropertyConverter(Provider.class, "person"), new PropertyConverter(Person.class, "personName"),
+                new ObjectFormatter("{givenName} {familyName}"));
     }
 
     private ConvertedEncounterDataDefinition associatedAdtEncounter(DataConverter... converters) {

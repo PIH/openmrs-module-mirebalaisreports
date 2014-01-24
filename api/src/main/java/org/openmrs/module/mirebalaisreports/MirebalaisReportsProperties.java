@@ -504,6 +504,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ENCOUNTER_ROLE_PRESCRIBED_BY_UUID = "c458d78e-8374-4767-ad58-9f8fe276e01c";
     public static final String CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID = "4f10ad1a-ec49-48df-98c7-1391c6ac7f05";
     public static final String ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID = "9b135b19-7ebe-4a51-aea2-69a53f9383af";
+    public static final String ADMINISTRATIVE_CLERK_ENCOUNTER_ROLE_UUID = "cbfe0b9d-9923-404c-941b-f048adc8cdc0";
+    public static final String NURSE_ENCOUNTER_ROLE_UUID = "98bf2792-3f0a-4388-81bb-c78b29c0df92";
 
     public EncounterRole getDispenserEncounterRole() {
         return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
@@ -519,6 +521,14 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterRole getAttendingSurgeonEncounterRole() {
         return getRequiredEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getAdministrativeClerkEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ADMINISTRATIVE_CLERK_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getNurseEncounterRole() {
+        return getRequiredEncounterRoleByUuid(NURSE_ENCOUNTER_ROLE_UUID);
     }
 
     private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {

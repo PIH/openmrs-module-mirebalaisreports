@@ -221,11 +221,18 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         query.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
         dsd.addRowFilter(query, "onOrAfter=${startDate},onOrBefore=${endDate}");
 
+        dsd.addColumn("zlEmrId", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "preferredZlEmrId"), null);
+        dsd.addColumn("age", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "ageAtEncounter"), null);
+        dsd.addColumn("gender", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "gender"), null);
+        dsd.addColumn("visitId", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visitId"), null);
         dsd.addColumn("encounterId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterId"), null);
         dsd.addColumn("encounterType", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterType.name"), null);
         dsd.addColumn("location", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "location.name"), null);
         dsd.addColumn("encounterDatetime", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterDatetime"), null);
         dsd.addColumn("enteredBy", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "creator"), null);
+        dsd.addColumn("administrativeClerk", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "administrativeClerk.name"), null);
+        dsd.addColumn("nurse", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "nurse.name"), null);
+        dsd.addColumn("consultingClinician", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "consultingClinician.name"), null);
 
         return dsd;
     }
