@@ -21,6 +21,7 @@ import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.library.EncounterDataLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -34,6 +35,7 @@ import org.openmrs.module.reporting.data.encounter.definition.EncounterDatetimeD
 import org.openmrs.module.reporting.data.encounter.definition.EncounterLocationDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterProviderDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.ObsForEncounterDataDefinition;
+import org.openmrs.module.reporting.data.encounter.library.BuiltInEncounterDataLibrary;
 import org.openmrs.module.reporting.data.obs.definition.GroupMemberObsDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
@@ -45,6 +47,7 @@ import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.query.encounter.definition.BasicEncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.SqlEncounterQuery;
 import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -183,15 +186,14 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             DataSetDefinition dsd;
             if ("patients".equals(key)) {
                 dsd = constructPatientsDataSetDefinition();
-            }
-            else if ("dispensing".equals(key)) {
+            } else if ("encounters".equals(key)) {
+                dsd = constructEncountersDataSetDefinition();
+            } else if ("dispensing".equals(key)) {
                 dsd = constructDispensingDataSetDefinition();
-            }
-            else if ("consultations-new".equals(key)) {
+            } else if ("consultations-new".equals(key)) {
                 dsd = constructConsultationsDataSetDefinition();
                 key = "consultations";
-            }
-            else {
+            } else {
                 dsd = constructSqlDataSetDefinition(key);
             }
             dsd.setName(MessageUtil.translate("mirebalaisreports.fulldataexport." + key + ".name"));
@@ -208,6 +210,25 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 		return rd;
 	}
+
+    private DataSetDefinition constructEncountersDataSetDefinition() {
+        EncounterDataSetDefinition dsd = new EncounterDataSetDefinition();
+        dsd.addParameter(getStartDateParameter());
+        dsd.addParameter(getEndDateParameter());
+
+        BasicEncounterQuery query = new BasicEncounterQuery();
+        query.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
+        query.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
+        dsd.addRowFilter(query, "onOrAfter=${startDate},onOrBefore=${endDate}");
+
+        dsd.addColumn("encounterId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterId"), null);
+        dsd.addColumn("encounterType", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterType.name"), null);
+        dsd.addColumn("location", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "location.name"), null);
+        dsd.addColumn("encounterDatetime", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterDatetime"), null);
+        dsd.addColumn("enteredBy", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "creator"), null);
+
+        return dsd;
+    }
 
     private DataSetDefinition constructDispensingDataSetDefinition() {
 

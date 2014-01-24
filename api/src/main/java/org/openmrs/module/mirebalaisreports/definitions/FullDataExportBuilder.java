@@ -46,7 +46,8 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
     public final List<String> dataSetOptions = Arrays.asList(
             "patients", "visits", "checkins", "vitals", "consultations", "diagnoses",
             "hospitalizations", "postOpNote1", "postOpNote2",
-            "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters", "dispensing"
+            "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
+            "dispensing", "encounters"
     );
 
     private List<Configuration> configurations = new ArrayList<Configuration>();
@@ -65,6 +66,8 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
                 Arrays.asList("consultations", "diagnoses")));
         configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.patientsdataexport.",
                 Arrays.asList("patients")));
+        configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.encountersdataexport.",
+                Arrays.asList("encounters")));
         configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dispensingdataexport.",
                 Arrays.asList("dispensing")));
     }

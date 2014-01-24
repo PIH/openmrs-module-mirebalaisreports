@@ -49,6 +49,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID = "bfa1b522-2aad-11e3-a840-5b9e0b589afb";
     public static final String CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID = "c427f48a-2aad-11e3-a840-5b9e0b589afb";
     public static final String PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID = "d9436988-4cc9-11e3-9325-f3ae8db9f6a7";
+    public static final String ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID = "f35033c8-8469-11e3-aca2-080027ab5716";
     public static final String ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID = "d534683e-20bd-11e3-b5bd-0bec7fb71852";
     public static final String LQAS_DIAGNOSES_REPORT_DEFINITION_UUID = "f277f5b4-20bd-11e3-b5bd-0bec7fb71852";
     public static final String NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID = "3737be52-2265-11e3-818c-c7ea4184d59e";

@@ -47,6 +47,8 @@ import java.util.Map;
 @Component
 public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDefinition> {
 
+    public static final String PREFIX = "mirebalais.encounterDataCalculation.";
+
     @Autowired
     MirebalaisReportsProperties props;
 
@@ -66,7 +68,7 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
     @Override
     public String getKeyPrefix() {
-        return "mirebalais.encounterDataCalculation.";
+        return PREFIX;
     }
 
     @DocumentedDefinition("creator")

@@ -41,10 +41,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Iterator;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
@@ -74,7 +77,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
         setUpPatientsBasedOnCoreMetadata();
 
-        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("patients"));
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList("patients"));
         FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
 
         EvaluationContext context = new EvaluationContext();
@@ -100,6 +103,70 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
         Assert.assertEquals(1, wb.getNumberOfSheets());
         Assert.assertEquals("patients", wb.getSheetName(0));
+    }
+
+    @Test
+    public void testEncountersExport() throws Exception {
+        Patient patient = data.randomPatient()
+                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", mirebalaisReportsProperties.getMirebalaisHospitalLocation())
+                .save();
+
+        Date date = DateUtil.parseYmdhms("2013-08-30 09:00:00");
+
+        User checkinUser = data.user().personName("Checkin", null, "Clerk").gender("M").username("checkin").save();
+        User nurseUser = data.user().personName("Nurse", null, "Nursing").gender("F").username("nurse").save();
+
+        Visit visit = data.visit().patient(patient).started(date).visitType(emrApiProperties.getAtFacilityVisitType()).save();
+
+        Encounter e1 = data.encounter().visit(visit)
+                .encounterType(emrApiProperties.getCheckInEncounterType())
+                .location(mirebalaisReportsProperties.getClinicRegistrationLocation())
+                .encounterDatetime("2013-08-30 09:00:00")
+                .creator(checkinUser).save();
+
+        Encounter e2 = data.encounter().visit(visit)
+                .encounterType(mirebalaisReportsProperties.getVitalsEncounterType())
+                .location(mirebalaisReportsProperties.getOutpatientLocation())
+                .encounterDatetime("2013-08-30 09:15:00")
+                .creator(nurseUser).save();
+
+        Visit oldVisit = data.visit().patient(patient).started(DateUtil.parseYmdhms("2012-01-01 09:00:00")).stopped(DateUtil.parseYmdhms("2012-01-01 12:00:00")).visitType(emrApiProperties.getAtFacilityVisitType()).save();
+        Encounter oldEncounter = data.encounter().visit(oldVisit)
+                .encounterType(emrApiProperties.getCheckInEncounterType())
+                .location(mirebalaisReportsProperties.getClinicRegistrationLocation())
+                .encounterDatetime(oldVisit.getStartDatetime())
+                .creator(checkinUser).save();
+
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList("encounters"));
+        FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
+
+        EvaluationContext context = new EvaluationContext();
+        context.addParameterValue("startDate", DateUtil.parseYmd("2013-08-01"));
+        context.addParameterValue("endDate", DateUtil.parseYmd("2013-08-31"));
+
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
+        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
+
+        DataSet dataSet = reportData.getDataSets().get("encounters");
+        Iterator<DataSetRow> rows = dataSet.iterator();
+
+        new TsvReportRenderer().render(reportData, null, System.out);
+
+        DataSetRow row = rows.next();
+        assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
+        assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
+        assertThat((String) row.getColumnValue("location"), is("Clinic Registration"));
+        assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
+        assertThat((String) row.getColumnValue("enteredBy"), is("Checkin Clerk"));
+
+        row = rows.next();
+        assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
+        assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
+        assertThat((String) row.getColumnValue("location"), is("Outpatient Clinic"));
+        assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
+        assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
+
+        assertFalse(rows.hasNext());
     }
 
     @Test
@@ -158,7 +225,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .obsDatetime(date).value(mirebalaisHospital.getId().toString())
                 .encounter(enc).save();
 
-        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("dispensing"));
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList("dispensing"));
         FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
 
         EvaluationContext context = new EvaluationContext();
@@ -234,7 +301,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         Encounter e3 = data.encounter().visit(v1).encounterType(consult).location(womensWard).encounterDatetime("2013-10-02 12:45:00")
                 .dateCreated("2013-10-02 00:00:00.0").creator(paulaMorris).provider(consultingClinician, unknownProvider).save();
 
-        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", Arrays.asList("consultations-new"));
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList("consultations-new"));
         FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
 
         EvaluationContext context = new EvaluationContext();
