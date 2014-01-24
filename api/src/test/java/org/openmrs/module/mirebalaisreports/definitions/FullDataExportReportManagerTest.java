@@ -43,11 +43,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Iterator;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
@@ -154,39 +152,47 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
         DataSet dataSet = reportData.getDataSets().get("encounters");
-        Iterator<DataSetRow> rows = dataSet.iterator();
+        assertThat(sizeOf(dataSet), is(2));
 
-        new TsvReportRenderer().render(reportData, null, System.out);
+        for (DataSetRow row : dataSet) {
+            assertThat((String) row.getColumnValue("zlEmrId"), is("2AA00V"));
+            assertThat((Double) row.getColumnValue("age"), is(12.6));
+            assertThat((String) row.getColumnValue("gender"), is("F"));
+            assertThat((Integer) row.getColumnValue("visitId"), is(visit.getId()));
 
-        DataSetRow row = rows.next();
-        assertThat((String) row.getColumnValue("zlEmrId"), is("2AA00V"));
-        assertThat((Double) row.getColumnValue("age"), is(12.6));
-        assertThat((String) row.getColumnValue("gender"), is("F"));
-        assertThat((Integer) row.getColumnValue("visitId"), is(visit.getId()));
-        assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
-        assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
-        assertThat((String) row.getColumnValue("location"), is("Clinic Registration"));
-        assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
-        assertThat((String) row.getColumnValue("enteredBy"), is("Checkin Clerk"));
-        assertThat((String) row.getColumnValue("administrativeClerk"), is("Checkin Clerk"));
-        assertThat((String) row.getColumnValue("nurse"), is(""));
-        assertThat((String) row.getColumnValue("consultingClinician"), is(""));
+            Integer encounterId = (Integer) row.getColumnValue("encounterId");
+            if (encounterId.equals(e1.getEncounterId())) {
+                assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
+                assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
+                assertThat((String) row.getColumnValue("location"), is("Clinic Registration"));
+                assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
+                assertThat((String) row.getColumnValue("enteredBy"), is("Checkin Clerk"));
+                assertThat((String) row.getColumnValue("administrativeClerk"), is("Checkin Clerk"));
+                assertThat((String) row.getColumnValue("nurse"), is(""));
+                assertThat((String) row.getColumnValue("consultingClinician"), is(""));
+            }
+            else if (encounterId.equals(e2.getEncounterId())) {
+                assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
+                assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
+                assertThat((String) row.getColumnValue("location"), is("Outpatient Clinic"));
+                assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
+                assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
+                assertThat((String) row.getColumnValue("administrativeClerk"), is(""));
+                assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
+                assertThat((String) row.getColumnValue("consultingClinician"), is(""));
+            }
+            else {
+                Assert.fail("Only encounters should be e1 and e2");
+            }
+        }
+    }
 
-        row = rows.next();
-        assertThat((String) row.getColumnValue("zlEmrId"), is("2AA00V"));
-        assertThat((Double) row.getColumnValue("age"), is(12.6));
-        assertThat((String) row.getColumnValue("gender"), is("F"));
-        assertThat((Integer) row.getColumnValue("visitId"), is(visit.getId()));
-        assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
-        assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
-        assertThat((String) row.getColumnValue("location"), is("Outpatient Clinic"));
-        assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
-        assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
-        assertThat((String) row.getColumnValue("administrativeClerk"), is(""));
-        assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
-        assertThat((String) row.getColumnValue("consultingClinician"), is(""));
-
-        assertFalse(rows.hasNext());
+    private int sizeOf(DataSet dataSet) {
+        int i = 0;
+        for (DataSetRow row : dataSet) {
+            ++i;
+        }
+        return i;
     }
 
     @Test
