@@ -29,8 +29,6 @@ import org.openmrs.module.reporting.data.encounter.definition.AgeAtEncounterData
 import org.openmrs.module.reporting.data.encounter.definition.AuditInfoEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
-import org.openmrs.module.reporting.data.encounter.definition.EncounterDatetimeDataDefinition;
-import org.openmrs.module.reporting.data.encounter.definition.EncounterIdDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SimultaneousEncountersDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDefinition;
@@ -71,26 +69,11 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return "mirebalais.encounterDataCalculation.";
     }
 
-    @DocumentedDefinition("encounterId")
-    public EncounterDataDefinition getEncounterId() {
-        return new EncounterIdDataDefinition();
-    }
-
-    @DocumentedDefinition("encounterDatetime")
-    public EncounterDataDefinition getEncounterDatetimeYmd() {
-        return new EncounterDatetimeDataDefinition();
-    }
-
     @DocumentedDefinition("creator")
     public EncounterDataDefinition getCreator() {
         return auditInfo(new PropertyConverter(AuditInfo.class, "creator"),
                 new PropertyConverter(User.class, "personName"),
                 new ObjectFormatter("{givenName} {familyName}"));
-    }
-
-    @DocumentedDefinition("dateCreated")
-    public EncounterDataDefinition getDateCreated() {
-        return auditInfo(new PropertyConverter(AuditInfo.class, "dateCreated"));
     }
 
     @DocumentedDefinition("returnVisitDate")
@@ -132,11 +115,6 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
     @DocumentedDefinition("location.name")
     public EncounterDataDefinition getLocationName() {
         return sqlEncounterDataDefinition("locationName.sql",null);
-    }
-
-    @DocumentedDefinition("patientId")
-    public EncounterDataDefinition getPatientId() {
-        return new PatientToEncounterDataDefinition(builtInPatientDataLibrary.getPatientId());
     }
 
     @DocumentedDefinition("gender")
