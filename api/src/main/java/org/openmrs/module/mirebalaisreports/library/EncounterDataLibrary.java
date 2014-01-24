@@ -233,9 +233,19 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return sqlEncounterDataDefinition("retrospective.sql", null);
     }
 
-    @DocumentedDefinition("visitId")
+    @DocumentedDefinition("visit.id")
     public EncounterDataDefinition getVisitId() {
         return sqlEncounterDataDefinition("visitId.sql", null);
+    }
+
+    @DocumentedDefinition("visit.startDatetime")
+    public EncounterDataDefinition getVisitStartDatetime() {
+        return sqlEncounterDataDefinition("visitStartDate.sql", null);
+    }
+
+    @DocumentedDefinition("visit.stopDatetime")
+    public EncounterDataDefinition getVisitStopDatetime() {
+        return sqlEncounterDataDefinition("visitStopDate.sql", null);
     }
 
     @DocumentedDefinition("administrativeClerk.name")

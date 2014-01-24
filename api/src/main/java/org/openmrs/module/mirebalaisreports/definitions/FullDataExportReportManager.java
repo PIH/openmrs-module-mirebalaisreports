@@ -222,13 +222,17 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addRowFilter(query, "onOrAfter=${startDate},onOrBefore=${endDate}");
 
         dsd.addColumn("zlEmrId", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "preferredZlEmrId"), null);
+        dsd.addColumn("patientId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "patientId"), null);
         dsd.addColumn("age", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "ageAtEncounter"), null);
         dsd.addColumn("gender", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "gender"), null);
-        dsd.addColumn("visitId", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visitId"), null);
+        dsd.addColumn("visitId", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visit.id"), null);
+        dsd.addColumn("visitStart", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visit.startDatetime"), null);
+        dsd.addColumn("visitStop", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visit.stopDatetime"), null);
         dsd.addColumn("encounterId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterId"), null);
         dsd.addColumn("encounterType", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterType.name"), null);
         dsd.addColumn("location", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "location.name"), null);
         dsd.addColumn("encounterDatetime", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterDatetime"), null);
+        dsd.addColumn("disposition", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "disposition"), null);
         dsd.addColumn("enteredBy", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "creator"), null);
         dsd.addColumn("administrativeClerk", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "administrativeClerk.name"), null);
         dsd.addColumn("nurse", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "nurse.name"), null);

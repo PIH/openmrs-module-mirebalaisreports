@@ -46,6 +46,8 @@ import java.util.Date;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
@@ -151,6 +153,8 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
 
+        new TsvReportRenderer().render(reportData, null, System.out);
+
         DataSet dataSet = reportData.getDataSets().get("encounters");
         assertThat(sizeOf(dataSet), is(2));
 
@@ -159,6 +163,8 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
             assertThat((Double) row.getColumnValue("age"), is(12.6));
             assertThat((String) row.getColumnValue("gender"), is("F"));
             assertThat((Integer) row.getColumnValue("visitId"), is(visit.getId()));
+            assertThat((Timestamp) row.getColumnValue("visitStart"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
+            assertNull((Timestamp) row.getColumnValue("visitStop"));
 
             Integer encounterId = (Integer) row.getColumnValue("encounterId");
             if (encounterId.equals(e1.getEncounterId())) {
@@ -166,6 +172,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
                 assertThat((String) row.getColumnValue("location"), is("Clinic Registration"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
+                assertThat(row.getColumnValue("disposition"), nullValue());
                 assertThat((String) row.getColumnValue("enteredBy"), is("Checkin Clerk"));
                 assertThat((String) row.getColumnValue("administrativeClerk"), is("Checkin Clerk"));
                 assertThat((String) row.getColumnValue("nurse"), is(""));
@@ -176,6 +183,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
                 assertThat((String) row.getColumnValue("location"), is("Outpatient Clinic"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
+                assertThat(row.getColumnValue("disposition"), nullValue());
                 assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
                 assertThat((String) row.getColumnValue("administrativeClerk"), is(""));
                 assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));

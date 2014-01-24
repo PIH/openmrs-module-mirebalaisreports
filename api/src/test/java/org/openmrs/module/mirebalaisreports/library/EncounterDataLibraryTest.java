@@ -68,6 +68,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
 
     private EncounterEvaluationContext context;
     private EncounterIdSet encounterIdSet;
+    private Visit v1;
     private Encounter e1;
     private Encounter e2;
     private Encounter e3;
@@ -102,7 +103,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
                 .female().birthdate("1946-05-26", false).dateCreated("2013-10-01").uuid("be7890be-36a4-11e3-b90a-a351ac6b1528")
                 .address(addr)
                 .dead(true).deathDate("2013-12-01 00:00:00.0").causeOfDeath("unknown", "PIH").save();
-        Visit v1 = data.visit().patient(p1).started("2013-10-02 09:15:00").stopped("2013-10-14 04:30:00").location(visitLocation).visitType(visitType).save();
+        v1 = data.visit().patient(p1).started("2013-10-02 09:15:00").stopped("2013-10-14 04:30:00").location(visitLocation).visitType(visitType).save();
         e1 = data.encounter().visit(v1).encounterType(checkIn).location(clinicRegistration).encounterDatetime("2013-10-02 09:15:00").dateCreated("2013-10-01 00:00:00.0").creator(paulaMorris).save();
         e2 = data.encounter().visit(v1).encounterType(admission).location(womensWard).encounterDatetime("2013-10-02 12:30:00").dateCreated("2013-10-03 00:00:00.0").creator(paulaMorris).save();
         e3 = data.encounter().visit(v1).encounterType(mirebalaisReportsProperties.getConsultEncounterType()).location(womensWard).encounterDatetime("2013-10-02 12:45:00")
@@ -376,6 +377,36 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         assertThat((String) data.getData().get(e1.getId()), is("Paula Morris"));
         assertThat((String) data.getData().get(e2.getId()), is("Paula Morris"));
         assertThat((String) data.getData().get(e3.getId()), is("Paula Morris"));
+    }
+
+    @Test
+    public void testVisitId() throws Exception {
+        context.setBaseEncounters(encounterIdSet);
+        EncounterDataDefinition definition = library.getVisitId();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((Integer) data.getData().get(e1.getId()), is(v1.getId()));
+        assertThat((Integer) data.getData().get(e2.getId()), is(v1.getId()));
+        assertThat((Integer) data.getData().get(e3.getId()), is(v1.getId()));
+    }
+
+    @Test
+    public void testVisitStartDatetime() throws Exception {
+        context.setBaseEncounters(encounterIdSet);
+        EncounterDataDefinition definition = library.getVisitStartDatetime();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((Timestamp) data.getData().get(e1.getId()), is(Timestamp.valueOf("2013-10-02 09:15:00")));
+        assertThat((Timestamp) data.getData().get(e2.getId()), is(Timestamp.valueOf("2013-10-02 09:15:00")));
+        assertThat((Timestamp) data.getData().get(e3.getId()), is(Timestamp.valueOf("2013-10-02 09:15:00")));
+    }
+
+    @Test
+    public void testVisitStopDatetime() throws Exception {
+        context.setBaseEncounters(encounterIdSet);
+        EncounterDataDefinition definition = library.getVisitStopDatetime();
+        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
+        assertThat((Timestamp) data.getData().get(e1.getId()), is(Timestamp.valueOf("2013-10-14 04:30:00")));
+        assertThat((Timestamp) data.getData().get(e2.getId()), is(Timestamp.valueOf("2013-10-14 04:30:00")));
+        assertThat((Timestamp) data.getData().get(e3.getId()), is(Timestamp.valueOf("2013-10-14 04:30:00")));
     }
 
 }
