@@ -30,6 +30,19 @@
         "extensionParams": { "linkId": "mirebalaisreports-dailyClinicalEncountersReport-link" }
     },
     {
+        "id": "mirebalaisreports.inpatients",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "mirebalaisreports.app.inpatients.label",
+        "url": "mirebalaisreports/inpatientList.page",
+        "icon": "icon-list-ol",
+        "order": 4,
+        "requiredPrivilege": "App: emr.inpatients",
+        "extensionParams": {
+            "featureToggle": "inpatientsList"
+        }
+    },
+    {
         "id": "mirebalaisreports.overview.inpatientDaily",
         "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
         "type": "link",
