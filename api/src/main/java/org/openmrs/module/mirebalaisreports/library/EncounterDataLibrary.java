@@ -263,6 +263,36 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return getProvider(props.getConsultingClinicianEncounterRole());
     }
 
+    @DocumentedDefinition("dispenser.name")
+    public EncounterDataDefinition getDispenser() {
+        return getProvider(props.getDispenserEncounterRole());
+    }
+
+    @DocumentedDefinition("radiologyTechnician.name")
+    public EncounterDataDefinition getRadiologyTechnician() {
+        return getProvider(props.getRadiologyTechnicianEncounterRole());
+    }
+
+    @DocumentedDefinition("orderingProvider.name")
+    public EncounterDataDefinition getOrderingProvider() {
+        return getProvider(props.getOrderingProviderEncounterRole());
+    }
+
+    @DocumentedDefinition("principalResultsInterpreter.name")
+    public EncounterDataDefinition getPrincipalResultsInterpreter() {
+        return getProvider(props.getPrincipalResultsInterpreterEncounterRole());
+    }
+
+    @DocumentedDefinition("anesthesiologist.name")
+    public EncounterDataDefinition getAnesthesiologist() {
+        return getProvider(props.getAnesthesiologistEncounterRole());
+    }
+
+    @DocumentedDefinition("assistingSurgeon.name")
+    public EncounterDataDefinition getAssistingSurgeon() {
+        return getProvider(props.getAssistingSurgeonEncounterRole());
+    }
+
     private EncounterDataDefinition getProvider(EncounterRole encounterRole) {
         EncounterProviderDataDefinition dd = new EncounterProviderDataDefinition();
         dd.setEncounterRole(encounterRole);

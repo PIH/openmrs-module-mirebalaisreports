@@ -504,8 +504,13 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ENCOUNTER_ROLE_PRESCRIBED_BY_UUID = "c458d78e-8374-4767-ad58-9f8fe276e01c";
     public static final String CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID = "4f10ad1a-ec49-48df-98c7-1391c6ac7f05";
     public static final String ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID = "9b135b19-7ebe-4a51-aea2-69a53f9383af";
+    public static final String ASSISTING_SURGEON_ENCOUNTER_ROLE_UUID = "6e630e03-5182-4cb3-9a82-a5b1a85c09a7";
     public static final String ADMINISTRATIVE_CLERK_ENCOUNTER_ROLE_UUID = "cbfe0b9d-9923-404c-941b-f048adc8cdc0";
     public static final String NURSE_ENCOUNTER_ROLE_UUID = "98bf2792-3f0a-4388-81bb-c78b29c0df92";
+    public static final String RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE_UUID = "8f4d96e2-c97c-4285-9319-e56b9ba6029c";
+    public static final String ORDERING_PROVIDER_ENCOUNTER_ROLE_UUID = "c458d78e-8374-4767-ad58-9f8fe276e01c";
+    public static final String PRINCIPAL_RESULTS_INTERPRETER_ENCOUNTER_ROLE_UUID = "08f73be2-9452-44b5-801b-bdf7418c2f71";
+    public static final String ANESTHESIOLOGIST_ENCOUNTER_ROLE_UUID = "de11b25c-a641-4630-9524-5b85ece9a4f8";
 
     public EncounterRole getDispenserEncounterRole() {
         return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
@@ -523,12 +528,32 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
     }
 
+    public EncounterRole getAssistingSurgeonEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ASSISTING_SURGEON_ENCOUNTER_ROLE_UUID);
+    }
+
     public EncounterRole getAdministrativeClerkEncounterRole() {
         return getRequiredEncounterRoleByUuid(ADMINISTRATIVE_CLERK_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getNurseEncounterRole() {
         return getRequiredEncounterRoleByUuid(NURSE_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getRadiologyTechnicianEncounterRole() {
+        return getRequiredEncounterRoleByUuid(RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getOrderingProviderEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ORDERING_PROVIDER_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getPrincipalResultsInterpreterEncounterRole() {
+        return getRequiredEncounterRoleByUuid(PRINCIPAL_RESULTS_INTERPRETER_ENCOUNTER_ROLE_UUID);
+    }
+
+    public EncounterRole getAnesthesiologistEncounterRole() {
+        return getRequiredEncounterRoleByUuid(ANESTHESIOLOGIST_ENCOUNTER_ROLE_UUID);
     }
 
     private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {

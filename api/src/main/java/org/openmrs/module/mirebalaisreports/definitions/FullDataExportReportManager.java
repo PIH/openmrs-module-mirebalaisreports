@@ -237,6 +237,13 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("administrativeClerk", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "administrativeClerk.name"), null);
         dsd.addColumn("nurse", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "nurse.name"), null);
         dsd.addColumn("consultingClinician", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "consultingClinician.name"), null);
+        dsd.addColumn("dispenser", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "dispenser.name"), null);
+        dsd.addColumn("radiologyTech", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "radiologyTechnician.name"), null);
+        dsd.addColumn("orderingProvider", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "orderingProvider.name"), null);
+        dsd.addColumn("principalResultsInterpreter", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "principalResultsInterpreter.name"), null);
+        dsd.addColumn("attendingSurgeon", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "attendingSurgeon.name"), null);
+        dsd.addColumn("assistingSurgeon", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "assistingSurgeon.name"), null);
+        dsd.addColumn("anesthesiologist", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "anesthesiologist.name"), null);
 
         return dsd;
     }

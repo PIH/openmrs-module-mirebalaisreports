@@ -25,6 +25,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.dispensing.DispensingProperties;
+import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -67,6 +68,9 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired
     ProviderService providerService;
+
+    @Autowired
+    DispositionService dispositionService;
     
     @Autowired
     TestDataManager data;
@@ -133,7 +137,9 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .location(mirebalaisReportsProperties.getOutpatientLocation())
                 .encounterDatetime("2013-08-30 09:15:00")
                 .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
+                .obs(dispositionService.getDispositionDescriptor().getDispositionConcept(), conceptService.getConcept("Admit to hospital")) // unrealistic data
                 .creator(nurseUser).save();
+
 
         Visit oldVisit = data.visit().patient(patient).started(DateUtil.parseYmdhms("2012-01-01 09:00:00")).stopped(DateUtil.parseYmdhms("2012-01-01 12:00:00")).visitType(emrApiProperties.getAtFacilityVisitType()).save();
         Encounter oldEncounter = data.encounter().visit(oldVisit)
@@ -183,7 +189,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
                 assertThat((String) row.getColumnValue("location"), is("Outpatient Clinic"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
-                assertThat(row.getColumnValue("disposition"), nullValue());
+                assertThat((String) row.getColumnValue("disposition"), is("Admettre à l'hôpital"));
                 assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
                 assertThat((String) row.getColumnValue("administrativeClerk"), is(""));
                 assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
