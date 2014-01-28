@@ -16,6 +16,8 @@ package org.openmrs.module.mirebalaisreports;
 
 import org.apache.commons.io.IOUtils;
 import org.openmrs.module.reporting.common.ContentType;
+import org.openmrs.module.reporting.dataset.DataSet;
+import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
 import org.openmrs.module.reporting.report.renderer.ExcelTemplateRenderer;
@@ -27,6 +29,9 @@ import org.openmrs.util.OpenmrsClassLoader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -108,4 +113,12 @@ public class MirebalaisReportsUtil {
 		}
 		return new RenderingMode(renderer, label, extension, null);
 	}
+
+    public static List<Map<String, Object>> simplify(DataSet dataSet) {
+        List<Map<String, Object>> simplified = new ArrayList<Map<String, Object>>();
+        for (DataSetRow row : dataSet) {
+            simplified.add(row.getColumnValuesByKey());
+        }
+        return simplified;
+    }
 }
