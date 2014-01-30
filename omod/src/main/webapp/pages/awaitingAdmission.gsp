@@ -12,7 +12,7 @@
         { label: "${ ui.message("coreapps.app.awaitingAdmission.label")}"}
     ];
 
-    var WARD_COLUMN_INDEX = 4;
+    var WARD_COLUMN_INDEX = 5;
     var inpatientsTable = jq("#active-visits").dataTable();
 
     jq(document).ready(function() {
@@ -54,7 +54,7 @@
             "id": "inpatients-filterByLocation",
             "formFieldName": "filterByLocationId",
             "label": "emr.inpatients.filterByCurrentWard",
-            "withTag": "Admission Location;Transfer Location"
+            "withTag": "Admission Location"
     ] ) }
 </div>
 
@@ -64,8 +64,11 @@
         <th>${ ui.message("emr.patient.identifier") }</th>
         <th>${ ui.message("ui.i18n.PatientIdentifierType.name.e66645eb-03a8-4991-b4ce-e87318e37566") }</th>
         <th>${ ui.message("emr.person.name") }</th>
-        <th>${ ui.message("emr.inpatients.firstAdmitted") }</th>
         <th>${ ui.message("emr.inpatients.currentWard") }</th>
+        <th>${ ui.message("emr.patientDashBoard.provider") }</th>
+        <th>${ ui.message("disposition.emrapi.admitToHospital.admissionLocation") }</th>
+        <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.diagnosis") }</th>
+
     </tr>
     </thead>
     <tbody>
@@ -78,27 +81,25 @@
     %>
     <tr id="visit-${ v.patientId
     }">
-        <td>${ v.zlEmrId ?: ''}</td>
+        <td>${ v.primaryIdentifier ?: ''}</td>
         <td>${ v.dossierNumber ?: ''}</td>
         <td>
             <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
-                ${ ui.format((v.givenName ? v.givenName : '') + " " + (v.familyName ? v.familyName : '')) }
+                ${ ui.format((v.patientFirstName ? v.patientFirstName : '') + " " + (v.patientLastName ? v.patientLastName : '')) }
             </a>
         </td>
         <td>
-            ${ ui.format( v.firstAdmittedLocation) }
+            ${ ui.message("ui.i18n.Location.name." + v.consultationLocationUuid) }
             <br/>
             <small>
-                ${ ui.format(v.admissionDateTime)}
+                ${ ui.format(v.consultationDateTime)}
             </small>
         </td>
         <td>
-            ${ ui.format( v.inpatientLocation) }
-            <br/>
-            <small>
-                ${ ui.format(v.inpatientDateTime) }
-            </small>
+            ${ ui.format((v.providerFirstName ? v.providerFirstName : '') + " " + (v.providerLastName ? v.providerLastName : '')) }
         </td>
+        <td>${ ui.message("ui.i18n.Location.name." + v.admissionLocationUuid) }</td>
+        <td>${ v.diagnosis ?: ''}</td>
     </tr>
     <% } %>
     </tbody>
