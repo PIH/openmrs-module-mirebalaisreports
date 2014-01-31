@@ -53,7 +53,7 @@
     ${ ui.includeFragment("emr", "field/location", [
             "id": "inpatients-filterByLocation",
             "formFieldName": "filterByLocationId",
-            "label": "emr.inpatients.filterByCurrentWard",
+            "label": "mirebalais.awaitingAdmission.filterByAdmittedTo",
             "withTag": "Admission Location"
     ] ) }
 </div>
