@@ -1,6 +1,5 @@
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.mirebalaisreports.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
 import org.openmrs.module.mirebalaisreports.definitions.BaseInpatientReportTest;
@@ -18,10 +17,7 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
 /**
  *
  */
-@Ignore("The underlying query uses a MySQL-specific date function")
 public class AdmissionSoonAfterExitCohortDefinitionEvaluatorTest extends BaseInpatientReportTest {
-
-    // TODO when we re-enable this test, if it still fails, note that we have refactoring the test data set, so there could be an issue there
 
     @Autowired
     CohortDefinitionService cohortDefinitionService;
@@ -36,7 +32,7 @@ public class AdmissionSoonAfterExitCohortDefinitionEvaluatorTest extends BaseInp
         definition.setOnOrBefore(endDate);
 
         EvaluatedCohort result = cohortDefinitionService.evaluate(definition, new EvaluationContext());
-        assertThat(result, isCohortWithExactlyIds(1002));
+        assertThat(result, isCohortWithExactlyIds(patient3.getId()));
     }
 
 }

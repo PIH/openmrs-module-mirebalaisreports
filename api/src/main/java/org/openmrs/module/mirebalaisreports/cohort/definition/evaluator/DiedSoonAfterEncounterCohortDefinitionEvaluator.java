@@ -48,7 +48,8 @@ public class DiedSoonAfterEncounterCohortDefinitionEvaluator implements CohortDe
                 " inner join encounter admit \n" +
                 "   on admit.patient_id = p.patient_id \n" +
                 "   and admit.encounter_type = :encounterType \n" +
-                "   and admit.encounter_datetime > DATE_SUB(per.death_date, INTERVAL :windowInHours HOUR) \n" +
+                // was mysql-specific "   and admit.encounter_datetime > DATE_SUB(per.death_date, INTERVAL :windowInHours HOUR) \n" +
+                "   and admit.encounter_datetime > TIMESTAMPADD(HOUR, -:windowInHours, per.death_date) \n" +
                 " where per.death_date between :diedOnOrAfter and :diedOnOrBefore \n" +
                 "   and p.voided = false ";
 

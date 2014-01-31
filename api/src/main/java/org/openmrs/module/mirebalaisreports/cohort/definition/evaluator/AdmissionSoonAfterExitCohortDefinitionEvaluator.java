@@ -51,7 +51,8 @@ public class AdmissionSoonAfterExitCohortDefinitionEvaluator implements CohortDe
                 " on discharge.patient_id = admit.patient_id \n" +
                 " and discharge.voided = false \n" +
                 " and discharge.encounter_type = :dischargeEncounterType \n" +
-                " and discharge.encounter_datetime >= DATE_SUB(admit.encounter_datetime, INTERVAL :windowInDays DAY) \n" + // this is MySQL-specific
+                // was mysql-specific " and discharge.encounter_datetime >= DATE_SUB(admit.encounter_datetime, INTERVAL :windowInDays DAY) \n" +
+                " and discharge.encounter_datetime >= TIMESTAMPADD(DAY, -:windowInDays, admit.encounter_datetime) \n" +
                 " and discharge.encounter_datetime < admit.encounter_datetime \n" +
                 "where admit.voided = false \n" +
                 " and admit.encounter_type = :admitEncounterType \n" +
