@@ -48,7 +48,7 @@
         <providerManagementVersion>2.0</providerManagementVersion>
         <patientregistrationVersion>2.0</patientregistrationVersion>
         <idgenVersion>2.5</idgenVersion>
-        <appframeworkVersion>2.0</appframeworkVersion>
+        <appframeworkVersion>2.2-SNAPSHOT</appframeworkVersion>
         <eventVersion>2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <supercsvVersion>2.1.0</supercsvVersion>

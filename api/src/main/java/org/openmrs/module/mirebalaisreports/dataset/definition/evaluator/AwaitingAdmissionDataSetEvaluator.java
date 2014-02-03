@@ -108,7 +108,8 @@ public class AwaitingAdmissionDataSetEvaluator implements DataSetEvaluator{
                 "            and cn.concept_name_type = 'FULLY_SPECIFIED' " +
                 "        ) " +
                 "  else ifnull (diagnosis.value_coded, '') " +
-                "  end as 'diagnosis'   " +
+                "  end as 'diagnosis', " +
+                "v.visit_id as visitId   " +
                 "from visit v " +
                 "inner join person_name as n on ( v.patient_id = n.person_id and n.voided = 0 and n.preferred=1 ) " +
                 "inner join patient_identifier as id1 on ( v.patient_id = id1.patient_id and id1.identifier_type = :primaryIdentifierType and id1.voided = 0 and id1.preferred =1 ) " +
@@ -178,6 +179,7 @@ public class AwaitingAdmissionDataSetEvaluator implements DataSetEvaluator{
             row.addColumnValue(new DataSetColumn("providerLastName", "providerLastName", String.class), o[9]);
             row.addColumnValue(new DataSetColumn("admissionLocationUuid", "admissionLocationUuid", String.class), o[10]);
             row.addColumnValue(new DataSetColumn("diagnosis", "diagnosis", String.class), o[11]);
+            row.addColumnValue(new DataSetColumn("visitId", "visitId", String.class), o[12]);
             dataSet.addRow(row);
         }
         return dataSet;

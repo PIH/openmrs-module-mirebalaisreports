@@ -68,6 +68,7 @@
         <th>${ ui.message("emr.patientDashBoard.provider") }</th>
         <th>${ ui.message("disposition.emrapi.admitToHospital.admissionLocation") }</th>
         <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.diagnosis") }</th>
+        <th>${ ui.message("mirebalais.awaitingAdmission.admitPatient") }</th>
 
     </tr>
     </thead>
@@ -78,6 +79,8 @@
     </tr>
     <% } %>
     <% awaitingAdmissionList.each { v ->
+        def patientId = v.patientId
+        def visitId = v.visitId
     %>
     <tr id="visit-${ v.patientId
     }">
@@ -100,6 +103,15 @@
         </td>
         <td>${ ui.message("ui.i18n.Location.name." + v.admissionLocationUuid) }</td>
         <td>${ v.diagnosis ?: ''}</td>
+        <td>
+            <% admissionActions.each { task ->
+                def url = task.url.replaceAll('\\{\\{patientId\\}\\}', patientId.toString())
+                url = url.replaceAll('\\{\\{visit.id\\}\\}', visitId.toString())
+            %>
+                <a href="/${ contextPath }/${ url }" class="button task">
+                <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
+            <% } %>
+        </td>
     </tr>
     <% } %>
     </tbody>
