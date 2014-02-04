@@ -73,6 +73,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String WOMENS_INTERNAL_MEDICINE_UUID = "2c93919d-7fc6-406d-a057-c0b640104790";
     public static final String MENS_INTERNAL_MEDICINE_UUID = "e5db0599-89e8-44fa-bfa2-07e47d63546f";
     public static final String SURGICAL_WARD_UUID = "7d6cc39d-a600-496f-a320-fd4985f07f0b";
+    public static final String ANTEPARTUM_WARD_UUID = "272bd989-a8ee-4a16-b5aa-55bad4e84f5c";
+    public static final String LABOR_AND_DELIVERY_UUID = "dcfefcb7-163b-47e5-84ae-f715cf3e0e92";
+    public static final String POSTPARTUM_WARD_UUID = "950852f3-8a96-4d82-a5f8-a68a92043164";
+    public static final String NEONATAL_ICU_UUID = "62a9500e-a1a5-4235-844f-3a8cc0765d53";
 
     public Location getOutpatientLocation() {
 		return getRequiredLocationByUuid(OUTPATIENT_CLINIC_UUID);
@@ -108,6 +112,22 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public Location getSurgicalWardLocation() {
         return getRequiredLocationByUuid(SURGICAL_WARD_UUID);
+    }
+
+    public Location getAntepartumWardLocation() {
+        return getRequiredLocationByUuid(ANTEPARTUM_WARD_UUID);
+    }
+
+    public Location getLaborAndDeliveryLocation() {
+        return getRequiredLocationByUuid(LABOR_AND_DELIVERY_UUID);
+    }
+
+    public Location getPostpartumWardLocation() {
+        return getRequiredLocationByUuid(POSTPARTUM_WARD_UUID);
+    }
+
+    public Location getNeonatalIcuLocation() {
+        return getRequiredLocationByUuid(NEONATAL_ICU_UUID);
     }
 
     private Location getRequiredLocationByUuid(String uuid) {

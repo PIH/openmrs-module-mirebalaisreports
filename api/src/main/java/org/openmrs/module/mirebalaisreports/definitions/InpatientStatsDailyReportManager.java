@@ -22,13 +22,13 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.DiedSoonAfterEncounterCohortDefinition;
-import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
-import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientTransferCohortDefinition;
 import org.openmrs.module.mirebalaisreports.cohort.definition.LastDispositionBeforeExitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.library.MirebalaisCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
+import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -48,6 +48,9 @@ import java.util.List;
 public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManager {
 
     @Autowired
+    private AllDefinitionLibraries libraries;
+
+    @Autowired
     private ConceptService conceptService;
 
     @Autowired
@@ -60,7 +63,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1-SNAPSHOT";
     }
 
     @Override
@@ -79,10 +82,20 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
     public ReportDefinition constructReportDefinition() {
         log.info("Constructing " + getName());
 
+        ReportDefinition rd = new ReportDefinition();
+        rd.setName(getMessageCodePrefix() + "name");
+        rd.setDescription(getMessageCodePrefix() + "description");
+        rd.setUuid(getUuid());
+        rd.setParameters(getParameters());
+
+        rd.addDataSetDefinition("cohorts", map(constructDataSetDefinition(), "startDate=${day},endDate=${day+1d-1ms}"));
+
+        return rd;
+    }
+
+    public DataSetDefinition constructDataSetDefinition() {
         List<Location> inpatientLocations = adtService.getInpatientLocations();
         EncounterType admissionEncounterType = emrApiProperties.getAdmissionEncounterType();
-        EncounterType transferWithinHospitalEncounterType = emrApiProperties.getTransferWithinHospitalEncounterType();
-        EncounterType exitEncounterType = emrApiProperties.getExitFromInpatientEncounterType();
 
         Concept dischargedDisposition = conceptService.getConceptByMapping("DISCHARGED", "PIH");
         Concept deathDisposition = conceptService.getConceptByMapping("DEATH", "PIH");
@@ -92,120 +105,74 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         List<Concept> dispositionsToConsider = Arrays.asList(dischargedDisposition, deathDisposition, transferOutDisposition, leftWithoutCompletionOfTreatmentDisposition, leftWithoutSeeingClinicianDisposition);
         // Dispositions we're currently ignoring: "Transfer within hospital", "Admit to hospital", "Discharged", "Emergency Department observation", "Home"
 
-        ReportDefinition rd = new ReportDefinition();
-        rd.setName(getMessageCodePrefix() + "name");
-        rd.setDescription(getMessageCodePrefix() + "description");
-        rd.setUuid(getUuid());
-        rd.setParameters(getParameters());
-
         CohortIndicatorDataSetDefinition cohortDsd = new CohortIndicatorDataSetDefinition();
         cohortDsd.addParameter(getStartDateParameter());
         cohortDsd.addParameter(getEndDateParameter());
 
         DiedSoonAfterEncounterCohortDefinition diedSoonAfterAdmission = new DiedSoonAfterEncounterCohortDefinition();
-        diedSoonAfterAdmission.setEncounterType(emrApiProperties.getAdmissionEncounterType());
+        diedSoonAfterAdmission.setEncounterType(admissionEncounterType);
         diedSoonAfterAdmission.addParameter(new Parameter("diedOnOrAfter", "Died on or after", Date.class));
         diedSoonAfterAdmission.addParameter(new Parameter("diedOnOrBefore", "Died on or before", Date.class));
 
         for (Location location : inpatientLocations) {
+            String locationSuffix = ":" + location.getUuid();
 
             // census at start, census at end
 
-            InpatientLocationCohortDefinition censusCohortDef = new InpatientLocationCohortDefinition();
-            censusCohortDef.addParameter(getEffectiveDateParameter());
-            censusCohortDef.setWard(location);
+            CohortDefinition censusCohortDef = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "inpatientAtLocationOnDate", "location", location);
 
-            CohortIndicator censusStartInd = buildIndicator("Census at start: " + location.getName(), censusCohortDef, "effectiveDate=${startDate}");
-            CohortIndicator censusEndInd = buildIndicator("Census at end: " + location.getName(), censusCohortDef, "effectiveDate=${endDate}");
+            CohortIndicator censusStartInd = buildIndicator("Census at start: " + location.getName(), censusCohortDef, "date=${startDate}");
+            CohortIndicator censusEndInd = buildIndicator("Census at end: " + location.getName(), censusCohortDef, "date=${endDate}");
 
-            cohortDsd.addColumn("censusAtStart:" + location.getUuid(), "Census at start: " + location.getName(), map(censusStartInd, "startDate=${startDate}"), "");
-            cohortDsd.addColumn("censusAtEnd:" + location.getUuid(), "Census at end: " + location.getName(), map(censusEndInd, "endDate=${endDate}"), "");
+            cohortDsd.addColumn("censusAtStart" + locationSuffix, "Census at start: " + location.getName(), map(censusStartInd, "startDate=${startDate}"), "");
+            cohortDsd.addColumn("censusAtEnd" + locationSuffix, "Census at end: " + location.getName(), map(censusEndInd, "endDate=${endDate}"), "");
 
             // number of admissions
 
-            EncounterCohortDefinition admissionDuring = new EncounterCohortDefinition();
-            admissionDuring.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-            admissionDuring.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-            admissionDuring.addLocation(location);
-            admissionDuring.addEncounterType(admissionEncounterType);
+            CohortDefinition admissionDuring = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "admissionAtLocationDuringPeriod", "location", location);
 
-            CohortIndicator admissionInd = buildIndicator("Admission: " + location.getName(), admissionDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            cohortDsd.addColumn("admissions:" + location.getUuid(), "Admission: " + location.getName(), map(admissionInd, "startDate=${startDate},endDate=${endDate}"), "");
-            
+            CohortIndicator admissionInd = buildIndicator("Admission: " + location.getName(), admissionDuring, "startDate=${startDate},endDate=${endDate}");
+            cohortDsd.addColumn("admissions" + locationSuffix, "Admission: " + location.getName(), map(admissionInd, "startDate=${startDate},endDate=${endDate}"), "");
+
             // number of transfer ins
 
-            InpatientTransferCohortDefinition transferInDuring = new InpatientTransferCohortDefinition();
-            transferInDuring.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-            transferInDuring.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-            transferInDuring.setInToWard(location);
+            CohortDefinition transferInDuring = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "transferInToLocationDuringPeriod", "location", location);
 
-            CohortIndicator transferInInd = buildIndicator("Transfer In: " + location.getName(), transferInDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            cohortDsd.addColumn("transfersIn:" + location.getUuid(), "Transfer In: " + location.getName(), map(transferInInd, "startDate=${startDate},endDate=${endDate}"), "");
+            CohortIndicator transferInInd = buildIndicator("Transfer In: " + location.getName(), transferInDuring, "startDate=${startDate},endDate=${endDate}");
+            cohortDsd.addColumn("transfersIn" + locationSuffix, "Transfer In: " + location.getName(), map(transferInInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number of transfer outs
 
-            InpatientTransferCohortDefinition transferOutDuring = new InpatientTransferCohortDefinition();
-            transferOutDuring.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-            transferOutDuring.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-            transferOutDuring.setOutOfWard(location);
+            CohortDefinition transferOutDuring = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "transferOutOfLocationDuringPeriod", "location", location);
 
-            CohortIndicator transferOutInd = buildIndicator("Transfer Out: " + location.getName(), transferOutDuring, "onOrAfter=${startDate},onOrBefore=${endDate}");
-            cohortDsd.addColumn("transfersOut:" + location.getUuid(), "Transfer Out: " + location.getName(), map(transferOutInd, "startDate=${startDate},endDate=${endDate}"), "");
+            CohortIndicator transferOutInd = buildIndicator("Transfer Out: " + location.getName(), transferOutDuring, "startDate=${startDate},endDate=${endDate}");
+            cohortDsd.addColumn("transfersOut" + locationSuffix, "Transfer Out: " + location.getName(), map(transferOutInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number of discharges
 
-            LastDispositionBeforeExitCohortDefinition discharged = new LastDispositionBeforeExitCohortDefinition();
-            discharged.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
-            discharged.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
-            discharged.setExitFromWard(location);
-            discharged.setDispositionsToConsider(dispositionsToConsider);
-            discharged.addDisposition(dischargedDisposition);
+            CohortDefinition discharged = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "dischargeExitFromLocationDuringPeriod", "location", location);
 
-            CohortIndicator dischargedInd = buildIndicator("Discharged: " + location.getName(), discharged, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
-            cohortDsd.addColumn("discharged:" + location.getUuid(), "Discharged: " + location.getName(), map(dischargedInd, "startDate=${startDate},endDate=${endDate}"), "");
+            CohortIndicator dischargedInd = buildIndicator("Discharged: " + location.getName(), discharged, "startDate=${startDate},endDate=${endDate}");
+            cohortDsd.addColumn("discharged" + locationSuffix, "Discharged: " + location.getName(), map(dischargedInd, "startDate=${startDate},endDate=${endDate}"), "");
 
-            // number of deaths
+            // number of deaths -> split deaths into within-48-hours and later
 
-            LastDispositionBeforeExitCohortDefinition deaths = new LastDispositionBeforeExitCohortDefinition();
-            deaths.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
-            deaths.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
-            deaths.setExitFromWard(location);
-            deaths.setDispositionsToConsider(dispositionsToConsider);
-            deaths.addDisposition(deathDisposition);
-
-            // -> split deaths into within-48-hours and later
-            CompositionCohortDefinition deathsEarly = new CompositionCohortDefinition();
-            deathsEarly.addParameter(getStartDateParameter());
-            deathsEarly.addParameter(getEndDateParameter());
-            deathsEarly.addSearch("died", this.<CohortDefinition>map(deaths, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}"));
-            deathsEarly.addSearch("diedSoon", this.<CohortDefinition>map(diedSoonAfterAdmission, "diedOnOrAfter=${startDate},diedOnOrBefore=${endDate}"));
-            deathsEarly.setCompositionString("died AND diedSoon");
+            CohortDefinition deathsEarly = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "diedExitFromLocationDuringPeriodSoonAfterAdmission", "location", location);
+            CohortDefinition deathsLate = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "diedExitFromLocationDuringPeriodNotSoonAfterAdmission", "location", location);
 
             CohortIndicator deathsEarlyInd = buildIndicator("Deaths within 48h: " + location.getName(), deathsEarly, "startDate=${startDate},endDate=${endDate}");
-            cohortDsd.addColumn("deathsWithin48:" + location.getUuid(), "Deaths within 48h: " + location.getName(), map(deathsEarlyInd, "startDate=${startDate},endDate=${endDate}"), "");
-
-            CompositionCohortDefinition deathsLate = new CompositionCohortDefinition();
-            deathsLate.addParameter(getStartDateParameter());
-            deathsLate.addParameter(getEndDateParameter());
-            deathsLate.addSearch("died", this.<CohortDefinition>map(deaths, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}"));
-            deathsLate.addSearch("diedSoon", this.<CohortDefinition>map(diedSoonAfterAdmission, "diedOnOrAfter=${startDate},diedOnOrBefore=${endDate}"));
-            deathsLate.setCompositionString("died AND NOT diedSoon");
+            cohortDsd.addColumn("deathsWithin48" + locationSuffix, "Deaths within 48h: " + location.getName(), map(deathsEarlyInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             CohortIndicator deathsLateInd = buildIndicator("Deaths after 48h: " + location.getName(), deathsLate, "startDate=${startDate},endDate=${endDate}");
-            cohortDsd.addColumn("deathsAfter48:" + location.getUuid(), "Deaths after 48h: " + location.getName(), map(deathsLateInd, "startDate=${startDate},endDate=${endDate}"), "");
+            cohortDsd.addColumn("deathsAfter48" + locationSuffix, "Deaths after 48h: " + location.getName(), map(deathsLateInd, "startDate=${startDate},endDate=${endDate}"), "");
 
 
             // number transferred out of HUM
 
-            LastDispositionBeforeExitCohortDefinition transfersOut = new LastDispositionBeforeExitCohortDefinition();
-            transfersOut.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
-            transfersOut.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
-            transfersOut.setExitFromWard(location);
-            transfersOut.setDispositionsToConsider(dispositionsToConsider);
-            transfersOut.addDisposition(transferOutDisposition);
+            CohortDefinition transfersOut = libraries.cohortDefinition(MirebalaisCohortDefinitionLibrary.PREFIX + "transferOutOfHumExitFromLocationDuringPeriod", "location", location);
 
-            CohortIndicator transfersOutInd = buildIndicator("Transfer Outs: " + location.getName(), transfersOut, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
-            cohortDsd.addColumn("transfersOutOfHUM:" + location.getUuid(), "Transfer Outs: " + location.getName(), map(transfersOutInd, "startDate=${startDate},endDate=${endDate}"), "");
+            CohortIndicator transfersOutInd = buildIndicator("Transfer Outs: " + location.getName(), transfersOut, "startDate=${startDate},endDate=${endDate}");
+            cohortDsd.addColumn("transfersOutOfHUM" + locationSuffix, "Transfer Outs: " + location.getName(), map(transfersOutInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number left without completing treatment
 
@@ -217,7 +184,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             leftWithoutCompletingTreatment.addDisposition(leftWithoutCompletionOfTreatmentDisposition);
 
             CohortIndicator leftWithoutCompletingTreatmentInd = buildIndicator("Left Without Completing Treatment: " + location.getName(), leftWithoutCompletingTreatment, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
-            cohortDsd.addColumn("leftWithoutCompletingTx:" + location.getUuid(), "Left Without Completing Treatment: " + location.getName(), map(leftWithoutCompletingTreatmentInd, "startDate=${startDate},endDate=${endDate}"), "");
+            cohortDsd.addColumn("leftWithoutCompletingTx" + locationSuffix, "Left Without Completing Treatment: " + location.getName(), map(leftWithoutCompletingTreatmentInd, "startDate=${startDate},endDate=${endDate}"), "");
 
             // number left without completing treatment
 
@@ -229,11 +196,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
             leftWithoutSeeingClinician.addDisposition(leftWithoutSeeingClinicianDisposition);
 
             CohortIndicator leftWithoutSeeingClinicianInd = buildIndicator("Left Without Seeing Clinician: " + location.getName(), leftWithoutSeeingClinician, "exitOnOrAfter=${startDate},exitOnOrBefore=${endDate}");
-            cohortDsd.addColumn("leftWithoutSeeingClinician:" + location.getUuid(), "Left Without Seeing Clinician: " + location.getName(), map(leftWithoutSeeingClinicianInd, "startDate=${startDate},endDate=${endDate}"), "");
-
-            // length of stay of patients who exited from inpatient (by ward, and in the ER)
-
-            // admissions within 48 hours of previous exit
+            cohortDsd.addColumn("leftWithoutSeeingClinician" + locationSuffix, "Left Without Seeing Clinician: " + location.getName(), map(leftWithoutSeeingClinicianInd, "startDate=${startDate},endDate=${endDate}"), "");
         }
 
         // number of ED check-ins
@@ -265,13 +228,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         CohortIndicator readmissionInd = buildIndicator("Possible Readmission", readmission, "onOrAfter=${startDate},onOrBefore=${endDate}");
         cohortDsd.addColumn("possiblereadmission", "Possible Readmission", map(readmissionInd, "startDate=${startDate},endDate=${endDate}"), "");
 
-        rd.addDataSetDefinition("cohorts", map(cohortDsd, "startDate=${day},endDate=${day+1d-1s}"));
-
-        return rd;
-    }
-
-    private Parameter getEffectiveDateParameter() {
-        return new Parameter("effectiveDate", "mirebalaisreports.parameter.effectiveDate", Date.class);
+        return cohortDsd;
     }
 
     @Override

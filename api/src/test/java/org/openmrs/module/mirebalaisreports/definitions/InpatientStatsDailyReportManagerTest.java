@@ -14,34 +14,30 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetColumn;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.module.reporting.indicator.dimension.CohortIndicatorAndDimensionResult;
 import org.openmrs.module.reporting.report.ReportData;
-import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
-import org.openmrs.module.reporting.report.renderer.ExcelTemplateRenderer;
-import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 /**
  *
  */
-@Ignore("This report now has a query that doesn't work against H2")
 @SkipBaseSetup
 public class InpatientStatsDailyReportManagerTest extends BaseInpatientReportTest {
-
-    // TODO when we re-enable this test, if it still fails, note that we have refactoring the test data set, so there could be an issue there
 
     @Autowired
     private InpatientStatsDailyReportManager manager;
@@ -57,26 +53,44 @@ public class InpatientStatsDailyReportManagerTest extends BaseInpatientReportTes
         ReportDefinition reportDefinition = manager.constructReportDefinition();
         ReportData evaluated = reportDefinitionService.evaluate(reportDefinition, context);
 
-        for (Map.Entry<String, DataSet> entry : evaluated.getDataSets().entrySet()) {
-            DataSet dataSet = entry.getValue();
-            System.out.println("Data Set: " + entry.getKey());
+        Map<String, Integer> results = new HashMap<String, Integer>();
+        for (DataSet dataSet : evaluated.getDataSets().values()) {
             MapDataSet mds = (MapDataSet) dataSet;
             for (DataSetColumn column : mds.getMetaData().getColumns()) {
-                System.out.println(column.getLabel() + " = " + mds.getData(column));
+                CohortIndicatorAndDimensionResult val = (CohortIndicatorAndDimensionResult) mds.getData(column);
+                results.put(column.getName(), val.getValue().intValue());
+                // System.out.println(column.getName() + " = " + column.getLabel() + " = " + val.getValue().intValue());
             }
         }
 
-        File outputFile = new File(System.getProperty("java.io.tmpdir"), "inpatientStatsDaily.xls");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final ReportDesign design = manager.constructReportDesigns(reportDefinition).get(0);
-        new ExcelTemplateRenderer() {
-            @Override
-            public ReportDesign getDesign(String argument) {
-                return design;
-            }
-        }.render(evaluated, "", out);
-        ReportUtil.writeByteArrayToFile(outputFile, out.toByteArray());
-        System.out.println("Wrote to " + outputFile.getAbsolutePath());
+        // Men's Internal Medicine
+        assertAndRemove(results, "censusAtStart:e5db0599-89e8-44fa-bfa2-07e47d63546f", 1);
+        assertAndRemove(results, "admissions:e5db0599-89e8-44fa-bfa2-07e47d63546f", 1);
+        assertAndRemove(results, "discharged:e5db0599-89e8-44fa-bfa2-07e47d63546f", 1);
+        assertAndRemove(results, "censusAtEnd:e5db0599-89e8-44fa-bfa2-07e47d63546f", 1);
+
+        // Surgical Ward
+        assertAndRemove(results, "transfersIn:7d6cc39d-a600-496f-a320-fd4985f07f0b", 1);
+        assertAndRemove(results, "censusAtEnd:7d6cc39d-a600-496f-a320-fd4985f07f0b", 1);
+
+        // Women's Internal Medicine
+        assertAndRemove(results, "censusAtStart:2c93919d-7fc6-406d-a057-c0b640104790", 2);
+        assertAndRemove(results, "transfersOut:2c93919d-7fc6-406d-a057-c0b640104790", 1);
+        assertAndRemove(results, "censusAtEnd:2c93919d-7fc6-406d-a057-c0b640104790", 1);
+
+        assertAndRemove(results, "edcheckin", 1);
+        assertAndRemove(results, "orvolume", 1);
+        assertAndRemove(results, "possiblereadmission", 1);
+
+        // everything else should be 0
+        for (Integer actual : results.values()) {
+            assertThat(actual, is(0));
+        }
+    }
+
+    private void assertAndRemove(Map<String, Integer> results, String key, int expected) {
+        assertThat(key + " should be " + expected, results.get(key), is(expected));
+        results.remove(key);
     }
 
 }
