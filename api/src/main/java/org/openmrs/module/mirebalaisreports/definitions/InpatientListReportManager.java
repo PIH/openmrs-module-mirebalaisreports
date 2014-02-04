@@ -55,7 +55,7 @@ public class InpatientListReportManager extends BaseMirebalaisReportManager {
         CohortIndicator censusStartInd = buildIndicator("Census at start: ", censusCohortDef, "effectiveDate=${startDate}");
         cohortDsd.addColumn("censusAtStart" , "Census at start: ", map(censusStartInd, "startDate=${startDate}"), "");
 
-        rd.addDataSetDefinition("cohorts", map(cohortDsd, "startDate=${day},endDate=${day+1d-1s}"));
+        rd.addDataSetDefinition("cohorts", map(cohortDsd, "startDate=${day},endDate=${day+1d-1ms}"));
 
         return rd;
     }

@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public abstract class DailyIndicatorByLocationReportDefinition extends BaseMirebalaisReportManager {
 
-    public static final String MAP_DAY_TO_START_AND_END_DATE = "startDate=${day},endDate=${day+1d-1s}";
+    public static final String MAP_DAY_TO_START_AND_END_DATE = "startDate=${day},endDate=${day+1d-1ms}";
 
     public abstract String getNameOfLocationParameterOnCohortDefinition();
 
