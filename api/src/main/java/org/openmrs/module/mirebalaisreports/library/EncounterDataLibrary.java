@@ -25,6 +25,9 @@ import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.common.AuditInfo;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
+import org.openmrs.module.reporting.data.converter.ChainedConverter;
+import org.openmrs.module.reporting.data.converter.CollectionConverter;
+import org.openmrs.module.reporting.data.converter.CountConverter;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.converter.PropertyConverter;
@@ -299,6 +302,22 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
 
         return new ConvertedEncounterDataDefinition(dd, new PropertyConverter(Provider.class, "person"), new PropertyConverter(Person.class, "personName"),
                 new ObjectFormatter("{givenName} {familyName}"));
+    }
+
+    @DocumentedDefinition("allProviders.name")
+    public EncounterDataDefinition getAllProviders() {
+        EncounterProviderDataDefinition dd = new EncounterProviderDataDefinition();
+        dd.setSingleProvider(false);
+        ChainedConverter itemConverter = new ChainedConverter(new PropertyConverter(Provider.class, "person"), new PropertyConverter(Person.class, "personName"),
+                new ObjectFormatter("{givenName} {familyName}"));
+        return new ConvertedEncounterDataDefinition(dd, new CollectionConverter(itemConverter, false, null), new ObjectFormatter(", "));
+    }
+
+    @DocumentedDefinition("numberOfProviders")
+    public EncounterDataDefinition getNumberOfProviders() {
+        EncounterProviderDataDefinition dd = new EncounterProviderDataDefinition();
+        dd.setSingleProvider(false);
+        return new ConvertedEncounterDataDefinition(dd, new CountConverter());
     }
 
     private ConvertedEncounterDataDefinition associatedAdtEncounter(DataConverter... converters) {

@@ -234,6 +234,8 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("encounterDatetime", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterDatetime"), null);
         dsd.addColumn("disposition", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "disposition"), null);
         dsd.addColumn("enteredBy", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "creator"), null);
+        dsd.addColumn("allProviders", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "allProviders.name"), null);
+        dsd.addColumn("numberOfProviders", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "numberOfProviders"), null);
         dsd.addColumn("administrativeClerk", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "administrativeClerk.name"), null);
         dsd.addColumn("nurse", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "nurse.name"), null);
         dsd.addColumn("consultingClinician", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "consultingClinician.name"), null);

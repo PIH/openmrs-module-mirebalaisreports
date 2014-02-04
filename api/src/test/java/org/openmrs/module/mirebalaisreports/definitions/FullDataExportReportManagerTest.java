@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertNull;
@@ -130,6 +131,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .location(mirebalaisReportsProperties.getClinicRegistrationLocation())
                 .encounterDatetime("2013-08-30 09:00:00")
                 .provider(mirebalaisReportsProperties.getAdministrativeClerkEncounterRole(), checkInProvider)
+                .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
                 .creator(checkinUser).save();
 
         Encounter e2 = data.encounter().visit(visit)
@@ -180,8 +182,10 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
                 assertThat(row.getColumnValue("disposition"), nullValue());
                 assertThat((String) row.getColumnValue("enteredBy"), is("Checkin Clerk"));
+                assertThat((String) row.getColumnValue("allProviders"), anyOf(is("Checkin Clerk, Nurse Nursing"), is("Nurse Nursing, Checkin Clerk")));
+                assertThat((Integer) row.getColumnValue("numberOfProviders"), is(2));
                 assertThat((String) row.getColumnValue("administrativeClerk"), is("Checkin Clerk"));
-                assertThat((String) row.getColumnValue("nurse"), is(""));
+                assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
                 assertThat((String) row.getColumnValue("consultingClinician"), is(""));
             }
             else if (encounterId.equals(e2.getEncounterId())) {
@@ -191,6 +195,8 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
                 assertThat((String) row.getColumnValue("disposition"), is("Admettre à l'hôpital"));
                 assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
+                assertThat((String) row.getColumnValue("allProviders"), is("Nurse Nursing"));
+                assertThat((Integer) row.getColumnValue("numberOfProviders"), is(1));
                 assertThat((String) row.getColumnValue("administrativeClerk"), is(""));
                 assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
                 assertThat((String) row.getColumnValue("consultingClinician"), is(""));
