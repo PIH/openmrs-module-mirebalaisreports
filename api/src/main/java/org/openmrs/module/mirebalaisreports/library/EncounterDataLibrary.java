@@ -346,12 +346,6 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return definition;
     }
 
-    private class Replacements extends HashMap<String, String> {
-        public Replacements add(String key, Object replacement) {
-            String asString = replacement instanceof OpenmrsObject ? ((OpenmrsObject) replacement).getId().toString() : replacement.toString();
-            super.put(key, asString);
-            return this;
-        }
-    }
+
 
 }

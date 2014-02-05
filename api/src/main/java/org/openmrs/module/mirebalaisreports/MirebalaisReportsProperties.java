@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
@@ -24,6 +25,10 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emr.EmrProperties;
+import org.openmrs.module.emrapi.EmrApiConstants;
+import org.openmrs.module.emrapi.disposition.Disposition;
+import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +41,9 @@ import java.util.List;
  */
 @Component("mirebalaisReportsProperties")
 public class MirebalaisReportsProperties extends EmrProperties {
+
+    @Autowired
+    DispositionService dispositionService;
 
     //***** DATE FORMATS ******
     public static final String DATE_FORMAT = "dd MMM yyyy";
@@ -308,6 +316,26 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return conceptService.getConceptSourceByName("org.openmrs.module.mirebalaisreports");
 	}
 
+    public Concept getAdmissionLocationConcept() {
+        return dispositionService.getDispositionDescriptor().getAdmissionLocationConcept();
+    }
+
+    public Concept getDispositionConcept() {
+        return dispositionService.getDispositionDescriptor().getDispositionConcept();
+    }
+
+    public Concept getAdmissionDispositionConcept() {
+        Concept admissionDispositionConcept = null;
+        Disposition admitToHospital = dispositionService.getDispositionByUniqueId("admitToHospital");
+        String conceptCode = admitToHospital.getConceptCode();
+        if ( StringUtils.isNotBlank(conceptCode) ) {
+            String[] conceptMap = conceptCode.split(":");
+            if ( (conceptMap !=null) && (conceptMap.length == 2) ) {
+                admissionDispositionConcept = conceptService.getConceptByMapping(conceptMap[1], conceptMap[0]);
+            }
+        }
+        return admissionDispositionConcept;
+    }
 
 	//***** CONCEPTS *****
 
@@ -382,6 +410,14 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public Concept getNonCodedDiagnosisConcept() {
 		return getRequiredConceptByUuid(DIAGNOSIS_NONCODED_CONCEPT_UUID);
 	}
+
+    public Concept getDiagnosisOrderConcept(){
+        return conceptService.getConceptByMapping(EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_ORDER, EmrApiConstants.EMR_CONCEPT_SOURCE_NAME);
+    }
+
+    public Concept getPrimaryDiagnosisConcept(){
+        return conceptService.getConceptByMapping(EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_ORDER_PRIMARY, EmrApiConstants.EMR_CONCEPT_SOURCE_NAME);
+    }
 
 	public static final String CLINICAL_IMPRESSIONS_CONCEPT_UUID = "3cd9d956-26fe-102b-80cb-0017a47871b2";
 

@@ -92,17 +92,17 @@
             </a>
         </td>
         <td>
-            ${ ui.message("ui.i18n.Location.name." + v.consultationLocationUuid) }
+            ${ ui.message("ui.i18n.Location.name." + v.requestedAdmissionFromLocation) }
             <br/>
             <small>
-                ${ ui.format(v.consultationDateTime)}
+                ${ ui.format(v.requestedAdmissionDateTime)}
             </small>
         </td>
         <td>
-            ${ ui.format((v.providerFirstName ? v.providerFirstName : '') + " " + (v.providerLastName ? v.providerLastName : '')) }
+            ${ ui.format(v.requestedAdmissionProvider) }
         </td>
-        <td>${ ui.message("ui.i18n.Location.name." + v.admissionLocationUuid) }</td>
-        <td>${ v.diagnosis ?: ''}</td>
+        <td>${ ui.message("ui.i18n.Location.name." + v.requestedAdmissionToLocation) }</td>
+        <td>${ v.requestedAdmissionDiagnosis ?: ''}</td>
         <td>
             <% admissionActions.each { task ->
                 def url = task.url.replaceAll('\\{\\{patientId\\}\\}', patientId.toString())
