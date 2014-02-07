@@ -33,6 +33,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.service.ReportService;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -140,12 +141,16 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
             }
         }
 
-        List<ReportDesign> designs = manager.constructReportDesigns(reportDefinition);
-        for (ReportDesign design : designs) {
-            reportService.saveReportDesign(design);
+        try {
+            List<ReportDesign> designs = manager.constructReportDesigns(reportDefinition);
+            for (ReportDesign design : designs) {
+                reportService.saveReportDesign(design);
+            }
+            administrationService.setGlobalProperty(globalPropertyFor(manager), manager.getVersion());
         }
-
-        administrationService.setGlobalProperty(globalPropertyFor(manager), manager.getVersion());
+        catch (IOException ex) {
+            log.error("Error constructing report design for " + reportDefinition.getName(), ex);
+        }
     }
 
     private boolean alreadyAtLatestVersion(ReportManager manager) {

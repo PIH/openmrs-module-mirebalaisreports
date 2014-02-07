@@ -14,10 +14,15 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Cohort;
 import org.openmrs.Location;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.context.ServiceContext;
 import org.openmrs.contrib.testdata.TestDataManager;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -25,16 +30,24 @@ import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
+import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
+import org.openmrs.module.reporting.report.renderer.ExcelTemplateRenderer;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyIds;
 
 @SkipBaseSetup
@@ -54,6 +67,33 @@ public class InpatientStatsMonthlyReportManagerTest extends BaseInpatientReportT
 
     @Autowired
     ReportDefinitionService reportDefinitionService;
+
+    @Autowired @Qualifier("adminService")
+    AdministrationService administrationService;
+
+    // we need to have access to certain messages to make the Excel sheet work right (i.e. formatting the location name)
+    MessageSourceService originalMessageSourceService;
+    MessageSourceService messageSourceService;
+
+    @Before
+    public void setUpMockMessageSourceService() {
+        administrationService.setGlobalProperty("reporting.defaultLocale", "fr");
+
+        ServiceContext serviceContext = ServiceContext.getInstance();
+
+        originalMessageSourceService = serviceContext.getMessageSourceService();
+
+        messageSourceService = mock(MessageSourceService.class);
+        when(messageSourceService.getMessage("ui.i18n.Location.name.e5db0599-89e8-44fa-bfa2-07e47d63546f", null, Locale.FRENCH)).thenReturn("Sal Gason");
+        serviceContext.setMessageSourceService(messageSourceService);
+    }
+
+    @After
+    public void restoreOriginalMessageSourceService() {
+        if (originalMessageSourceService != null) {
+            ServiceContext.getInstance().setMessageSourceService(originalMessageSourceService);
+        }
+    }
 
     @Test
     public void testReport() throws Exception {
@@ -118,6 +158,18 @@ public class InpatientStatsMonthlyReportManagerTest extends BaseInpatientReportT
                 assertThat((Cohort) row.getColumnValue("censusAtEnd"), isCohortWithExactlyIds());
             }
         }
+
+        List<ReportDesign> reportDesigns = reportManager.constructReportDesigns(reportDefinition);
+        final ReportDesign design = reportDesigns.iterator().next();
+
+        // hack to avoid having to save things to the DB
+        ExcelTemplateRenderer renderer = new ExcelTemplateRenderer() {
+            public ReportDesign getDesign(String argument) {
+                return design;
+            }
+        };
+
+        renderer.render(evaluated, "xxx:xls", new FileOutputStream("/tmp/InpatientStatsMonthly.xls"));
     }
 
 }

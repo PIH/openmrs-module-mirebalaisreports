@@ -69,7 +69,7 @@ public class InpatientListReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null));
+        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
     }
 
     private Parameter getEffectiveDateParameter() {

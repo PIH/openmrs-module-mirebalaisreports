@@ -240,7 +240,7 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         //} catch (IOException e) {
         //    throw new IllegalStateException("Unable to load excel template", e);
         //}
-        return Arrays.asList(xlsReportDesign(reportDefinition, null));
+        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
     }
 
 }

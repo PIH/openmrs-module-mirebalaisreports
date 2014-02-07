@@ -491,7 +491,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null), csvReportDesign(reportDefinition));
+        return Arrays.asList(xlsReportDesign(reportDefinition, null, null), csvReportDesign(reportDefinition));
     }
 
 }

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Base implementation of ReportManager that provides some common method implementations
@@ -88,7 +89,7 @@ public abstract class BaseReportManager implements ReportManager {
 		return translation;
 	}
 
-    protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition, byte[] excelTemplate) {
+    protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition, byte[] excelTemplate, Properties designProperties) {
         ReportDesign design = new ReportDesign();
         design.setName("mirebalaisreports.output.excel");
         design.setReportDefinition(reportDefinition);
@@ -101,6 +102,9 @@ public abstract class BaseReportManager implements ReportManager {
             resource.setContents(excelTemplate);
             resource.setReportDesign(design);
             design.addResource(resource);
+            if (designProperties != null) {
+                design.setProperties(designProperties);
+            }
         }
         return design;
     }

@@ -20,6 +20,7 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +79,7 @@ public interface ReportManager {
      * @param reportDefinition this will be the same ReportDefinition returned by an earlier call to #constructReportDefinition
      * @return the ReportDesigns under which this report can be evaluated
      */
-    List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition);
+    List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException;
 
     /**
      * This is used to determine whether to build/save the report definition on module startup. Version should be something
