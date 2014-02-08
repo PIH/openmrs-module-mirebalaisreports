@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Cohort;
+import org.openmrs.GlobalProperty;
 import org.openmrs.Location;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.ServiceContext;
@@ -78,6 +79,9 @@ public class InpatientStatsMonthlyReportManagerTest extends BaseInpatientReportT
 
     @Before
     public void setUpMockMessageSourceService() {
+        // org.openmrs.module.reporting.ReportingConstants.GLOBAL_PROPERTY_DEFAULT_LOCALE() will cache this so we need
+        // to explicitly clear that cache after the test, to avoid affecting other tests. (The automatic rollback of the
+        // DB write will not trigger a GlobalPropertyListener.)
         administrationService.setGlobalProperty(ReportingConstants.DEFAULT_LOCALE_GP_NAME, "fr");
 
         ServiceContext serviceContext = ServiceContext.getInstance();
@@ -94,6 +98,9 @@ public class InpatientStatsMonthlyReportManagerTest extends BaseInpatientReportT
         if (originalMessageSourceService != null) {
             ServiceContext.getInstance().setMessageSourceService(originalMessageSourceService);
         }
+        // Force org.openmrs.module.reporting.ReportingConstants to clear its cached locale value to avoid affecting
+        // other tests
+        new ReportingConstants().globalPropertyChanged(new GlobalProperty(ReportingConstants.DEFAULT_LOCALE_GP_NAME, null));
     }
 
     @Test

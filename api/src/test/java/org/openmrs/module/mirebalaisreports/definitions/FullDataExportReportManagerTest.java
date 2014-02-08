@@ -23,11 +23,9 @@ import org.openmrs.VisitType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
-import org.openmrs.api.context.Context;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
-import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -285,8 +283,6 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
         DataSet dispensingDataSet = reportData.getDataSets().get("dispensing");
         DataSetRow row = dispensingDataSet.iterator().next();
-
-        System.out.println("GP = " + Context.getAdministrationService().getGlobalProperty(ReportingConstants.DEFAULT_LOCALE_GP_NAME));
 
         assertThat((String) row.getColumnValue("medication"), is("Aspirin"));
         assertThat(Double.valueOf((String) row.getColumnValue("dosage")), is(100.0));
