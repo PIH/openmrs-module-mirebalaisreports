@@ -25,6 +25,7 @@ import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -77,7 +78,7 @@ public class InpatientStatsMonthlyReportManagerTest extends BaseInpatientReportT
 
     @Before
     public void setUpMockMessageSourceService() {
-        administrationService.setGlobalProperty("reporting.defaultLocale", "fr");
+        administrationService.setGlobalProperty(ReportingConstants.DEFAULT_LOCALE_GP_NAME, "fr");
 
         ServiceContext serviceContext = ServiceContext.getInstance();
 
