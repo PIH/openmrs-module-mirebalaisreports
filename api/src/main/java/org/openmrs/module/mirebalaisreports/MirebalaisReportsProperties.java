@@ -411,8 +411,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return getRequiredConceptByUuid(DIAGNOSIS_NONCODED_CONCEPT_UUID);
 	}
 
-    public Concept getDiagnosisOrderConcept(){
+    public Concept getDiagnosisOrderConcept() {
         return conceptService.getConceptByMapping(EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_ORDER, EmrApiConstants.EMR_CONCEPT_SOURCE_NAME);
+    }
+
+    public Concept getDiagnosisCertaintyConcept() {
+        return conceptService.getConceptByMapping(EmrApiConstants.CONCEPT_CODE_DIAGNOSIS_CERTAINTY, EmrApiConstants.EMR_CONCEPT_SOURCE_NAME);
     }
 
     public Concept getPrimaryDiagnosisConcept(){

@@ -27,7 +27,7 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = :consEnc
 
 --Provider with Consulting Clinician encounter role
-INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = 4
+INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = :consultingClinician
 INNER JOIN provider epp ON ep.provider_id = epp.provider_id
 INNER JOIN person_name provn ON epp.person_id = provn.person_id AND provn.voided = 0
 

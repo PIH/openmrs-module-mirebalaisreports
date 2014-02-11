@@ -81,6 +81,10 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "exitEnc", mrp.getExitFromInpatientEncounterType());
         sql = replace(sql, "transferEnc", mrp.getTransferEncounterType());
 
+        sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
+
+        sql = replace(sql, "icd10", mrp.getIcd10ConceptSource());
+
         sql = replace(sql, "paid", mrp.getAmountPaidConcept());
         sql = replace(sql, "wt", mrp.getWeightConcept());
         sql = replace(sql, "ht", mrp.getHeightConcept());
@@ -93,6 +97,8 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "o2", mrp.getBloodOxygenSaturationConcept());
         sql = replace(sql, "coded", mrp.getCodedDiagnosisConcept());
         sql = replace(sql, "noncoded", mrp.getNonCodedDiagnosisConcept());
+        sql = replace(sql, "diagnosisOrder", mrp.getDiagnosisOrderConcept());
+        sql = replace(sql, "diagnosisCertainty", mrp.getDiagnosisCertaintyConcept());
         sql = replace(sql, "comment", mrp.getClinicalImpressionsConcept());
         sql = replace(sql, "notifiable", mrp.getSetOfWeeklyNotifiableDiseases());
         sql = replace(sql, "urgent", mrp.getSetOfUrgentDiseases());
