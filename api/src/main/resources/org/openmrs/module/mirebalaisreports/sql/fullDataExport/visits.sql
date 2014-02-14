@@ -74,7 +74,7 @@ WHERE p.voided = 0
 --Excludes test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = 11 AND voided = 0)
 
-AND v.date_started BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
+AND v.date_started >= :startDate AND v.date_started < ADDDATE(:endDate, INTERVAL 1 DAY)
 
 GROUP BY v.visit_id
 
@@ -107,7 +107,7 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 INNER JOIN (
 SELECT p.patient_id, e.encounter_id, e.encounter_datetime, v.visit_id
 FROM patient p
-INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.encounter_type = 6 AND e.voided = 0 AND e.encounter_datetime BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
+INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.encounter_type = 6 AND e.voided = 0 AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)
 LEFT OUTER JOIN visit v ON p.patient_id = v.patient_id AND v.voided = 0 AND DATE(e.encounter_datetime) = DATE(v.date_started)
 ) reg ON p.patient_id = reg.patient_id AND reg.visit_id IS NULL
 

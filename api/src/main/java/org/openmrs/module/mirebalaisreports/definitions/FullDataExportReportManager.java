@@ -97,7 +97,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.2"; // last change: splitting provider from creator
+        return "1.3-SNAPSHOT"; // last change: don't include the first second of the day after the period
     }
 
 	//***** INSTANCE METHODS

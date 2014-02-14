@@ -46,7 +46,7 @@ LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_cre
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
 
 --Admitted in a visit during the period
-INNER JOIN visit v ON p.patient_id = v.patient_id AND v.voided = 0 AND v.date_started BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
+INNER JOIN visit v ON p.patient_id = v.patient_id AND v.voided = 0 AND v.date_started >= :startDate AND v.date_started < ADDDATE(:endDate, INTERVAL 1 DAY)
 INNER JOIN encounter cons_adm ON v.visit_id = cons_adm.visit_id AND cons_adm.voided = 0 AND cons_adm.encounter_type = 8
 INNER JOIN obs dispo_adm ON cons_adm.encounter_id = dispo_adm.encounter_id AND dispo_adm.concept_id = 985 AND dispo_adm.voided = 0 AND dispo_adm.value_coded = 1221
 INNER JOIN encounter adm ON v.visit_id = adm.visit_id AND adm.voided = 0 AND adm.encounter_type = 12
