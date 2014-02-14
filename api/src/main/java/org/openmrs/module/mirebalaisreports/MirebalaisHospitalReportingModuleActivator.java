@@ -25,6 +25,7 @@ import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
 import org.openmrs.module.mirebalaisreports.definitions.InpatientListReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsDailyReportManager;
+import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsMonthlyReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.UsersAndProvidersReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
@@ -85,6 +86,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
      */
     private void setupOtherReports() {
         setupReport(Context.getRegisteredComponents(InpatientStatsDailyReportManager.class).get(0));
+        setupReport(Context.getRegisteredComponents(InpatientStatsMonthlyReportManager.class).get(0));
         setupReport(Context.getRegisteredComponents(InpatientListReportManager.class).get(0));
         setupReport(Context.getRegisteredComponents(UsersAndProvidersReportManager.class).get(0));
         for (DailyIndicatorByLocationReportDefinition manager : Context.getRegisteredComponents(DailyIndicatorByLocationReportDefinition.class)) {

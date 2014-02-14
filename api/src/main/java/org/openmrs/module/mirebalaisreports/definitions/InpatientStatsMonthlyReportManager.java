@@ -17,6 +17,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.library.MirebalaisCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.TimePeriod;
@@ -53,7 +54,7 @@ public class InpatientStatsMonthlyReportManager extends BaseMirebalaisReportMana
 
     @Override
     public String getUuid() {
-        return "b6addbae-89ed-11e3-af23-f07d9ea14ea1";
+        return MirebalaisReportsProperties.INPATIENT_STATS_MONTHLY_REPORT_DEFINITION_UUID;
     }
 
     @Override
@@ -63,14 +64,22 @@ public class InpatientStatsMonthlyReportManager extends BaseMirebalaisReportMana
 
     @Override
     protected String getMessageCodePrefix() {
-        return "mirebalaisreports.inpatientStatsMonthly.";
+        return "mirebalaisreports.inpatientStatsMonthlyReport.";
     }
 
     @Override
     public List<Parameter> getParameters() {
+        Properties monthConfig = new Properties();
+        monthConfig.put("uiframeworkFragmentProvider", "mirebalaisreports");
+        monthConfig.put("uiframeworkFragment", "field/monthSinceMirebalaisOpening");
+
+        Properties wardConfig = new Properties();
+        wardConfig.put("uiframeworkFragmentProvider", "mirebalaisreports");
+        wardConfig.put("uiframeworkFragment", "field/inpatientWard");
+
         List<Parameter> l = new ArrayList<Parameter>();
-        l.add(new Parameter("month", "mirebalaisreports.parameter.month", Date.class));
-        l.add(new Parameter("ward", "mirebalaisreports.parameter.ward", Location.class));
+        l.add(new Parameter("month", "mirebalaisreports.parameter.month", Date.class, monthConfig));
+        l.add(new Parameter("location", "mirebalaisreports.parameter.ward", Location.class, wardConfig));
         return l;
     }
 

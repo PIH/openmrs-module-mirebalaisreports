@@ -50,9 +50,18 @@
         "url": "mirebalaisreports/inpatientStatsDailyReport.page",
         "order": 4,
         "requiredPrivilege": "App: reportingui.reports",
-        "extensionParams": { "linkId": "mirebalaisreports-inpatientDataExportReport-link" }
+        "extensionParams": { "linkId": "mirebalaisreports-inpatientDailyReport-link" }
     },
-
+    {
+        "id": "mirebalaisreports.overview.inpatientMonthly",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.overview",
+        "type": "link",
+        "label": "mirebalaisreports.inpatientStatsMonthlyReport.name",
+        "url": "reportingui/runReport.page?reportDefinition=b6addbae-89ed-11e3-af23-f07d9ea14ea1",
+        "order": 5,
+        "requiredPrivilege": "App: reportingui.reports",
+        "extensionParams": { "linkId": "mirebalaisreports-inpatientMonthlyReport-link" }
+    },
 
     {
         "id": "mirebalaisreports.dataQuality.nonCodedDiagnoses",
@@ -64,7 +73,6 @@
         "requiredPrivilege": "App: reportingui.reports",
         "extensionParams": { "linkId": "mirebalaisreports-nonCodedDiagnosesReport-link" }
     },
-
 
     {
         "id": "mirebalaisreports.dataExports.usersAndProviders",
