@@ -97,7 +97,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.3-SNAPSHOT"; // last change: don't include the first second of the day after the period
+        return "1.3-SNAPSHOT"; // last change: export CSVs using ISO-8859-1
     }
 
 	//***** INSTANCE METHODS
