@@ -110,8 +110,8 @@
                 def url = task.url.replaceAll('\\{\\{patientId\\}\\}', patientId.toString())
                 url = url.replaceAll('\\{\\{visit.id\\}\\}', visitId.toString())
             %>
-                <a href="/${ contextPath }/${ url }" class="button task">
-                <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
+                <a href="/${ contextPath }/${ url }" class="">
+                <i class="${task.icon} admitIcon"></i> ${ ui.message(task.label) }</a>
             <% } %>
         </td>
     </tr>
