@@ -1,6 +1,7 @@
 <%
     ui.decorateWith("appui", "standardEmrPage")
     ui.includeCss("mirebalais", "inpatient.css")
+    ui.includeCss("mirebalais", "awaitingAdmission.css")
     def awaitingAdmissionNumber = 0;
     if (awaitingAdmissionList != null ){
         awaitingAdmissionNumber = awaitingAdmissionList.size();
@@ -48,7 +49,8 @@
 
 </script>
 
-<h3 class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: <span id="listSize">${awaitingAdmissionNumber}</span></h3>
+<h2>Patients Awaiting Admission</h2>
+<strong class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: <span id="listSize">${awaitingAdmissionNumber}</span></strong>
 <div class="inpatient-filter">
     ${ ui.includeFragment("emr", "field/location", [
             "id": "inpatients-filterByLocation",
@@ -75,7 +77,7 @@
     <tbody>
     <% if ((awaitingAdmissionList == null) || (awaitingAdmissionList != null && awaitingAdmissionList.size() == 0)) { %>
     <tr>
-        <td colspan="4">${ ui.message("emr.none") }</td>
+        <td colspan="8">${ ui.message("emr.none") }</td>
     </tr>
     <% } %>
     <% awaitingAdmissionList.each { v ->
