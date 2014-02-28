@@ -43,6 +43,7 @@ public class NonCodedDiagnosesPageController {
     private final Log log = LogFactory.getLog(getClass());
 
     public void get(@SpringBean NonCodedDiagnosesReportManager reportManager,
+                    @SpringBean MirebalaisReportsProperties mrp,
                     @RequestParam(required = false, value = "fromDate") Date fromDate,
                     @RequestParam(required = false, value = "toDate") Date toDate,
                     PageModel model) throws EvaluationException, IOException {
@@ -57,7 +58,7 @@ public class NonCodedDiagnosesPageController {
         toDate = DateUtil.getEndOfDay(toDate);
 
         model.addAttribute("nonCodedRows", null);
-        model.addAttribute("providers", MirebalaisReportsProperties.getAllProviders());
+        model.addAttribute("providers", mrp.getAllProviders());
         model.addAttribute("reportManager", reportManager);
         model.addAttribute("fromDate", null);
         model.addAttribute("toDate", null);
@@ -67,12 +68,13 @@ public class NonCodedDiagnosesPageController {
     }
 
     public void post(@SpringBean NonCodedDiagnosesReportManager reportManager,
-                       @SpringBean ReportDefinitionService reportDefinitionService,
-                       @RequestParam(required = false, value = "fromDate") Date fromDate,
-                       @RequestParam(required = false, value = "toDate") Date toDate,
-                       @RequestParam(required = false, value = "nonCoded") String nonCoded,
-                       @RequestParam(required = false, value = "provider") Provider provider,
-                       PageModel model) throws EvaluationException, IOException {
+                     @SpringBean MirebalaisReportsProperties mrp,
+                     @SpringBean ReportDefinitionService reportDefinitionService,
+                     @RequestParam(required = false, value = "fromDate") Date fromDate,
+                     @RequestParam(required = false, value = "toDate") Date toDate,
+                     @RequestParam(required = false, value = "nonCoded") String nonCoded,
+                     @RequestParam(required = false, value = "provider") Provider provider,
+                     PageModel model) throws EvaluationException, IOException {
 
 
         if (fromDate == null) {
@@ -110,7 +112,7 @@ public class NonCodedDiagnosesPageController {
         model.addAttribute("reportManager", reportManager);
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
-        model.addAttribute("providers", MirebalaisReportsProperties.getAllProviders());
+        model.addAttribute("providers", mrp.getAllProviders());
 
     }
 
