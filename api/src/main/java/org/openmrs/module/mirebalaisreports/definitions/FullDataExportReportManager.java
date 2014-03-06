@@ -97,7 +97,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.3-SNAPSHOT"; // last change: export CSVs using ISO-8859-1
+        return "1.4-SNAPSHOT"; // last change: adding visitId to many data sets
     }
 
 	//***** INSTANCE METHODS
@@ -261,6 +261,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         query.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
         query.addConcept(dispensingProperties.getDispensingConstructConcept());
         dsd.addRowFilter(query, "onOrAfter=${startDate},onOrBefore=${endDate}");
+
+        dsd.addColumn("visitId", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visit.id"), null);
+        dsd.addColumn("encounterId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterId"), null);
 
         dsd.addColumn("medication", constructGroupMemberObsDataDefinition(dispensingProperties.getMedicationConcept())
                 , "", new ObjectFormatter());

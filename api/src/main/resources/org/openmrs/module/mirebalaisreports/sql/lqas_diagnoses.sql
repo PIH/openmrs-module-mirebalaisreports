@@ -5,7 +5,9 @@ SELECT '' as 'Dossier Found? Y/N',
        dispo.name as Disposition,
        cd1n.name as 'Coded 1', cd2n.name  as 'Coded 2', cd3n.name  as 'Coded 3', cd4n.name  as 'Coded 4',
        nc1.value_text  as 'Non-Coded 1', nc2.value_text  as 'Non-Coded 2', '' as 'Dossier',
-       concat(un.given_name, ' ', un.family_name) as 'Clinician who entered diagnosis'
+       concat(un.given_name, ' ', un.family_name) as 'Clinician who entered diagnosis',
+       pc.encounter_id,
+       pc.visit_id
 FROM patient p
 
 INNER JOIN encounter pc

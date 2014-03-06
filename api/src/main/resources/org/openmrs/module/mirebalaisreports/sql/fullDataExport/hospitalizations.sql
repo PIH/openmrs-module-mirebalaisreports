@@ -1,6 +1,6 @@
 SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(adm.encounter_datetime, pr.birthdate)/365.25, 1) age_at_adm, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,
 
-adm.encounter_id, adm.encounter_datetime admission_datetime, adm_l.name admitting_ward, CONCAT(pn.given_name, ' ', pn.family_name) admitting_provider,
+adm.encounter_id, adm.visit_id, adm.encounter_datetime admission_datetime, adm_l.name admitting_ward, CONCAT(pn.given_name, ' ', pn.family_name) admitting_provider,
 
 transf_1.encounter_datetime transf_1_datetime,
 transf_1_l.name transf_1_location,
