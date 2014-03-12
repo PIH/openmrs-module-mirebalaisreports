@@ -671,4 +671,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return role;
     }
 
+    /**
+     * For testing
+     * @param dispositionService
+     */
+    public void setDispositionService(DispositionService dispositionService) {
+        this.dispositionService = dispositionService;
+    }
+
 }

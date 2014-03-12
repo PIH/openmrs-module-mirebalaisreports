@@ -1,11 +1,20 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.module.emrapi.disposition.Disposition;
+import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
+
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -14,6 +23,26 @@ public class FullDataExportBuilderTest extends BaseMirebalaisReportTest {
 
     @Autowired
     FullDataExportBuilder builder;
+
+    @Autowired
+    MirebalaisReportsProperties mirebalaisReportsProperties;
+
+    @Autowired
+    DispositionService originalDispositionService;
+
+    @Before
+    public void setUp() throws Exception {
+        Disposition someDisposition = new Disposition();
+        someDisposition.setConceptCode("PIH:ADMIT TO HOSPITAL");
+        DispositionService dispositionService = mock(DispositionService.class);
+        when(dispositionService.getDispositionByUniqueId(anyString())).thenReturn(someDisposition);
+        mirebalaisReportsProperties.setDispositionService(dispositionService);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        mirebalaisReportsProperties.setDispositionService(originalDispositionService);
+    }
 
     @Test
     public void shouldSetupTheReportWithAllDataSets() throws Exception {
