@@ -85,6 +85,9 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "postOpNoteEnc", mrp.getPostOpNoteEncounterType());
 
         sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
+        sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());
+        sql = replace(sql, "principalResultsInterpreter", mrp.getPrincipalResultsInterpreterEncounterRole());
+        sql = replace(sql, "radiologyTech", mrp.getRadiologyTechnicianEncounterRole());
 
         sql = replace(sql, "icd10", mrp.getIcd10ConceptSource());
 
@@ -128,10 +131,6 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
         sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
         sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
-
-        sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());
-        sql = replace(sql, "principalResultsInterpreter", mrp.getPrincipalResultsInterpreterEncounterRole());
-        sql = replace(sql, "radiologyTech", mrp.getRadiologyTechnicianEncounterRole());
 
         log.debug("Replacing metadata references complete.");
         return sql;
