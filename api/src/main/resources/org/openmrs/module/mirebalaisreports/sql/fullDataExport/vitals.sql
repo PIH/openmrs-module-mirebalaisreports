@@ -6,13 +6,13 @@ IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE,
 FROM patient p
 
 --Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 
 --ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
 
 --Unknown patient
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = 10 AND un.voided = 0
+LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt AND un.voided = 0
 
 --Person
 INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
@@ -24,7 +24,7 @@ LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_cre
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
 
 --Vitals encounter
-INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = 5
+INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = :vitEnc
 
 --User who created vitals encounter
 INNER JOIN users u ON e.creator = u.user_id
@@ -68,7 +68,7 @@ LEFT OUTER JOIN obs o2 ON e.encounter_id = o2.encounter_id AND o2.voided = 0 AND
 WHERE p.voided = 0
 
 --Exclude test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = 11 AND voided = 0)
+AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt AND voided = 0)
 
 AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)
 

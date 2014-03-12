@@ -225,6 +225,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String VITALS_ENCOUNTER_TYPE_UUID = "4fb47712-34a6-40d2-8ed3-e153abbd25b7";
     public static final String CONSULT_ENCOUNTER_TYPE_UUID = "92fd09b4-5335-4f7e-9f63-b2a663fd09a6";
     public static final String RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID = "1b3d1e13-f0b1-4b83-86ea-b1b1e2fb4efa";
+    public static final String RADIOLOGY_STUDY_ENCOUNTER_TYPE_UUID = "5b1b4a4e-0084-4137-87db-dba76c784439";
+    public static final String RADIOLOGY_REPORT_ENCOUNTER_TYPE_UUID = "d5ca53a7-d3b5-44ac-9aa2-1491d2a4b4e9";
     public static final String POST_OP_NOTE_ENCOUNTER_TYPE_UUID = "c4941dee-7a9b-4c1c-aa6f-8193e9e5e4e5";
     public static final String ADMISSION_ENCOUNTER_TYPE_UUID = "260566e1-c909-4d61-a96f-c1019291a09d";
     public static final String EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID = "b6631959-2105-49dd-b154-e1249e0fbcd7";
@@ -253,6 +255,14 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public EncounterType getRadiologyOrderEncounterType() {
 		return getRequiredEncounterTypeByUuid(RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID);
 	}
+
+    public EncounterType getRadiologyStudyEncounterType() {
+        return getRequiredEncounterTypeByUuid(RADIOLOGY_STUDY_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getRadiologyReportEncounterType() {
+        return getRequiredEncounterTypeByUuid(RADIOLOGY_REPORT_ENCOUNTER_TYPE_UUID);
+    }
 
     public EncounterType getPostOpNoteEncounterType() {
         return getRequiredEncounterTypeByUuid(POST_OP_NOTE_ENCOUNTER_TYPE_UUID);
@@ -326,16 +336,52 @@ public class MirebalaisReportsProperties extends EmrProperties {
     }
 
     public Concept getAdmissionDispositionConcept() {
-        Concept admissionDispositionConcept = null;
-        Disposition admitToHospital = dispositionService.getDispositionByUniqueId("admitToHospital");
-        String conceptCode = admitToHospital.getConceptCode();
+        return getConceptForDisposition("admitToHospital");
+    }
+
+    public Concept getDischargeDispositionConcept() {
+        return getConceptForDisposition("discharge");
+    }
+
+    public Concept getLeftWithoutSeeingClinicianDispositionConcept() {
+        return getConceptForDisposition("leftWithoutSeeingAClinician");
+    }
+
+    public Concept getLeftWithoutCompletingTreatmentDispositionConcept() {
+        return getConceptForDisposition("leftWithoutCompletionOfTreatment");
+    }
+
+    public Concept getTransferOutOfHospitalDispositionConcept() {
+        return getConceptForDisposition("transferOutOfHospital");
+    }
+
+    public Concept getTransferWithinHospitalDispositionConcept() {
+        return getConceptForDisposition("transferWithinHospital");
+    }
+
+    public Concept getStillHospitalizedDispositionConcept() {
+        return getConceptForDisposition("stillHospitalized");
+    }
+
+    public Concept getEdObservationDispositionConcept() {
+        return getConceptForDisposition("edObservation");
+    }
+
+    public Concept getDeathDispositionConcept() {
+        return getConceptForDisposition("markPatientDead");
+    }
+
+    private Concept getConceptForDisposition(String dispositionCode) {
+        Concept conceptForDisposition = null;
+        Disposition disposition = dispositionService.getDispositionByUniqueId(dispositionCode);
+        String conceptCode = disposition.getConceptCode();
         if ( StringUtils.isNotBlank(conceptCode) ) {
             String[] conceptMap = conceptCode.split(":");
             if ( (conceptMap !=null) && (conceptMap.length == 2) ) {
-                admissionDispositionConcept = conceptService.getConceptByMapping(conceptMap[1], conceptMap[0]);
+                conceptForDisposition = conceptService.getConceptByMapping(conceptMap[1], conceptMap[0]);
             }
         }
-        return admissionDispositionConcept;
+        return conceptForDisposition;
     }
 
 	//***** CONCEPTS *****

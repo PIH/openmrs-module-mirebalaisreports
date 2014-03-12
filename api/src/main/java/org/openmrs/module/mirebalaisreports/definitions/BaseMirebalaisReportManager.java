@@ -77,9 +77,12 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "vitEnc", mrp.getVitalsEncounterType());
         sql = replace(sql, "consEnc", mrp.getConsultEncounterType());
         sql = replace(sql, "radEnc", mrp.getRadiologyOrderEncounterType());
+        sql = replace(sql, "radStudyEnc", mrp.getRadiologyStudyEncounterType());
+        sql = replace(sql, "radReportEnc", mrp.getRadiologyReportEncounterType());
         sql = replace(sql, "admitEnc", mrp.getAdmissionEncounterType());
         sql = replace(sql, "exitEnc", mrp.getExitFromInpatientEncounterType());
         sql = replace(sql, "transferEnc", mrp.getTransferEncounterType());
+        sql = replace(sql, "postOpNoteEnc", mrp.getPostOpNoteEncounterType());
 
         sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
 
@@ -115,6 +118,20 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "traumaOccur", mrp.getOccurrenceOfTraumaConcept());
         sql = replace(sql, "traumaType", mrp.getTraumaTypeConcept());
         sql = replace(sql, "rvd", mrp.getReturnVisitDate());
+
+        sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
+        sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());
+        sql = replace(sql, "transferOutDispoConcept", mrp.getTransferOutOfHospitalDispositionConcept());
+        sql = replace(sql, "transferWithinDispoConcept", mrp.getTransferWithinHospitalDispositionConcept());
+        sql = replace(sql, "deathDispoConcept", mrp.getDeathDispositionConcept());
+        sql = replace(sql, "leftWithoutSeeingDispoConcept", mrp.getLeftWithoutSeeingClinicianDispositionConcept());
+        sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
+        sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
+        sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
+
+        sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());
+        sql = replace(sql, "principalResultsInterpreter", mrp.getPrincipalResultsInterpreterEncounterRole());
+        sql = replace(sql, "radiologyTech", mrp.getRadiologyTechnicianEncounterRole());
 
         log.debug("Replacing metadata references complete.");
         return sql;

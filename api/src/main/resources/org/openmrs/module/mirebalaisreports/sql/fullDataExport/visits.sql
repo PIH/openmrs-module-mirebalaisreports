@@ -6,13 +6,13 @@ SELECT v.visit_id, p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered
 FROM patient p
 
 --Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 
 --ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
 
 --Unknown patient
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = 10 AND un.voided = 0
+LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt AND un.voided = 0
 
 --Person record
 INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
@@ -29,39 +29,39 @@ INNER JOIN visit_type vt ON v.visit_type_id = vt.visit_type_id
 INNER JOIN location vl ON v.location_id = vl.location_id
 
 --Registration encounter, if patient was registered same day visit started
-LEFT OUTER JOIN encounter reg ON p.patient_id = reg.patient_id AND reg.encounter_type = 6 AND reg.voided = 0 AND DATE(reg.encounter_datetime) = DATE(v.date_started)
+LEFT OUTER JOIN encounter reg ON p.patient_id = reg.patient_id AND reg.encounter_type = :regEnc AND reg.voided = 0 AND DATE(reg.encounter_datetime) = DATE(v.date_started)
 
 --Count of check-in encounters, with date and time of first check-in
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 1 AND voided = 0 GROUP BY visit_id) chk ON v.visit_id = chk.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 1 AND voided = 0 GROUP BY visit_id) fchk ON v.visit_id = fchk.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :chkEnc AND voided = 0 GROUP BY visit_id) chk ON v.visit_id = chk.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :chkEnc AND voided = 0 GROUP BY visit_id) fchk ON v.visit_id = fchk.visit_id
 
 --Count of vitals encounters, with date and time of first vitals
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 5 AND voided = 0 GROUP BY visit_id) vit ON v.visit_id = vit.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 5 AND voided = 0 GROUP BY visit_id) fvit ON v.visit_id = fvit.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :vitEnc AND voided = 0 GROUP BY visit_id) vit ON v.visit_id = vit.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :vitEnc AND voided = 0 GROUP BY visit_id) fvit ON v.visit_id = fvit.visit_id
 
 --Count of consultations, with date and time of first consultation
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 8 AND voided = 0 GROUP BY visit_id) cons ON v.visit_id = cons.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 8 AND voided = 0 GROUP BY visit_id) fcons ON v.visit_id = fcons.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :consEnc AND voided = 0 GROUP BY visit_id) cons ON v.visit_id = cons.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :consEnc AND voided = 0 GROUP BY visit_id) fcons ON v.visit_id = fcons.visit_id
 
 --Count of radiology order encounters, with date and time of first
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 7 AND voided = 0 GROUP BY visit_id) rad ON v.visit_id = rad.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 7 AND voided = 0 GROUP BY visit_id) frad ON v.visit_id = frad.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :radEnc AND voided = 0 GROUP BY visit_id) rad ON v.visit_id = rad.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :radEnc AND voided = 0 GROUP BY visit_id) frad ON v.visit_id = frad.visit_id
 
 --Count of admissions, with date and time of first admission
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 12 AND voided = 0 GROUP BY visit_id) adm ON v.visit_id = adm.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 12 AND voided = 0 GROUP BY visit_id) fadm ON v.visit_id = fadm.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :admitEnc AND voided = 0 GROUP BY visit_id) adm ON v.visit_id = adm.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :admitEnc AND voided = 0 GROUP BY visit_id) fadm ON v.visit_id = fadm.visit_id
 
 --Count of postop notes, with date and time of first
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 4 AND voided = 0 GROUP BY visit_id) pop ON v.visit_id = pop.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 4 AND voided = 0 GROUP BY visit_id) fpop ON v.visit_id = fpop.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :postOpNoteEnc AND voided = 0 GROUP BY visit_id) pop ON v.visit_id = pop.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :postOpNoteEnc AND voided = 0 GROUP BY visit_id) fpop ON v.visit_id = fpop.visit_id
 
 --Count of discharge encounters, with date and time of first
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 11 AND voided = 0 GROUP BY visit_id) dis ON v.visit_id = dis.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 11 AND voided = 0 GROUP BY visit_id) fdis ON v.visit_id = fdis.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :exitEnc AND voided = 0 GROUP BY visit_id) dis ON v.visit_id = dis.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :exitEnc AND voided = 0 GROUP BY visit_id) fdis ON v.visit_id = fdis.visit_id
 
 --Count of transfer encounters, with date and time of first
-LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = 13 AND voided = 0 GROUP BY visit_id) tfr ON v.visit_id = tfr.visit_id
-LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = 13 AND voided = 0 GROUP BY visit_id) ftfr ON v.visit_id = ftfr.visit_id
+LEFT OUTER JOIN (SELECT visit_id, COUNT(encounter_id) num FROM encounter WHERE encounter_type = :transferEnc AND voided = 0 GROUP BY visit_id) tfr ON v.visit_id = tfr.visit_id
+LEFT OUTER JOIN (SELECT visit_id, MIN(encounter_datetime) dt FROM encounter WHERE encounter_type = :transferEnc AND voided = 0 GROUP BY visit_id) ftfr ON v.visit_id = ftfr.visit_id
 
 --Checks to see if this is the first visit for the patient
 INNER JOIN (SELECT patient_id, MIN(date_started) date_started FROM visit WHERE voided = 0 GROUP BY patient_id) first_visit ON p.patient_id = first_visit.patient_id
@@ -72,7 +72,7 @@ LEFT OUTER JOIN visit prv ON p.patient_id = prv.patient_id AND prv.voided = 0 AN
 WHERE p.voided = 0
 
 --Excludes test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = 11 AND voided = 0)
+AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt AND voided = 0)
 
 AND v.date_started >= :startDate AND v.date_started < ADDDATE(:endDate, INTERVAL 1 DAY)
 
@@ -86,13 +86,13 @@ SELECT NULL, p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.v
 FROM patient p
 
 --Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 
 --ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
 
 --Unknown patient
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = 10 AND un.voided = 0
+LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt AND un.voided = 0
 
 --Person
 INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
@@ -107,14 +107,14 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 INNER JOIN (
 SELECT p.patient_id, e.encounter_id, e.encounter_datetime, v.visit_id
 FROM patient p
-INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.encounter_type = 6 AND e.voided = 0 AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)
+INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.encounter_type = :regEnc AND e.voided = 0 AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)
 LEFT OUTER JOIN visit v ON p.patient_id = v.patient_id AND v.voided = 0 AND DATE(e.encounter_datetime) = DATE(v.date_started)
 ) reg ON p.patient_id = reg.patient_id AND reg.visit_id IS NULL
 
 WHERE p.voided = 0
 
 --Excludes test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = 11 AND voided = 0)
+AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt AND voided = 0)
 
 GROUP BY reg.encounter_id
 
