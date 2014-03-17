@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, e.visit_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) entered_by, CONCAT(provn.given_name, ' ', provn.family_name) provider, IF(o.concept_id = :coded, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = :coded, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_fr, icd.code icd10_code,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) entered_by, CONCAT(provn.given_name, ' ', provn.family_name) provider, IF(o.concept_id = :coded, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = :coded, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_fr, icd.code icd10_code,
 
 --Checks to see if diagnosis is a member of a variety of concept sets
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :notifiable), TRUE, FALSE) notifiable,
@@ -14,7 +14,9 @@ IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :ageR
 o.date_created,
 
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
-IF(TIME_TO_SEC(o.date_created) - TIME_TO_SEC(o.obs_datetime) > 1800, TRUE, FALSE) retrospective
+IF(TIME_TO_SEC(o.date_created) - TIME_TO_SEC(o.obs_datetime) > 1800, TRUE, FALSE) retrospective,
+
+e.visit_id
 
 FROM patient p
 

@@ -1,6 +1,6 @@
 SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(adm.encounter_datetime, pr.birthdate)/365.25, 1) age_at_adm, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,
 
-adm.encounter_id, adm.visit_id, adm.encounter_datetime admission_datetime, adm_l.name admitting_ward, CONCAT(pn.given_name, ' ', pn.family_name) admitting_provider,
+adm.encounter_id, adm.encounter_datetime admission_datetime, adm_l.name admitting_ward, CONCAT(pn.given_name, ' ', pn.family_name) admitting_provider,
 
 transf_1.encounter_datetime transf_1_datetime,
 transf_1_l.name transf_1_location,
@@ -23,7 +23,8 @@ IF(dis.encounter_datetime IS NOT NULL, dis.encounter_datetime, IF(pr.death_date 
 (DATEDIFF(IF(dis.encounter_datetime IS NOT NULL, dis.encounter_datetime, IF(pr.death_date IS NOT NULL, pr.death_date, NOW())), adm.encounter_datetime) + 1) length_of_hospitalization,
 
 dis_dispo.disposition_location transfer_out_location,
-IF(pr.dead = 0, NULL, IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Died < 48hrs', 'Died >= 48 hrs')) died
+IF(pr.dead = 0, NULL, IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Died < 48hrs', 'Died >= 48 hrs')) died,
+adm.visit_id
 
 FROM patient p
 
