@@ -5,11 +5,8 @@ import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.reporting.report.renderer.RenderingMode;
-import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,26 +20,12 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1"; //switched from XLS to CSV
     }
 
     @Override
     protected String getMessageCodePrefix() {
         return "mirebalaisreports.allpatientswithids.";
-    }
-
-    @Override
-    public List<RenderingMode> getRenderingModes() {
-        List<RenderingMode> l = new ArrayList<RenderingMode>();
-        {
-            RenderingMode mode = new RenderingMode();
-            mode.setLabel(translate("output.Excel"));
-            mode.setRenderer(new XlsReportRenderer());
-            mode.setSortWeight(50);
-            mode.setArgument("");
-            l.add(mode);
-        }
-        return l;
     }
 
     @Override
@@ -58,7 +41,6 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
         dsd.setName(getName());
         dsd.setDescription(getDescription());
 
-
         String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "allPatients_withIds.sql");
         sql = applyMetadataReplacements(sql);
         dsd.setSqlQuery(sql);
@@ -72,7 +54,7 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        return Arrays.asList(csvReportDesign(reportDefinition));
     }
 
 }

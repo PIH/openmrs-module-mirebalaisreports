@@ -99,7 +99,7 @@
         "extensionPointId": "org.openmrs.module.reportingui.reports.dataexport",
         "type": "link",
         "label": "mirebalaisreports.allpatientswithids.name",
-        "url": "mirebalaisreports/allPatientsWithIds.page",
+        "url": "reportingui/runReport.page?reportDefinition=d534683e-20bd-11e3-b5bd-0bec7fb71852",
         "order": 102,
         "requiredPrivilege": "App: mirebalaisreports.dataexports",
         "extensionParams": { "linkId": "mirebalaisreports-allPatientsWithIdsReport-link" }

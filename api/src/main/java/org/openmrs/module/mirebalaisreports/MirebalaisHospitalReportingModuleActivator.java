@@ -22,6 +22,7 @@ import org.openmrs.api.db.SerializedObject;
 import org.openmrs.api.db.SerializedObjectDAO;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.mirebalaisreports.definitions.AllPatientsWithIdsReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.FullDataExportBuilder;
 import org.openmrs.module.mirebalaisreports.definitions.InpatientListReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsDailyReportManager;
@@ -85,6 +86,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
      * ready to be included here
      */
     private void setupOtherReports() {
+        setupReport(Context.getRegisteredComponents(AllPatientsWithIdsReportManager.class).get(0));
         setupReport(Context.getRegisteredComponents(InpatientStatsDailyReportManager.class).get(0));
         setupReport(Context.getRegisteredComponents(InpatientStatsMonthlyReportManager.class).get(0));
         setupReport(Context.getRegisteredComponents(InpatientListReportManager.class).get(0));
