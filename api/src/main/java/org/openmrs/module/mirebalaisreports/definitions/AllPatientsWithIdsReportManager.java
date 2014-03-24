@@ -20,7 +20,7 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public String getVersion() {
-        return "1.1"; //switched from XLS to CSV
+        return "1.2"; // fixed name to be localized
     }
 
     @Override
@@ -33,8 +33,8 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
         log.info("Constructing " + getName());
 
         ReportDefinition rd = new ReportDefinition();
-        rd.setName(getName());
-        rd.setDescription(getDescription());
+        rd.setName(getMessageCodePrefix() + "name");
+        rd.setDescription(getMessageCodePrefix() + "description");
         rd.setUuid(getUuid());
 
         SqlDataSetDefinition dsd = new SqlDataSetDefinition();
