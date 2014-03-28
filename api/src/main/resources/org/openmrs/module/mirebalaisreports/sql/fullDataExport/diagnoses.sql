@@ -16,7 +16,7 @@ o.date_created,
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(o.date_created) - TIME_TO_SEC(o.obs_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id
+e.visit_id, pr.birthdate, pr.birthdate_estimated
 
 FROM patient p
 
