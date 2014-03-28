@@ -30,7 +30,7 @@ plan.value_text plan, e.date_created,
 
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
-emergency_n.name emergency, e.visit_id, pr.birthdate, pr.birthdate_estimated
+emergency_n.name emergency, e.visit_id
 
 FROM patient p
 

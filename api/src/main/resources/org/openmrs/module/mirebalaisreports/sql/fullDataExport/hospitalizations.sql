@@ -24,7 +24,7 @@ IF(dis.encounter_datetime IS NOT NULL, dis.encounter_datetime, IF(pr.death_date 
 
 dis_dispo.disposition_location transfer_out_location,
 IF(pr.dead = 0, NULL, IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Died < 48hrs', 'Died >= 48 hrs')) died,
-adm.visit_id, pr.birthdate, pr.birthdate_estimated
+adm.visit_id
 
 FROM patient p
 
