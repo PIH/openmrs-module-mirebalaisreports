@@ -39,6 +39,7 @@ import org.openmrs.module.reporting.data.encounter.library.BuiltInEncounterDataL
 import org.openmrs.module.reporting.data.obs.definition.GroupMemberObsDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
+import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.EncounterDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
@@ -246,6 +247,8 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("attendingSurgeon", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "attendingSurgeon.name"), null);
         dsd.addColumn("assistingSurgeon", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "assistingSurgeon.name"), null);
         dsd.addColumn("anesthesiologist", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "anesthesiologist.name"), null);
+        dsd.addColumn("birthdate", libraries.getDefinition(PatientDataDefinition.class, BuiltInPatientDataLibrary.PREFIX + "birthdate"), null);
+        dsd.addColumn("birthdate_estimated", libraries.getDefinition(PatientDataDefinition.class, BuiltInPatientDataLibrary.PREFIX + "birthdate.estimated"), null);
 
         return dsd;
     }
@@ -476,6 +479,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
         // ROUND(DATEDIFF(reg.encounter_datetime, pr.birthdate)/365.25, 1) age_at_reg
         dsd.addColumn("age_at_reg", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.registration.age"), "");
+
+        dsd.addColumn("birthdate", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.birthdate"), "");
+        dsd.addColumn("birthdate_estimated", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.birthdate.estimated"), "");
 
         return dsd;
     }

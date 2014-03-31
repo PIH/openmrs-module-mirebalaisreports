@@ -2,7 +2,7 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 
 										 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
-reason_n.name type_of_visit, e.visit_id
+reason_n.name type_of_visit, e.visit_id, pr.birthdate, pr.birthdate_estimated
 
 FROM patient p
 
