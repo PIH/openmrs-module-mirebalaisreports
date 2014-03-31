@@ -81,7 +81,7 @@ GROUP BY v.visit_id
 UNION
 
 --Second dataset, for patients with a registration encounter but no visit
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(reg.encounter_datetime, pr.birthdate)/365.25, 1) age_at_visit, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, reg.encounter_datetime reg_dt, NULL, NULL, reg.encounter_datetime, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, , pr.birthdate, pr.birthdate_estimated
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(reg.encounter_datetime, pr.birthdate)/365.25, 1) age_at_visit, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, reg.encounter_datetime reg_dt, NULL, NULL, reg.encounter_datetime, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, pr.birthdate, pr.birthdate_estimated
 
 FROM patient p
 
