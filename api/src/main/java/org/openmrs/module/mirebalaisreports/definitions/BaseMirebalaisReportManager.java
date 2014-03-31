@@ -7,6 +7,7 @@ import org.openmrs.OpenmrsObject;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.radiologyapp.RadiologyProperties;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
@@ -32,6 +33,9 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
     @Autowired
     protected EmrApiProperties emrApiProperties;
+
+    @Autowired
+    protected RadiologyProperties radiologyProperties;
 
     public abstract String getUuid();
 
@@ -131,6 +135,10 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
         sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
         sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
+
+        sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
+        sql = replace(sql, "ctOrderables", radiologyProperties.getCTScanOrderablesConcept());
+        sql = replace(sql, "ultrasoundOrderables", radiologyProperties.getUltrasoundOrderablesConcept());
 
         log.debug("Replacing metadata references complete.");
         return sql;

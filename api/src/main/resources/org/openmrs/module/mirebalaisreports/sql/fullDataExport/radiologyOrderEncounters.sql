@@ -3,7 +3,15 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id, pr.birthdate, pr.birthdate_estimated
+e.visit_id, pr.birthdate, pr.birthdate_estimated,
+
+CASE
+  WHEN ct_set.concept_id is not null THEN 'CT'
+  WHEN us_set.concept_id is not null THEN 'Ultrasound'
+  ELSE 'Xray'
+END as modality,
+
+test_order.clinical_history
 
 FROM patient p
 
@@ -42,6 +50,14 @@ INNER JOIN location el ON e.location_id = el.location_id
 
 --Radiology order associated with encounter
 INNER JOIN orders o ON e.encounter_id = o.encounter_id AND o.voided = 0
+
+INNER JOIN test_order ON test_order.order_id = o.order_id
+
+-- Is the order a CT?
+LEFT OUTER JOIN concept_set ct_set ON o.concept_id = ct_set.concept_id AND ct_set.concept_set = :ctOrderables
+
+-- Is the order an Ultrasound?
+LEFT OUTER JOIN concept_set us_set ON o.concept_id = us_set.concept_id AND us_set.concept_set = :ultrasoundOrderables
 
 WHERE p.voided = 0
 

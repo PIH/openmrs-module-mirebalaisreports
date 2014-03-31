@@ -34,6 +34,7 @@
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
 		<openMRSVersion>1.9.4</openMRSVersion>
         <emrapiVersion>1.1-SNAPSHOT</emrapiVersion>
+        <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
         <reportingVersion>0.8.2-SNAPSHOT</reportingVersion>
@@ -218,6 +219,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>dispensing-api</artifactId>
             <version>${dispensingVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>radiologyapp-api</artifactId>
+            <version>${radiologyappVersion}</version>
             <scope>provided</scope>
         </dependency>
 
