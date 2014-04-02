@@ -92,6 +92,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());
         sql = replace(sql, "principalResultsInterpreter", mrp.getPrincipalResultsInterpreterEncounterRole());
         sql = replace(sql, "radiologyTech", mrp.getRadiologyTechnicianEncounterRole());
+        sql = replace(sql, "nurse", mrp.getNurseEncounterRole());
 
         sql = replace(sql, "icd10", mrp.getIcd10ConceptSource());
 

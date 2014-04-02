@@ -3,7 +3,7 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id
+e.visit_id, pr.birthdate, pr.birthdate_estimated
 
 FROM patient p
 
@@ -33,7 +33,7 @@ INNER JOIN users u ON e.creator = u.user_id
 INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
 
 --Provider with Nurse encounter role in vitals encounters
-INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = 3
+INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = :nurse
 INNER JOIN provider epp ON ep.provider_id = epp.provider_id
 INNER JOIN person_name provn ON epp.person_id = provn.person_id AND provn.voided = 0
 
