@@ -4,17 +4,7 @@ CASE
   WHEN o.concept_id IN(SELECT concept_id FROM concept_set WHERE concept_set = :ctOrderables) THEN 'CT'
   WHEN o.concept_id IN(SELECT concept_id FROM concept_set WHERE concept_set = :ultrasoundOrderables) THEN 'Ultrasound'
   ELSE 'Xray'
-END AS modality,
-
-CASE
-  WHEN o.concept_id IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyChest) THEN 'chest'
-  WHEN o.concept_id IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyHeadNeck) THEN 'head and neck'
-  WHEN o.concept_id IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologySpine) THEN 'spine'
-  WHEN o.concept_id IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyVascular) THEN 'vascular'
-  WHEN o.concept_id IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyAbdomenPelvis) THEN 'abdomen and pelvis'
-  WHEN o.concept_id IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyMusculoskeletal) THEN 'musculoskeletal (non-cranial/spinal)'
-  ELSE '?'
-END AS anatomical_grouping
+END AS modality
 
 FROM patient p
 
