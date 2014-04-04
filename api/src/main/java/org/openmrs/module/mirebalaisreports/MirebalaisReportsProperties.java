@@ -596,6 +596,37 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(OTHER_ASSISTANT_CONCEPT_UUID);
     }
 
+    public static final String CHEST_RADIOLOGY_EXAM_SET_UUID = "cf739c45-e5e6-4544-b06a-16670898706e";
+    public static final String SPINE_RADIOLOGY_EXAM_SET_UUID = "35ca061d-91d4-4549-aa80-be6b82706053";
+    public static final String HEAD_AND_NECK_RADIOLOGY_EXAM_SET_UUID = "c271e719-8bf7-4f06-a8d5-853210c34592";
+    public static final String VASCULAR_RADIOLOGY_EXAM_SET_UUID = "4419626d-236c-4281-968d-961cf90567fb";
+    public static final String ABDOMEN_AND_PELVIS_RADIOLOGY_EXAM_SET_UUID = "da40f72e-8c3e-4b82-8295-b4bbd656afa8";
+    public static final String MUSCULOSKELETAL_NON_CRANIAL_AND_SPINAL_RADIOLOGY_EXAM_SET_UUID = "2d26d7be-f7fa-400a-9e26-2fdf5e01e9ab";
+
+    public Concept getChestRadiologyExamSetConcept() {
+        return getRequiredConceptByUuid(CHEST_RADIOLOGY_EXAM_SET_UUID);
+    }
+
+    public Concept getSpineRadiologyExamSetConcept() {
+        return getRequiredConceptByUuid(SPINE_RADIOLOGY_EXAM_SET_UUID);
+    }
+
+    public Concept getHeadAndNeckRadiologyExamSetConcept() {
+        return getRequiredConceptByUuid(HEAD_AND_NECK_RADIOLOGY_EXAM_SET_UUID);
+    }
+
+    public Concept getVascularRadiologyExamSetConcept() {
+        return getRequiredConceptByUuid(VASCULAR_RADIOLOGY_EXAM_SET_UUID);
+    }
+
+    public Concept getAbdomenAndPelvisRadiologyExamSetConcept() {
+        return getRequiredConceptByUuid(ABDOMEN_AND_PELVIS_RADIOLOGY_EXAM_SET_UUID);
+    }
+
+    public Concept getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept() {
+        return getRequiredConceptByUuid(MUSCULOSKELETAL_NON_CRANIAL_AND_SPINAL_RADIOLOGY_EXAM_SET_UUID);
+    }
+
 	private Concept getRequiredConceptByUuid(String uuid) {
 		Concept c = conceptService.getConceptByUuid(uuid);
 		if (c == null) {

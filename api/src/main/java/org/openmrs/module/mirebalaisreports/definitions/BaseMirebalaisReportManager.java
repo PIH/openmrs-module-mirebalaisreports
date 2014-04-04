@@ -137,9 +137,18 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
         sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
 
+        // sets for radiological exam modalities
         sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
         sql = replace(sql, "ctOrderables", radiologyProperties.getCTScanOrderablesConcept());
         sql = replace(sql, "ultrasoundOrderables", radiologyProperties.getUltrasoundOrderablesConcept());
+
+        // sets for anatomical groupings of radiological exams
+        sql = replace(sql, "radiologyChest", mrp.getChestRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyHeadNeck", mrp.getHeadAndNeckRadiologyExamSetConcept());
+        sql = replace(sql, "radiologySpine", mrp.getSpineRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyVascular", mrp.getVascularRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyAbdomenPelvis", mrp.getAbdomenAndPelvisRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyMusculoskeletal", mrp.getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept());
 
         log.debug("Replacing metadata references complete.");
         return sql;
