@@ -3,7 +3,17 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id, pr.birthdate, pr.birthdate_estimated
+e.visit_id, pr.birthdate, pr.birthdate_estimated,
+
+CASE
+  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyChest) THEN 'chest'
+  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyHeadNeck) THEN 'head and neck'
+  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologySpine) THEN 'spine'
+  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyVascular) THEN 'vascular'
+  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyAbdomenPelvis) THEN 'abdomen and pelvis'
+  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyMusculoskeletal) THEN 'musculoskeletal (non-cranial/spinal)'
+  ELSE '?'
+END AS anatomical_grouping
 
 FROM patient p
 

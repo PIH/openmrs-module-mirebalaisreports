@@ -188,9 +188,9 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         context.setBaseEncounters(encounterIdSet);
         EncounterDataDefinition definition = library.getMostRecentZLEmrIdLocation();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
-        assertThat((String)data.getData().get(e1.getId()), is("Mirebalais Hospital"));
-        assertThat((String)data.getData().get(e2.getId()), is("Mirebalais Hospital"));
-        assertThat((String) data.getData().get(e3.getId()), is("Mirebalais Hospital"));
+        assertThat((String)data.getData().get(e1.getId()), is("Hôpital Universitaire de Mirebalais"));
+        assertThat((String)data.getData().get(e2.getId()), is("Hôpital Universitaire de Mirebalais"));
+        assertThat((String) data.getData().get(e3.getId()), is("Hôpital Universitaire de Mirebalais"));
     }
 
     @Test
@@ -338,9 +338,9 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         context.setBaseEncounters(encounterIdSet);
         EncounterDataDefinition definition = library.getLocationName();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
-        assertThat((String) data.getData().get(e1.getId()), is("Clinic Registration"));
-        assertThat((String) data.getData().get(e2.getId()), is("Women’s Internal Medicine"));
-        assertThat((String) data.getData().get(e3.getId()), is("Women’s Internal Medicine"));
+        assertThat((String) data.getData().get(e1.getId()), is("Biwo Resepsyon"));
+        assertThat((String) data.getData().get(e2.getId()), is("Sal Fanm"));
+        assertThat((String) data.getData().get(e3.getId()), is("Sal Fanm"));
     }
 
     @Test

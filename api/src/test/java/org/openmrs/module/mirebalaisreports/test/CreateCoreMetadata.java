@@ -28,17 +28,19 @@ import java.io.FileWriter;
 /**
  * Produces the coreMetadata.xml test dataset.  This should be run as follows:
  * 1. Install a new, empty mirebalais implementation following the steps on the wiki
+ *      (it's probably okay to use an existing database, as long as it's nearly-empty of things like users and providers)
  * 2. Point your .OpenMRS/openmrs-runtime.properties file at this database
  * 3. Specify a location where you want the dataset to be written (leaving this blank will skip the execution of this)
  * 4. Run this as a unit test
  * This should produce a new version of coreMetadata.xml at the location you have specified,
  * and you can copy it into the resources folder if and as appropriate
+ * 5. If any of your <provider .../> rows have a provider_role_id attribute, remove that
  */
 public class CreateCoreMetadata extends BaseModuleContextSensitiveTest {
 
 	public String getOutputDirectory() {
 		//return "/home/mseaton/code/mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
-		return "/Users/djazayeri/Documents/git-repositories/openmrs-module-mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
+		return "/Users/djazayeri/git-repositories/openmrs-module-mirebalaisreports/api/src/test/resources/org/openmrs/module/mirebalaisreports";
 		//return "";
 	}
 
@@ -56,7 +58,7 @@ public class CreateCoreMetadata extends BaseModuleContextSensitiveTest {
 		QueryDataSet initialDataSet = new QueryDataSet(connection);
 
 		initialDataSet.addTable("users", "SELECT * FROM users");
-		initialDataSet.addTable("person", "SELECT * FROM person");
+		initialDataSet.addTable("person", "SELECT * FROM person p WHERE (select count(*) from users where person_id = p.person_id) > 0 OR (select count(*) from provider where person_id = p.person_id) > 0");
 
 		initialDataSet.addTable("concept", "SELECT * FROM concept");
 		initialDataSet.addTable("concept_answer", "SELECT * FROM concept_answer");
