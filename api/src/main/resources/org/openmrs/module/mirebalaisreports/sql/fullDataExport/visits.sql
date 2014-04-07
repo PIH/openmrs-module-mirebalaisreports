@@ -1,4 +1,4 @@
---This export returns two separate datasets, one with one row per visit, and another with one row per registration encounter that is not associated with a visit that day (since registration encounters are supposed to be counted as visits, but are not currently grouped with visits in our database)
+--This export used to UNION two datasets (the second including patients registered on a day, but with no visit) but we removed this on 7-Apr-2014 as part of UHM-1162 because it is no longer necessary
 
 --First dataset, for visits
 SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(v.date_started, pr.birthdate)/365.25, 1) age_at_visit, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, reg.encounter_datetime reg_dt, vt.name visit_type, vl.name visit_location, IF(reg.encounter_datetime IS NOT NULL, reg.encounter_datetime, v.date_started) date_started, v.date_stopped, IF(v.date_stopped IS NOT NULL, TIME_TO_SEC(TIMEDIFF(v.date_stopped, IF(reg.encounter_datetime IS NOT NULL, reg.encounter_datetime, v.date_started)))/3600, NULL) duration, chk.num num_check_in, fchk.dt first_check_in, IF(reg.encounter_datetime < fchk.dt, TIME_TO_SEC(TIMEDIFF(fchk.dt, reg.encounter_datetime))/3600, NULL) reg_to_chk, vit.num num_vit, fvit.dt first_vitals, IF(fvit.dt > fchk.dt, TIME_TO_SEC(TIMEDIFF(fvit.dt, fchk.dt))/3600, NULL) time_to_vitals, cons.num num_consulations, fcons.dt first_consultation, IF(fcons.dt > fvit.dt, TIME_TO_SEC(TIMEDIFF(fcons.dt, fvit.dt))/3600, NULL) time_to_consultation, rad.num num_radiology, frad.dt first_radiology, adm.num num_admissions, fadm.dt first_admission, pop.num num_post_op, fpop.dt first_post_op, dis.num num_discharges, fdis.dt first_discharge, tfr.num num_transfers, ftfr.dt first_transfer, IF(fdis.dt IS NOT NULL, TIME_TO_SEC(TIMEDIFF(fdis.dt, fadm.dt))/86400, NULL) ln_hospitalization, IF(first_visit.date_started = v.date_started, TRUE, FALSE) first_visit, IF(prv.date_started IS NOT NULL, TRUE, FALSE) 2nd_day, v.visit_id, pr.birthdate, pr.birthdate_estimated
@@ -77,45 +77,4 @@ AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 't
 AND v.date_started >= :startDate AND v.date_started < ADDDATE(:endDate, INTERVAL 1 DAY)
 
 GROUP BY v.visit_id
-
-UNION
-
---Second dataset, for patients with a registration encounter but no visit
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(reg.encounter_datetime, pr.birthdate)/365.25, 1) age_at_visit, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, reg.encounter_datetime reg_dt, NULL, NULL, reg.encounter_datetime, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, pr.birthdate, pr.birthdate_estimated
-
-FROM patient p
-
---Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
-
---ZL EMR ID location
-INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
-
---Unknown patient
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt AND un.voided = 0
-
---Person
-INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
-
---Most recent address
-LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
-
---Most recent name
-INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
-
---Finds registration encounters during the period, then filters out encounters that had a same day visit
-INNER JOIN (
-SELECT p.patient_id, e.encounter_id, e.encounter_datetime, v.visit_id
-FROM patient p
-INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.encounter_type = :regEnc AND e.voided = 0 AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)
-LEFT OUTER JOIN visit v ON p.patient_id = v.patient_id AND v.voided = 0 AND DATE(e.encounter_datetime) = DATE(v.date_started)
-) reg ON p.patient_id = reg.patient_id AND reg.visit_id IS NULL
-
-WHERE p.voided = 0
-
---Excludes test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt AND voided = 0)
-
-GROUP BY reg.encounter_id
-
 ;
