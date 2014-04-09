@@ -74,7 +74,7 @@
         <td colspan="4">${ ui.message("emr.none") }</td>
     </tr>
     <% } %>
-    <% inpatientsList.each { v ->
+    <% inpatientsList.sort{ it.admissionDateTime }.reverse().each { v ->
     %>
     <tr id="visit-${ v.patientId
     }">
