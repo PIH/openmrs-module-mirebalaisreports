@@ -29,6 +29,7 @@ import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
+import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -310,6 +311,31 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .address("", "", "Kapina").save();
         data.encounter().patient(patient).encounterType(mirebalaisReportsProperties.getRegistrationEncounterType())
                 .encounterDatetime("2013-09-08").location(mirebalaisReportsProperties.getOutpatientLocation()).save();
+    }
+
+    @Test
+    public void testConsultationsHacked() throws Exception {
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList("consultations"));
+        FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
+        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
+
+        // H2 cannot handle the following snippets, so we remove them from the query
+        SqlDataSetDefinition sqlDsd = (SqlDataSetDefinition) reportDefinition.getDataSetDefinitions().get("consultations").getParameterizable();
+        String sql = sqlDsd.getSqlQuery();
+        sql = sql.replace("ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,", "");
+        sql = sql.replace("DATE(rvd.value_datetime) appointment,", "");
+        sql = sql.replace("IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,", "");
+        sql = sql.replace("AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)", "");
+        sqlDsd.setSqlQuery(sql);
+
+        EvaluationContext context = new EvaluationContext();
+        context.addParameterValue("startDate", DateUtil.parseDate("2013-10-01", "yyyy-MM-dd"));
+        context.addParameterValue("endDate", DateUtil.parseDate("2013-10-31", "yyyy-MM-dd"));
+
+        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
+        new TsvReportRenderer().render(reportData, null, System.out);
+
+        // we don't actually test anything here beyond the fact that the SQL query can be executed
     }
 
     @Test @Ignore("H2 cannot handle DATE() function to cast a timestamp to a date")

@@ -627,6 +627,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(MUSCULOSKELETAL_NON_CRANIAL_AND_SPINAL_RADIOLOGY_EXAM_SET_UUID);
     }
 
+    public static final String BOARDING_FOR_CONCEPT_UUID = "83a54c1d-510e-4860-8971-61755c71f0ed";
+
+    public Concept getBoardingForConcept() {
+        return getRequiredConceptByUuid(BOARDING_FOR_CONCEPT_UUID);
+    }
+
 	private Concept getRequiredConceptByUuid(String uuid) {
 		Concept c = conceptService.getConceptByUuid(uuid);
 		if (c == null) {
