@@ -127,6 +127,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "traumaType", mrp.getTraumaTypeConcept());
         sql = replace(sql, "rvd", mrp.getReturnVisitDate());
         sql = replace(sql, "boardingFor", mrp.getBoardingForConcept());
+        sql = replace(sql, "typeOfPatient", mrp.getTypeOfPatientConcept());
 
         sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
         sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());

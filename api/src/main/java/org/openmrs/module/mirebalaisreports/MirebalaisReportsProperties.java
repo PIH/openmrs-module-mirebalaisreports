@@ -633,6 +633,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getRequiredConceptByUuid(BOARDING_FOR_CONCEPT_UUID);
     }
 
+    public static final String TYPE_OF_PATIENT_CONCEPT_UUID = "4813f780-ba12-48c3-befb-401ac0246929";
+
+    public Concept getTypeOfPatientConcept() {
+        return getRequiredConceptByUuid(TYPE_OF_PATIENT_CONCEPT_UUID);
+    }
+
 	private Concept getRequiredConceptByUuid(String uuid) {
 		Concept c = conceptService.getConceptByUuid(uuid);
 		if (c == null) {

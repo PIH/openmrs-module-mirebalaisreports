@@ -25,7 +25,9 @@ anesthesia_n.name anesthesia, e.date_created,
 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id, pr.birthdate, pr.birthdate_estimated
+e.visit_id, pr.birthdate, pr.birthdate_estimated,
+
+admission_status_n.name as admission_status
 
 FROM patient p
 
@@ -121,6 +123,10 @@ LEFT OUTER JOIN concept_name procedure_5_n ON procedure_5.value_coded = procedur
 --Anesthesia
 LEFT OUTER JOIN obs anesthesia ON e.encounter_id = anesthesia.encounter_id AND anesthesia.concept_id = 508 AND anesthesia.voided = 0
 LEFT OUTER JOIN concept_name anesthesia_n ON anesthesia.value_coded = anesthesia_n.concept_id AND anesthesia_n.locale = 'fr' AND anesthesia_n.locale_preferred = 1 AND anesthesia_n.voided = 0
+
+--Admission status
+LEFT OUTER JOIN obs admission_status ON e.encounter_id = admission_status.encounter_id AND admission_status.concept_id = :typeOfPatient AND admission_status.voided = 0
+LEFT OUTER JOIN concept_name admission_status_n ON admission_status.value_coded = admission_status_n.concept_id AND admission_status_n.locale = 'fr' AND admission_status_n.locale_preferred = 1 AND admission_status_n.voided = 0
 
 WHERE p.voided = 0
 

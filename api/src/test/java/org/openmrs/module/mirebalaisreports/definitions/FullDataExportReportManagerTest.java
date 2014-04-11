@@ -314,18 +314,26 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    public void testConsultationsHacked() throws Exception {
-        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList("consultations"));
+    public void testConsultationsHacky() throws Exception {
+        testExportHacky("consultations",
+                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
+                "DATE(rvd.value_datetime) appointment,",
+                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
+                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
+        // we don't actually test anything here beyond the fact that the SQL query can be executed
+    }
+
+    private ReportData testExportHacky(String dataSetName, String... removeTheseSnippets) throws Exception {
+        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList(dataSetName));
         FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
         ReportDefinition reportDefinition = reportManager.constructReportDefinition();
 
         // H2 cannot handle the following snippets, so we remove them from the query
-        SqlDataSetDefinition sqlDsd = (SqlDataSetDefinition) reportDefinition.getDataSetDefinitions().get("consultations").getParameterizable();
+        SqlDataSetDefinition sqlDsd = (SqlDataSetDefinition) reportDefinition.getDataSetDefinitions().get(dataSetName).getParameterizable();
         String sql = sqlDsd.getSqlQuery();
-        sql = sql.replace("ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,", "");
-        sql = sql.replace("DATE(rvd.value_datetime) appointment,", "");
-        sql = sql.replace("IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,", "");
-        sql = sql.replace("AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)", "");
+        for (int i = 0; i < removeTheseSnippets.length; ++i) {
+            sql = sql.replace(removeTheseSnippets[i], "");
+        }
         sqlDsd.setSqlQuery(sql);
 
         EvaluationContext context = new EvaluationContext();
@@ -334,6 +342,30 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
         new TsvReportRenderer().render(reportData, null, System.out);
+
+        return reportData;
+    }
+
+    @Test
+    public void testPostOpNote1ExportHacky() throws Exception {
+        testExportHacky("postOpNote1",
+                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
+                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
+                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
+
+        // we don't actually test anything here beyond the fact that the SQL query can be executed
+    }
+
+    @Test
+    public void testPostOpNote2ExportHacky() throws Exception {
+        testExportHacky("postOpNote2",
+                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
+                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
+                "IF(whole_blood.obs_id IS NOT NULL, 'Oui', 'Non') whole_blood,",
+                "IF(plasma.obs_id IS NOT NULL, 'Oui', 'Non') plasma,",
+                "IF(platelets.obs_id IS NOT NULL, 'Oui', 'Non') platelets,",
+                "IF(packed_cells.obs_id IS NOT NULL, 'Oui', 'Non') packed_cells,",
+                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
 
         // we don't actually test anything here beyond the fact that the SQL query can be executed
     }
