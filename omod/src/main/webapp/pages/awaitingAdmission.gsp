@@ -49,14 +49,15 @@
 
 </script>
 
-<h2>Patients Awaiting Admission</h2>
+<h2>${ ui.message("mirebalaisreports.awaitingAdmission.title") }</h2>
 <strong class="inpatient-count">${ ui.message("emr.inpatients.patientCount") }: <span id="listSize">${awaitingAdmissionNumber}</span></strong>
 <div class="inpatient-filter">
-    ${ ui.includeFragment("emr", "field/location", [
+    ${ ui.includeFragment("uicommons", "field/location", [
             "id": "inpatients-filterByLocation",
             "formFieldName": "filterByLocationId",
-            "label": "mirebalais.awaitingAdmission.filterByAdmittedTo",
-            "withTag": "Admission Location"
+            "label": "mirebalaisreports.awaitingAdmission.filterByAdmittedTo",
+            "withTag": "Admission Location",
+            "initialValue": sessionContext.sessionLocation
     ] ) }
 </div>
 
@@ -70,7 +71,7 @@
         <th>${ ui.message("emr.patientDashBoard.provider") }</th>
         <th>${ ui.message("disposition.emrapi.admitToHospital.admissionLocation") }</th>
         <th>${ ui.message("mirebalaisreports.noncodeddiagnoses.diagnosis") }</th>
-        <th>${ ui.message("mirebalais.awaitingAdmission.admitPatient") }</th>
+        <th>${ ui.message("mirebalaisreports.awaitingAdmission.admitPatient") }</th>
 
     </tr>
     </thead>
