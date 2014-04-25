@@ -112,7 +112,7 @@
                 url = url.replaceAll('\\{\\{visit.id\\}\\}', visitId.toString())
             %>
                 <a href="/${ contextPath }/${ url }" class="">
-                <i class="${task.icon} admitIcon"></i> ${ ui.message(task.label) }</a>
+                <i class="${task.icon}"></i> ${ ui.message(task.label) }</a>
             <% } %>
         </td>
     </tr>

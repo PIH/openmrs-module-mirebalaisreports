@@ -1,6 +1,9 @@
 package org.openmrs.module.mirebalaisreports.page.controller;
 
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.appframework.domain.Extension;
@@ -17,9 +20,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 
-import java.util.Collections;
-import java.util.List;
-
 public class AwaitingAdmissionPageController  {
     private final Log log = LogFactory.getLog(getClass());
 
@@ -29,7 +29,7 @@ public class AwaitingAdmissionPageController  {
                     @SpringBean("appFrameworkService") AppFrameworkService appFrameworkService) throws EvaluationException {
 
         EvaluationContext context = new EvaluationContext();
-        List<Extension> admissionActions = appFrameworkService.getExtensionsById("patientDashboard.visitActions", "mirebalais.admit");
+        List<Extension> admissionActions = appFrameworkService.getAllEnabledExtensions("mirebalaisreports.awaitingAdmissionActions");
         Collections.sort(admissionActions);
         model.addAttribute("admissionActions", admissionActions);
 
