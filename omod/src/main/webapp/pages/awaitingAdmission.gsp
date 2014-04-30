@@ -61,7 +61,7 @@
     ] ) }
 </div>
 
-<table id="active-visits" width="100%" border="1" cellspacing="0" cellpadding="2">
+<table id="awaiting-admission" width="100%" border="1" cellspacing="0" cellpadding="2">
     <thead>
     <tr>
         <th>${ ui.message("emr.patient.identifier") }</th>
