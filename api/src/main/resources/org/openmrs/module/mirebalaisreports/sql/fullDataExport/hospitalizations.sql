@@ -18,13 +18,13 @@ CONCAT(transf_2_pn.given_name, ' ', transf_2_pn.family_name) transf_2_provider,
 --transf_4_l.name transf_4_location,
 --CONCAT(transf_4_pn.given_name, ' ', transf_4_pn.family_name) transf_4_provider,
 
-IF(dis_dispo.disposition IS NOT NULL, dis_dispo.disposition, 'Still Hospitalized') outcome,
+IF(dis_dispo.disposition IS NOT NULL, dis_dispo.disposition, 'Toujours hospitalisé') outcome,
 dis_dispo.dispo_datetime outcome_datetime,
 
-(DATEDIFF(IF(dis.encounter_datetime IS NOT NULL AND dis.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY), dis.encounter_datetime, ADDDATE(:endDate, INTERVAL 1 DAY)), adm.encounter_datetime) + 1) length_of_hospitalization,
+(DATEDIFF(IF(dis.encounter_datetime IS NOT NULL AND dis.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY), dis.encounter_datetime, :endDate), adm.encounter_datetime) + 1) length_of_hospitalization,
 
 dis_dispo.disposition_location transfer_out_location,
-IF(pr.death_date IS NOT NULL AND pr.death_date < ADDDATE(:endDate, INTERVAL 1 DAY), IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Died < 48hrs', 'Died >= 48 hrs'), null) died,
+IF(pr.death_date IS NOT NULL AND pr.death_date < ADDDATE(:endDate, INTERVAL 1 DAY), IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Décès < 48 hrs', 'Décès >= 48 hrs'), null) died,
 v.visit_id as visit_id, pr.birthdate, pr.birthdate_estimated
 
 FROM patient p
