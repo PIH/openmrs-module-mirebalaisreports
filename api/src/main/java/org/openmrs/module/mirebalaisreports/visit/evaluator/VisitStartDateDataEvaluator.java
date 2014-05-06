@@ -14,16 +14,18 @@
 
 package org.openmrs.module.mirebalaisreports.visit.evaluator;
 
+import java.util.Date;
+import java.util.Map;
+
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.mirebalaisreports.visit.definition.VisitDataDefinition;
 import org.openmrs.module.mirebalaisreports.visit.definition.VisitStartDateDataDefinition;
 import org.openmrs.module.mirebalaisreports.visit.query.VisitQueryService;
+import org.openmrs.module.reporting.data.visit.EvaluatedVisitData;
+import org.openmrs.module.reporting.data.visit.definition.VisitDataDefinition;
+import org.openmrs.module.reporting.data.visit.evaluator.VisitDataEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.Map;
 
 /**
  *

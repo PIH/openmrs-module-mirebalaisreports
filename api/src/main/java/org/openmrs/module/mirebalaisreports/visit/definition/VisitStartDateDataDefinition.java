@@ -14,10 +14,11 @@
 
 package org.openmrs.module.mirebalaisreports.visit.definition;
 
-import org.openmrs.module.reporting.data.BaseDataDefinition;
-import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
-
 import java.util.Date;
+
+import org.openmrs.module.reporting.data.BaseDataDefinition;
+import org.openmrs.module.reporting.data.visit.definition.VisitDataDefinition;
+import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
 /**
  *

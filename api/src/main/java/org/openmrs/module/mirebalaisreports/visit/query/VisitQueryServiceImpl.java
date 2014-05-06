@@ -1,15 +1,15 @@
 package org.openmrs.module.mirebalaisreports.visit.query;
 
 
+import java.util.Date;
+import java.util.Map;
+
 import org.openmrs.Concept;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.diagnosis.DiagnosisMetadata;
-import org.openmrs.module.mirebalaisreports.visit.definition.VisitQuery;
 import org.openmrs.module.mirebalaisreports.visit.query.db.VisitQueryDAO;
 import org.openmrs.module.reporting.definition.service.BaseDefinitionService;
-
-import java.util.Date;
-import java.util.Map;
+import org.openmrs.module.reporting.query.visit.definition.VisitQuery;
 
 public class VisitQueryServiceImpl extends BaseDefinitionService<VisitQuery> implements VisitQueryService{
 

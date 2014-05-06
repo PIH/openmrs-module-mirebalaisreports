@@ -14,24 +14,22 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openmrs.module.mirebalaisreports.visit.api.VisitDataService;
-import org.openmrs.module.mirebalaisreports.visit.definition.VisitStartDateDataDefinition;
-import org.openmrs.module.mirebalaisreports.visit.evaluator.EvaluatedVisitData;
-import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.dataset.DataSet;
-import org.openmrs.module.reporting.dataset.DataSetRow;
-import org.openmrs.module.reporting.evaluation.EvaluationContext;
-import org.openmrs.test.BaseContextSensitiveTest;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.Date;
 
-import static org.hamcrest.collection.IsIterableWithSize.iterableWithSize;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.openmrs.module.mirebalaisreports.visit.definition.VisitStartDateDataDefinition;
+import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.data.visit.EvaluatedVisitData;
+import org.openmrs.module.reporting.data.visit.service.VisitDataService;
+import org.openmrs.module.reporting.dataset.DataSet;
+import org.openmrs.module.reporting.dataset.DataSetRow;
+import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
