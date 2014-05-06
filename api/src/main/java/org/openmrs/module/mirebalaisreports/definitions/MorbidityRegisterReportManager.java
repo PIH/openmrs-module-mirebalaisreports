@@ -16,6 +16,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import java.util.Date;
 
+import org.openmrs.module.mirebalaisreports.visit.definition.HasPrimaryDiagnosisVisitQuery;
 import org.openmrs.module.mirebalaisreports.visit.definition.VisitStartDateDataDefinition;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.definition.VisitDataSetDefinition;
@@ -25,7 +26,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
-import org.openmrs.module.reporting.query.visit.definition.HasPrimaryDiagnosisVisitQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
