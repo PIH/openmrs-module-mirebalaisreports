@@ -1,5 +1,19 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.joda.time.DateTime;
@@ -38,20 +52,6 @@ import org.openmrs.module.reporting.report.renderer.TsvReportRenderer;
 import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.sql.Timestamp;
-import java.util.Date;
-
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
 public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
@@ -187,7 +187,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((Integer) row.getColumnValue("numberOfProviders"), is(2));
                 assertThat((String) row.getColumnValue("administrativeClerk"), is("Checkin Clerk"));
                 assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
-                assertThat((String) row.getColumnValue("consultingClinician"), is(""));
+                assertThat((String) row.getColumnValue("consultingClinician"), is(nullValue()));
             }
             else if (encounterId.equals(e2.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
@@ -198,9 +198,9 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
                 assertThat((String) row.getColumnValue("allProviders"), is("Nurse Nursing"));
                 assertThat((Integer) row.getColumnValue("numberOfProviders"), is(1));
-                assertThat((String) row.getColumnValue("administrativeClerk"), is(""));
+                assertThat((String) row.getColumnValue("administrativeClerk"), is(nullValue()));
                 assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
-                assertThat((String) row.getColumnValue("consultingClinician"), is(""));
+                assertThat((String) row.getColumnValue("consultingClinician"), is(nullValue()));
             }
             else {
                 Assert.fail("Only encounters should be e1 and e2");
