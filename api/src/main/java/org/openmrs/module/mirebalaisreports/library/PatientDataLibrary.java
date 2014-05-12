@@ -6,7 +6,6 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonAttribute;
 import org.openmrs.User;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
@@ -19,9 +18,12 @@ import org.openmrs.module.reporting.data.converter.EarliestCreatedConverter;
 import org.openmrs.module.reporting.data.converter.MostRecentlyCreatedConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.converter.PropertyConverter;
-import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
-import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.*;
+import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PersonToPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.AgeAtDateOfOtherDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
@@ -53,50 +55,6 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
     @Override
     public String getKeyPrefix() {
         return "mirebalais.patientDataCalculation.";
-    }
-
-    @DocumentedDefinition("visit.id")
-    public PatientDataDefinition getVisitId() {
-        return sqlPatientDataDefinition("visitId.sql", null);
-    }
-
-    @DocumentedDefinition("requestedAdmissionToLocation")
-    public PatientDataDefinition getRequestedAdmissionToLocation() {
-        return sqlPatientDataDefinition("requestedAdmissionToLocation.sql",
-                new Replacements().add("admissionLocationConceptId",
-                        mirebalaisReportsProperties.getAdmissionLocationConcept().getId()));
-    }
-
-    @DocumentedDefinition("requestedAdmissionFromLocation")
-    public PatientDataDefinition getRequestedAdmissionFromLocation() {
-        return sqlPatientDataDefinition("requestedAdmissionFromLocation.sql",
-                new Replacements().add("dispositionConceptId", mirebalaisReportsProperties.getDispositionConcept().getId())
-                        .add("admissionDispositionConceptId", mirebalaisReportsProperties.getAdmissionDispositionConcept().getId()));
-    }
-
-    @DocumentedDefinition("requestedAdmissionDateTime")
-    public PatientDataDefinition getRequestedAdmissionDateTime() {
-        return sqlPatientDataDefinition("requestedAdmissionDateTime.sql",
-                new Replacements().add("dispositionConceptId", mirebalaisReportsProperties.getDispositionConcept().getId())
-                        .add("admissionDispositionConceptId", mirebalaisReportsProperties.getAdmissionDispositionConcept().getId()));
-    }
-
-    @DocumentedDefinition("requestedAdmissionProvider")
-    public PatientDataDefinition getRequestedAdmissionProvider() {
-        return sqlPatientDataDefinition("requestedAdmissionProvider.sql",
-                new Replacements().add("dispositionConceptId", mirebalaisReportsProperties.getDispositionConcept().getId())
-                        .add("admissionDispositionConceptId", mirebalaisReportsProperties.getAdmissionDispositionConcept().getId()));
-    }
-
-    @DocumentedDefinition("requestedAdmissionDiagnosis")
-    public PatientDataDefinition getRequestedAdmissionDiagnosis() {
-        return sqlPatientDataDefinition("requestedAdmissionDiagnosis.sql",
-                new Replacements().add("dispositionConceptId", mirebalaisReportsProperties.getDispositionConcept().getId())
-                        .add("admissionDispositionConceptId", mirebalaisReportsProperties.getAdmissionDispositionConcept().getId())
-                        .add("locale", Context.getLocale().toString())
-                        .add("codedDiagnosis", mirebalaisReportsProperties.getCodedDiagnosisConcept().getId())
-                        .add("diagnosisOrder", mirebalaisReportsProperties.getDiagnosisOrderConcept().getId())
-                        .add("primaryDiagnosis", mirebalaisReportsProperties.getPrimaryDiagnosisConcept().getId()));
     }
 
     @DocumentedDefinition("numberOfZlEmrIds")

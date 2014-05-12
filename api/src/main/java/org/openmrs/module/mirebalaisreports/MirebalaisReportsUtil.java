@@ -28,7 +28,6 @@ import org.openmrs.util.OpenmrsClassLoader;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +113,8 @@ public class MirebalaisReportsUtil {
 		return new RenderingMode(renderer, label, extension, null);
 	}
 
+    // has been moved to ReportUtil in reporting module, use the one there
+    @Deprecated
     public static List<Map<String, Object>> simplify(DataSet dataSet) {
         List<Map<String, Object>> simplified = new ArrayList<Map<String, Object>>();
         for (DataSetRow row : dataSet) {
