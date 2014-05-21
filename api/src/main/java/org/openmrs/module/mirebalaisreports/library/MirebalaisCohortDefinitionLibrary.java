@@ -71,21 +71,27 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
     @DocumentedDefinition(value = "specificCodedDiagnosesBetweenDates")
     public DiagnosisCohortDefinition getSpecificCodedDiagnosesBetweenDates() {
         DiagnosisCohortDefinition cd = new DiagnosisCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "On or after date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "On or before date", Date.class));
-        cd.addParameter(new Parameter("codedDiagnoses", "Which coded diagnoses", Concept.class, List.class, null));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        cd.addParameter(new Parameter("codedDiagnoses", "mirebalaisreports.parameter.codedDiagnoses", Concept.class, List.class, null));
         return cd;
+    }
+
+    @DocumentedDefinition(value = "testPatients")
+    public CohortDefinition getTestPatients() {
+        PersonAttributeCohortDefinition test = new PersonAttributeCohortDefinition();
+        test.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
+        //the method add value has a bug, using set values for now
+        test.setValues(Arrays.asList("true"));
+        return test;
     }
 
     @DocumentedDefinition(value = "excludeTestPatients")
     public CohortDefinition getExcludeTestPatients() {
-        PersonAttributeCohortDefinition personAttributeCohortDefinition = new PersonAttributeCohortDefinition();
-        personAttributeCohortDefinition.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
-        //the method add value has a bug, using set values for now
-        personAttributeCohortDefinition.setValues(Arrays.asList("true"));
+        CohortDefinition test = getTestPatients();
 
         CompositionCohortDefinition excludeTestPatientsCohortDefinition = new CompositionCohortDefinition();
-        excludeTestPatientsCohortDefinition.addSearch("test", map((CohortDefinition) personAttributeCohortDefinition, ""));
+        excludeTestPatientsCohortDefinition.addSearch("test", map(test, ""));
         excludeTestPatientsCohortDefinition.setCompositionString("NOT test");
         return excludeTestPatientsCohortDefinition;
     }
@@ -93,9 +99,9 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
     @DocumentedDefinition(value = "clinicalCheckInAtLocation")
     public CohortDefinition getClinicalCheckInAtLocation() {
         EncounterWithCodedObsCohortDefinition cd = new EncounterWithCodedObsCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-        cd.addParameter(new Parameter("locationList", "Locations", Location.class));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        cd.addParameter(new Parameter("locationList", "reporting.parameter.locationList", Location.class));
         cd.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
         cd.setConcept(conceptService.getConceptByMapping("Type of HUM visit", "PIH"));
         cd.addIncludeCodedValue(conceptService.getConceptByMapping("CLINICAL", "PIH"));
@@ -114,9 +120,9 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
     @DocumentedDefinition(value = "admissionAtLocationDuringPeriod")
     public CohortDefinition getAdmissionAtLocationDuringPeriod() {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-        cd.addParameter(new Parameter("locationList", "Locations", Location.class));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        cd.addParameter(new Parameter("locationList", "reporting.parameter.locationList", Location.class));
         cd.addEncounterType(mirebalaisReportsProperties.getAdmissionEncounterType());
         return new MappedParametersCohortDefinition(cd, "onOrAfter", "startDate", "onOrBefore", "endDate", "locationList", "location");
     }
@@ -124,18 +130,18 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
     @DocumentedDefinition(value = "transferInToLocationDuringPeriod")
     public CohortDefinition getTransferInToLocationDuringPeriod() {
         InpatientTransferCohortDefinition cd = new InpatientTransferCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-        cd.addParameter(new Parameter("inToWard", "In to ward", Location.class));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        cd.addParameter(new Parameter("inToWard", "mirebalaisreports.parameter.inToWard", Location.class));
         return new MappedParametersCohortDefinition(cd, "onOrAfter", "startDate", "onOrBefore", "endDate", "inToWard", "location");
     }
 
     @DocumentedDefinition(value = "transferOutOfLocationDuringPeriod")
     public CohortDefinition getTransferOutOfLocationDuringPeriod() {
         InpatientTransferCohortDefinition cd = new InpatientTransferCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-        cd.addParameter(new Parameter("outOfWard", "Out of ward", Location.class));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        cd.addParameter(new Parameter("outOfWard", "mirebalaisreports.parameter.outOfWard", Location.class));
         return new MappedParametersCohortDefinition(cd, "onOrAfter", "startDate", "onOrBefore", "endDate", "outOfWard", "location");
     }
 
@@ -143,8 +149,8 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
     public CohortDefinition getDiedSoonAfterAdmissionDuringPeriod() {
         DiedSoonAfterEncounterCohortDefinition cd = new DiedSoonAfterEncounterCohortDefinition();
         cd.setEncounterType(emrApiProperties.getAdmissionEncounterType());
-        cd.addParameter(new Parameter("diedOnOrAfter", "Died on or after", Date.class));
-        cd.addParameter(new Parameter("diedOnOrBefore", "Died on or before", Date.class));
+        cd.addParameter(new Parameter("diedOnOrAfter", "mirebalaisreports.parameter.diedOnOrAfter", Date.class));
+        cd.addParameter(new Parameter("diedOnOrBefore", "mirebalaisreports.parameter.diedOnOrBefore", Date.class));
         return new MappedParametersCohortDefinition(cd, "diedOnOrAfter", "startDate", "diedOnOrBefore", "endDate");
     }
 
@@ -216,9 +222,9 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
 
     private CohortDefinition lastDispositionBeforeExitHelper(Concept disposition) {
         LastDispositionBeforeExitCohortDefinition cd = new LastDispositionBeforeExitCohortDefinition();
-        cd.addParameter(new Parameter("exitOnOrAfter", "Exit on or after", Date.class));
-        cd.addParameter(new Parameter("exitOnOrBefore", "Exit on or before", Date.class));
-        cd.addParameter(new Parameter("exitFromWard", "Exit from ward", Location.class));
+        cd.addParameter(new Parameter("exitOnOrAfter", "mirebalaisreports.parameter.exitOnOrAfter", Date.class));
+        cd.addParameter(new Parameter("exitOnOrBefore", "mirebalaisreports.parameter.exitOnOrBefore", Date.class));
+        cd.addParameter(new Parameter("exitFromWard", "mirebalaisreports.parameter.exitFromWard", Location.class));
         cd.setDispositionsToConsider(getDispositionsToConsiderAsExit());
         cd.addDisposition(disposition);
         return new MappedParametersCohortDefinition(cd, "exitOnOrAfter", "startDate", "exitOnOrBefore", "endDate", "exitFromWard", "location");
