@@ -23,6 +23,7 @@ import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Provider;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
@@ -43,7 +44,10 @@ import java.util.List;
 public class MirebalaisReportsProperties extends EmrProperties {
 
     @Autowired
-    DispositionService dispositionService;
+    private DispositionService dispositionService;
+
+    @Autowired
+    private FeatureToggleProperties featureToggles;
 
     //***** DATE FORMATS ******
     public static final String DATE_FORMAT = "dd MMM yyyy";
@@ -356,7 +360,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
     }
 
     public Concept getTransferWithinHospitalDispositionConcept() {
-        return getConceptForDisposition("transferWithinHospital");
+        if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
+            return getConceptForDisposition("inpatientTransferWithinHospital");
+        }
+        else {
+            return getConceptForDisposition("transferWithinHospital");
+        }
     }
 
     public Concept getStillHospitalizedDispositionConcept() {
