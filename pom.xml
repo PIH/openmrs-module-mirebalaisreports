@@ -52,6 +52,7 @@
         <appframeworkVersion>2.2-SNAPSHOT</appframeworkVersion>
         <eventVersion>2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
+        <appointmentschedulingVersion>1.1-SNAPSHOT</appointmentschedulingVersion>
         <supercsvVersion>2.1.0</supercsvVersion>
         <openmrsTestutilsVersion>1.3-SNAPSHOT</openmrsTestutilsVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -225,6 +226,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>radiologyapp-api</artifactId>
             <version>${radiologyappVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>appointmentscheduling-api</artifactId>
+            <version>${appointmentschedulingVersion}</version>
             <scope>provided</scope>
         </dependency>
 

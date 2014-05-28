@@ -103,5 +103,15 @@
         "order": 102,
         "requiredPrivilege": "App: mirebalaisreports.dataexports",
         "extensionParams": { "linkId": "mirebalaisreports-allPatientsWithIdsReport-link" }
+    },
+    {
+        "id": "mirebalaisreports.dataExports.appointments",
+        "extensionPointId": "org.openmrs.module.reportingui.reports.dataexport",
+        "type": "link",
+        "label": "mirebalaisreports.appointments.name",
+        "url": "reportingui/runReport.page?reportDefinition=7fd11020-e5d1-11e3-ac10-0800200c9a66",
+        "order": 103,
+        "requiredPrivilege": "App: mirebalaisreports.dataexports",
+        "extensionParams": { "linkId": "mirebalaisreports-appointments-link" }
     }
 ]

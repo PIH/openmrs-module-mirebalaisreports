@@ -52,6 +52,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     //***** DATE FORMATS ******
     public static final String DATE_FORMAT = "dd MMM yyyy";
     public static final String DATETIME_FORMAT= "dd MMM yyyy hh:mm aa";
+    public static final String TIME_FORMAT = "hh:mm aa";
 
     //***** REPORT DEFINITIONS *****
     public static final String FULL_DATA_EXPORT_REPORT_DEFINITION_UUID = "8c3752e2-20bb-11e3-b5bd-0bec7fb71852";
@@ -74,6 +75,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String DAILY_CHECK_INS_REPORT_DEFINITION_UUID = "f170699a-50af-11e3-ba00-27a0ac7f78d9";
     public static final String DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID = "8b2f46e0-5d13-11e3-949a-0800200c9a66";
     public static final String USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID = "e4d1d6b0-642d-11e3-949a-0800200c9a66";
+    public static final String APPOINTMENTS_REPORT_DEFINITION_UUID = "7fd11020-e5d1-11e3-ac10-0800200c9a66";
 
 	//***** LOCATIONS *****
 
