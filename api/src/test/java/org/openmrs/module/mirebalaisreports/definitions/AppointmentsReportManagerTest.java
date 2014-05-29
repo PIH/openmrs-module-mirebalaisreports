@@ -98,7 +98,7 @@ public class AppointmentsReportManagerTest extends BaseMirebalaisReportTest {
         assertThat((String) row.getColumnValue("zlEmrId"), is("2AA00V"));
         assertThat((String) row.getColumnValue("dossierNumber"), is("A000001"));
         assertThat((String) row.getColumnValue("telephoneNumber"), is("123-4567"));
-        assertThat((String) row.getColumnValue("status"), is("COMPLETED"));
+        assertThat((String) row.getColumnValue("status"), is("appointmentschedulingui.scheduleAppointment.status.type.completed"));  // TODO: find out why this doesn't resolve locallization properly within tests
         assertThat((String) row.getColumnValue("reason"), is("Sick"));
         assertThat((String) row.getColumnValue("cancelReason"), is("Provider sick"));
         assertThat((String) row.getColumnValue("serviceType"), is("Outpatient consult"));

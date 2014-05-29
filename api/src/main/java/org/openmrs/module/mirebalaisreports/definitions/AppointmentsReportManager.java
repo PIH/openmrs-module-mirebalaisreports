@@ -11,7 +11,7 @@ import org.openmrs.module.appointmentscheduling.reporting.data.definition.Appoin
 import org.openmrs.module.appointmentscheduling.reporting.dataset.definition.AppointmentDataSetDefinition;
 import org.openmrs.module.appointmentscheduling.reporting.query.definition.BasicAppointmentQuery;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.converter.CustomAppointmentStatusConverter;
+import org.openmrs.module.mirebalaisreports.converter.AppointmentStatusToStatusTypeInFrenchConverter;
 import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.converter.DateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
@@ -81,7 +81,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("serviceType", new AppointmentTypeDataDefinition(), "", new ObjectFormatter());
         dsd.addColumn("reason", new AppointmentReasonDataDefinition(), "", new ObjectFormatter());
         dsd.addColumn("cancelReason", new AppointmentCancelReasonDataDefinition(), "", new ObjectFormatter());
-        dsd.addColumn("status", new AppointmentStatusDataDefinition(), "", new CustomAppointmentStatusConverter());
+        dsd.addColumn("status", new AppointmentStatusDataDefinition(), "", new AppointmentStatusToStatusTypeInFrenchConverter());
 
         dsd.addSortCriteria("date", SortCriteria.SortDirection.ASC);
         dsd.addSortCriteria("startTime", SortCriteria.SortDirection.ASC);

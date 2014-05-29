@@ -10,7 +10,7 @@ import java.util.Locale;
  * Custom rendering of Appointment status--we always want to show the French translation of the appointment
  * status type, regardless of the locale we are in
  */
-public class CustomAppointmentStatusConverter implements DataConverter {
+public class AppointmentStatusToStatusTypeInFrenchConverter implements DataConverter {
 
     @Override
     public Object convert(Object original) {
