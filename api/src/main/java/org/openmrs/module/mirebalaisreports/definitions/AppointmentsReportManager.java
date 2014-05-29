@@ -12,6 +12,7 @@ import org.openmrs.module.appointmentscheduling.reporting.dataset.definition.App
 import org.openmrs.module.appointmentscheduling.reporting.query.definition.BasicAppointmentQuery;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.converter.CustomAppointmentStatusConverter;
+import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.converter.DateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
@@ -82,6 +83,8 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("cancelReason", new AppointmentCancelReasonDataDefinition(), "", new ObjectFormatter());
         dsd.addColumn("status", new AppointmentStatusDataDefinition(), "", new CustomAppointmentStatusConverter());
 
+        dsd.addSortCriteria("date", SortCriteria.SortDirection.ASC);
+        dsd.addSortCriteria("startTime", SortCriteria.SortDirection.ASC);
 
         Map<String, Object> mappings =  new HashMap<String, Object>();
         mappings.put("startDate","${startDate}");
@@ -99,7 +102,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1";
     }
 
     @Override
