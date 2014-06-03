@@ -19,17 +19,8 @@ import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.cohort.definition.DiagnosisCohortDefinition;
-import org.openmrs.module.mirebalaisreports.cohort.definition.DiedSoonAfterEncounterCohortDefinition;
-import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
-import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientTransferCohortDefinition;
-import org.openmrs.module.mirebalaisreports.cohort.definition.LastDispositionBeforeExitCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.EncounterWithCodedObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.PersonAttributeCohortDefinition;
+import org.openmrs.module.mirebalaisreports.cohort.definition.*;
+import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -122,7 +113,7 @@ public class MirebalaisCohortDefinitionLibrary extends BaseDefinitionLibrary<Coh
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
-        cd.addParameter(new Parameter("locationList", "reporting.parameter.locationList", Location.class));
+        cd.addParameter(new Parameter("locationList", "reporting.parameter.location", Location.class));
         cd.addEncounterType(mirebalaisReportsProperties.getAdmissionEncounterType());
         return new MappedParametersCohortDefinition(cd, "onOrAfter", "startDate", "onOrBefore", "endDate", "locationList", "location");
     }
