@@ -2,6 +2,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentCancelReasonDataDefinition;
+import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentEndDateDataDefinition;
 import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentLocationDataDefinition;
 import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentProviderDataDefinition;
 import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentReasonDataDefinition;
@@ -76,6 +77,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("telephoneNumber", libraries.getDefinition(PersonDataDefinition.class, "mirebalais.personDataCalculation.telephoneNumber"), "");
         dsd.addColumn("date", new AppointmentStartDateDataDefinition(), "", new DateConverter(MirebalaisReportsProperties.DATE_FORMAT));
         dsd.addColumn("startTime", new AppointmentStartDateDataDefinition(), "", new DateConverter(MirebalaisReportsProperties.TIME_FORMAT));
+        dsd.addColumn("endTime", new AppointmentEndDateDataDefinition(), "", new DateConverter(MirebalaisReportsProperties.TIME_FORMAT));
         dsd.addColumn("location", new AppointmentLocationDataDefinition(), "", new ObjectFormatter());
         dsd.addColumn("provider", new AppointmentProviderDataDefinition(), "", new ObjectFormatter());
         dsd.addColumn("serviceType", new AppointmentTypeDataDefinition(), "", new ObjectFormatter());

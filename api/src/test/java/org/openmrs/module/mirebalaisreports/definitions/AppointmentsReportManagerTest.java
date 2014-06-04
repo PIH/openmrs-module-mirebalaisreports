@@ -106,6 +106,7 @@ public class AppointmentsReportManagerTest extends BaseMirebalaisReportTest {
         assertThat((String) row.getColumnValue("provider"), is(scheduledProvider.getName()));
         assertThat((String) row.getColumnValue("date"), is("01 Jan 2014"));
         assertThat((String) row.getColumnValue("startTime"), is("09:00 AM"));
+        assertThat((String) row.getColumnValue("endTime"), is("11:00 AM"));
 
     }
 
