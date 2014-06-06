@@ -362,7 +362,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
     }
 
     public Concept getTransferWithinHospitalDispositionConcept() {
-        return getConceptForDisposition("transferWithinHospital");
+        if (featureToggles.isFeatureEnabled("awaitingAdmission")) {
+            return getConceptForDisposition("inpatientTransferWithinHospital");
+        }
+        else {
+            return getConceptForDisposition("transferWithinHospital");
+        }
     }
 
     public Concept getStillHospitalizedDispositionConcept() {
