@@ -1,19 +1,5 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.sql.Timestamp;
-import java.util.Date;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.joda.time.DateTime;
@@ -52,6 +38,20 @@ import org.openmrs.module.reporting.report.renderer.TsvReportRenderer;
 import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.Timestamp;
+import java.util.Date;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
 public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
@@ -376,6 +376,25 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 "IF(plasma.obs_id IS NOT NULL, 'Oui', 'Non') plasma,",
                 "IF(platelets.obs_id IS NOT NULL, 'Oui', 'Non') platelets,",
                 "IF(packed_cells.obs_id IS NOT NULL, 'Oui', 'Non') packed_cells,",
+                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
+
+        // we don't actually test anything here beyond the fact that the SQL query can be executed
+    }
+
+    @Test
+    public void testRadiologyStudyEncountersHacky() throws Exception {
+        testExportHacky("radiologyStudyEncounters",
+                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
+                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
+                "CASE\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyChest) THEN 'chest'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyHeadNeck) THEN 'head and neck'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologySpine) THEN 'spine'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyVascular) THEN 'vascular'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyAbdomenPelvis) THEN 'abdomen and pelvis'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyMusculoskeletal) THEN 'musculoskeletal (non-cranial/spinal)'\n" +
+                        "  ELSE '?'\n" +
+                        "END AS anatomical_grouping,",
                 "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
 
         // we don't actually test anything here beyond the fact that the SQL query can be executed
