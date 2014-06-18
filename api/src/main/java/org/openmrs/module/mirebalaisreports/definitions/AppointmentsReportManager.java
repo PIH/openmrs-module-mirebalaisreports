@@ -99,12 +99,12 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null), csvReportDesign(reportDefinition));
+        return Arrays.asList(csvReportDesign(reportDefinition));
     }
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3";
     }
 
     @Override

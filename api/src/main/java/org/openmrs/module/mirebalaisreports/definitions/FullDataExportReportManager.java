@@ -98,7 +98,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.4-SNAPSHOT"; // last change: adding visitId to many data sets
+        return "1.4"; // last change: switched to only use csv renders
     }
 
 	//***** INSTANCE METHODS
@@ -500,7 +500,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null), csvReportDesign(reportDefinition));
+        return Arrays.asList(csvReportDesign(reportDefinition));
     }
 
 }

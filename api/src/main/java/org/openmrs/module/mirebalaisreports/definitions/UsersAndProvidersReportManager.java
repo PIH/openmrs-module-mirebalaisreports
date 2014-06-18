@@ -21,7 +21,7 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1";
     }
 
     @Override
@@ -46,7 +46,7 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        return Arrays.asList(csvReportDesign(reportDefinition));
     }
 
     @Override

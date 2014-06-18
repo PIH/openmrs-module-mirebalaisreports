@@ -59,7 +59,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1";
     }
 	public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
 		this.emrApiProperties = emrApiProperties;
@@ -110,7 +110,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        return Arrays.asList(csvReportDesign(reportDefinition));
     }
 
 }

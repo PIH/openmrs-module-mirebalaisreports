@@ -32,7 +32,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.1-SNAPSHOT"; // latest change: added encounter_id and visit_id columns
+        return "1.1"; // latest change: added encounter_id and visit_id columns
     }
 
     @Override
@@ -98,7 +98,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        return Arrays.asList(csvReportDesign(reportDefinition));
     }
 
 }
