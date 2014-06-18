@@ -1,6 +1,7 @@
 package org.openmrs.module.mirebalaisreports;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Cohort;
 import org.openmrs.Location;
@@ -35,6 +36,7 @@ import java.util.Properties;
 
 import static java.util.Arrays.asList;
 
+@Ignore
 public class IdSetConcurrencyTest extends BaseModuleWebContextSensitiveTest {
 
 	@Autowired
