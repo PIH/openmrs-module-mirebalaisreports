@@ -30,6 +30,8 @@ import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.data.converter.DateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.converter.ObsValueTextAsCodedConverter;
+import org.openmrs.module.reporting.data.converter.PropertyConverter;
+import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDatetimeDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterLocationDataDefinition;
@@ -98,7 +100,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.4"; // last change: switched to only use csv renders
+        return "1.5-SNAPSHOT"; // last change: switched to only use csv renders
     }
 
 	//***** INSTANCE METHODS
@@ -231,7 +233,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("visitStop", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visit.stopDatetime"), null);
         dsd.addColumn("encounterId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterId"), null);
         dsd.addColumn("encounterType", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterType.name"), null);
-        dsd.addColumn("location", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "location.name"), null);
+        dsd.addColumn("location", new ConvertedEncounterDataDefinition(new EncounterLocationDataDefinition(), new PropertyConverter(String.class, "name")), null);  // the "encounterLocation.name" converter is very inefficent
         dsd.addColumn("encounterDatetime", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterDatetime"), null);
         dsd.addColumn("disposition", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "disposition"), null);
         dsd.addColumn("enteredBy", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "creator"), null);
