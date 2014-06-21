@@ -84,7 +84,7 @@ INNER JOIN location ord_loc ON ord_enc.location_id = ord_loc.location_id
 -- Ordering Provider for order (via its encounter)
 LEFT OUTER JOIN encounter_provider ord_ep ON ord_ep.encounter_id = ord_enc.encounter_id AND ord_ep.voided = 0 AND ord_ep.encounter_role_id = :orderingProvider
 LEFT OUTER JOIN provider ord_pr ON ord_ep.provider_id = ord_pr.provider_id
-LEFT OUTER JOIN person_name ord_pr_n ON ord_pr.person_id = ord_pr_n.person_id AND ord_pr_n.preferred = 1 AND ord_pr_n.voided = 0
+LEFT OUTER JOIN person_name ord_pr_n ON ord_pr.person_id = ord_pr_n.person_id AND ord_pr_n.voided = 0 -- AND ord_pr_n.preferred = 1 commented out since our providers somehow don't have names marked as preferred
 
 WHERE p.voided = 0
 
