@@ -400,6 +400,25 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         // we don't actually test anything here beyond the fact that the SQL query can be executed
     }
 
+    @Test
+    public void testRadiologyReportEncountersHacky() throws Exception {
+        testExportHacky("radiologyStudyEncounters",
+                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
+                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
+                "CASE\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyChest) THEN 'chest'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyHeadNeck) THEN 'head and neck'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologySpine) THEN 'spine'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyVascular) THEN 'vascular'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyAbdomenPelvis) THEN 'abdomen and pelvis'\n" +
+                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyMusculoskeletal) THEN 'musculoskeletal (non-cranial/spinal)'\n" +
+                        "  ELSE '?'\n" +
+                        "END AS anatomical_grouping,",
+                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
+
+        // we don't actually test anything here beyond the fact that the SQL query can be executed
+    }
+
     @Test @Ignore("H2 cannot handle DATE() function to cast a timestamp to a date")
     public void shouldSuccessfullyRenderConsultationsToExcel() throws Exception {
         PatientIdentifierType zlEmrId = mirebalaisReportsProperties.getZlEmrIdentifierType();
