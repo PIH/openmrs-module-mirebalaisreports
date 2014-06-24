@@ -8,7 +8,6 @@
 
         <mapping resource="ImportedPackage.hbm.xml" />
         <mapping resource="ReportDesign.hbm.xml" />
-        <mapping resource="IdsetMember.hbm.xml" />
 
         <mapping resource="Appointment.hbm.xml" />
         <mapping resource="AppointmentBlock.hbm.xml" />
