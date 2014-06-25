@@ -328,7 +328,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         testExportHacky("hospitalizations",
                 "ROUND(DATEDIFF(adm.encounter_datetime, pr.birthdate)/365.25, 1) age_at_adm,",
                 "IF(dis_dispo.disposition IS NOT NULL, dis_dispo.disposition, 'Toujours hospitalisé') outcome,",
-                "(DATEDIFF(IF(dis.encounter_datetime IS NOT NULL AND dis.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY), dis.encounter_datetime, :endDate), adm.encounter_datetime) + 1) length_of_hospitalization,",
+                "(DATEDIFF(IF(dis.encounter_datetime IS NOT NULL AND dis.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY), dis.encounter_datetime, COALESCE(v.date_stopped, :endDate)), adm.encounter_datetime) + 1) length_of_hospitalization,",
                 "IF(pr.death_date IS NOT NULL AND pr.death_date < ADDDATE(:endDate, INTERVAL 1 DAY), IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Décès < 48 hrs', 'Décès >= 48 hrs'), null) died,",
                 "AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)",
                 "AND adm.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
