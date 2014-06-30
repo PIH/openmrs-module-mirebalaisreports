@@ -58,10 +58,10 @@ controller('InpatientStatsDailyReportController', ['$scope', '$http', '$timeout'
         { uuid: "272bd989-a8ee-4a16-b5aa-55bad4e84f5c", name: "Antepartum Ward", beds: 10 },
         { uuid: "dcfefcb7-163b-47e5-84ae-f715cf3e0e92", name: "Labor and Delivery", beds: 12 },
         { uuid: "950852f3-8a96-4d82-a5f8-a68a92043164", name: "Postpartum Ward", beds: 20 },
-        { uuid: "62a9500e-a1a5-4235-844f-3a8cc0765d53", name: "NICU", beds: 16 },
-        { uuid: "c9ab4c5c-0a8a-4375-b986-f23c163b2f69", name: "Pediatrics", beds: 36 },
-        { uuid: "2c93919d-7fc6-406d-a057-c0b640104790", name: "Women's Internal Medicine", beds: 18 },
-        { uuid: "e5db0599-89e8-44fa-bfa2-07e47d63546f", name: "Men’s Internal Medicine", beds: 18 },
+        { uuid: "62a9500e-a1a5-4235-844f-3a8cc0765d53", name: "NICU", beds: 18 },
+        { uuid: "c9ab4c5c-0a8a-4375-b986-f23c163b2f69", name: "Pediatrics", beds: 24 },
+        { uuid: "2c93919d-7fc6-406d-a057-c0b640104790", name: "Women's Internal Medicine", beds: 19 },
+        { uuid: "e5db0599-89e8-44fa-bfa2-07e47d63546f", name: "Men’s Internal Medicine", beds: 19 },
         { uuid: "7d6cc39d-a600-496f-a320-fd4985f07f0b", name: "Surgical Ward", beds: 19 },
         { uuid: "29437276-aeae-4ea8-8219-720886cdc87f", name: "Isolation", beds: 10 }
     ];
