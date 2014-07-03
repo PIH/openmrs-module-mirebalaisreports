@@ -51,8 +51,7 @@ public class InpatientStatsDailyReportFragmentController {
             cohortResults.put(entry.getKey(), simplify(entry.getValue()));
         }
 
-        return SimpleObject.create("cohorts", cohortResults,
-                "evaluationContext", SimpleObject.fromObject(context, ui, "evaluationDate", "parameterValues"));
+        return SimpleObject.create("cohorts", cohortResults, "evaluationContext", SimpleObject.fromObject(context, ui, "evaluationDate", "parameterValues"));
     }
 
     private Object simplify(Object o) {

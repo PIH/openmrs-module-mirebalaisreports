@@ -129,9 +129,19 @@ ${ ui.includeFragment("appui", "messages", [ codes: [
                 <tbody ng-show="viewingCohort.members">
                     <tr ng-repeat="member in viewingCohort.members">
                         <td>
-                            <a target="_blank" href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard") }?patientId={{ member.patientId }}">
+                            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
+                                    || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+                            <!-- only add link to patient dashboard if user has appropriate privilege -->
+                                <a target="_blank" href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard") }?patientId={{ member.patientId }}">
+                            <% } %>
+
                                 {{ member.familyName }}, {{ member.givenName }}
-                            </a>
+
+                            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
+                                    || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+                            <!-- only add link to patient dashboard if user has appropriate privilege -->
+                                </a>
+                            <% } %>
                         </td>
                         <td>
                             {{ member.zlEmrId }}

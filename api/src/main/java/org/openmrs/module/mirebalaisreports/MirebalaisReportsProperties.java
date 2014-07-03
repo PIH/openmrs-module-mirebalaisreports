@@ -54,6 +54,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String DATETIME_FORMAT= "dd MMM yyyy hh:mm aa";
     public static final String TIME_FORMAT = "hh:mm aa";
 
+
+    //***** PRIVILEGES ******
+    public static final String PRIVILEGE_PATIENT_DASHBOARD = "App: coreapps.patientDashboard";
+
     //***** REPORT DEFINITIONS *****
     public static final String FULL_DATA_EXPORT_REPORT_DEFINITION_UUID = "8c3752e2-20bb-11e3-b5bd-0bec7fb71852";
     public static final String DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID = "6d9b292a-2aad-11e3-a840-5b9e0b589afb";

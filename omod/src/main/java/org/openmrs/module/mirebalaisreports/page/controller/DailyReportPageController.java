@@ -26,6 +26,7 @@ public class DailyReportPageController {
         }
 
         model.addAttribute("reportDefinition", reportDefinition);
+        model.addAttribute("privilegePatientDashboard", MirebalaisReportsProperties.PRIVILEGE_PATIENT_DASHBOARD);
     }
 
 }

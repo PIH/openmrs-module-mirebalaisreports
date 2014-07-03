@@ -81,9 +81,20 @@
         <td>${ v.zlEmrId ?: ''}</td>
         <td>${ v.dossierNumber ?: ''}</td>
         <td>
-            <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
-                ${ ui.format((v.givenName ? v.givenName : '') + " " + (v.familyName ? v.familyName : '')) }
-            </a>
+            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
+                    || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+            <!-- only add link to patient dashboard if user has appropriate privilege -->
+                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
+            <% } %>
+
+            ${ ui.format((v.givenName ? v.givenName : '') + " " + (v.familyName ? v.familyName : '')) }
+
+            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
+                    || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+                <!-- only add link to patient dashboard if user has appropriate privilege -->
+                </a>
+            <% } %>
+
         </td>
         <td>
             ${ ui.format( v.firstAdmittedLocation) }
