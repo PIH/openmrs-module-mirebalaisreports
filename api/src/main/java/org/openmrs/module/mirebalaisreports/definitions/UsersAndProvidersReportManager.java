@@ -6,6 +6,7 @@ import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.renderer.ReportDesignRenderer;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
 
     @Override
     public String getVersion() {
-        return "1.1";
+        return "1.2"; // last change: standardized download filename
     }
 
     @Override
@@ -46,7 +47,12 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(csvReportDesign(reportDefinition));
+        ReportDesign reportDesign = csvReportDesign(reportDefinition);
+        reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY,
+                "mirebalais.usersandprovidersdateexport." +
+                "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
+                "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+        return Arrays.asList(reportDesign);
     }
 
     @Override

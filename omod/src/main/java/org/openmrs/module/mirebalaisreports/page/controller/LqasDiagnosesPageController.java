@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.impl.cookie.DateParseException;
 import org.openmrs.Location;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.mirebalaisreports.definitions.LqasDiagnosesReportManager;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
@@ -13,6 +14,7 @@ import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
+import org.openmrs.module.reporting.template.TemplateFactory;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.FileDownload;
 import org.openmrs.ui.framework.page.PageModel;
@@ -59,7 +61,20 @@ public class LqasDiagnosesPageController {
         mode.getRenderer().render(reportData, mode.getArgument(), out);
 
         ReportRequest reportRequest = new ReportRequest(Mapped.noMappings(reportDefinition), null, mode, ReportRequest.Priority.NORMAL, null);
-        String filename = mode.getRenderer().getFilename(reportRequest, mode.getArgument());
+
+        TemplateFactory templateFactory = Context.getRegisteredComponents(TemplateFactory.class).get(0);
+        Map templateModel = new HashMap();
+        templateModel.put("parameters", parameters);
+        templateModel.put("evalDate", new Date());
+
+        String template = "mirebalais.lqasdiagnosesdataexport." +
+                "{{ formatDate parameters.startDate \"yyyyMMdd\" }}." +
+                "{{ formatDate parameters.endDate \"yyyyMMdd\" }}." +
+                "{{ parameters.location.name }}." +
+                "{{ formatDate evalDate \"yyyyMMdd\" }}." +
+                "{{ formatDate evalDate \"HHmm\" }}.xls";
+
+        String filename = templateFactory.evaluateHandlebarsTemplate(template, templateModel);
         String contentType = mode.getRenderer().getRenderedContentType(reportDefinition, mode.getArgument());
 
         log.info("Rendering complete.  Outputting " + filename + " as contentType: " + contentType);

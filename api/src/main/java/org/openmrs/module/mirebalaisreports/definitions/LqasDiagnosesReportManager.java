@@ -7,6 +7,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
+import org.openmrs.module.reporting.report.renderer.ReportDesignRenderer;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.1"; // latest change: added encounter_id and visit_id columns
+        return "1.2"; // latest change: changed filename in report design
     }
 
     @Override
@@ -98,7 +99,16 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(csvReportDesign(reportDefinition));
+        // this is not actually used, since we have a custom controller, rather than using the standard
+        // run report page
+        ReportDesign reportDesign = csvReportDesign(reportDefinition);
+        reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "mirebalais.lqasdiagnosesdataexport." +
+                "{{ formatDate request.reportDefinition.parameterMappings.startDate \"yyyyMMdd\" }}." +
+                "{{ formatDate request.reportDefinition.parameterMappings.endDate \"yyyyMMdd\" }}." +
+                "{{ request.reportDefinition.parameterMappings.location.name }}." +
+                "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
+                "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+        return Arrays.asList(reportDesign);
     }
 
 }
