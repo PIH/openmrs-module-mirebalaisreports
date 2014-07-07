@@ -37,10 +37,7 @@
         "url": "mirebalaisreports/inpatientList.page",
         "icon": "icon-list-ol",
         "order": 4,
-        "requiredPrivilege": "App: emr.inpatients",
-        "extensionParams": {
-            "featureToggle": "inpatientsList"
-        }
+        "requiredPrivilege": "App: emr.inpatients"
     },
     {
         "id": "mirebalaisreports.overview.inpatientDaily",
