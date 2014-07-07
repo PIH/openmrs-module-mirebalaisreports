@@ -7,7 +7,9 @@ import org.openmrs.Location;
 import org.openmrs.module.mirebalaisreports.definitions.LqasDiagnosesReportManager;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.report.ReportData;
+import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
@@ -56,7 +58,8 @@ public class LqasDiagnosesPageController {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         mode.getRenderer().render(reportData, mode.getArgument(), out);
 
-        String filename = mode.getRenderer().getFilename(reportDefinition, mode.getArgument());
+        ReportRequest reportRequest = new ReportRequest(Mapped.noMappings(reportDefinition), null, mode, ReportRequest.Priority.NORMAL, null);
+        String filename = mode.getRenderer().getFilename(reportRequest, mode.getArgument());
         String contentType = mode.getRenderer().getRenderedContentType(reportDefinition, mode.getArgument());
 
         log.info("Rendering complete.  Outputting " + filename + " as contentType: " + contentType);

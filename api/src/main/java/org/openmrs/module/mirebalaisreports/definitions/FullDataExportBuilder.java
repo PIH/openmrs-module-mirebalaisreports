@@ -53,30 +53,30 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
     private List<Configuration> configurations = new ArrayList<Configuration>();
 
     public FullDataExportBuilder() {
-        configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.fulldataexport.", null));
-        configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dashboarddataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "fulldataexport", null));
+        configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "dashboarddataexport",
                 Arrays.asList("patients", "checkins", "vitals", "consultations", "diagnoses", "visits", "hospitalizations", "postOpNote1", "postOpNote2")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.radiologydataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "radiologydataexport",
                 Arrays.asList("radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.surgerydataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID, "surgerydataexport",
                 Arrays.asList("postOpNote1", "postOpNote2")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.hospitalizationsdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "hospitalizationsdataexport",
                 Arrays.asList("hospitalizations", "postOpNote1", "postOpNote2")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.consultationsdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "consultationsdataexport",
                 Arrays.asList("consultations", "diagnoses")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.patientsdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "patientsdataexport",
                 Arrays.asList("patients")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.encountersdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
                 Arrays.asList("encounters")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.dispensingdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "dispensingdataexport",
                 Arrays.asList("dispensing")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.VISITS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.visitsdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.VISITS_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitsdataexport",
                 Arrays.asList("visits")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.vitalsdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "vitalsdataexport",
                 Arrays.asList("vitals")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.checkinsdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID, "checkinsdataexport",
                 Arrays.asList("checkins")));
-        configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "mirebalaisreports.diagnosesdataexport.",
+        configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "diagnosesdataexport",
                 Arrays.asList("diagnoses")));
     }
 
@@ -126,7 +126,7 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
             dataSets = dataSetOptions;
         }
 
-        FullDataExportReportManager manager = new FullDataExportReportManager(configuration.getUuid(), configuration.getMessageCodePrefix(), dataSets);
+        FullDataExportReportManager manager = new FullDataExportReportManager(configuration.getUuid(), configuration.getCode(), dataSets);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(manager);
         return manager;
     }
@@ -135,13 +135,13 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
 
         private String uuid;
 
-        private String messageCodePrefix;
+        private String code;
 
         private List<String> dataSets;
 
-        public Configuration(String uuid, String messageCodePrefix, List<String> dataSets) {
+        public Configuration(String uuid, String code, List<String> dataSets) {
             this.uuid = uuid;
-            this.messageCodePrefix = messageCodePrefix;
+            this.code = code;
             this.dataSets = dataSets;
         }
 
@@ -150,7 +150,11 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
         }
 
         public String getMessageCodePrefix() {
-            return messageCodePrefix;
+            return "mirebalaisreports." + code + ".";
+        }
+
+        public String getCode() {
+            return code;
         }
 
         public List<String> getDataSets() {

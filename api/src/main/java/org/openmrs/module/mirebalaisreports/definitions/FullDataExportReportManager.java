@@ -56,6 +56,7 @@ import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
+import org.openmrs.module.reporting.report.renderer.ReportDesignRenderer;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -84,12 +85,14 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
     private DispensingProperties dispensingProperties;
 
     private String uuid;
+    private String code;
     private String messageCodePrefix;
     private List<String> dataSets;
 
-    public FullDataExportReportManager(String uuid, String messageCodePrefix, List<String> dataSets) {
+    public FullDataExportReportManager(String uuid, String code, List<String> dataSets) {
         this.uuid = uuid;
-        this.messageCodePrefix = messageCodePrefix;
+        this.code = code;
+        this.messageCodePrefix = "mirebalaisreports." + code + ".";
         this.dataSets = dataSets;
     }
 
@@ -502,7 +505,13 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(csvReportDesign(reportDefinition));
+        ReportDesign design = csvReportDesign(reportDefinition);
+        design.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "mirebalais." + code + "." +
+                "{{ formatDate request.reportDefinition.parameterMappings.startDate \"yyyyMMdd\" }}." +
+                "{{ formatDate request.reportDefinition.parameterMappings.endDate \"yyyyMMdd\" }}." +
+                "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
+                "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+        return Arrays.asList(design);
     }
 
 }
