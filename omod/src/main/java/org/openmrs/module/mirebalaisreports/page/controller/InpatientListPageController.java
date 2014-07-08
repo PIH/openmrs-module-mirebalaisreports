@@ -2,6 +2,7 @@ package org.openmrs.module.mirebalaisreports.page.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
@@ -44,6 +45,7 @@ public class InpatientListPageController {
 
         model.addAttribute("inpatientsList", MirebalaisReportsUtil.simplify(result));
 
+        model.put("privilegePatientDashboard", MirebalaisReportsProperties.PRIVILEGE_PATIENT_DASHBOARD);  // used to determine if we display links to patient dashboard)
     }
 
 
