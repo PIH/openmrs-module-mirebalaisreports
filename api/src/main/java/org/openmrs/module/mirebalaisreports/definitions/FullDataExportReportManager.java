@@ -15,6 +15,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.Concept;
+import org.openmrs.Drug;
 import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.dispensing.DispensingProperties;
@@ -274,7 +275,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("encounterId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterId"), null);
 
         dsd.addColumn("medication", constructGroupMemberObsDataDefinition(dispensingProperties.getMedicationConcept())
-                , "", new ObjectFormatter());
+                , "",  new PropertyConverter(Drug.class, "valueDrug"), new ObjectFormatter());
         dsd.addColumn("dosage", constructGroupMemberObsDataDefinition(dispensingProperties.getDosageConcept())
                 , "", new ObjectFormatter());
         dsd.addColumn("dosageUnits", constructGroupMemberObsDataDefinition(dispensingProperties.getDosageUnitsConcept())

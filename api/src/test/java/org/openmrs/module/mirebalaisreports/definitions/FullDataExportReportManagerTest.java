@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.Drug;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
@@ -219,6 +220,9 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     @Test
     public void testDispensingExport() throws Exception {
 
+        // simple export that adds drugs to the sample data
+        executeDataSet("org/openmrs/module/mirebalaisreports/dispensingExportTestData.xml");
+
         Patient patient = data.randomPatient()
                 .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", mirebalaisReportsProperties.getMirebalaisHospitalLocation())
                 .save();
@@ -241,9 +245,10 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         Concept someFrequency = conceptService.getConceptByUuid("9b0068ac-4104-4bea-ba76-851e5faa9f2a");
         Concept someDurationUnits = conceptService.getConceptByUuid("e0d31892-690e-4063-9570-73d103c8efb0");
         Concept someTypeOfPrescription = conceptService.getConceptByUuid("eefba61c-17c5-40ee-bddc-08e64d39e9b1");
+        Drug someDrug = conceptService.getDrugByUuid("05ec820a-d297-44e3-be6e-698531d9dd3f");
 
         Obs medication = data.obs().person(patient).concept(dispensingProperties.getMedicationConcept()).obsDatetime(date)
-                .value(someMedication).save();
+                .value(someMedication).value(someDrug).save();
         Obs dosage = data.obs().person(patient).concept(dispensingProperties.getDosageConcept()).obsDatetime(date)
                 .value(100).save();
         Obs dosageUnits = data.obs().person(patient).concept(dispensingProperties.getDosageUnitsConcept()).obsDatetime(date)
@@ -285,7 +290,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         DataSet dispensingDataSet = reportData.getDataSets().get("dispensing");
         DataSetRow row = dispensingDataSet.iterator().next();
 
-        assertThat((String) row.getColumnValue("medication"), is("Aspirin"));
+        assertThat((String) row.getColumnValue("medication"), is("Aspirin Full Drug Name"));
         assertThat(Double.valueOf((String) row.getColumnValue("dosage")), is(100.0));
         assertThat((String) row.getColumnValue("dosageUnits"), is("mg"));
         assertThat((String) row.getColumnValue("frequency"), is("Seven times a day"));
