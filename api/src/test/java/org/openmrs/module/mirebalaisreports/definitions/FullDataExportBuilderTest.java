@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.emrapi.disposition.Disposition;
+import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -36,6 +37,7 @@ public class FullDataExportBuilderTest extends BaseMirebalaisReportTest {
         someDisposition.setConceptCode("PIH:ADMIT TO HOSPITAL");
         DispositionService dispositionService = mock(DispositionService.class);
         when(dispositionService.getDispositionByUniqueId(anyString())).thenReturn(someDisposition);
+        when(dispositionService.getDispositionDescriptor()).thenReturn(new DispositionDescriptor());
         mirebalaisReportsProperties.setDispositionService(dispositionService);
     }
 
