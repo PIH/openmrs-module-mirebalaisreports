@@ -345,6 +345,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return dispositionService.getDispositionDescriptor().getAdmissionLocationConcept();
     }
 
+    public Concept getInternalTransferLocationConcept() {
+        return dispositionService.getDispositionDescriptor().getInternalTransferLocationConcept();
+    }
+
     public Concept getDispositionConcept() {
         return dispositionService.getDispositionDescriptor().getDispositionConcept();
     }

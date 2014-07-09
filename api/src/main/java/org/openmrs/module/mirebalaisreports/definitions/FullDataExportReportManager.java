@@ -237,7 +237,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("visitStop", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "visit.stopDatetime"), null);
         dsd.addColumn("encounterId", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterId"), null);
         dsd.addColumn("encounterType", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterType.name"), null);
-        dsd.addColumn("location", new ConvertedEncounterDataDefinition(new EncounterLocationDataDefinition(), new PropertyConverter(String.class, "name")), null);  // the "encounterLocation.name" converter is very inefficent
+        dsd.addColumn("encounterLocation", new ConvertedEncounterDataDefinition(new EncounterLocationDataDefinition(), new PropertyConverter(String.class, "name")), null);  // the "encounterLocation.name" converter is very inefficent
         dsd.addColumn("encounterDatetime", libraries.getDefinition(EncounterDataDefinition.class, BuiltInEncounterDataLibrary.PREFIX + "encounterDatetime"), null);
         dsd.addColumn("disposition", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "disposition"), null);
         dsd.addColumn("enteredBy", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "creator"), null);
@@ -255,6 +255,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("anesthesiologist", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "anesthesiologist.name"), null);
         dsd.addColumn("birthdate", libraries.getDefinition(PatientDataDefinition.class, BuiltInPatientDataLibrary.PREFIX + "birthdate"), null);
         dsd.addColumn("birthdate_estimated", libraries.getDefinition(PatientDataDefinition.class, BuiltInPatientDataLibrary.PREFIX + "birthdate.estimated"), null);
+        dsd.addColumn("admissionStatus", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "admissionStatus"), null);
+        dsd.addColumn("requestedAdmissionLocation", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "requestedAdmissionLocation.name"), null);
+        dsd.addColumn("requestedTransferLocation", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "requestedTransferLocation.name"), null);
 
         return dsd;
     }

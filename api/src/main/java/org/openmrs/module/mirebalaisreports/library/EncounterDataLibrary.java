@@ -16,7 +16,8 @@ package org.openmrs.module.mirebalaisreports.library;
 
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
-import org.openmrs.OpenmrsObject;
+import org.openmrs.Location;
+import org.openmrs.Obs;
 import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.User;
@@ -30,12 +31,14 @@ import org.openmrs.module.reporting.data.converter.CollectionConverter;
 import org.openmrs.module.reporting.data.converter.CountConverter;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.converter.ObsValueTextAsCodedConverter;
 import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.encounter.definition.AgeAtEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.AuditInfoEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterProviderDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.ObsForEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SimultaneousEncountersDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDefinition;
@@ -45,7 +48,6 @@ import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -318,6 +320,28 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         EncounterProviderDataDefinition dd = new EncounterProviderDataDefinition();
         dd.setSingleProvider(false);
         return new ConvertedEncounterDataDefinition(dd, new CountConverter());
+    }
+
+    @DocumentedDefinition("admissionStatus")
+    public EncounterDataDefinition getAdmissionStatus() {
+        ObsForEncounterDataDefinition dd = new ObsForEncounterDataDefinition();
+        // concept with synonyms "Type of Patient" and "Admission Status", possible answers are Ambulatory and Hospitalized
+        dd.setQuestion(props.getTypeOfPatientConcept());
+        return new ConvertedEncounterDataDefinition(dd, new PropertyConverter(Obs.class, "valueCoded"), new ObjectFormatter());
+    }
+
+    @DocumentedDefinition("requestedAdmissionLocation.name")
+    public EncounterDataDefinition getRequestedAdmissionLocationName() {
+        ObsForEncounterDataDefinition dd = new ObsForEncounterDataDefinition();
+        dd.setQuestion(props.getAdmissionLocationConcept());
+        return new ConvertedEncounterDataDefinition(dd, new ObsValueTextAsCodedConverter<Location>(Location.class), new ObjectFormatter());
+    }
+
+    @DocumentedDefinition("requestedTransferLocation.name")
+    public EncounterDataDefinition getRequestedTransferLocationName() {
+        ObsForEncounterDataDefinition dd = new ObsForEncounterDataDefinition();
+        dd.setQuestion(props.getInternalTransferLocationConcept());
+        return new ConvertedEncounterDataDefinition(dd, new ObsValueTextAsCodedConverter<Location>(Location.class), new ObjectFormatter());
     }
 
     private ConvertedEncounterDataDefinition associatedAdtEncounter(DataConverter... converters) {

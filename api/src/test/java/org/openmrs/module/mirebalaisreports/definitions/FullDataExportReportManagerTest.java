@@ -2,6 +2,9 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -21,12 +24,14 @@ import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -39,6 +44,7 @@ import org.openmrs.module.reporting.report.renderer.TsvReportRenderer;
 import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -74,7 +80,10 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired
     DispositionService dispositionService;
-    
+
+    @Autowired @Qualifier("adminService")
+    AdministrationService administrationService;
+
     @Autowired
     TestDataManager data;
     private Encounter e1;
@@ -114,6 +123,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
     @Test
     public void testEncountersExport() throws Exception {
+        administrationService.setGlobalProperty("reporting.defaultLocale", "fr");
         Patient patient = data.randomPatient()
                 .birthdate("2001-02-03")
                 .gender("F")
@@ -134,6 +144,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .encounterDatetime("2013-08-30 09:00:00")
                 .provider(mirebalaisReportsProperties.getAdministrativeClerkEncounterRole(), checkInProvider)
                 .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
+                .obs(mirebalaisReportsProperties.getTypeOfPatientConcept(), conceptService.getConceptByUuid("3cda41f2-26fe-102b-80cb-0017a47871b2"))
                 .creator(checkinUser).save();
 
         Encounter e2 = data.encounter().visit(visit)
@@ -142,6 +153,8 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .encounterDatetime("2013-08-30 09:15:00")
                 .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
                 .obs(dispositionService.getDispositionDescriptor().getDispositionConcept(), conceptService.getConcept("Admit to hospital")) // unrealistic data
+                .obs(dispositionService.getDispositionDescriptor().getAdmissionLocationConcept(), mirebalaisReportsProperties.getWomensInternalMedicineLocation().getId().toString())
+                .obs(dispositionService.getDispositionDescriptor().getInternalTransferLocationConcept(), mirebalaisReportsProperties.getMensInternalMedicineLocation().getId().toString()) // would never really have this and admission location
                 .creator(nurseUser).save();
 
 
@@ -180,7 +193,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
             if (encounterId.equals(e1.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
                 assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
-                assertThat((String) row.getColumnValue("location"), is("Biwo Resepsyon"));
+                assertThat((String) row.getColumnValue("encounterLocation"), is("Biwo Resepsyon"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
                 assertThat(row.getColumnValue("disposition"), nullValue());
                 assertThat((String) row.getColumnValue("enteredBy"), is("Checkin Clerk"));
@@ -189,11 +202,16 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((String) row.getColumnValue("administrativeClerk"), is("Checkin Clerk"));
                 assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
                 assertThat((String) row.getColumnValue("consultingClinician"), is(nullValue()));
+                assertThat(((Birthdate) row.getColumnValue("birthdate")).getBirthdate(), sameDateTime(DateUtil.parseYmd("2001-02-03")));
+                assertThat((Boolean) row.getColumnValue("birthdate_estimated"), is(true));
+                assertThat((String) row.getColumnValue("admissionStatus"), is("Hospitalisé"));
+                assertThat((String) row.getColumnValue("requestedAdmissionLocation"), is(nullValue()));
+                assertThat((String) row.getColumnValue("requestedTransferLocation"), is(nullValue()));
             }
             else if (encounterId.equals(e2.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
                 assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
-                assertThat((String) row.getColumnValue("location"), is("Klinik Ekstèn"));
+                assertThat((String) row.getColumnValue("encounterLocation"), is("Klinik Ekstèn"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
                 assertThat((String) row.getColumnValue("disposition"), is("Admettre à l'hôpital"));
                 assertThat((String) row.getColumnValue("enteredBy"), is("Nurse Nursing"));
@@ -202,11 +220,30 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat((String) row.getColumnValue("administrativeClerk"), is(nullValue()));
                 assertThat((String) row.getColumnValue("nurse"), is("Nurse Nursing"));
                 assertThat((String) row.getColumnValue("consultingClinician"), is(nullValue()));
+                assertThat(((Birthdate) row.getColumnValue("birthdate")).getBirthdate(), sameDateTime(DateUtil.parseYmd("2001-02-03")));
+                assertThat((Boolean) row.getColumnValue("birthdate_estimated"), is(true));
+                assertThat((String) row.getColumnValue("admissionStatus"), is(nullValue()));
+                assertThat((String) row.getColumnValue("requestedAdmissionLocation"), is(mirebalaisReportsProperties.getWomensInternalMedicineLocation().getName()));
+                assertThat((String) row.getColumnValue("requestedTransferLocation"), is(mirebalaisReportsProperties.getMensInternalMedicineLocation().getName()));
             }
             else {
                 Assert.fail("Only encounters should be e1 and e2");
             }
         }
+    }
+
+    private Matcher<? super Date> sameDateTime(final Date date) {
+        return new BaseMatcher<Date>() {
+            @Override
+            public boolean matches(Object o) {
+                return ((Date) o).getTime() == date.getTime();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("same date/time as " + date + " ignoring timezone");
+            }
+        };
     }
 
     private int sizeOf(DataSet dataSet) {
