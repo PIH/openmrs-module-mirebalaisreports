@@ -104,7 +104,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.5-SNAPSHOT"; // last change: adding order details to radiology study and report exports
+        return "1.5-SNAPSHOT"; // last change: diagnoses export should include all encounter types
     }
 
 	//***** INSTANCE METHODS
