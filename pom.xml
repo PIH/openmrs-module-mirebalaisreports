@@ -33,7 +33,7 @@
 	<properties>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
 		<openMRSVersion>1.9.4</openMRSVersion>
-        <emrapiVersion>1.2-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.2</emrapiVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
