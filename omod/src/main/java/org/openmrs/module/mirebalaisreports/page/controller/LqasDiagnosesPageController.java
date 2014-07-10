@@ -75,7 +75,7 @@ public class LqasDiagnosesPageController {
                 "{{ formatDate evalDate \"HHmm\" }}.xls";
 
         String filename = templateFactory.evaluateHandlebarsTemplate(template, templateModel);
-        String contentType = mode.getRenderer().getRenderedContentType(reportDefinition, mode.getArgument());
+        String contentType = mode.getRenderer().getRenderedContentType(reportRequest);
 
         log.info("Rendering complete.  Outputting " + filename + " as contentType: " + contentType);
         return new FileDownload(filename, contentType, out.toByteArray());
