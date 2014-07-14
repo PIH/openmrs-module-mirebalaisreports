@@ -63,7 +63,7 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
         configurations.add(new Configuration(MirebalaisReportsProperties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "hospitalizationsdataexport",
                 Arrays.asList("hospitalizations", "postOpNote1", "postOpNote2")));
         configurations.add(new Configuration(MirebalaisReportsProperties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "consultationsdataexport",
-                Arrays.asList("consultations", "diagnoses")));
+                Arrays.asList("consultations")));
         configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "patientsdataexport",
                 Arrays.asList("patients")));
         configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
