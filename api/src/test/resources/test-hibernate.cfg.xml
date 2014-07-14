@@ -14,5 +14,8 @@
         <mapping resource="AppointmentType.hbm.xml" />
         <mapping resource="TimeSlot.hbm.xml" />
 
+        <mapping resource="PaperRecordRequest.hbm.xml"/>
+        <mapping resource="PaperRecordMergeRequest.hbm.xml"/>
+
     </session-factory>
 </hibernate-configuration>
