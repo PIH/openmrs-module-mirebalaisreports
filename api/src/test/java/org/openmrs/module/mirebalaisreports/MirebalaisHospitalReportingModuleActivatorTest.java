@@ -9,6 +9,7 @@ import org.openmrs.module.mirebalaisreports.definitions.DailyRegistrationsReport
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.service.ReportService;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -17,6 +18,7 @@ import static junit.framework.Assert.assertNotNull;
 /**
  *
  */
+@SkipBaseSetup
 public class MirebalaisHospitalReportingModuleActivatorTest extends BaseMirebalaisReportTest {
 
     MirebalaisHospitalReportingModuleActivator activator;

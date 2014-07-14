@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.Location;
@@ -25,6 +26,7 @@ import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -35,6 +37,8 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
 /**
  *
  */
+@SkipBaseSetup
+@Ignore
 public class LastDispositionBeforeExitCohortDefinitionEvaluatorTest extends BaseInpatientReportTest {
 
     @Autowired

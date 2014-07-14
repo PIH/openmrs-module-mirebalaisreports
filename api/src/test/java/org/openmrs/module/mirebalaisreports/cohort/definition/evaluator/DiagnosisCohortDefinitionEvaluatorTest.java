@@ -15,6 +15,7 @@
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.Patient;
@@ -41,6 +42,7 @@ import static org.openmrs.module.emr.test.ReportingMatchers.hasExactlyIds;
 /**
  *
  */
+@Ignore
 public class DiagnosisCohortDefinitionEvaluatorTest extends BaseModuleContextSensitiveTest {
 
     @Autowired

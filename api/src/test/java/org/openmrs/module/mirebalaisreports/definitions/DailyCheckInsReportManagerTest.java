@@ -1,6 +1,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Cohort;
 import org.openmrs.Encounter;
@@ -16,6 +17,7 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.TsvReportRenderer;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -24,6 +26,8 @@ import static org.junit.Assert.assertThat;
 import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyIds;
 import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyMembers;
 
+@SkipBaseSetup
+@Ignore
 public class DailyCheckInsReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired

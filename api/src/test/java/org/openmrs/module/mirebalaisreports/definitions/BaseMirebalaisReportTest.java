@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Sets up basic Mirebalais metadata (instead of the standardTestDataset.xml from openmrs-core)
  */
+@Ignore
 @SkipBaseSetup // because of TRUNK-4051, this annotation will not be picked up, and you need to declare this on your concrete subclass
 public abstract class BaseMirebalaisReportTest extends BaseModuleContextSensitiveTest {
 

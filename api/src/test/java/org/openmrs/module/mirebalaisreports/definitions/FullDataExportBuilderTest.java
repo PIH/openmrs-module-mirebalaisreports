@@ -3,12 +3,14 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -20,6 +22,8 @@ import static org.mockito.Mockito.when;
 /**
  *
  */
+@SkipBaseSetup
+@Ignore
 public class FullDataExportBuilderTest extends BaseMirebalaisReportTest {
 
     @Autowired

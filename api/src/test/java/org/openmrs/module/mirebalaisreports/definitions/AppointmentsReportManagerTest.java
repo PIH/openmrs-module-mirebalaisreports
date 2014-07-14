@@ -1,6 +1,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -18,6 +19,7 @@ import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
@@ -26,6 +28,8 @@ import java.util.Date;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+@SkipBaseSetup
+@Ignore
 public class AppointmentsReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired

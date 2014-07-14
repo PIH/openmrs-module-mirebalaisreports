@@ -40,6 +40,7 @@ import org.openmrs.module.reporting.data.encounter.service.EncounterDataService;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.context.EncounterEvaluationContext;
 import org.openmrs.module.reporting.query.encounter.EncounterIdSet;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigInteger;
@@ -52,6 +53,7 @@ import static org.junit.Assert.assertThat;
 /**
  *
  */
+@SkipBaseSetup
 public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
 
     @Autowired
