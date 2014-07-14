@@ -28,7 +28,7 @@ public abstract class BaseInpatientReportTest extends BaseMirebalaisReportTest {
     private ConceptService conceptService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setupDontOverrideBaseClassSetup() throws Exception {
         VisitType atFacility = emrApiProperties.getAtFacilityVisitType();
         EncounterType checkIn = mirebalaisReportsProperties.getCheckInEncounterType();
         EncounterType admission = mirebalaisReportsProperties.getAdmissionEncounterType();

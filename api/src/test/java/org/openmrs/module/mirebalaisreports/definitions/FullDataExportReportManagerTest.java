@@ -90,7 +90,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     private Encounter e1;
 
     @Before
-    public void setup() {
+    public void setupDontOverrideBaseClassSetup() {
         dispositionService.setDispositionConfig("testDispositionConfig.json");
     }
 

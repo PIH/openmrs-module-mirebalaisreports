@@ -36,7 +36,7 @@ public class FullDataExportBuilderTest extends BaseMirebalaisReportTest {
     DispositionService originalDispositionService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setupDontOverrideBaseClassSetup() throws Exception {
         Disposition someDisposition = new Disposition();
         someDisposition.setConceptCode("PIH:ADMIT TO HOSPITAL");
         DispositionService dispositionService = mock(DispositionService.class);
