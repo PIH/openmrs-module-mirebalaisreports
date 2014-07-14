@@ -7,6 +7,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -87,6 +88,11 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     @Autowired
     TestDataManager data;
     private Encounter e1;
+
+    @BeforeClass
+    public void setup() {
+        dispositionService.setDispositionConfig("testDispositionConfig.json");
+    }
 
     @Test
 	public void shouldSuccessfullyRenderToExcel() throws Exception {
