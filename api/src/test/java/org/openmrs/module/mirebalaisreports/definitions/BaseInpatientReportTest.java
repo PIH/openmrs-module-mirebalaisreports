@@ -1,7 +1,6 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
@@ -14,7 +13,6 @@ import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SkipBaseSetup
-@Ignore
 public abstract class BaseInpatientReportTest extends BaseMirebalaisReportTest {
 
     protected Patient patient1;

@@ -1,7 +1,6 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Cohort;
 import org.openmrs.Encounter;
@@ -27,7 +26,6 @@ import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWith
  *
  */
 @SkipBaseSetup
-@Ignore
 public class DailyClinicalEncountersReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired

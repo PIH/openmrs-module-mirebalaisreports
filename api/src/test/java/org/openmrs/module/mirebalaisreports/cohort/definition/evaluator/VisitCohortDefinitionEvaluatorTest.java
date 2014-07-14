@@ -15,7 +15,6 @@
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Cohort;
 import org.openmrs.Patient;
@@ -42,7 +41,6 @@ import static org.junit.Assert.assertThat;
 /**
  *
  */
-@Ignore
 public class VisitCohortDefinitionEvaluatorTest extends BaseModuleContextSensitiveTest {;
 
     @Autowired

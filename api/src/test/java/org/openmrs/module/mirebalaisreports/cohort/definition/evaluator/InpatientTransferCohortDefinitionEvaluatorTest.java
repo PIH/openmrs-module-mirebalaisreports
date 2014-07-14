@@ -14,7 +14,6 @@
 
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
@@ -36,7 +35,6 @@ import static org.openmrs.module.emr.test.ReportingMatchers.isCohortWithExactlyI
  *
  */
 @SkipBaseSetup
-@Ignore
 public class InpatientTransferCohortDefinitionEvaluatorTest extends BaseInpatientReportTest {
 
     @Autowired

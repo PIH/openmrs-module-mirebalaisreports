@@ -3,7 +3,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.when;
  *
  */
 @SkipBaseSetup
-@Ignore
 public class FullDataExportBuilderTest extends BaseMirebalaisReportTest {
 
     @Autowired

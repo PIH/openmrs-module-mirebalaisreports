@@ -14,7 +14,6 @@
 
 package org.openmrs.module.mirebalaisreports.cohort.definition.evaluator;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.PersonName;
@@ -37,7 +36,6 @@ import static org.openmrs.module.emr.test.ReportingMatchers.hasExactlyIds;
 /**
  *
  */
-@Ignore
 public class PersonAuditInfoCohortDefinitionEvaluatorTest extends BaseModuleContextSensitiveTest {
 
     @Autowired
