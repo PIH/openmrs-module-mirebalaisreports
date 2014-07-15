@@ -36,7 +36,7 @@ import java.util.Arrays;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.openmrs.module.emr.test.ReportingMatchers.hasExactlyIds;
+import static org.openmrs.module.reporting.common.ReportingMatchers.hasExactlyIds;
 
 /**
  *
