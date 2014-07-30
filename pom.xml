@@ -2,6 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.openmrs.module</groupId>
+        <artifactId>mirebalais</artifactId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
+
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>mirebalaisreports</artifactId>
 	<version>1.1-SNAPSHOT</version>
@@ -29,33 +35,9 @@
 		<module>api</module>
 		<module>omod</module>
 	</modules>
-	
+
 	<properties>
-        <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-		<openMRSVersion>1.9.7</openMRSVersion>
-        <emrapiVersion>1.3-SNAPSHOT</emrapiVersion>
-        <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
-        <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
-        <emrVersion>2.0-SNAPSHOT</emrVersion>
-        <reportingVersion>0.9.2-SNAPSHOT</reportingVersion>
-        <reportingrestVersion>1.3-SNAPSHOT</reportingrestVersion>
-        <webservicesRestVersion>2.5</webservicesRestVersion>
-        <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
-        <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
-        <calculationVersion>1.0</calculationVersion>
-        <metadatasharingVersion>1.1.7.1</metadatasharingVersion>
-        <uiframeworkVersion>3.3-SNAPSHOT</uiframeworkVersion>
-        <htmlformentryVersion>2.4-SNAPSHOT</htmlformentryVersion>
-        <providerManagementVersion>2.0</providerManagementVersion>
-        <patientregistrationVersion>2.1</patientregistrationVersion>
-        <idgenVersion>2.7</idgenVersion>
-        <appframeworkVersion>2.2-SNAPSHOT</appframeworkVersion>
-        <eventVersion>2.1</eventVersion>
-        <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
-        <appointmentschedulingVersion>1.1-SNAPSHOT</appointmentschedulingVersion>
-        <printerVersion>1.0-SNAPSHOT</printerVersion>
         <supercsvVersion>2.1.0</supercsvVersion>
-        <openmrsTestutilsVersion>1.3.1</openmrsTestutilsVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -196,7 +178,7 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>providermanagement-api</artifactId>
-            <version>${providerManagementVersion}</version>
+            <version>${providermanagementVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -276,7 +258,7 @@
         <dependency>
             <groupId>org.openmrs.contrib</groupId>
             <artifactId>testutils</artifactId>
-            <version>${openmrsTestutilsVersion}</version>
+            <version>${testutilsVersion}</version>
             <scope>test</scope>
         </dependency>
 
