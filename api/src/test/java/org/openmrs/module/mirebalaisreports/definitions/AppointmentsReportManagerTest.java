@@ -1,7 +1,6 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -29,7 +28,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
-@Ignore
 public class AppointmentsReportManagerTest extends BaseMirebalaisReportTest {
 
     @Autowired
