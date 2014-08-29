@@ -31,12 +31,9 @@ import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsMonthlyRep
 import org.openmrs.module.mirebalaisreports.definitions.ReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.UsersAndProvidersReportManager;
 import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
-import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.report.ReportDesign;
-import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
-import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.service.ReportService;
 
 import java.io.IOException;
@@ -81,7 +78,6 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
 
         setupFullDataExports();
         setupOtherReports();
-        scheduleReports();
 
         log.info("Mirebalais Hospital Reporting Module Module started");
 	}
@@ -163,49 +159,6 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         }
     }
 
-    private void scheduleReports() {
-
-        // TODO: do we need to make sure this does not run on the reporting server?
-        // TODO: how do we want to copy this to a remote server? plus a cron job to clean old reports up?
-
-        // schedule the all patients report to run at midnight and noon everyday
-        ReportRequest allPatientsScheduledReportRequest = reportService.getReportRequestByUuid(MirebalaisReportsProperties.ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID);
-        if (allPatientsScheduledReportRequest == null) {
-            allPatientsScheduledReportRequest = new ReportRequest();
-        }
-        ReportDefinition allPatientsReportDefinition = reportDefinitionService.getDefinitionByUuid(MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID);
-        allPatientsScheduledReportRequest.setUuid(MirebalaisReportsProperties.ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID);
-        allPatientsScheduledReportRequest.setReportDefinition(Mapped.noMappings(allPatientsReportDefinition));
-        allPatientsScheduledReportRequest.setRenderingMode(getCsvReportRenderer(allPatientsReportDefinition));
-        allPatientsScheduledReportRequest.setSchedule("0 0 */12 * * ?");
-        reportService.queueReport(allPatientsScheduledReportRequest);
-
-        // schedule the appointments report to run at midnight and noon everyday, retrieving all appointments for the next seven days
-        ReportRequest appointmentsScheduledReportRequest = reportService.getReportRequestByUuid(MirebalaisReportsProperties.APPOINTMENTS_SCHEDULED_REPORT_REQUEST_UUID);
-        if (appointmentsScheduledReportRequest == null) {
-            appointmentsScheduledReportRequest = new ReportRequest();
-        }
-        ReportDefinition appointmentsReportDefinition = reportDefinitionService.getDefinitionByUuid(MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID);
-        appointmentsScheduledReportRequest.setUuid(MirebalaisReportsProperties.APPOINTMENTS_SCHEDULED_REPORT_REQUEST_UUID);
-        appointmentsScheduledReportRequest.setReportDefinition(Mapped.map(appointmentsReportDefinition, "startDate=${start_of_today},endDate=${start_of_today + 7d}"));
-        appointmentsScheduledReportRequest.setRenderingMode(getCsvReportRenderer(appointmentsReportDefinition));
-        appointmentsScheduledReportRequest.setSchedule("0 0 */12 * * ?");
-        reportService.queueReport(appointmentsScheduledReportRequest);
-
-        // schedule the appointments report to run at midnight and noon everyday, retrieving all check-ins for the past seven days
-        ReportRequest checkInsDataExportScheduledReportRequest = reportService.getReportRequestByUuid(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_SCHEDULED_REPORT_REQUEST_UUID);
-        if (checkInsDataExportScheduledReportRequest == null) {
-            checkInsDataExportScheduledReportRequest = new ReportRequest();
-        }
-        ReportDefinition checkInsDataExportReportDefinition = reportDefinitionService.getDefinitionByUuid(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID);
-        checkInsDataExportScheduledReportRequest.setUuid(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_SCHEDULED_REPORT_REQUEST_UUID);
-        checkInsDataExportScheduledReportRequest.setReportDefinition(Mapped.map(checkInsDataExportReportDefinition, "startDate=${start_of_today - 7d},endDate=${now}"));
-        checkInsDataExportScheduledReportRequest.setRenderingMode(getCsvReportRenderer(checkInsDataExportReportDefinition));
-        checkInsDataExportScheduledReportRequest.setSchedule("0 0 */12 * * ?");
-        reportService.queueReport(checkInsDataExportScheduledReportRequest);
-
-    }
-
     private boolean alreadyAtLatestVersion(ReportManager manager) {
         String newVersion = manager.getVersion();
         String existingVersion = administrationService.getGlobalProperty(globalPropertyFor(manager));
@@ -216,16 +169,6 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
 
     private String globalPropertyFor(ReportManager manager) {
         return "mirebalaisreports." + manager.getUuid() + ".version";
-    }
-
-    private RenderingMode getCsvReportRenderer(ReportDefinition reportDefinition) {
-
-        for (RenderingMode candidate : reportService.getRenderingModes(reportDefinition)) {
-            if (candidate.getDescriptor().startsWith("org.openmrs.module.reporting.report.renderer.CsvReportRenderer")) {
-                return candidate;
-            }
-        }
-        return null;
     }
 
     /**
