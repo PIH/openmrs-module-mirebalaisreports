@@ -23,7 +23,6 @@ import org.openmrs.Location;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Provider;
-import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
@@ -45,9 +44,6 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     @Autowired
     private DispositionService dispositionService;
-
-    @Autowired
-    private FeatureToggleProperties featureToggles;
 
     //***** DATE FORMATS ******
     public static final String DATE_FORMAT = "dd MMM yyyy";
