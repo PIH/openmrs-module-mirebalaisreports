@@ -81,16 +81,14 @@
         <td>${ v.zlEmrId ?: ''}</td>
         <td>${ v.dossierNumber ?: ''}</td>
         <td>
-            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
-                    || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
             <!-- only add link to patient dashboard if user has appropriate privilege -->
                 <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
             <% } %>
 
             ${ ui.format((v.givenName ? v.givenName : '') + " " + (v.familyName ? v.familyName : '')) }
 
-            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)
-                    || (!featureToggles.isFeatureEnabled("newPatientSearchWidget"))) { %>
+            <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
                 <!-- only add link to patient dashboard if user has appropriate privilege -->
                 </a>
             <% } %>
