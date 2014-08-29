@@ -177,7 +177,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         allPatientsScheduledReportRequest.setUuid(MirebalaisReportsProperties.ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID);
         allPatientsScheduledReportRequest.setReportDefinition(Mapped.noMappings(allPatientsReportDefinition));
         allPatientsScheduledReportRequest.setRenderingMode(getCsvReportRenderer(allPatientsReportDefinition));
-        allPatientsScheduledReportRequest.setSchedule("0 * */12 * * ?");
+        allPatientsScheduledReportRequest.setSchedule("0 0 */12 * * ?");
         reportService.queueReport(allPatientsScheduledReportRequest);
 
         // schedule the appointments report to run at midnight and noon everyday, retrieving all appointments for the next seven days
@@ -189,7 +189,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         appointmentsScheduledReportRequest.setUuid(MirebalaisReportsProperties.APPOINTMENTS_SCHEDULED_REPORT_REQUEST_UUID);
         appointmentsScheduledReportRequest.setReportDefinition(Mapped.map(appointmentsReportDefinition, "startDate=${start_of_today},endDate=${start_of_today + 7d}"));
         appointmentsScheduledReportRequest.setRenderingMode(getCsvReportRenderer(appointmentsReportDefinition));
-        appointmentsScheduledReportRequest.setSchedule("0 * */12 * * ?");
+        appointmentsScheduledReportRequest.setSchedule("0 0 */12 * * ?");
         reportService.queueReport(appointmentsScheduledReportRequest);
 
         // schedule the appointments report to run at midnight and noon everyday, retrieving all check-ins for the past seven days
@@ -201,7 +201,7 @@ public class MirebalaisHospitalReportingModuleActivator extends BaseModuleActiva
         checkInsDataExportScheduledReportRequest.setUuid(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_SCHEDULED_REPORT_REQUEST_UUID);
         checkInsDataExportScheduledReportRequest.setReportDefinition(Mapped.map(checkInsDataExportReportDefinition, "startDate=${start_of_today - 7d},endDate=${now}"));
         checkInsDataExportScheduledReportRequest.setRenderingMode(getCsvReportRenderer(checkInsDataExportReportDefinition));
-        checkInsDataExportScheduledReportRequest.setSchedule("0 * */12 * * ?");
+        checkInsDataExportScheduledReportRequest.setSchedule("0 0 */12 * * ?");
         reportService.queueReport(checkInsDataExportScheduledReportRequest);
 
     }
