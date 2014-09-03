@@ -167,7 +167,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
     protected ReportProcessorConfiguration constructSaveToDiskReportProcessorConfiguration() {
 
         Properties saveToDiskProperties = new Properties();
-        saveToDiskProperties.put(DiskReportProcessor.SAVE_LOCATION, "/home/mogoodrich/.OpenMRS");
+        saveToDiskProperties.put(DiskReportProcessor.SAVE_LOCATION, "/home/tomcat6/.OpenMRS/reports");
         saveToDiskProperties.put(DiskReportProcessor.COMPRESS_OUTPUT, "true");
 
         ReportProcessorConfiguration saveToDiskProcessorConfiguration
