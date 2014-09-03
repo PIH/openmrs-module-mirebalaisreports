@@ -21,7 +21,7 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public String getVersion() {
-        return "1.9"; // standardized download filename
+        return "1.10";
     }
 
     @Override
