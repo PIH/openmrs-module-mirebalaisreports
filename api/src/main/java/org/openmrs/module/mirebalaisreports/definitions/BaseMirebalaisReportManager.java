@@ -11,9 +11,12 @@ import org.openmrs.module.radiologyapp.RadiologyProperties;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
+import org.openmrs.module.reporting.report.ReportProcessorConfiguration;
+import org.openmrs.module.reporting.report.processor.DiskReportProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.Properties;
 
 /**
  * Includes helpful methods for dealing with Mirebalais Metadata (this class exists so that someday we might consider
@@ -161,4 +164,17 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         return s;
     }
 
+    protected ReportProcessorConfiguration constructSaveToDiskReportProcessorConfiguration() {
+
+        Properties saveToDiskProperties = new Properties();
+        saveToDiskProperties.put(DiskReportProcessor.SAVE_LOCATION, "/home/mogoodrich/.OpenMRS");
+        saveToDiskProperties.put(DiskReportProcessor.COMPRESS_OUTPUT, "true");
+
+        ReportProcessorConfiguration saveToDiskProcessorConfiguration
+                = new ReportProcessorConfiguration("saveToDisk", DiskReportProcessor.class, saveToDiskProperties, true, false);
+        saveToDiskProcessorConfiguration.setProcessorMode(ReportProcessorConfiguration.ProcessorMode.AUTOMATIC);
+
+        return saveToDiskProcessorConfiguration;
+
+    }
 }

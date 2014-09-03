@@ -21,7 +21,7 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public String getVersion() {
-        return "1.3"; // standardized download filename
+        return "1.9"; // standardized download filename
     }
 
     @Override
@@ -55,11 +55,16 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+        
         ReportDesign reportDesign = csvReportDesign(reportDefinition);
         reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY,
-                "mirebalais.allpatientslistdataexport." +
-                "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
-                "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+                "mirebalaisreports.allpatientslistdataexport." +
+                        "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
+                        "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+
+        // used to save this report to disk when running it as part of scheduled emergency backup
+        reportDesign.addReportProcessor(constructSaveToDiskReportProcessorConfiguration());
+
         return Arrays.asList(reportDesign);
     }
 

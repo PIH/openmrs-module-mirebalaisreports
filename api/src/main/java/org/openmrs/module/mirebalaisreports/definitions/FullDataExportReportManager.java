@@ -104,7 +104,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.5-SNAPSHOT"; // last change: diagnoses export should include all encounter types
+        return "1.6";
     }
 
 	//***** INSTANCE METHODS
@@ -509,12 +509,18 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+
         ReportDesign design = csvReportDesign(reportDefinition);
-        design.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "mirebalais." + code + "." +
+
+        design.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "mirebalaisreports." + code + "." +
                 "{{ formatDate request.reportDefinition.parameterMappings.startDate \"yyyyMMdd\" }}." +
                 "{{ formatDate request.reportDefinition.parameterMappings.endDate \"yyyyMMdd\" }}." +
                 "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
                 "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+
+        // used to save this report to disk when running it as part of scheduled emergency backup
+        design.addReportProcessor(constructSaveToDiskReportProcessorConfiguration());
+
         return Arrays.asList(design);
     }
 

@@ -23,6 +23,7 @@ import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.renderer.ReportDesignRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -99,12 +100,22 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
-        return Arrays.asList(csvReportDesign(reportDefinition));
+
+        ReportDesign reportDesign = csvReportDesign(reportDefinition);
+        reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY,
+                "mirebalaisreports.appointments." +
+                        "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
+                        "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+
+        // used to save this report to disk when running it as part of scheduled emergency backup
+        reportDesign.addReportProcessor(constructSaveToDiskReportProcessorConfiguration());
+
+        return Arrays.asList(reportDesign);
     }
 
     @Override
     public String getVersion() {
-        return "1.3";
+        return "1.4";
     }
 
     @Override
