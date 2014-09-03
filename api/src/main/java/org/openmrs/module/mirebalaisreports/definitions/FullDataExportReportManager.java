@@ -518,7 +518,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
                 "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
                 "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
 
-        // used to save this report to disk when running it as part of scheduled emergency backup
+        // used to save this report to disk when running it as part of scheduled backup
         design.addReportProcessor(constructSaveToDiskReportProcessorConfiguration());
 
         return Arrays.asList(design);
