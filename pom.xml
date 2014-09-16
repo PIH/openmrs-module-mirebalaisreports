@@ -52,7 +52,7 @@
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
         <webservicesRestVersion>2.5</webservicesRestVersion>
-        <appointmentschedulingVersion>1.1-SNAPSHOT</appointmentschedulingVersion>
+        <appointmentschedulingVersion>1.2-SNAPSHOT</appointmentschedulingVersion>
         <testutilsVersion>1.4-SNAPSHOT</testutilsVersion>
         <printerVersion>1.0-SNAPSHOT</printerVersion>
         <!-- Need to phase this out. -->
