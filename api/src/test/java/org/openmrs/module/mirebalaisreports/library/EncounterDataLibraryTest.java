@@ -43,7 +43,6 @@ import org.openmrs.module.reporting.query.encounter.EncounterIdSet;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
 
 import static org.hamcrest.core.Is.is;
@@ -312,7 +311,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(e1.getId()), nullValue());
         assertThat(data.getData().get(e2.getId()), nullValue());
-        assertThat((BigInteger) data.getData().get(e3.getId()), is(new BigInteger("2")));
+        assertThat(data.getData().get(e3.getId()).toString(), is("2"));
     }
 
     @Test
@@ -322,7 +321,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
         assertThat(data.getData().get(e1.getId()), nullValue());
         assertThat(data.getData().get(e2.getId()), nullValue());
-        assertThat((BigInteger) data.getData().get(e3.getId()), is(new BigInteger("2")));
+		assertThat(data.getData().get(e3.getId()).toString(), is("2"));
     }
 
     @Test
