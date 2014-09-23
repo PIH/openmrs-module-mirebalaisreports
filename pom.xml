@@ -37,7 +37,7 @@
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
         <uiframeworkVersion>3.3-SNAPSHOT</uiframeworkVersion>
-        <appframeworkVersion>2.2-SNAPSHOT</appframeworkVersion>
+        <appframeworkVersion>2.3-SNAPSHOT</appframeworkVersion>
         <metadatasharingVersion>1.1.8</metadatasharingVersion>
         <htmlformentryVersion>2.4-SNAPSHOT</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
