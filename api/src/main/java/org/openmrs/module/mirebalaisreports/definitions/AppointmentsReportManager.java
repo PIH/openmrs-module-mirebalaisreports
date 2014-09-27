@@ -1,6 +1,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.module.appointmentscheduling.AppointmentType;
 import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentCancelReasonDataDefinition;
 import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentEndDateDataDefinition;
 import org.openmrs.module.appointmentscheduling.reporting.data.definition.AppointmentLocationDataDefinition;
@@ -16,6 +17,7 @@ import org.openmrs.module.mirebalaisreports.converter.AppointmentStatusToStatusT
 import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.converter.DateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
@@ -85,6 +87,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("reason", new AppointmentReasonDataDefinition(), "", new ObjectFormatter());
         dsd.addColumn("cancelReason", new AppointmentCancelReasonDataDefinition(), "", new ObjectFormatter());
         dsd.addColumn("status", new AppointmentStatusDataDefinition(), "", new AppointmentStatusToStatusTypeInFrenchConverter());
+        dsd.addColumn("confidential", new AppointmentTypeDataDefinition(), "", new PropertyConverter(AppointmentType.class, "confidential"));
 
         dsd.addSortCriteria("date", SortCriteria.SortDirection.ASC);
         dsd.addSortCriteria("startTime", SortCriteria.SortDirection.ASC);
@@ -115,7 +118,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.5";
+        return "1.7"; // last change: added confidential column
     }
 
     @Override
