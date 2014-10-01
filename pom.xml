@@ -39,7 +39,7 @@
         <uiframeworkVersion>3.3-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>2.3-SNAPSHOT</appframeworkVersion>
         <metadatasharingVersion>1.1.8</metadatasharingVersion>
-        <htmlformentryVersion>2.4</htmlformentryVersion>
+        <htmlformentryVersion>2.5-SNAPSHOT</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
         <reportingVersion>0.9.3-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
