@@ -53,7 +53,7 @@
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
         <webservicesRestVersion>2.5</webservicesRestVersion>
         <appointmentschedulingVersion>1.2-SNAPSHOT</appointmentschedulingVersion>
-        <testutilsVersion>1.4-SNAPSHOT</testutilsVersion>
+        <testutilsVersion>1.5-SNAPSHOT</testutilsVersion>
         <printerVersion>1.0-SNAPSHOT</printerVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.2.0</supercsvVersion>
