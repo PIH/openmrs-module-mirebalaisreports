@@ -3,7 +3,9 @@ package org.openmrs.module.mirebalaisreports.definitions.helper;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
-import org.openmrs.module.mirebalaismetadata.MirebalaisMetadataProperties;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
+import org.openmrs.module.mirebalaismetadata.deploy.bundle.CoreMetadata;
+import org.openmrs.module.mirebalaismetadata.deploy.bundle.MirebalaisSpecificMetadata;
 import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportManager;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -38,6 +40,9 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
 
     @Autowired
     protected ConceptService conceptService;
+
+    @Autowired
+    protected FeatureToggleProperties featureToggles;
 
     @Override
     public List<Parameter> getParameters() {
@@ -75,8 +80,19 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
      * @return
      */
     public List<Location> getLocations() {
-        List<String> skip = Arrays.asList(MirebalaisMetadataProperties.UNKNOWN_LOCATION_UUID,
-                MirebalaisMetadataProperties.MIREBALAIS_HOSPITAL_LOCATION_UUID);
+        List<String> skip;
+
+ /*       if (featureToggles.isFeatureEnabled("cdi")) {
+            skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
+                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations.MIREBALAIS_HOSPITAL,
+                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations.CDI,
+                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations. MIREBALAIS_HOSPITAL_MAIN_CAMPUS);
+        }
+        else {*/
+            skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
+                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations.MIREBALAIS_HOSPITAL);
+     //   }
+
         List<Location> locations = locationService.getAllLocations(false);
         for (Iterator<Location> i = locations.iterator(); i.hasNext(); ) {
             Location candidate = i.next();
