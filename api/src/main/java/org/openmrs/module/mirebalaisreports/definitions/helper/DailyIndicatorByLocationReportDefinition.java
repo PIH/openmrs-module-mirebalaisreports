@@ -82,16 +82,16 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
     public List<Location> getLocations() {
         List<String> skip;
 
- /*       if (featureToggles.isFeatureEnabled("cdi")) {
+        if (featureToggles.isFeatureEnabled("cdi")) {
             skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
                     MirebalaisSpecificMetadata.MirebalaisHospitalLocations.MIREBALAIS_HOSPITAL,
                     MirebalaisSpecificMetadata.MirebalaisHospitalLocations.CDI,
                     MirebalaisSpecificMetadata.MirebalaisHospitalLocations. MIREBALAIS_HOSPITAL_MAIN_CAMPUS);
         }
-        else {*/
+        else {
             skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
                     MirebalaisSpecificMetadata.MirebalaisHospitalLocations.MIREBALAIS_HOSPITAL);
-     //   }
+        }
 
         List<Location> locations = locationService.getAllLocations(false);
         for (Iterator<Location> i = locations.iterator(); i.hasNext(); ) {
