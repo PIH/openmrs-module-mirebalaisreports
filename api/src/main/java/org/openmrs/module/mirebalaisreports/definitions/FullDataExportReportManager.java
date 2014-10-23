@@ -104,7 +104,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.7";
+        return "1.8";
     }
 
 	//***** INSTANCE METHODS
