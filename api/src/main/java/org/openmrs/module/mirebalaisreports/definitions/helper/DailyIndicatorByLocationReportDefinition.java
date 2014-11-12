@@ -5,7 +5,7 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.mirebalaismetadata.deploy.bundle.CoreMetadata;
-import org.openmrs.module.mirebalaismetadata.deploy.bundle.MirebalaisSpecificMetadata;
+import org.openmrs.module.mirebalaismetadata.deploy.bundle.ZanmiLocations;
 import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportManager;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -84,13 +84,13 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
 
         if (featureToggles.isFeatureEnabled("cdi")) {
             skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
-                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations.MIREBALAIS_HOSPITAL,
-                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations.CDI,
-                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations. MIREBALAIS_HOSPITAL_MAIN_CAMPUS);
+                    ZanmiLocations.MirebalaisLocations.MIREBALAIS_HOSPITAL,
+                    ZanmiLocations.MirebalaisLocations.CDI,
+                    ZanmiLocations.MirebalaisLocations.MIREBALAIS_HOSPITAL_MAIN_CAMPUS);
         }
         else {
             skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
-                    MirebalaisSpecificMetadata.MirebalaisHospitalLocations.MIREBALAIS_HOSPITAL);
+                    ZanmiLocations.MirebalaisLocations.MIREBALAIS_HOSPITAL);
         }
 
         List<Location> locations = locationService.getAllLocations(false);
