@@ -18,7 +18,14 @@ END AS anatomical_grouping,
 ord_loc.name AS order_location,
 CONCAT(ord_pr_n.given_name, ' ', ord_pr_n.family_name) AS order_provider,
 ord_enc.encounter_datetime AS order_datetime,
-ord_enc.visit_id AS order_visit_id
+ord_enc.visit_id AS order_visit_id,
+
+CASE
+  WHEN ct_set.concept_id is not null THEN 'CT'
+  WHEN us_set.concept_id is not null THEN 'Ultrasound'
+  WHEN xray_set.concept_id is not null THEN 'Xray'
+  ELSE ''
+END as modality
 
 FROM patient p
 
@@ -85,6 +92,15 @@ INNER JOIN location ord_loc ON ord_enc.location_id = ord_loc.location_id
 LEFT OUTER JOIN encounter_provider ord_ep ON ord_ep.encounter_id = ord_enc.encounter_id AND ord_ep.voided = 0 AND ord_ep.encounter_role_id = :orderingProvider
 LEFT OUTER JOIN provider ord_pr ON ord_ep.provider_id = ord_pr.provider_id
 LEFT OUTER JOIN person_name ord_pr_n ON ord_pr.person_id = ord_pr_n.person_id AND ord_pr_n.voided = 0 -- AND ord_pr_n.preferred = 1 commented out since our providers somehow don't have names marked as preferred
+
+-- Is ths order an Xray?
+LEFT OUTER JOIN concept_set xray_set ON ord.concept_id = xray_set.concept_id AND xray_set.concept_set = :xrayOrderables
+
+-- Is the order a CT?
+LEFT OUTER JOIN concept_set ct_set ON ord.concept_id = ct_set.concept_id AND ct_set.concept_set = :ctOrderables
+
+-- Is the order an Ultrasound?
+LEFT OUTER JOIN concept_set us_set ON ord.concept_id = us_set.concept_id AND us_set.concept_set = :ultrasoundOrderables
 
 WHERE p.voided = 0
 

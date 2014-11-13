@@ -8,7 +8,8 @@ e.visit_id, pr.birthdate, pr.birthdate_estimated,
 CASE
   WHEN ct_set.concept_id is not null THEN 'CT'
   WHEN us_set.concept_id is not null THEN 'Ultrasound'
-  ELSE 'Xray'
+  WHEN xray_set.concept_id is not null THEN 'Xray'
+  ELSE ''
 END as modality,
 
 test_order.clinical_history
@@ -52,6 +53,9 @@ INNER JOIN location el ON e.location_id = el.location_id
 INNER JOIN orders o ON e.encounter_id = o.encounter_id AND o.voided = 0
 
 INNER JOIN test_order ON test_order.order_id = o.order_id
+
+-- Is ths order an Xray?
+LEFT OUTER JOIN concept_set xray_set ON o.concept_id = xray_set.concept_id AND xray_set.concept_set = :xrayOrderables
 
 -- Is the order a CT?
 LEFT OUTER JOIN concept_set ct_set ON o.concept_id = ct_set.concept_id AND ct_set.concept_set = :ctOrderables

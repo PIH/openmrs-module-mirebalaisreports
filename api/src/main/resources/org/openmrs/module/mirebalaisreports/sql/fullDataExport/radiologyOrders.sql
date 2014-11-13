@@ -3,7 +3,8 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 CASE
   WHEN o.concept_id IN(SELECT concept_id FROM concept_set WHERE concept_set = :ctOrderables) THEN 'CT'
   WHEN o.concept_id IN(SELECT concept_id FROM concept_set WHERE concept_set = :ultrasoundOrderables) THEN 'Ultrasound'
-  ELSE 'Xray'
+  WHEN o.concept_id IN(SELECT concept_id FROM concept_set WHERE concept_set = :xrayOrderables) THEN 'Xray'
+  ELSE ''
 END AS modality,
 
 CASE
