@@ -80,13 +80,13 @@ LEFT OUTER JOIN concept_name proc_perf_n ON proc_perf.value_coded = proc_perf_n.
 LEFT OUTER JOIN obs comments ON rrc.obs_id = comments.obs_group_id AND comments.concept_id = 625 AND comments.voided = 0
 
 -- Order for this study
-INNER JOIN orders ord ON rrc.order_id = ord.order_id AND ord.voided = 0
+LEFT OUTER JOIN orders ord ON rrc.order_id = ord.order_id AND ord.voided = 0
 
 -- Encounter for Order
-INNER JOIN encounter ord_enc ON ord.encounter_id = ord_enc.encounter_id AND ord_enc.voided = 0
+LEFT OUTER JOIN encounter ord_enc ON ord.encounter_id = ord_enc.encounter_id AND ord_enc.voided = 0
 
 -- Location of Order (via its encounter)
-INNER JOIN location ord_loc ON ord_enc.location_id = ord_loc.location_id
+LEFT OUTER JOIN location ord_loc ON ord_enc.location_id = ord_loc.location_id
 
 -- Ordering Provider for order (via its encounter)
 LEFT OUTER JOIN encounter_provider ord_ep ON ord_ep.encounter_id = ord_enc.encounter_id AND ord_ep.voided = 0 AND ord_ep.encounter_role_id = :orderingProvider

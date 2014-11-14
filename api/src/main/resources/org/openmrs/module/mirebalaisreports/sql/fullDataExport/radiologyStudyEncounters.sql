@@ -77,13 +77,13 @@ LEFT OUTER JOIN obs proc_perf ON rsc.obs_id = proc_perf.obs_group_id AND proc_pe
 LEFT OUTER JOIN concept_name proc_perf_n ON proc_perf.value_coded = proc_perf_n.concept_id AND proc_perf_n.voided = 0 AND proc_perf_n.locale = 'fr' AND proc_perf_n.locale_preferred = 1
 
 -- Order for this study
-INNER JOIN orders ord ON rsc.order_id = ord.order_id AND ord.voided = 0
+LEFT OUTER JOIN orders ord ON rsc.order_id = ord.order_id AND ord.voided = 0
 
 -- Encounter for Order
-INNER JOIN encounter ord_enc ON ord.encounter_id = ord_enc.encounter_id AND ord_enc.voided = 0
+LEFT OUTER JOIN encounter ord_enc ON ord.encounter_id = ord_enc.encounter_id AND ord_enc.voided = 0
 
 -- Location of Order (via its encounter)
-INNER JOIN location ord_loc ON ord_enc.location_id = ord_loc.location_id
+LEFT OUTER JOIN location ord_loc ON ord_enc.location_id = ord_loc.location_id
 
 -- Ordering Provider for order (via its encounter)
 LEFT OUTER JOIN encounter_provider ord_ep ON ord_ep.encounter_id = ord_enc.encounter_id AND ord_ep.voided = 0 AND ord_ep.encounter_role_id = :orderingProvider
