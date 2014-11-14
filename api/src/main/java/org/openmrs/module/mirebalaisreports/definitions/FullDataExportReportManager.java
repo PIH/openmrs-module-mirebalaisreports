@@ -104,7 +104,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.11";
+        return "1.14";
     }
 
 	//***** INSTANCE METHODS
@@ -151,40 +151,16 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 		rd.setParameters(getParameters());
         rd.setUuid(getUuid());
 
-        {
-            CompositionCohortDefinition baseCohortDefinition = new CompositionCohortDefinition();
-            baseCohortDefinition.addParameter(getStartDateParameter());
-            baseCohortDefinition.addParameter(getEndDateParameter());
+        CompositionCohortDefinition baseCohortDefinition = new CompositionCohortDefinition();
 
-            // TODO--this is no longer accurate, remove?
-            // --Only show patients with a visit or registration encounter during the period
-            // INNER JOIN (
-            // SELECT patient_id, date_started FROM visit WHERE voided = 0 AND date_started BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
-            // UNION
-            // SELECT patient_id, encounter_datetime FROM encounter WHERE voided = 0 AND encounter_type = 6 AND encounter_datetime BETWEEN :startDate AND ADDDATE(:endDate, INTERVAL 1 DAY)
-            // ) list ON p.patient_id = list.patient_id
+        // --Exclude test patients
+        PersonAttributeCohortDefinition testPatient = new PersonAttributeCohortDefinition();
+        testPatient.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
+        testPatient.addValue("true");
+        baseCohortDefinition.addSearch("testPatient", Mapped.map(testPatient, ""));
+        baseCohortDefinition.setCompositionString("NOT testPatient");
+        rd.setBaseCohortDefinition(new Mapped<CohortDefinition>(baseCohortDefinition, null));
 
-            VisitCohortDefinition visitDuringPeriod = new VisitCohortDefinition();
-            visitDuringPeriod.addParameter(new Parameter("activeOnOrAfter", "", Date.class));
-            visitDuringPeriod.addParameter(new Parameter("activeOnOrBefore", "", Date.class));
-            baseCohortDefinition.addSearch("visitDuringPeriod", this.<CohortDefinition>map(visitDuringPeriod, "activeOnOrAfter=${startDate},activeOnOrBefore=${endDate}"));
-
-            EncounterCohortDefinition registrationEncounterDuringPeriod = new EncounterCohortDefinition();
-            registrationEncounterDuringPeriod.addEncounterType(mirebalaisReportsProperties.getRegistrationEncounterType());
-            registrationEncounterDuringPeriod.addParameter(new Parameter("onOrAfter", "", Date.class));
-            registrationEncounterDuringPeriod.addParameter(new Parameter("onOrBefore", "", Date.class));
-            baseCohortDefinition.addSearch("registrationEncounterDuringPeriod", this.<CohortDefinition>map(registrationEncounterDuringPeriod, "onOrAfter=${startDate},onOrBefore=${endDate}"));
-
-            // --Exclude test patients
-            // AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = 11 AND voided = 0)
-            PersonAttributeCohortDefinition testPatient = new PersonAttributeCohortDefinition();
-            testPatient.setAttributeType(emrApiProperties.getTestPatientPersonAttributeType());
-            testPatient.addValue("true");
-            baseCohortDefinition.addSearch("testPatient", Mapped.map(testPatient, ""));
-
-            baseCohortDefinition.setCompositionString("(visitDuringPeriod OR registrationEncounterDuringPeriod) AND NOT testPatient");
-            rd.setBaseCohortDefinition(this.<CohortDefinition>map(baseCohortDefinition, "startDate=${startDate},endDate=${endDate}"));
-        }
 
         for (String key : dataSets) {
 
@@ -391,10 +367,28 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
     }
 
     private DataSetDefinition constructPatientsDataSetDefinition() {
-        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
+        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.addParameter(getStartDateParameter());
         dsd.addParameter(getEndDateParameter());
+
+        CompositionCohortDefinition baseCohortDefinition = new CompositionCohortDefinition();
+        baseCohortDefinition.addParameter(getStartDateParameter());
+        baseCohortDefinition.addParameter(getEndDateParameter());
+
+        VisitCohortDefinition visitDuringPeriod = new VisitCohortDefinition();
+        visitDuringPeriod.addParameter(new Parameter("activeOnOrAfter", "", Date.class));
+        visitDuringPeriod.addParameter(new Parameter("activeOnOrBefore", "", Date.class));
+        baseCohortDefinition.addSearch("visitDuringPeriod", this.<CohortDefinition>map(visitDuringPeriod, "activeOnOrAfter=${startDate},activeOnOrBefore=${endDate}"));
+
+        EncounterCohortDefinition registrationEncounterDuringPeriod = new EncounterCohortDefinition();
+        registrationEncounterDuringPeriod.addEncounterType(mirebalaisReportsProperties.getRegistrationEncounterType());
+        registrationEncounterDuringPeriod.addParameter(new Parameter("onOrAfter", "", Date.class));
+        registrationEncounterDuringPeriod.addParameter(new Parameter("onOrBefore", "", Date.class));
+        baseCohortDefinition.addSearch("registrationEncounterDuringPeriod", this.<CohortDefinition>map(registrationEncounterDuringPeriod, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+        baseCohortDefinition.setCompositionString("(visitDuringPeriod OR registrationEncounterDuringPeriod)");
+        dsd.addRowFilter(this.<CohortDefinition>map(baseCohortDefinition, "startDate=${startDate},endDate=${endDate}"));
 
         dsd.addColumn("patient_id", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.patientId"), "");
 
