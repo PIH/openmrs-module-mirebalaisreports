@@ -14,28 +14,21 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.openmrs.module.appframework.domain.AppDescriptor;
-import org.openmrs.module.appframework.domain.AppTemplate;
 import org.openmrs.module.appframework.domain.Extension;
-import org.openmrs.module.appframework.factory.AppFrameworkFactory;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Helper that <em>builds</em> FullDataExportReportManagers with specific combinations of datasets.
- *
- * This implements AppFrameworkFactory, to provide link extensions on the reportingui homepage.
- * TODO figure out why this is not working
  */
 @Component
-public class FullDataExportBuilder implements AppFrameworkFactory {
+public class FullDataExportBuilder {
 
     @Autowired
     ApplicationContext applicationContext;
@@ -80,8 +73,7 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
                 Arrays.asList("diagnoses")));
     }
 
-    @Override
-    public List<Extension> getExtensions() throws IOException {
+    public List<Extension> getExtensions() {
         ArrayList<Extension> extensions = new ArrayList<Extension>();
         int i = 0;
         for (Configuration c : configurations) {
@@ -99,16 +91,6 @@ public class FullDataExportBuilder implements AppFrameworkFactory {
         }
 
         return extensions;
-    }
-
-    @Override
-    public List<AppDescriptor> getAppDescriptors() throws IOException {
-        return null;
-    }
-
-    @Override
-    public List<AppTemplate> getAppTemplates() throws IOException {
-        return null;
     }
 
     public List<FullDataExportReportManager> getAllReportManagers() {
