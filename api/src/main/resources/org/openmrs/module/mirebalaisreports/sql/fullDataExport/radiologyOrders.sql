@@ -17,7 +17,7 @@ CASE
   ELSE '?'
 END AS anatomical_grouping,
 
-addr_section.user_generated_id as 'Section Communale CDC ID'
+addr_section.user_generated_id as section_communale_CDC_ID
 
 FROM patient p
 

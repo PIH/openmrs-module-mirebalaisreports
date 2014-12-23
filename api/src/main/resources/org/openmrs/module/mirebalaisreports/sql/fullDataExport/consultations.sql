@@ -3,7 +3,7 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 										 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id, pr.birthdate, pr.birthdate_estimated, boarding_for_l.name as boarding_for, adt.encounter_id as dispo_encounter_id, addr_section.user_generated_id as 'Section Communale CDC ID'
+e.visit_id, pr.birthdate, pr.birthdate_estimated, boarding_for_l.name as boarding_for, adt.encounter_id as dispo_encounter_id, addr_section.user_generated_id as section_communale_CDC_ID
 
 FROM patient p
 

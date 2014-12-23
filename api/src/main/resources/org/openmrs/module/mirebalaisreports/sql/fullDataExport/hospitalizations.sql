@@ -26,7 +26,7 @@ dis_dispo.dispo_datetime outcome_datetime,
 dis_dispo.disposition_location transfer_out_location,
 IF(pr.death_date IS NOT NULL AND pr.death_date < ADDDATE(:endDate, INTERVAL 1 DAY), IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Décès < 48 hrs', 'Décès >= 48 hrs'), null) died,
 v.visit_id as visit_id, pr.birthdate, pr.birthdate_estimated,
-addr_section.user_generated_id as 'Section Communale CDC ID'
+addr_section.user_generated_id as section_communale_CDC_ID
 
 FROM patient p
 

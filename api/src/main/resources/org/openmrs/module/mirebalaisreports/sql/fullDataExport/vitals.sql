@@ -4,7 +4,7 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
 
 e.visit_id, pr.birthdate, pr.birthdate_estimated,
-addr_section.user_generated_id as 'Section Communale CDC ID'
+addr_section.user_generated_id as section_communale_CDC_ID
 
 FROM patient p
 

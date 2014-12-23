@@ -17,7 +17,7 @@ o.date_created,
 IF(TIME_TO_SEC(o.date_created) - TIME_TO_SEC(o.obs_datetime) > 1800, TRUE, FALSE) retrospective,
 
 e.visit_id, pr.birthdate, pr.birthdate_estimated, et.name as encounter_type,
-addr_section.user_generated_id as 'Section Communale CDC ID'
+addr_section.user_generated_id as section_communale_CDC_ID
 
 FROM patient p
 
