@@ -16,12 +16,13 @@ o.date_created,
 -- Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(o.date_created) - TIME_TO_SEC(o.obs_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id, pr.birthdate, pr.birthdate_estimated, et.name as encounter_type
+e.visit_id, pr.birthdate, pr.birthdate_estimated, et.name as encounter_type,
+addr_section.user_generated_id as 'Section Communale CDC ID'
 
 FROM patient p
 
--- Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
+--Most recent ZL EMR ID
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 
 -- ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
@@ -34,6 +35,11 @@ INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
 
 -- Most recent address
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
+
+-- CDC ID of address
+LEFT OUTER JOIN address_hierarchy_entry addr_section ON addr_section.name = pa.address3 AND addr_section.level_id = (SELECT address_hierarchy_level_id FROM address_hierarchy_level WHERE address_field='ADDRESS_3')
+LEFT OUTER JOIN address_hierarchy_entry addr_commune ON addr_commune.name  = pa.city_village AND addr_commune.address_hierarchy_entry_id = addr_section.parent_id AND addr_commune.level_id = (SELECT address_hierarchy_level_id FROM address_hierarchy_level WHERE address_field='CITY_VILLAGE')
+LEFT OUTER JOIN address_hierarchy_entry addr_department ON addr_department.name = pa.state_province AND addr_department.address_hierarchy_entry_id = addr_commune.parent_id AND addr_department.level_id = (SELECT address_hierarchy_level_id FROM address_hierarchy_level WHERE address_field='STATE_PROVINCE')
 
 -- Most recent name
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id

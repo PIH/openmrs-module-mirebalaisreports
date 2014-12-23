@@ -107,11 +107,6 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
         return new PatientToEncounterDataDefinition(patientDataLibrary.getPreferredZlEmrIdIdentifier());
     }
 
-    @DocumentedDefinition("mostRecentZlEmrId")
-    public EncounterDataDefinition getMostRecentZLEmrId() {
-        return new PatientToEncounterDataDefinition(patientDataLibrary.getMostRecentZlEmrIdIdentifier());
-    }
-
     @DocumentedDefinition("mostRecentZlEmrIdLocation")
     public EncounterDataDefinition getMostRecentZLEmrIdLocation() {
         return new PatientToEncounterDataDefinition(patientDataLibrary.getMostRecentZlEmrIdLocation());

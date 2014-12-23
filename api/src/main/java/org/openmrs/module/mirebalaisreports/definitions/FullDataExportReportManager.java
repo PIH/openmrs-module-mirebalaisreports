@@ -104,7 +104,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.14";
+        return "1.23";
     }
 
 	//***** INSTANCE METHODS
@@ -300,6 +300,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         return groupMemberObsDataDefinition;
     }
 
+    // TODO not yet being used, still using old SQL definition
     private DataSetDefinition constructConsultationsDataSetDefinition() {
         EncounterDataSetDefinition dsd = new EncounterDataSetDefinition();
 
@@ -394,7 +395,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
         // Most recent ZL EMR ID
         // INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
-        dsd.addColumn("zlemr", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentZlEmrId.identifier"), "");
+        dsd.addColumn("zlemr", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredZlEmrId.identifier"), "");
 
         // ZL EMR ID location
         // INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id

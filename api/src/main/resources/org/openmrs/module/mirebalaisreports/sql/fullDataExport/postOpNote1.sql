@@ -32,7 +32,7 @@ admission_status_n.name as admission_status
 FROM patient p
 
 --Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 
 --ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
@@ -42,6 +42,7 @@ LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person
 
 INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
 
+-- Most recent address
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
 
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id

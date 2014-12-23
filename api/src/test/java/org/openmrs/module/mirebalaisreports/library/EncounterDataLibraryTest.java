@@ -175,16 +175,6 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     }
 
     @Test
-    public void testMostRecentZlEmrId() throws EvaluationException {
-        context.setBaseEncounters(encounterIdSet);
-        EncounterDataDefinition definition = library.getMostRecentZLEmrId();
-        EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
-        assertThat((String)data.getData().get(e1.getId()), is("Y2C4VA"));
-        assertThat((String)data.getData().get(e2.getId()), is("Y2C4VA"));
-        assertThat((String) data.getData().get(e3.getId()), is("Y2C4VA"));
-    }
-
-    @Test
     public void testMostRecentZlEmrIdLocation() throws EvaluationException {
         context.setBaseEncounters(encounterIdSet);
         EncounterDataDefinition definition = library.getMostRecentZLEmrIdLocation();

@@ -75,7 +75,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
                 "", new ObjectFormatter());
         dsd.addColumn("givenName", libraries.getDefinition(PatientDataDefinition.class, "reporting.library.patientDataDefinition.builtIn.preferredName.givenName"),
                 "", new ObjectFormatter());
-        dsd.addColumn("zlEmrId", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentZlEmrId.identifier"), "");
+        dsd.addColumn("zlEmrId", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredZlEmrId.identifier"), "");
         dsd.addColumn("dossierNumber", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentDossierNumber.identifier"), "");
         dsd.addColumn("telephoneNumber", libraries.getDefinition(PersonDataDefinition.class, "mirebalais.personDataCalculation.telephoneNumber"), "");
         dsd.addColumn("date", new AppointmentStartDateDataDefinition(), "", new DateConverter(MirebalaisReportsProperties.DATE_FORMAT));
@@ -118,7 +118,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.7"; // last change: added confidential column
+        return "1.8"; // last change: added confidential column
     }
 
     @Override

@@ -79,13 +79,6 @@ public class PatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinit
                 new PropertyConverter(PatientIdentifier.class, "identifier"));
     }
 
-    @DocumentedDefinition("mostRecentZlEmrId.identifier")
-    public PatientDataDefinition getMostRecentZlEmrIdIdentifier() {
-        return getMostRecentIdentifierOf(
-                mirebalaisReportsProperties.getZlEmrIdentifierType(),
-                new PropertyConverter(PatientIdentifier.class, "identifier"));
-    }
-
     @DocumentedDefinition("mostRecentZlEmrId.location")
     public PatientDataDefinition getMostRecentZlEmrIdLocation() {
         return getMostRecentIdentifierOf(
