@@ -18,5 +18,8 @@
         <mapping resource="PaperRecordRequest.hbm.xml"/>
         <mapping resource="PaperRecordMergeRequest.hbm.xml"/>
 
+        <mapping resource="AddressHierarchyEntry.hbm.xml"/>
+        <mapping resource="AddressHierarchyLevel.hbm.xml"/>
+
     </session-factory>
 </hibernate-configuration>

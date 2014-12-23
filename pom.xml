@@ -57,6 +57,7 @@
         <appointmentschedulingVersion>1.2-SNAPSHOT</appointmentschedulingVersion>
         <testutilsVersion>1.5</testutilsVersion>
         <printerVersion>1.0-SNAPSHOT</printerVersion>
+        <addresshierarchyVersion>2.5</addresshierarchyVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.2.0</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -268,6 +269,12 @@
             <groupId>net.sf.supercsv</groupId>
             <artifactId>super-csv</artifactId>
             <version>${supercsvVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-api</artifactId>
+            <version>${addresshierarchyVersion}</version>
             <scope>test</scope>
         </dependency>
 
