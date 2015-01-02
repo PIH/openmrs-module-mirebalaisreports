@@ -59,7 +59,7 @@
         <printerVersion>1.0-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.5</addresshierarchyVersion>
         <!-- Need to phase this out. -->
-        <supercsvVersion>2.2.0</supercsvVersion>
+        <supercsvVersion>2.2.1</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
