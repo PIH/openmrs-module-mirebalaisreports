@@ -85,8 +85,7 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
         if (featureToggles.isFeatureEnabled("cdi")) {
             skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
                     ZanmiLocations.MirebalaisLocations.MIREBALAIS_HOSPITAL,
-                    ZanmiLocations.MirebalaisLocations.CDI,
-                    ZanmiLocations.MirebalaisLocations.MIREBALAIS_HOSPITAL_MAIN_CAMPUS);
+                    ZanmiLocations.MirebalaisLocations.MIREBALAIS_CDI_PARENT);
         }
         else {
             skip = Arrays.asList(CoreMetadata.Locations.UNKNOWN,
