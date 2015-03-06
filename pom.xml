@@ -33,7 +33,7 @@
     <properties>
         <openMRSVersion>1.9.8</openMRSVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-        <metadatasharingVersion>1.1.8</metadatasharingVersion>
+        <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.5-SNAPSHOT</metadatadeployVersion>
         <emrapiVersion>1.5-SNAPSHOT</emrapiVersion>
