@@ -50,7 +50,7 @@
         <idgenVersion>3.2</idgenVersion>
         <patientregistrationVersion>2.2-SNAPSHOT</patientregistrationVersion>
         <providermanagementVersion>2.2</providermanagementVersion>
-        <eventVersion>2.1</eventVersion>
+        <eventVersion>2.2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
         <webservicesRestVersion>2.12-SNAPSHOT</webservicesRestVersion>
