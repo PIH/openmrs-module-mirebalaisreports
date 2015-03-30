@@ -80,10 +80,8 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
      */
     public List<Location> getLocations() {
         List<String> skip = new ArrayList<String>();
-        skip.addAll(Arrays.asList(Locations.UNKNOWN.uuid(), Locations.MIREBALAIS_HOSPITAL.uuid()));
-        if (featureToggles.isFeatureEnabled("cdi")) {
-            skip = Arrays.asList(Locations.MIREBALAIS_CDI_PARENT.uuid());
-        }
+        skip.addAll(Arrays.asList(Locations.UNKNOWN.uuid(), Locations.MIREBALAIS_HOSPITAL.uuid(), Locations.MIREBALAIS_CDI_PARENT.uuid()));
+
         List<Location> locations = locationService.getAllLocations(false);
         for (Iterator<Location> i = locations.iterator(); i.hasNext(); ) {
             Location candidate = i.next();
