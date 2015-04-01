@@ -36,14 +36,14 @@
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.5-SNAPSHOT</metadatadeployVersion>
-        <emrapiVersion>1.6-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.6</emrapiVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
         <uiframeworkVersion>3.4-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>2.4-SNAPSHOT</appframeworkVersion>
         <htmlformentryVersion>2.6-SNAPSHOT</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
-        <reportingVersion>0.9.4</reportingVersion>
+        <reportingVersion>0.9.5-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
         <reportingrestVersion>1.4-SNAPSHOT</reportingrestVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
