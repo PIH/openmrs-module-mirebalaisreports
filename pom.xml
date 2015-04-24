@@ -31,7 +31,7 @@
 	</modules>
 
     <properties>
-        <openMRSVersion>1.9.8</openMRSVersion>
+        <openMRSVersion>1.10.1</openMRSVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
@@ -130,7 +130,7 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.9</artifactId>
+            <artifactId>emrapi-api-1.10</artifactId>
             <version>${emrapiVersion}</version>
             <scope>provided</scope>
         </dependency>
@@ -194,6 +194,12 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>htmlformentry-api</artifactId>
+            <version>${htmlformentryVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentry-api-1.10</artifactId>
             <version>${htmlformentryVersion}</version>
             <scope>provided</scope>
         </dependency>
@@ -278,6 +284,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- TODO figure out why we still need the 1.9 subproject for testing-->
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api-1.9</artifactId>
+            <version>${emrapiVersion}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- OpenMRS modules -->
 
         <!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
@@ -359,7 +372,7 @@
                     <properties>
                         <property>
                             <name>openMRSVersion</name>
-                            <version>[1.9.0,1.10.0-!)</version>
+                            <version>[1.10.0,1.11.0-!)</version>
                             <banSnapshots>true</banSnapshots>
                         </property>
                         <property>
