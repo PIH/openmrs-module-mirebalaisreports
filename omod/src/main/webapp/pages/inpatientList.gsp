@@ -19,14 +19,15 @@
         var ward= "";
         jq.fn.dataTableExt.afnFiltering.push(
                 function (oSettings, aData, iDataIndex) {
-                    var currentWard = aData[WARD_COLUMN_INDEX];
-                    currentWard = currentWard.replace(/'/g, "\\’");
-                    if (ward.length < 1 ){
-                        return true;
-                    }else if (currentWard.match(new RegExp(ward)) != null ){
-                        return true;
+
+                    var currentWard = aData[WARD_COLUMN_INDEX].replace(/'/g, "\\’").split('\\n')[0];
+
+                    if (ward && jq.trim(ward).length != 0) {
+                        if (!currentWard.match(new RegExp(ward + '\$'))) {
+                            return false;
+                        }
                     }
-                    return false;
+                    return true;
                 }
         );
         jq("#inpatients-filterByLocation").change(function(event){
