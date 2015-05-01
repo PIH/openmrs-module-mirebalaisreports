@@ -58,6 +58,7 @@
         <testutilsVersion>1.6-SNAPSHOT</testutilsVersion>
         <printerVersion>1.2-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.6</addresshierarchyVersion>
+        <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.3.1</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -249,6 +250,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>metadatadeploy-api</artifactId>
             <version>${metadatadeployVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>pihcore-api</artifactId>
+            <version>${pihcoreVersion}</version>
             <scope>provided</scope>
         </dependency>
 

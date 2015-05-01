@@ -4,8 +4,9 @@ import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
-import org.openmrs.module.mirebalaismetadata.constants.Locations;
+import org.openmrs.module.mirebalaismetadata.metadata.MirebalaisLocations;
 import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportManager;
+import org.openmrs.module.pihcore.metadata.Locations;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -80,7 +81,7 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BaseMireb
      */
     public List<Location> getLocations() {
         List<String> skip = new ArrayList<String>();
-        skip.addAll(Arrays.asList(Locations.UNKNOWN.uuid(), Locations.MIREBALAIS_HOSPITAL.uuid(), Locations.MIREBALAIS_CDI_PARENT.uuid()));
+        skip.addAll(Arrays.asList(Locations.UNKNOWN.uuid(), MirebalaisLocations.MIREBALAIS_HOSPITAL.uuid(), MirebalaisLocations.MIREBALAIS_CDI_PARENT.uuid()));
 
         List<Location> locations = locationService.getAllLocations(false);
         for (Iterator<Location> i = locations.iterator(); i.hasNext(); ) {
