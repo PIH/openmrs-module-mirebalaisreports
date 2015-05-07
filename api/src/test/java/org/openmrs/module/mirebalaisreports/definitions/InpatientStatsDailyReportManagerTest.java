@@ -15,6 +15,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Test;
+import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetColumn;
@@ -37,7 +38,7 @@ import static org.junit.Assert.assertThat;
  *
  */
 @SkipBaseSetup
-public class InpatientStatsDailyReportManagerTest extends BaseInpatientReportTest {
+public class InpatientStatsDailyReportManagerTest extends BaseReportTest {
 
     @Autowired
     private InpatientStatsDailyReportManager manager;

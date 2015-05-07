@@ -5,6 +5,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 @Ignore("H2 doesn't seem to like the SQL, though it's legal in MySQL")
 @SkipBaseSetup
-public class LqasDiagnosesReportManagerComponentTest extends BaseMirebalaisReportTest {
+public class LqasDiagnosesReportManagerComponentTest extends BaseReportTest {
 
     @Autowired
     private LqasDiagnosesReportManager reportManager;

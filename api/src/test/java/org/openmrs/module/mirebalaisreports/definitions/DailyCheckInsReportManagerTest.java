@@ -9,6 +9,10 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
+import org.openmrs.module.pihcore.metadata.Metadata;
+import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
+import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
+import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -26,7 +30,7 @@ import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWith
 import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyMembers;
 
 @SkipBaseSetup
-public class DailyCheckInsReportManagerTest extends BaseMirebalaisReportTest {
+public class DailyCheckInsReportManagerTest extends BaseReportTest {
 
     @Autowired
     DailyCheckInsReportManager manager;
@@ -36,12 +40,12 @@ public class DailyCheckInsReportManagerTest extends BaseMirebalaisReportTest {
     @Before
     public void setUp() throws Exception {
         VisitType atFacility = emrApiProperties.getAtFacilityVisitType();
-        Location registrationDesk = mirebalaisReportsProperties.getClinicRegistrationLocation();
-        Location outpatient = mirebalaisReportsProperties.getOutpatientLocation();
-        Location mirebalaisHospital = mirebalaisReportsProperties.getMirebalaisHospitalLocation();
-        EncounterType registration = mirebalaisReportsProperties.getRegistrationEncounterType();
-        EncounterType checkIn = mirebalaisReportsProperties.getCheckInEncounterType();
-        EncounterType consult = mirebalaisReportsProperties.getConsultEncounterType();
+        Location registrationDesk = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
+        Location outpatient = Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC);
+        Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
+        EncounterType registration = Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION);
+        EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
+        EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
 
         // never registered or seen
         data.randomPatient().dateCreated("2013-10-01").save();

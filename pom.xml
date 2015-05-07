@@ -258,6 +258,13 @@
             <version>${pihcoreVersion}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>pihcore-api</artifactId>
+            <version>${pihcoreVersion}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
         <!-- modules only required to fire up the app context when running component tests -->
         <dependency>

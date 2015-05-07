@@ -32,7 +32,13 @@ import org.openmrs.VisitType;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.contrib.testdata.TestDataManager;
-import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportTest;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.metadata.Metadata;
+import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
+import org.openmrs.module.pihcore.metadata.core.PersonAttributeTypes;
+import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
+import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.encounter.EvaluatedEncounterData;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
@@ -49,17 +55,17 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
-/**
- *
- */
 @SkipBaseSetup
-public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
+public class EncounterDataLibraryTest extends BaseReportTest {
 
     @Autowired
     private EncounterDataLibrary library;
 
     @Autowired
     private EncounterDataService encounterDataService;
+
+    @Autowired
+    MirebalaisReportsProperties mirebalaisReportsProperties;
 
     @Autowired
     TestDataManager data;
@@ -78,16 +84,19 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
     @Before
     public void setUp() throws Exception {
         VisitType visitType = emrApiProperties.getAtFacilityVisitType();
-        Location visitLocation = mirebalaisReportsProperties.getMirebalaisHospitalLocation();
-        Location outpatient = mirebalaisReportsProperties.getOutpatientLocation();
-        Location clinicRegistration = mirebalaisReportsProperties.getClinicRegistrationLocation();
-        EncounterType checkIn = mirebalaisReportsProperties.getCheckInEncounterType();
-        EncounterType admission = mirebalaisReportsProperties.getAdmissionEncounterType();
-        Location mirebalaisHospital = mirebalaisReportsProperties.getMirebalaisHospitalLocation();
-        Location womensWard = mirebalaisReportsProperties.getWomensInternalMedicineLocation();
-        PatientIdentifierType zlEmrId = mirebalaisReportsProperties.getZlEmrIdentifierType();
-        PersonAttributeType unknownPatient = mirebalaisReportsProperties.getUnknownPatientPersonAttributeType();
+        EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
+        EncounterType admission = Metadata.lookup(EncounterTypes.ADMISSION);
+        EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
+        EncounterType exitFromInpatient = Metadata.lookup(EncounterTypes.EXIT_FROM_CARE);
+        Location visitLocation = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
+        Location outpatient = Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC);
+        Location clinicRegistration = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
+        Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
+        Location womensWard = Metadata.lookup(MirebalaisLocations.WOMENS_INTERNAL_MEDICINE);
+        PatientIdentifierType zlEmrId = Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID);
+        PersonAttributeType unknownPatient = Metadata.lookup(PersonAttributeTypes.UNKNOWN_PATIENT);
         EncounterRole consultingClinician = mirebalaisReportsProperties.getConsultingClinicianEncounterRole();
+        EncounterRole attendingSurgeonRole = mirebalaisReportsProperties.getAttendingSurgeonEncounterRole();
         Provider unknownProvider = providerService.getProvider(1);
 
         PersonAddress addr = new PersonAddress();
@@ -107,7 +116,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         v1 = data.visit().patient(p1).started("2013-10-02 09:15:00").stopped("2013-10-14 04:30:00").location(visitLocation).visitType(visitType).save();
         e1 = data.encounter().visit(v1).encounterType(checkIn).location(clinicRegistration).encounterDatetime("2013-10-02 09:15:00").dateCreated("2013-10-01 00:00:00.0").creator(paulaMorris).save();
         e2 = data.encounter().visit(v1).encounterType(admission).location(womensWard).encounterDatetime("2013-10-02 12:30:00").dateCreated("2013-10-03 00:00:00.0").creator(paulaMorris).save();
-        e3 = data.encounter().visit(v1).encounterType(mirebalaisReportsProperties.getConsultEncounterType()).location(womensWard).encounterDatetime("2013-10-02 12:45:00")
+        e3 = data.encounter().visit(v1).encounterType(consult).location(womensWard).encounterDatetime("2013-10-02 12:45:00")
                 .dateCreated("2013-10-02 00:00:00.0").creator(paulaMorris).provider(consultingClinician, unknownProvider).save();
 
         data.obs().encounter(e3).concept("RETURN VISIT DATE", "PIH").value(DateUtil.parseDate("2013-11-02", "yyyy-MM-dd")).save();
@@ -121,7 +130,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         data.obs().encounter(e3).concept("Diagnosis or problem, non-coded", "PIH").value("Something incurable").save();
         data.obs().encounter(e3).concept("Diagnosis or problem, non-coded", "PIH").value("Something benign").save();
 
-        surgery = data.randomEncounter().patient(p1).provider(mirebalaisReportsProperties.getAttendingSurgeonEncounterRole(), surgeon).save();
+        surgery = data.randomEncounter().patient(p1).provider(attendingSurgeonRole, surgeon).save();
         data.obs().encounter(surgery).concept("Name of assistant surgeon", "PIH").value("Dr. Paul").save();
 
         /*
@@ -134,7 +143,7 @@ public class EncounterDataLibraryTest extends BaseMirebalaisReportTest {
         Visit v2 = data.visit().patient(p2).visitType(visitType).started("2013-10-01 17:30:00").stopped("2013-10-03 12:45:00").location(visitLocation).save();
         data.encounter().visit(v2).encounterType(checkIn).location(outpatient).encounterDatetime("2013-10-01 17:30:00").save();
         data.encounter().visit(v2).encounterType(admission).location(womensWard).encounterDatetime("2013-10-01 18:30:00").save();
-        data.encounter().visit(v1).encounterType(mirebalaisReportsProperties.getExitFromInpatientEncounterType()).location(womensWard).encounterDatetime("2013-10-02 23:45:00").save();
+        data.encounter().visit(v1).encounterType(exitFromInpatient).location(womensWard).encounterDatetime("2013-10-02 23:45:00").save();
 
         Context.flushSession();
 

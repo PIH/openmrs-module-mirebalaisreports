@@ -8,6 +8,7 @@ import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
  *
  */
 @SkipBaseSetup
-public class FullDataExportBuilderTest extends BaseMirebalaisReportTest {
+public class FullDataExportBuilderTest extends BaseReportTest {
 
     @Autowired
     FullDataExportBuilder builder;

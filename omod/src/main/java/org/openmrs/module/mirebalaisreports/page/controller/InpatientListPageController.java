@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
-import org.openmrs.module.mirebalaisreports.cohort.definition.InpatientLocationCohortDefinition;
+import org.openmrs.module.pihcore.reporting.cohort.definition.InpatientLocationCohortDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;

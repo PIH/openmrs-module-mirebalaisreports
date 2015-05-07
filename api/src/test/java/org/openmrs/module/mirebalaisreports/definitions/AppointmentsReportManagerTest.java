@@ -12,6 +12,10 @@ import org.openmrs.module.appointmentscheduling.AppointmentType;
 import org.openmrs.module.appointmentscheduling.TimeSlot;
 import org.openmrs.module.appointmentscheduling.api.AppointmentService;
 import org.openmrs.module.paperrecord.PaperRecordProperties;
+import org.openmrs.module.pihcore.metadata.Metadata;
+import org.openmrs.module.pihcore.metadata.core.PersonAttributeTypes;
+import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
+import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -28,7 +32,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
-public class AppointmentsReportManagerTest extends BaseMirebalaisReportTest {
+public class AppointmentsReportManagerTest extends BaseReportTest {
 
     @Autowired
     private AppointmentsReportManager reportManager;
@@ -46,9 +50,9 @@ public class AppointmentsReportManagerTest extends BaseMirebalaisReportTest {
     public void testAppointmentsExport() throws Exception {
 
         Patient patient = data.randomPatient()
-                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", mirebalaisReportsProperties.getMirebalaisHospitalLocation())
-                .identifier(paperRecordProperties.getPaperRecordIdentifierType(), "A000001", mirebalaisReportsProperties.getMirebalaisHospitalLocation())
-                .personAttribute(mirebalaisReportsProperties.getTelephoneNumberPersonAttributeType(), "123-4567")
+                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
+                .identifier(paperRecordProperties.getPaperRecordIdentifierType(), "A000001", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
+                .personAttribute(Metadata.lookup(PersonAttributeTypes.TELEPHONE_NUMBER), "123-4567")
                 .save();
 
         Date startDate = new DateTime(2014,1,1,9,0,0).toDate();

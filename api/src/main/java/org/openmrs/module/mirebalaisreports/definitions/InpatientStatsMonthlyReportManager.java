@@ -18,7 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.library.MirebalaisCohortDefinitionLibrary;
+import org.openmrs.module.pihcore.reporting.library.PihCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.TimePeriod;
 import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefinition;
@@ -90,16 +90,16 @@ public class InpatientStatsMonthlyReportManager extends BaseMirebalaisReportMana
         dsd.addParameter(getEndDateParameter());
         dsd.addParameter(getLocationParameter());
 
-        CohortDefinition inpatientCensus = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "inpatientAtLocationOnDate");
-        CohortDefinition admissionDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "admissionAtLocationDuringPeriod");
-        CohortDefinition transferInDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "transferInToLocationDuringPeriod");
-        CohortDefinition transferOutDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "transferOutOfLocationDuringPeriod");
-        CohortDefinition dischargedDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "dischargeExitFromLocationDuringPeriod");
-        CohortDefinition diedSoonAfterAdmissionDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "diedExitFromLocationDuringPeriodSoonAfterAdmission");
-        CohortDefinition diedLongAfterAdmissionDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "diedExitFromLocationDuringPeriodNotSoonAfterAdmission");
-        CohortDefinition transferOutOfHumDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "transferOutOfHumExitFromLocationDuringPeriod");
-        CohortDefinition leftWithoutCompletingTxDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "leftWithoutCompletingTreatmentExitFromLocationDuringPeriod");
-        CohortDefinition leftWithoutSeeingClinicianDuring = libraries.getDefinition(CohortDefinition.class, MirebalaisCohortDefinitionLibrary.PREFIX + "leftWithoutSeeingClinicianExitFromLocationDuringPeriod");
+        CohortDefinition inpatientCensus = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "inpatientAtLocationOnDate");
+        CohortDefinition admissionDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "admissionAtLocationDuringPeriod");
+        CohortDefinition transferInDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "transferInToLocationDuringPeriod");
+        CohortDefinition transferOutDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "transferOutOfLocationDuringPeriod");
+        CohortDefinition dischargedDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "dischargeExitFromLocationDuringPeriod");
+        CohortDefinition diedSoonAfterAdmissionDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "diedExitFromLocationDuringPeriodSoonAfterAdmission");
+        CohortDefinition diedLongAfterAdmissionDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "diedExitFromLocationDuringPeriodNotSoonAfterAdmission");
+        CohortDefinition transferOutOfHumDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "transferOutOfHumExitFromLocationDuringPeriod");
+        CohortDefinition leftWithoutCompletingTxDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "leftWithoutCompletingTreatmentExitFromLocationDuringPeriod");
+        CohortDefinition leftWithoutSeeingClinicianDuring = libraries.getDefinition(CohortDefinition.class, PihCohortDefinitionLibrary.PREFIX + "leftWithoutSeeingClinicianExitFromLocationDuringPeriod");
 
         dsd.addColumn("censusAtStart", Mapped.map(inpatientCensus, "date=${startDate},location=${location}"));
         dsd.addColumn("censusAtEnd", Mapped.map(inpatientCensus, "date=${endDate},location=${location}"));
