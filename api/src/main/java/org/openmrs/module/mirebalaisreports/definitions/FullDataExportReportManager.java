@@ -21,7 +21,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
-import org.openmrs.module.mirebalaisreports.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.pihcore.reporting.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.mirebalaisreports.library.EncounterDataLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -104,7 +104,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.24";
+        return "1.25";
     }
 
 	//***** INSTANCE METHODS

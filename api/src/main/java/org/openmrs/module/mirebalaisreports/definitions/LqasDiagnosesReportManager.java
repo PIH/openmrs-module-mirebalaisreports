@@ -33,7 +33,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.2"; // latest change: changed filename in report design
+        return "1.3"; // latest change: changed filename in report design
     }
 
     @Override

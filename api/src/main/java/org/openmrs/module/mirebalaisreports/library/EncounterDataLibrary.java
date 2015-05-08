@@ -24,6 +24,7 @@ import org.openmrs.User;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
+import org.openmrs.module.pihcore.reporting.library.PihPatientDataLibrary;
 import org.openmrs.module.reporting.common.AuditInfo;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.converter.ChainedConverter;
@@ -65,7 +66,7 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
     DispositionService dispositionService;
 
     @Autowired
-    PatientDataLibrary patientDataLibrary;
+    PihPatientDataLibrary patientDataLibrary;
 
     @Autowired
     BuiltInPatientDataLibrary builtInPatientDataLibrary;

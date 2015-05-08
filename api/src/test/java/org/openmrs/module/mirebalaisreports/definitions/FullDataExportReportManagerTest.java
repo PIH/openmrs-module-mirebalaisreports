@@ -29,9 +29,17 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
+import org.openmrs.api.context.Context;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.metadata.Metadata;
+import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
+import org.openmrs.module.pihcore.metadata.core.PersonAttributeTypes;
+import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
+import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -53,6 +61,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -62,7 +71,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
-public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
+public class FullDataExportReportManagerTest extends BaseReportTest {
 
     @Autowired
     FullDataExportBuilder builder;
@@ -82,6 +91,9 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     @Autowired
     DispositionService dispositionService;
 
+    @Autowired
+    MirebalaisReportsProperties mirebalaisReportsProperties;
+
     @Autowired @Qualifier("adminService")
     AdministrationService administrationService;
 
@@ -92,6 +104,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
     @Before
     public void setupDontOverrideBaseClassSetup() {
         dispositionService.setDispositionConfig("testDispositionConfig.json");
+        Context.setLocale(Locale.ENGLISH);
     }
 
     @Test
@@ -133,7 +146,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         Patient patient = data.randomPatient()
                 .birthdate("2001-02-03")
                 .gender("F")
-                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", mirebalaisReportsProperties.getMirebalaisHospitalLocation())
+                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
                 .save();
 
         User checkinUser = data.user().personName("Checkin", null, "Clerk").gender("M").username("checkin").save();
@@ -146,7 +159,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
         Encounter e1 = data.encounter().visit(visit)
                 .encounterType(emrApiProperties.getCheckInEncounterType())
-                .location(mirebalaisReportsProperties.getClinicRegistrationLocation())
+                .location(Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION))
                 .encounterDatetime("2013-08-30 09:00:00")
                 .provider(mirebalaisReportsProperties.getAdministrativeClerkEncounterRole(), checkInProvider)
                 .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
@@ -154,20 +167,20 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 .creator(checkinUser).save();
 
         Encounter e2 = data.encounter().visit(visit)
-                .encounterType(mirebalaisReportsProperties.getVitalsEncounterType())
-                .location(mirebalaisReportsProperties.getOutpatientLocation())
+                .encounterType(Metadata.lookup(EncounterTypes.VITALS))
+                .location(Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC))
                 .encounterDatetime("2013-08-30 09:15:00")
                 .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
                 .obs(dispositionService.getDispositionDescriptor().getDispositionConcept(), conceptService.getConcept("Admit to hospital")) // unrealistic data
-                .obs(dispositionService.getDispositionDescriptor().getAdmissionLocationConcept(), mirebalaisReportsProperties.getWomensInternalMedicineLocation().getId().toString())
-                .obs(dispositionService.getDispositionDescriptor().getInternalTransferLocationConcept(), mirebalaisReportsProperties.getMensInternalMedicineLocation().getId().toString()) // would never really have this and admission location
+                .obs(dispositionService.getDispositionDescriptor().getAdmissionLocationConcept(), Metadata.lookup(MirebalaisLocations.WOMENS_INTERNAL_MEDICINE).getId().toString())
+                .obs(dispositionService.getDispositionDescriptor().getInternalTransferLocationConcept(), Metadata.lookup(MirebalaisLocations.MENS_INTERNAL_MEDICINE).getId().toString()) // would never really have this and admission location
                 .creator(nurseUser).save();
 
 
         Visit oldVisit = data.visit().patient(patient).started(DateUtil.parseYmdhms("2012-01-01 09:00:00")).stopped(DateUtil.parseYmdhms("2012-01-01 12:00:00")).visitType(emrApiProperties.getAtFacilityVisitType()).save();
         Encounter oldEncounter = data.encounter().visit(oldVisit)
                 .encounterType(emrApiProperties.getCheckInEncounterType())
-                .location(mirebalaisReportsProperties.getClinicRegistrationLocation())
+                .location(Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION))
                 .encounterDatetime(oldVisit.getStartDatetime())
                 .provider(mirebalaisReportsProperties.getAdministrativeClerkEncounterRole(), checkInProvider)
                 .creator(checkinUser).save();
@@ -198,7 +211,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
             Integer encounterId = (Integer) row.getColumnValue("encounterId");
             if (encounterId.equals(e1.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
-                assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
+                assertThat((String) row.getColumnValue("encounterType"), is(EncounterTypes.CHECK_IN.name()));
                 assertThat((String) row.getColumnValue("encounterLocation"), is("Biwo Resepsyon"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
                 assertThat(row.getColumnValue("disposition"), nullValue());
@@ -216,7 +229,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
             }
             else if (encounterId.equals(e2.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
-                assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
+                assertThat((String) row.getColumnValue("encounterType"), is(EncounterTypes.VITALS.name()));
                 assertThat((String) row.getColumnValue("encounterLocation"), is("Klinik Ekstèn"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
                 assertThat((String) row.getColumnValue("disposition"), is("Admettre à l'hôpital"));
@@ -229,8 +242,8 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
                 assertThat(((Birthdate) row.getColumnValue("birthdate")).getBirthdate(), sameDateTime(DateUtil.parseYmd("2001-02-03")));
                 assertThat((Boolean) row.getColumnValue("birthdate_estimated"), is(true));
                 assertThat((String) row.getColumnValue("admissionStatus"), is(nullValue()));
-                assertThat((String) row.getColumnValue("requestedAdmissionLocation"), is(mirebalaisReportsProperties.getWomensInternalMedicineLocation().getName()));
-                assertThat((String) row.getColumnValue("requestedTransferLocation"), is(mirebalaisReportsProperties.getMensInternalMedicineLocation().getName()));
+                assertThat((String) row.getColumnValue("requestedAdmissionLocation"), is(Metadata.lookup(MirebalaisLocations.WOMENS_INTERNAL_MEDICINE).getName()));
+                assertThat((String) row.getColumnValue("requestedTransferLocation"), is(Metadata.lookup(MirebalaisLocations.MENS_INTERNAL_MEDICINE).getName()));
             }
             else {
                 Assert.fail("Only encounters should be e1 and e2");
@@ -267,7 +280,7 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         executeDataSet("org/openmrs/module/mirebalaisreports/dispensingExportTestData.xml");
 
         Patient patient = data.randomPatient()
-                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", mirebalaisReportsProperties.getMirebalaisHospitalLocation())
+                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
                 .save();
         Date date = new DateTime(2013, 8, 30, 10, 11, 12).toDate();
 
@@ -342,23 +355,23 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
         assertThat(Double.valueOf((String) row.getColumnValue("amount")), is(60.0));
         assertThat((String) row.getColumnValue("instructions"), is("some instructions"));
         assertThat((String) row.getColumnValue("patientIdentifier"), is("2AA00V"));
-        assertThat((String) row.getColumnValue("dispensedLocation"), is("Hôpital Universitaire de Mirebalais"));
+        assertThat((String) row.getColumnValue("dispensedLocation"), is("Mirebalais"));
         assertThat((String) row.getColumnValue("dispensedDatetime"), is("30 Aug 2013 10:11 AM"));
         assertThat((String) row.getColumnValue("dispensedBy"), is(dispensedBy.getName()));
         assertThat((String) row.getColumnValue("prescribedBy"), is(prescribedBy.getName()));
         assertThat((String) row.getColumnValue("typeOfPrescription"), is("Discharge"));
-        assertThat((String) row.getColumnValue("locationOfPrescription"), is("Hôpital Universitaire de Mirebalais"));
+        assertThat((String) row.getColumnValue("locationOfPrescription"), is("Mirebalais"));
     }
 
     private void setUpPatientsBasedOnCoreMetadata() {
         Patient patient = data.patient().name("Christy","Lee").gender("F")
-                .identifier(mirebalaisReportsProperties.getZlEmrIdentifierType(), "TT200E", mirebalaisReportsProperties.getOutpatientLocation())
+                .identifier(Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID), "TT200E", Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC))
                 .address("1050 Wishard Blvd", "RG5", "Indianapolis", "IN").save();
         data.patient().name("Bobby", "Joe").gender("M")
-                .identifier(mirebalaisReportsProperties.getZlEmrIdentifierType(), "TT201C", mirebalaisReportsProperties.getOutpatientLocation())
+                .identifier(Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID), "TT201C", Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC))
                 .address("", "", "Kapina").save();
-        data.encounter().patient(patient).encounterType(mirebalaisReportsProperties.getRegistrationEncounterType())
-                .encounterDatetime("2013-09-08").location(mirebalaisReportsProperties.getOutpatientLocation()).save();
+        data.encounter().patient(patient).encounterType(Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION))
+                .encounterDatetime("2013-09-08").location(Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC)).save();
     }
 
     @Test
@@ -469,15 +482,15 @@ public class FullDataExportReportManagerTest extends BaseMirebalaisReportTest {
 
     @Test @Ignore("H2 cannot handle DATE() function to cast a timestamp to a date")
     public void shouldSuccessfullyRenderConsultationsToExcel() throws Exception {
-        PatientIdentifierType zlEmrId = mirebalaisReportsProperties.getZlEmrIdentifierType();
-        Location mirebalaisHospital = mirebalaisReportsProperties.getMirebalaisHospitalLocation();
-        Location clinicRegistration = mirebalaisReportsProperties.getClinicRegistrationLocation();
-        Location womensWard = mirebalaisReportsProperties.getWomensInternalMedicineLocation();
-        PersonAttributeType unknownPatient = mirebalaisReportsProperties.getUnknownPatientPersonAttributeType();
+        PatientIdentifierType zlEmrId = Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID);
+        Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
+        Location clinicRegistration = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
+        Location womensWard = Metadata.lookup(MirebalaisLocations.WOMENS_INTERNAL_MEDICINE);
+        PersonAttributeType unknownPatient = Metadata.lookup(PersonAttributeTypes.UNKNOWN_PATIENT);
         VisitType visitType = emrApiProperties.getAtFacilityVisitType();
-        EncounterType checkIn = mirebalaisReportsProperties.getCheckInEncounterType();
-        EncounterType admission = mirebalaisReportsProperties.getAdmissionEncounterType();
-        EncounterType consult = mirebalaisReportsProperties.getConsultEncounterType();
+        EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
+        EncounterType admission = Metadata.lookup(EncounterTypes.ADMISSION);
+        EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
         EncounterRole consultingClinician = mirebalaisReportsProperties.getConsultingClinicianEncounterRole();
 
         User paulaMorris = data.user().personName("Paula", null, "Morris").username("pmorris").gender("F").save();
