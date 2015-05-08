@@ -108,7 +108,7 @@ public class AppointmentsReportManagerTest extends BaseReportTest {
         assertThat((String) row.getColumnValue("reason"), is("Sick"));
         assertThat((String) row.getColumnValue("cancelReason"), is("Provider sick"));
         assertThat((String) row.getColumnValue("serviceType"), is("Outpatient consult"));
-        assertThat((String) row.getColumnValue("location"), is("Hôpital Universitaire de Mirebalais"));
+        assertThat((String) row.getColumnValue("location"), is("Mirebalais"));
         assertThat((String) row.getColumnValue("provider"), is(scheduledProvider.getName()));
         assertThat((String) row.getColumnValue("date"), is("01 Jan 2014"));
         assertThat((String) row.getColumnValue("startTime"), is("09:00 AM"));

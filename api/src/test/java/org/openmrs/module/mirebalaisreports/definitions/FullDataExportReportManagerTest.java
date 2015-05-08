@@ -29,6 +29,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ProviderService;
+import org.openmrs.api.context.Context;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
@@ -60,6 +61,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -102,6 +104,7 @@ public class FullDataExportReportManagerTest extends BaseReportTest {
     @Before
     public void setupDontOverrideBaseClassSetup() {
         dispositionService.setDispositionConfig("testDispositionConfig.json");
+        Context.setLocale(Locale.ENGLISH);
     }
 
     @Test
@@ -208,7 +211,7 @@ public class FullDataExportReportManagerTest extends BaseReportTest {
             Integer encounterId = (Integer) row.getColumnValue("encounterId");
             if (encounterId.equals(e1.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
-                assertThat((String) row.getColumnValue("encounterType"), is("Check-in"));
+                assertThat((String) row.getColumnValue("encounterType"), is(EncounterTypes.CHECK_IN.name()));
                 assertThat((String) row.getColumnValue("encounterLocation"), is("Biwo Resepsyon"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
                 assertThat(row.getColumnValue("disposition"), nullValue());
@@ -226,7 +229,7 @@ public class FullDataExportReportManagerTest extends BaseReportTest {
             }
             else if (encounterId.equals(e2.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
-                assertThat((String) row.getColumnValue("encounterType"), is("Vitals"));
+                assertThat((String) row.getColumnValue("encounterType"), is(EncounterTypes.VITALS.name()));
                 assertThat((String) row.getColumnValue("encounterLocation"), is("Klinik Ekstèn"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
                 assertThat((String) row.getColumnValue("disposition"), is("Admettre à l'hôpital"));
@@ -352,12 +355,12 @@ public class FullDataExportReportManagerTest extends BaseReportTest {
         assertThat(Double.valueOf((String) row.getColumnValue("amount")), is(60.0));
         assertThat((String) row.getColumnValue("instructions"), is("some instructions"));
         assertThat((String) row.getColumnValue("patientIdentifier"), is("2AA00V"));
-        assertThat((String) row.getColumnValue("dispensedLocation"), is("Hôpital Universitaire de Mirebalais"));
+        assertThat((String) row.getColumnValue("dispensedLocation"), is("Mirebalais"));
         assertThat((String) row.getColumnValue("dispensedDatetime"), is("30 Aug 2013 10:11 AM"));
         assertThat((String) row.getColumnValue("dispensedBy"), is(dispensedBy.getName()));
         assertThat((String) row.getColumnValue("prescribedBy"), is(prescribedBy.getName()));
         assertThat((String) row.getColumnValue("typeOfPrescription"), is("Discharge"));
-        assertThat((String) row.getColumnValue("locationOfPrescription"), is("Hôpital Universitaire de Mirebalais"));
+        assertThat((String) row.getColumnValue("locationOfPrescription"), is("Mirebalais"));
     }
 
     private void setUpPatientsBasedOnCoreMetadata() {
