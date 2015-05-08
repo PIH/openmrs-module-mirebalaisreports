@@ -22,7 +22,7 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
 
     @Override
     public String getVersion() {
-        return "1.2"; // last change: standardized download filename
+        return "1.3"; // last change: standardized download filename
     }
 
     @Override

@@ -118,7 +118,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.8"; // last change: added confidential column
+        return "1.9"; // last change: added confidential column
     }
 
     @Override
