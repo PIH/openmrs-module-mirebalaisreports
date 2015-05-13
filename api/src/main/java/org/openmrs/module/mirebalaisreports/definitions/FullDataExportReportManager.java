@@ -23,6 +23,7 @@ import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.pihcore.reporting.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.mirebalaisreports.library.EncounterDataLibrary;
+import org.openmrs.module.pihcore.reporting.dataset.manager.RegistrationDataSetManager;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -85,6 +86,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
     @Autowired
     private DispensingProperties dispensingProperties;
 
+    @Autowired
+    private RegistrationDataSetManager registrationDataSetManager;
+
     private String uuid;
     private String code;
     private String messageCodePrefix;
@@ -104,7 +108,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.25";
+        return "1.26-SNAPSHOT";
     }
 
 	//***** INSTANCE METHODS
@@ -169,14 +173,21 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             DataSetDefinition dsd;
             if ("patients".equals(key)) {
                 dsd = constructPatientsDataSetDefinition();
-            } else if ("encounters".equals(key)) {
+            }
+            else if ("registration".equals(key)) {
+                dsd = registrationDataSetManager.constructDataSet();
+            }
+            else if ("encounters".equals(key)) {
                 dsd = constructEncountersDataSetDefinition();
-            } else if ("dispensing".equals(key)) {
+            }
+            else if ("dispensing".equals(key)) {
                 dsd = constructDispensingDataSetDefinition();
-            } else if ("consultations-new".equals(key)) {
+            }
+            else if ("consultations-new".equals(key)) {
                 dsd = constructConsultationsDataSetDefinition();
                 key = "consultations";
-            } else {
+            }
+            else {
                 dsd = constructSqlDataSetDefinition(key);
             }
             dsd.setName(MessageUtil.translate("mirebalaisreports.fulldataexport." + key + ".name"));

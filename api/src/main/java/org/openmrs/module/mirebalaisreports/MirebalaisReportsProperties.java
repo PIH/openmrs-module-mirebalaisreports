@@ -80,6 +80,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID = "257bb3e9-fc74-11e3-8248-08002769d9ae";
     public static final String USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID = "e4d1d6b0-642d-11e3-949a-0800200c9a66";
     public static final String APPOINTMENTS_REPORT_DEFINITION_UUID = "7fd11020-e5d1-11e3-ac10-0800200c9a66";
+    public static final String REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID = "a4f410a8-f8cc-11e4-a7d0-e82aea237783";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
