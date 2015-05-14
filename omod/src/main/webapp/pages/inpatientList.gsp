@@ -23,7 +23,7 @@
                     var currentWard = aData[WARD_COLUMN_INDEX].replace(/'/g, "\\’").split('\\n')[0];
 
                     if (ward && jq.trim(ward).length != 0) {
-                        if (!currentWard.match(new RegExp(ward + '\$'))) {
+                        if (currentWard != ward) {
                             return false;
                         }
                     }
