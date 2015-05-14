@@ -20,7 +20,8 @@
         jq.fn.dataTableExt.afnFiltering.push(
                 function (oSettings, aData, iDataIndex) {
 
-                    var currentWard = aData[WARD_COLUMN_INDEX].replace(/'/g, "\\’").split('\\n')[0];
+                    // remove single quote, everything after the <br> (datetime), and trim leading and trailing whitespace
+                    var currentWard = jq.trim(aData[WARD_COLUMN_INDEX].replace(/'/g, "\\’").split('<br>')[0]);
 
                     if (ward && jq.trim(ward).length != 0) {
                         if (currentWard != ward) {
