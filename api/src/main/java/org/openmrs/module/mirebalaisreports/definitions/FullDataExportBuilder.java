@@ -57,6 +57,8 @@ public class FullDataExportBuilder {
             if (config.getCountry() == ConfigDescriptor.Country.LIBERIA) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "registrationdataexport",
                         Arrays.asList("registration")));
+                configurations.add(new Configuration(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID, "checkinsdataexport",
+                        Arrays.asList("checkins")));
             }
             else {
                 configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "fulldataexport", null));
