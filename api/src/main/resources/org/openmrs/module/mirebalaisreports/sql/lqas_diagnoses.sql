@@ -1,6 +1,6 @@
 SELECT '' as 'Dossier Found? Y/N',
        d.identifier as '# Dossier',
-       date(pc.encounter_datetime) as 'Visit Date',
+       date(pc.encounter_datetime) as 'Encounter Date',
        loc.name as Location,
        dispo.name as Disposition,
        cd1n.name as 'Coded 1', cd2n.name  as 'Coded 2', cd3n.name  as 'Coded 3', cd4n.name  as 'Coded 4',
