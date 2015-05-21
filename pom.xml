@@ -31,7 +31,7 @@
 	</modules>
 
     <properties>
-        <openMRSVersion>1.10.1</openMRSVersion>
+        <openMRSVersion>1.10.2</openMRSVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
