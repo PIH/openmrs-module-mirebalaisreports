@@ -57,6 +57,8 @@ angular.module('checkInsByAge', ['ui.bootstrap'])
             var categoryData = $scope.data.checkInsByAge[category]
             if (categoryData) {
                 $scope.currentRows = categoryData.rows;
+            } else {
+                $scope.currentRows =[]
             }
         }
 
