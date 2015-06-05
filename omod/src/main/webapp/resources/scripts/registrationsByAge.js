@@ -57,6 +57,8 @@ angular.module('registrationsByAge', ['ui.bootstrap'])
             var categoryData = $scope.data.registrationsByAge[category]
             if (categoryData) {
                 $scope.currentRows = categoryData.rows;
+            } else {
+                $scope.currentRows =[]
             }
         }
 
