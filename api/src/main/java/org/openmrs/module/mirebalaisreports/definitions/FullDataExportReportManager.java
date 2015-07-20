@@ -21,13 +21,12 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
-import org.openmrs.module.mirebalaisreports.library.EncounterDataLibrary;
 import org.openmrs.module.pihcore.config.Config;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.pihcore.reporting.cohort.definition.VisitCohortDefinition;
+import org.openmrs.module.mirebalaisreports.library.EncounterDataLibrary;
 import org.openmrs.module.pihcore.reporting.dataset.manager.CheckInDataSetManager;
 import org.openmrs.module.pihcore.reporting.dataset.manager.RegistrationDataSetManager;
-import org.openmrs.module.pihcore.reporting.dataset.manager.VitalsDataSetManager;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -95,9 +94,6 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
     @Autowired
     private CheckInDataSetManager checkInDataSetManager;
-
-    @Autowired
-    private VitalsDataSetManager vitalsDataSetManager;
 
     @Autowired
     Config config;
@@ -190,13 +186,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             else if ("registration".equals(key)) {
                 dsd = registrationDataSetManager.constructDataSet();
             }
-            // TODO: This is really ugly. We need to get this into proper configuration--new Liberia check-ins report uses a manager, the old is a sql report
+            // TODO: This is really ugly. We need to get this into proper configuration
             else if ("checkins".equals(key) && config.getCountry() == ConfigDescriptor.Country.LIBERIA) {
                 dsd = checkInDataSetManager.constructDataSet();
-            }
-            // we are now using the vitals data manager defined in core, no longer using teh vitals.sql defined in mirebalais reports
-            else if ("vitals".equals(key)) {
-                dsd = vitalsDataSetManager.constructDataSet();
             }
             else if ("encounters".equals(key)) {
                 dsd = constructEncountersDataSetDefinition();
