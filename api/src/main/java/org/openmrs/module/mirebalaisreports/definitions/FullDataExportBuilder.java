@@ -42,7 +42,7 @@ public class FullDataExportBuilder {
     public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
     public final List<String> dataSetOptions = Arrays.asList(
-            "patients", "visits", "checkins", "vitals", "consultations", "diagnoses",
+            "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
             "hospitalizations", "postOpNote1", "postOpNote2",
             "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
             "dispensing", "encounters"
