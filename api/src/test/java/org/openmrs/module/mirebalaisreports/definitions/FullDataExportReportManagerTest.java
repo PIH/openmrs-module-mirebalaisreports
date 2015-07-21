@@ -40,6 +40,7 @@ import org.openmrs.module.pihcore.metadata.core.PersonAttributeTypes;
 import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
+import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
 import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -71,7 +72,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 @SkipBaseSetup
-public class FullDataExportReportManagerTest extends BaseReportTest {
+public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest {
 
     @Autowired
     FullDataExportBuilder builder;
