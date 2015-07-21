@@ -39,7 +39,6 @@ import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.metadata.core.PersonAttributeTypes;
 import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
-import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
 import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -103,7 +102,9 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
     private Encounter e1;
 
     @Before
-    public void setupDontOverrideBaseClassSetup() {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
         dispositionService.setDispositionConfig("testDispositionConfig.json");
         Context.setLocale(Locale.ENGLISH);
     }
