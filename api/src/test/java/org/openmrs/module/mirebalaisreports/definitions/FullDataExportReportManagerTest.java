@@ -99,6 +99,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
 
     @Autowired
     TestDataManager data;
+
     private Encounter e1;
 
     @Before

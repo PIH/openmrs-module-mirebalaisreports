@@ -8,7 +8,7 @@ import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionDescriptor;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.reporting.BaseReportTest;
+import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
  *
  */
 @SkipBaseSetup
-public class FullDataExportBuilderTest extends BaseReportTest {
+public class FullDataExportBuilderTest extends EncounterDataSetManagerTest {
 
     @Autowired
     FullDataExportBuilder builder;
@@ -34,8 +34,10 @@ public class FullDataExportBuilderTest extends BaseReportTest {
     @Autowired
     DispositionService originalDispositionService;
 
+    @Override
     @Before
-    public void setupDontOverrideBaseClassSetup() throws Exception {
+    public void setup() throws Exception {
+        super.setup();
         Disposition someDisposition = new Disposition();
         someDisposition.setConceptCode("PIH:ADMIT TO HOSPITAL");
         DispositionService dispositionService = mock(DispositionService.class);
@@ -53,7 +55,7 @@ public class FullDataExportBuilderTest extends BaseReportTest {
     public void shouldSetupTheReportWithAllDataSets() throws Exception {
         FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", null);
         ReportDefinition reportDefinition = builder.buildReportManager(configuration).constructReportDefinition();
-        Assert.assertEquals(15, reportDefinition.getDataSetDefinitions().size());
+        Assert.assertEquals(16, reportDefinition.getDataSetDefinitions().size());
     }
 
     @Test
