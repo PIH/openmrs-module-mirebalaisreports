@@ -21,7 +21,7 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
 
     @Override
     public String getVersion() {
-        return "1.15";
+        return "1.16";
     }
 
     @Override
