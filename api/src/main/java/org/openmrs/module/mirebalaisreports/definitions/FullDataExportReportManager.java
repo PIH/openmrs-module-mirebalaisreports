@@ -194,10 +194,10 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             else if ("checkins".equals(key) && config.getCountry() == ConfigDescriptor.Country.LIBERIA) {
                 dsd = checkInDataSetManager.constructDataSet();
             }
-            // we are now using the vitals data manager defined in core, no longer using teh vitals.sql defined in mirebalais reports
-            else if ("vitals".equals(key)) {
+            // TODO turn this on to replace current SQL data query with vitals data set manager (which reorganizes fields and adds chief complaint)
+            /*else if ("vitals".equals(key)) {
                 dsd = vitalsDataSetManager.constructDataSet();
-            }
+            }*/
             else if ("encounters".equals(key)) {
                 dsd = constructEncountersDataSetDefinition();
             }
