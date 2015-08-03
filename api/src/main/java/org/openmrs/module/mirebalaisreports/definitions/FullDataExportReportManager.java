@@ -27,6 +27,7 @@ import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.pihcore.reporting.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.pihcore.reporting.dataset.manager.CheckInDataSetManager;
 import org.openmrs.module.pihcore.reporting.dataset.manager.RegistrationDataSetManager;
+import org.openmrs.module.pihcore.reporting.dataset.manager.VitalsDataSetManager;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -95,8 +96,8 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
     @Autowired
     private CheckInDataSetManager checkInDataSetManager;
 
-  /*  @Autowired
-    private VitalsDataSetManager vitalsDataSetManager;*/
+    @Autowired
+    private VitalsDataSetManager vitalsDataSetManager;
 
     @Autowired
     Config config;
