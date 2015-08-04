@@ -43,7 +43,7 @@
         <appframeworkVersion>2.4-SNAPSHOT</appframeworkVersion>
         <htmlformentryVersion>2.6-SNAPSHOT</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
-        <reportingVersion>0.9.5-SNAPSHOT</reportingVersion>
+        <reportingVersion>0.9.6-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
         <reportingrestVersion>1.5-SNAPSHOT</reportingrestVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
