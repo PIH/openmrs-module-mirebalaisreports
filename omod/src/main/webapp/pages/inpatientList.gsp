@@ -85,7 +85,7 @@
         <td>
             <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
             <!-- only add link to patient dashboard if user has appropriate privilege -->
-                <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: v.patientId ]) }">
+                <a href="${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: v.patientId ]) }">
             <% } %>
 
             ${ ui.format((v.givenName ? v.givenName : '') + " " + (v.familyName ? v.familyName : '')) }

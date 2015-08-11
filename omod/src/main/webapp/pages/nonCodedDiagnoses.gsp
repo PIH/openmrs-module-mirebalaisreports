@@ -47,7 +47,6 @@
         jq(".codeDiagnosis").click(function(event) {
 
             createCodeDiagnosisDialog();
-            patientDashboardLink ='${ui.pageLink("coreapps", "patientdashboard/patientDashboard")}';
             instructionsTemplate ='${ ui.escapeJs(ui.message("coreapps.dataManagement.replaceNonCoded")) }';
             var patientId = jq(event.target).attr("data-patient-id");
             var visitId = jq(event.target).attr("data-visit-id");
@@ -131,7 +130,7 @@
             <tr id="obs-id-${ it.getColumnValue("obsId") }">
                 <td class="non-coded-diagnoses-td">${ ui.escapeHtml(it.getColumnValue("nonCodedDiagnosis")) }</td>
                 <td>
-                    <a href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard", [ patientId: it.getColumnValue("patientId") , visitId: it.getColumnValue("visitId") ]) }">
+                    <a href="${ ui.urlBind("/" + contextPath + dashboardUrl, [ patientId: it.getColumnValue("patientId") , visitId: it.getColumnValue("visitId") ]) }">
                         ${ ui.format(it.getColumnValue("patientIdentifier")) }
                     </a>
                 </td>

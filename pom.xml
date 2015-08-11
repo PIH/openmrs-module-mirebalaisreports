@@ -37,6 +37,7 @@
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.5-SNAPSHOT</metadatadeployVersion>
         <emrapiVersion>1.8-SNAPSHOT</emrapiVersion>
+        <coreappsVersion>1.7-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
         <uiframeworkVersion>3.4-SNAPSHOT</uiframeworkVersion>
@@ -262,6 +263,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>pihcore-api</artifactId>
             <version>${pihcoreVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>coreapps-api</artifactId>
+            <version>${coreappsVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -19,6 +19,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Provider;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -64,12 +65,12 @@ public class NonCodedDiagnosesPageController {
         model.addAttribute("toDate", null);
         model.addAttribute("nonCoded", "");
         model.addAttribute("providerId", null);
-
     }
 
     public void post(@SpringBean NonCodedDiagnosesReportManager reportManager,
                      @SpringBean MirebalaisReportsProperties mrp,
                      @SpringBean ReportDefinitionService reportDefinitionService,
+                     @SpringBean CoreAppsProperties coreAppsProperties,
                      @RequestParam(required = false, value = "fromDate") Date fromDate,
                      @RequestParam(required = false, value = "toDate") Date toDate,
                      @RequestParam(required = false, value = "nonCoded") String nonCoded,
@@ -113,6 +114,7 @@ public class NonCodedDiagnosesPageController {
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
         model.addAttribute("providers", mrp.getAllProviders());
+        model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
 
     }
 

@@ -2,6 +2,7 @@ package org.openmrs.module.mirebalaisreports.page.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.pihcore.reporting.cohort.definition.InpatientLocationCohortDefinition;
@@ -21,6 +22,7 @@ public class InpatientListPageController {
     private final Log log = LogFactory.getLog(getClass());
 
     public void get(PageModel model,
+                                 @SpringBean CoreAppsProperties coreAppsProperties,
                                  @SpringBean AllDefinitionLibraries libraries,
                                  @SpringBean DataSetDefinitionService dsdService) throws EvaluationException {
         EvaluationContext context = new EvaluationContext();
@@ -44,7 +46,7 @@ public class InpatientListPageController {
         result = dsdService.evaluate(dsd, context);
 
         model.addAttribute("inpatientsList", MirebalaisReportsUtil.simplify(result));
-
+        model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
         model.put("privilegePatientDashboard", MirebalaisReportsProperties.PRIVILEGE_PATIENT_DASHBOARD);  // used to determine if we display links to patient dashboard)
     }
 

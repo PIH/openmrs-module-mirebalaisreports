@@ -90,7 +90,7 @@
                         <td>
                             <% if (sessionContext.currentUser.hasPrivilege(privilegePatientDashboard)) { %>
                                 <!-- only add link to patient dashboard if user has appropriate privilege -->
-                                <a target="_blank" href="${ ui.pageLink("coreapps", "patientdashboard/patientDashboard") }?patientId={{ member.patientId }}">
+                                <a target="_blank" href="${ "/" + contextPath + dashboardUrlWithoutQueryParams }?patientId={{ member.patientId }}">
                             <% } %>
 
                                 {{ member.familyName }}, {{ member.givenName }}

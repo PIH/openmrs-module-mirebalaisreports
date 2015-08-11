@@ -1,5 +1,6 @@
 package org.openmrs.module.mirebalaisreports.page.controller;
 
+import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class DailyReportPageController {
 
     public void get(@SpringBean ReportDefinitionService reportDefinitionService,
+                    @SpringBean CoreAppsProperties coreAppsProperties,
                     @RequestParam("reportDefinition") String reportDefinitionUuid,
                     PageModel model) throws Exception {
 
@@ -26,6 +28,7 @@ public class DailyReportPageController {
         }
 
         model.addAttribute("reportDefinition", reportDefinition);
+        model.addAttribute("dashboardUrlWithoutQueryParams", coreAppsProperties.getDashboardUrlWithoutQueryParams());
         model.addAttribute("privilegePatientDashboard", MirebalaisReportsProperties.PRIVILEGE_PATIENT_DASHBOARD);
     }
 
