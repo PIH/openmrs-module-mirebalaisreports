@@ -35,7 +35,7 @@
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
-        <metadatadeployVersion>1.5-SNAPSHOT</metadatadeployVersion>
+        <metadatadeployVersion>1.5</metadatadeployVersion>
         <emrapiVersion>1.9-SNAPSHOT</emrapiVersion>
         <coreappsVersion>1.7-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
@@ -48,7 +48,7 @@
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
         <reportingrestVersion>1.5-SNAPSHOT</reportingrestVersion>
         <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
-        <idgenVersion>3.2</idgenVersion>
+        <idgenVersion>4.0</idgenVersion>
         <patientregistrationVersion>2.2-SNAPSHOT</patientregistrationVersion>
         <providermanagementVersion>2.2</providermanagementVersion>
         <eventVersion>2.2.1</eventVersion>
