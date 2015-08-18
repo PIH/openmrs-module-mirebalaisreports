@@ -88,6 +88,10 @@ public class FullDataExportBuilder {
                         Arrays.asList("checkins")));
                 configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "diagnosesdataexport",
                         Arrays.asList("diagnoses")));
+                configurations.add(new Configuration(MirebalaisReportsProperties.LAB_RESULTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "labresultsdataexport",
+                        Arrays.asList("labReports")));
+                configurations.add(new Configuration(MirebalaisReportsProperties.ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "oncologydataexport",
+                        Arrays.asList("oncology")));
             }
         }
         return configurations;

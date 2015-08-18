@@ -91,6 +91,8 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "exitEnc", mrp.getExitFromInpatientEncounterType());
         sql = replace(sql, "transferEnc", mrp.getTransferEncounterType());
         sql = replace(sql, "postOpNoteEnc", mrp.getPostOpNoteEncounterType());
+        sql = replace(sql, "labResultEnc", mrp.getLabResultsEncounterType());
+        sql = replace(sql, "oncNoteEnc", mrp.getOncologyEncounterType());
 
         sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
         sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());

@@ -81,6 +81,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID = "e4d1d6b0-642d-11e3-949a-0800200c9a66";
     public static final String APPOINTMENTS_REPORT_DEFINITION_UUID = "7fd11020-e5d1-11e3-ac10-0800200c9a66";
     public static final String REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID = "a4f410a8-f8cc-11e4-a7d0-e82aea237783";
+    public static final String LAB_RESULTS_DATA_EXPORT_REPORT_DEFINITION_UUID = "109d8490-45d4-11e5-b970-0800200c9a66";
+    public static final String ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID = "202e6ee0-45d6-11e5-b970-0800200c9a66";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
@@ -247,6 +249,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ADMISSION_ENCOUNTER_TYPE_UUID = "260566e1-c909-4d61-a96f-c1019291a09d";
     public static final String EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID = "b6631959-2105-49dd-b154-e1249e0fbcd7";
     public static final String TRANSFER_ENCOUNTER_TYPE_UUID = "436cfe33-6b81-40ef-a455-f134a9f7e580";
+    public static final String LAB_RESULTS_ENCOUNTER_TYPE_UUID = "4d77916a-0620-11e5-a6c0-1697f925ec7b";
+    public static final String ONCOLOGY_ENCOUNTER_TYPE_UUID = "035fb8da-226a-420b-8d8b-3904f3bedb25";
 
 	public EncounterType getRegistrationEncounterType() {
 		return getRequiredEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
@@ -294,6 +298,14 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterType getTransferEncounterType() {
         return getRequiredEncounterTypeByUuid(TRANSFER_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getLabResultsEncounterType() {
+        return getRequiredEncounterTypeByUuid(LAB_RESULTS_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getOncologyEncounterType() {
+        return getRequiredEncounterTypeByUuid(ONCOLOGY_ENCOUNTER_TYPE_UUID);
     }
 
     /**
