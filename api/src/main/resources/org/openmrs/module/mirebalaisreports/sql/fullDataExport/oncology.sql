@@ -5,26 +5,25 @@ obs_proc1.value_text 'Pathology_Site_1', obs_procdate1.value_datetime 'Pathology
 obs_proc2.value_text 'Pathology_Site_2', obs_procdate2.value_datetime 'Pathology_Date_2',
 obs_proc3.value_text 'Pathology_Site_3', obs_procdate3.value_datetime 'Pathology_Date_3' 
 FROM patient p
-/*Most recent ZL EMR ID*/
+-- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
-/*ZL EMR ID location*/
+-- ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
-/*--Unknown patient*/
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id =:unknownPt 
-            AND un.voided = 0
-/*--Gender*/
+-- Unknown patient
+LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id =:unknownPt AND un.voided = 0
+-- Gender
 INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
-/*-- Most recent address*/
+-- Most recent address
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
 INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = :oncNoteEnc
 INNER JOIN location el ON e.location_id = el.location_id
-/* Provider Name */
+-- Provider Name
 INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
 INNER JOIN provider pv ON pv.provider_id = ep.provider_id 
 INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
-/*Joins for all other fields except pathology */
+-- Joins for all other fields except pathology
 INNER JOIN 
 (select o.encounter_id,
 group_concat(CASE when crs.name = 'PIH' and crt.code = 'Type of oncology visit' then cn.name end separator ',') 'Type_of_Oncology_Visit',
@@ -60,7 +59,7 @@ and e.voided = 0
 and o.voided = 0
 group by o.encounter_id
 ) obsjoins ON obsjoins.encounter_id = e.encounter_id
-/*Begin joins for pathology */
+-- Begin joins for pathology
 inner join (select crm.concept_id from concept_reference_map crm, concept_reference_term crt, concept_reference_source crs
     where crm.concept_reference_term_id = crt.concept_reference_term_id
     and crt.concept_source_id = crs.concept_source_id
@@ -84,9 +83,9 @@ left outer join obs obs_proc3 on obs_proc3.encounter_id = e.encounter_id and obs
    and obs_proc3.obs_id not in (obs_proc1.obs_id, obs_proc2.obs_id) 
 left outer join obs obs_procdate3 on obs_procdate3.encounter_id = e.encounter_id and obs_procdate3.voided = 0 
    and obs_procdate3.concept_id = procdatecode.concept_id and obs_procdate3.obs_group_id = obs_proc3.obs_group_id  
-/* end columns joins */
+-- end columns joins
 WHERE p.voided = 0
-/*exclude test patients*/
+-- exclude test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt 
                          AND voided = 0)
 AND date(e.encounter_datetime) >= :startDate 
