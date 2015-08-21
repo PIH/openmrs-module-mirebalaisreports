@@ -3,7 +3,7 @@ CONCAT(pn.given_name, ' ',pn.family_name) provider,
 obsjoins.*
 FROM patient p
 -- Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlid
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 -- ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
@@ -15,7 +15,7 @@ INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
 -- Most recent address
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
-INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = :postOpNoteEnc
+INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = :labResultEnc
 INNER JOIN location el ON e.location_id = el.location_id
 -- Provider Name
 INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
@@ -66,7 +66,7 @@ where 1=1
 and crm2.concept_reference_term_id = crt2.concept_reference_term_id 
 and crt2.concept_source_id = crs2.concept_source_id) obsgrp on obsgrp.concept_id = obs2.concept_id
 where 1=1 
-and e.encounter_type= :postOpNoteEnc
+and e.encounter_type= :labResultEnc
 and crm.concept_reference_term_id = crt.concept_reference_term_id
 and crt.concept_source_id = crs.concept_source_id
 and crm.concept_id = o.concept_id
