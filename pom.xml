@@ -35,7 +35,7 @@
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
-        <metadatadeployVersion>1.5</metadatadeployVersion>
+        <metadatadeployVersion>1.6-SNAPSHOT</metadatadeployVersion>
         <emrapiVersion>1.9-SNAPSHOT</emrapiVersion>
         <coreappsVersion>1.7-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
