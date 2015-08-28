@@ -36,7 +36,7 @@
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.6-SNAPSHOT</metadatadeployVersion>
-        <emrapiVersion>1.9-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.10-SNAPSHOT</emrapiVersion>
         <coreappsVersion>1.7-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
@@ -47,7 +47,7 @@
         <reportingVersion>0.9.7-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
         <reportingrestVersion>1.5-SNAPSHOT</reportingrestVersion>
-        <serializationxstreamVersion>0.2.7</serializationxstreamVersion>
+        <serializationxstreamVersion>0.2.8-SNAPSHOT</serializationxstreamVersion>
         <idgenVersion>4.0</idgenVersion>
         <patientregistrationVersion>2.2-SNAPSHOT</patientregistrationVersion>
         <providermanagementVersion>2.2</providermanagementVersion>
