@@ -25,6 +25,7 @@ INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 INNER JOIN 
 (select o.encounter_id,
 max(CASE when crs.name = 'PIH' and crt.code = 'DATE OF LABORATORY TEST' then date(o.value_datetime) end) 'Date_of_Lab_Test',
+max(CASE when crs.name = 'CIEL' and crt.code = '159951' then date(o.value_datetime) end) 'Date_of_Collection',
 max(CASE when crs.name = 'PIH' and crt.code = 'HEMOGLOBIN' then o.value_numeric end) 'Hemoglobin',
 max(CASE when crs.name = 'PIH' and crt.code = 'HbA1c' then o.value_numeric end) 'HbA1c',
 max(CASE when crs.name = 'PIH' and crt.code = 'HEMATOCRIT' then o.value_numeric end) 'Hematocrit',
