@@ -539,7 +539,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
         ReportDesign design = csvReportDesign(reportDefinition);
 
-        design.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "mirebalaisreports." + code + "." +
+        design.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, code + "." +
                 "{{ formatDate request.reportDefinition.parameterMappings.startDate \"yyyyMMdd\" }}." +
                 "{{ formatDate request.reportDefinition.parameterMappings.endDate \"yyyyMMdd\" }}." +
                 "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +

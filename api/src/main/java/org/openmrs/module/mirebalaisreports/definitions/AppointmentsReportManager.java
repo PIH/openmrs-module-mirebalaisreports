@@ -106,7 +106,7 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
         ReportDesign reportDesign = csvReportDesign(reportDefinition);
         reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY,
-                "mirebalaisreports.appointments." +
+                "appointments." +
                         "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
                         "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
 

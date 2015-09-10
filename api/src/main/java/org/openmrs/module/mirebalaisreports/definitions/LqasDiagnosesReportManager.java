@@ -102,7 +102,7 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
         // this is not actually used, since we have a custom controller, rather than using the standard
         // run report page
         ReportDesign reportDesign = csvReportDesign(reportDefinition);
-        reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "mirebalais.lqasdiagnosesdataexport." +
+        reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "lqasdiagnosesdataexport." +
                 "{{ formatDate request.reportDefinition.parameterMappings.startDate \"yyyyMMdd\" }}." +
                 "{{ formatDate request.reportDefinition.parameterMappings.endDate \"yyyyMMdd\" }}." +
                 "{{ request.reportDefinition.parameterMappings.location.name }}." +

@@ -49,7 +49,7 @@ public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager 
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         ReportDesign reportDesign = csvReportDesign(reportDefinition);
         reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY,
-                "mirebalais.usersandprovidersdateexport." +
+                "usersandprovidersdateexport." +
                 "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
                 "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
         return Arrays.asList(reportDesign);

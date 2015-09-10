@@ -58,7 +58,7 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
         
         ReportDesign reportDesign = csvReportDesign(reportDefinition);
         reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY,
-                "mirebalaisreports.allpatientslistdataexport." +
+                "allpatientslistdataexport." +
                         "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
                         "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
 
