@@ -50,7 +50,7 @@
         <serializationxstreamVersion>0.2.8-SNAPSHOT</serializationxstreamVersion>
         <idgenVersion>4.0</idgenVersion>
         <patientregistrationVersion>2.2-SNAPSHOT</patientregistrationVersion>
-        <providermanagementVersion>2.2</providermanagementVersion>
+        <providermanagementVersion>2.3-SNAPSHOT</providermanagementVersion>
         <eventVersion>2.2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
