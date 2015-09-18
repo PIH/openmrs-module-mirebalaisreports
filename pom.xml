@@ -40,7 +40,7 @@
         <coreappsVersion>1.7-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
-        <uiframeworkVersion>3.4-SNAPSHOT</uiframeworkVersion>
+        <uiframeworkVersion>3.4</uiframeworkVersion>
         <appframeworkVersion>2.4-SNAPSHOT</appframeworkVersion>
         <htmlformentryVersion>2.6-SNAPSHOT</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
@@ -50,7 +50,7 @@
         <serializationxstreamVersion>0.2.8-SNAPSHOT</serializationxstreamVersion>
         <idgenVersion>4.0</idgenVersion>
         <patientregistrationVersion>2.2-SNAPSHOT</patientregistrationVersion>
-        <providermanagementVersion>2.3-SNAPSHOT</providermanagementVersion>
+        <providermanagementVersion>2.3</providermanagementVersion>
         <eventVersion>2.2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
