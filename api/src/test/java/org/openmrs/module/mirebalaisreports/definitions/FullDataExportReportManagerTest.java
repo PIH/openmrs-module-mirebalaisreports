@@ -1,7 +1,6 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -42,6 +41,7 @@ import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
 import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.common.ExcelUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
@@ -136,8 +136,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         System.out.println("Wrote to " + outputFile.getAbsolutePath());
 
         InputStream is = new FileInputStream(outputFile);
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        HSSFWorkbook wb = new HSSFWorkbook(fs);
+        Workbook wb = ExcelUtil.loadWorkbookFromInputStream(is);
 
         Assert.assertEquals(1, wb.getNumberOfSheets());
         Assert.assertEquals("patients", wb.getSheetName(0));
@@ -538,8 +537,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         System.out.println("Wrote to " + outputFile.getAbsolutePath());
 
         InputStream is = new FileInputStream(outputFile);
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        HSSFWorkbook wb = new HSSFWorkbook(fs);
+        Workbook wb = ExcelUtil.loadWorkbookFromInputStream(is);
 
         Assert.assertEquals(1, wb.getNumberOfSheets());
         Assert.assertEquals("consultations", wb.getSheetName(0));
