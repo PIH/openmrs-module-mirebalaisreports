@@ -42,7 +42,7 @@
         <emrVersion>2.0-SNAPSHOT</emrVersion>
         <uiframeworkVersion>3.4</uiframeworkVersion>
         <appframeworkVersion>2.4-SNAPSHOT</appframeworkVersion>
-        <htmlformentryVersion>2.6-SNAPSHOT</htmlformentryVersion>
+        <htmlformentryVersion>2.7-SNAPSHOT</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
         <reportingVersion>0.9.7-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
