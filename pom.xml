@@ -60,6 +60,7 @@
         <printerVersion>1.2-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.7</addresshierarchyVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
+        <registrationcoreVersion>1.2-SNAPSHOT</registrationcoreVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.3.1</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -308,6 +309,12 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>addresshierarchy-api</artifactId>
             <version>${addresshierarchyVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>registrationcore-api</artifactId>
+            <version>${registrationcoreVersion}</version>
             <scope>test</scope>
         </dependency>
 
