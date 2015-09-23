@@ -83,7 +83,7 @@ inner join (select crm.concept_id from concept_reference_map crm, concept_refere
     where crm.concept_reference_term_id = crt.concept_reference_term_id
     and crt.concept_source_id = crs.concept_source_id
     and crs.name = 'PIH' 
-    and crt.code = 'Primary diagnosis'
+    and crt.code = 'DIAGNOSIS'
     ) diagcode
 left outer join obs obs_diag1 on obs_diag1.encounter_id = e.encounter_id and obs_diag1.voided = 0 and obs_diag1.concept_id = diagcode.concept_id
 left outer join concept_name diagname1 on diagname1.concept_id = obs_diag1.value_coded and diagname1.locale = 'fr' and diagname1.voided = 0 and diagname1.locale_preferred=1
