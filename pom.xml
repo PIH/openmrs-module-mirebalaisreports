@@ -37,7 +37,7 @@
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.6-SNAPSHOT</metadatadeployVersion>
         <emrapiVersion>1.12-SNAPSHOT</emrapiVersion>
-        <coreappsVersion>1.7-SNAPSHOT</coreappsVersion>
+        <coreappsVersion>1.7</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
         <uiframeworkVersion>3.4</uiframeworkVersion>
