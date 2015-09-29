@@ -40,14 +40,14 @@
         <coreappsVersion>1.8-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
-        <uiframeworkVersion>3.4</uiframeworkVersion>
-        <appframeworkVersion>2.4</appframeworkVersion>
+        <uiframeworkVersion>3.5-SNAPSHOT</uiframeworkVersion>
+        <appframeworkVersion>2.5-SNAPSHOT</appframeworkVersion>
         <htmlformentryVersion>2.7-SNAPSHOT</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
-        <reportingVersion>0.9.7</reportingVersion>
+        <reportingVersion>0.9.8-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
         <reportingrestVersion>1.5-SNAPSHOT</reportingrestVersion>
-        <serializationxstreamVersion>0.2.8</serializationxstreamVersion>
+        <serializationxstreamVersion>0.2.9-SNAPSHOT</serializationxstreamVersion>
         <idgenVersion>4.0</idgenVersion>
         <patientregistrationVersion>2.2-SNAPSHOT</patientregistrationVersion>
         <providermanagementVersion>2.3</providermanagementVersion>
@@ -55,7 +55,7 @@
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
         <webservicesRestVersion>2.12-SNAPSHOT</webservicesRestVersion>
-        <appointmentschedulingVersion>1.4</appointmentschedulingVersion>
+        <appointmentschedulingVersion>1.5-SNAPSHOT</appointmentschedulingVersion>
         <testutilsVersion>1.6-SNAPSHOT</testutilsVersion>
         <printerVersion>1.2-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.7</addresshierarchyVersion>
