@@ -92,6 +92,8 @@ public class FullDataExportBuilder {
                         Arrays.asList("labReports")));
                 configurations.add(new Configuration(MirebalaisReportsProperties.ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "oncologydataexport",
                         Arrays.asList("oncology")));
+                configurations.add(new Configuration(MirebalaisReportsProperties.NCD_DATA_EXPORT_REPORT_DEFINITION_UUID, "ncddataexport",
+                        Arrays.asList("ncd")));
             }
         }
         return configurations;
