@@ -191,7 +191,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
                 dsd = registrationDataSetManager.constructDataSet();
             }
             // TODO: This is really ugly. We need to get this into proper configuration--new Liberia check-ins report uses a manager, the old is a sql report
-            else if ("checkins".equals(key) && config.getCountry() == ConfigDescriptor.Country.LIBERIA) {
+            else if ("checkins".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE)) {
                 dsd = checkInDataSetManager.constructDataSet();
             }
             // TODO turn this on to replace current SQL data query with vitals data set manager (which reorganizes fields and adds chief complaint)

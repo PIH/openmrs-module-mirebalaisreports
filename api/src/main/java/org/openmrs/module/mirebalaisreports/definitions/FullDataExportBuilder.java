@@ -54,13 +54,13 @@ public class FullDataExportBuilder {
         if (configurations == null) {
             configurations = new ArrayList<Configuration>();
             // For now, let's segment quickly based on country like this, but we should improve this overall configurability
-            if (config.getCountry() == ConfigDescriptor.Country.LIBERIA) {
+            if (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)  || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE) ) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "registrationdataexport",
                         Arrays.asList("registration")));
                 configurations.add(new Configuration(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID, "checkinsdataexport",
                         Arrays.asList("checkins")));
             }
-            else {
+            else if (config.getCountry().equals(ConfigDescriptor.Country.HAITI) ) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "fulldataexport", null));
                 configurations.add(new Configuration(MirebalaisReportsProperties.REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "registrationdataexport",
                         Arrays.asList("registration")));
