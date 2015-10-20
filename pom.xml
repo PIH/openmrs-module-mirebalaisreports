@@ -267,6 +267,12 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
+            <artifactId>webservices.rest-omod</artifactId>
+            <version>${webservicesRestVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
             <artifactId>pihcore-api</artifactId>
             <version>${pihcoreVersion}</version>
             <type>test-jar</type>
@@ -453,10 +459,6 @@
                             <name>idgenVersion</name>
                             <banSnapshots>true</banSnapshots>
                         </property>
-                        <!--      <property>
-                                  <name>webservicesRestVersion</name>
-                                  <banSnapshots>true</banSnapshots>
-                              </property>-->
                     </properties>
                 </configuration>
             </plugin>
