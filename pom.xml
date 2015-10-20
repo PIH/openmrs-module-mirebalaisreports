@@ -46,7 +46,7 @@
         <calculationVersion>1.1</calculationVersion>
         <reportingVersion>0.9.8-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
-        <reportingrestVersion>1.5-SNAPSHOT</reportingrestVersion>
+        <reportingrestVersion>1.6-SNAPSHOT</reportingrestVersion>
         <serializationxstreamVersion>0.2.9-SNAPSHOT</serializationxstreamVersion>
         <idgenVersion>4.0</idgenVersion>
         <providermanagementVersion>2.3</providermanagementVersion>
