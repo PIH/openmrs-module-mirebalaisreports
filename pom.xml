@@ -270,6 +270,7 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>webservices.rest</artifactId>
             <version>${webservicesRestVersion}</version>
+            <type>pom</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
