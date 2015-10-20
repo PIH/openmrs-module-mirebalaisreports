@@ -265,9 +265,10 @@
             <version>${coreappsVersion}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- we include this just so that the versions updater properly updates rest version numbers -->
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>webservices.rest-omod</artifactId>
+            <artifactId>webservices.rest</artifactId>
             <version>${webservicesRestVersion}</version>
             <scope>provided</scope>
         </dependency>
