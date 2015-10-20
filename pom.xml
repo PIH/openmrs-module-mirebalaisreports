@@ -53,7 +53,7 @@
         <eventVersion>2.2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
-        <webservicesRestVersion>2.12-SNAPSHOT</webservicesRestVersion>
+        <webservicesRestVersion>2.13-SNAPSHOT</webservicesRestVersion>
         <appointmentschedulingVersion>1.5-SNAPSHOT</appointmentschedulingVersion>
         <testutilsVersion>1.6-SNAPSHOT</testutilsVersion>
         <printerVersion>1.2-SNAPSHOT</printerVersion>
