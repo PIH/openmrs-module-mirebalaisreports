@@ -50,14 +50,17 @@ max(CASE when crs.name = 'PIH' and crt.code = 'SERUM CREATININE' then o.value_nu
 max(CASE when crs.name = 'PIH' and crt.code = 'SERUM GLUCOSE' then o.value_numeric end) 'Serum_Glucose',
 max(CASE when crs.name = 'PIH' and crt.code = 'SERUM CALCIUM' then o.value_numeric end) 'Serum_Calcium',
 max(CASE when crs.name = 'CIEL' and crt.code = '160914' then o.value_numeric end) 'Glucose_Prandial',
+max(CASE when crs.name = 'PIH' and crt.code = 'CD4 COUNT' then o.value_numeric end) 'CD4_Count',
+max(CASE when crs.name = 'PIH' and crt.code = 'BLOOD TYPING' then cn.name end) 'Blood_Type',
 max(CASE when crs.name = 'CIEL' and crt.code = '160912' then o.value_numeric end) 'Glucose-Fasting',
 max(CASE when crs.name = 'PIH' and crt.code = 'TOTAL CHOLESTEROL' then o.value_numeric end) 'Total_Cholesterol',
 max(CASE when crs.name = 'PIH' and crt.code = 'LOW-DENSITY LIPOPROTEIN CHOLESTEROL' then o.value_numeric end) 'Low-Den_Lipoprotein_Cholesterol',
 max(CASE when crs.name = 'PIH' and crt.code = 'HIGH-DENSITY LIPOPROTEIN CHOLESTEROL' then o.value_numeric end) 'High-Den_Lipoprotein_Cholesterol',
 max(CASE when crs.name = 'PIH' and crt.code = 'TRIGLYCERIDES' then o.value_numeric end) 'Triglycerides',
-max(CASE when crs.name = 'PIH' and crt.code = 'CD4 COUNT' then o.value_numeric end) 'CD4_Count',
 max(CASE when crs.name = 'PIH' and crt.code = 'MALARIAL SMEAR' then cn.name end) 'Malarial_Smear',
-max(CASE when crs.name = 'PIH' and crt.code = 'LACTATE DEHYDROGENASE' then o.value_numeric end) 'Lactate_Dehydrogenase'
+max(CASE when crs.name = 'PIH' and crt.code = 'LACTATE DEHYDROGENASE' then o.value_numeric end) 'Lactate_Dehydrogenase',
+max(CASE when crs.name = 'PIH' and crt.code = 'RESULT OF HIV TEST' then cn.name end) 'HIV_Test',
+max(CASE when crs.name = 'PIH' and crt.code = 'HIV VIRAL LOAD' then o.value_numeric end) 'HIV_Viral_Load'
 from encounter e, concept_reference_map crm,  concept_reference_term crt, concept_reference_source crs, obs o
 LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
 LEFT OUTER JOIN obs obs2 on obs2.obs_id = o.obs_group_id
