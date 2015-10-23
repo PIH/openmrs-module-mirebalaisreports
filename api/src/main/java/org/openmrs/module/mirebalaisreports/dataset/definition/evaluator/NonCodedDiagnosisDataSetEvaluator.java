@@ -19,6 +19,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
 import org.openmrs.Concept;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Provider;
@@ -26,7 +27,6 @@ import org.openmrs.User;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.UserService;
-import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -48,7 +48,7 @@ import java.util.List;
 public class NonCodedDiagnosisDataSetEvaluator implements DataSetEvaluator {
 
     @Autowired
-    private DbSessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
     @Autowired
     private EmrApiProperties emrApiProperties;

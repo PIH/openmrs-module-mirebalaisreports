@@ -16,8 +16,8 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.SessionFactory;
 import org.openmrs.Provider;
-import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
@@ -50,7 +50,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 	EmrApiProperties emrApiProperties;
 
 	@Autowired
-	DbSessionFactory sessionFactory;
+	SessionFactory sessionFactory;
 
     @Override
     public String getUuid() {
@@ -65,7 +65,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 		this.emrApiProperties = emrApiProperties;
 	}
 
-	public void setSessionFactory(DbSessionFactory sessionFactory) {
+	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 
