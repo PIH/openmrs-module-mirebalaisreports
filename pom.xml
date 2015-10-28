@@ -59,7 +59,7 @@
         <printerVersion>1.2-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.7</addresshierarchyVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
-        <registrationcoreVersion>1.3-SNAPSHOT</registrationcoreVersion>
+        <registrationcoreVersion>1.4-SNAPSHOT</registrationcoreVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.3.1</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
