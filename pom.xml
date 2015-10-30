@@ -61,7 +61,7 @@
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <registrationcoreVersion>1.4-SNAPSHOT</registrationcoreVersion>
         <!-- Need to phase this out. -->
-        <supercsvVersion>2.3.1</supercsvVersion>
+        <supercsvVersion>2.4.0</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
