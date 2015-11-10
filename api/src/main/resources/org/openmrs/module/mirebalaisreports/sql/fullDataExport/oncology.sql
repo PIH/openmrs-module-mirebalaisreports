@@ -1,5 +1,5 @@
 SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_datetime, el.name encounter_location,
-CONCAT(pn.given_name, ' ',pn.family_name) provider,obsjoins.encounter_id "Encounter_id", et.name "Encounter_Type",
+CONCAT(pn.given_name, ' ',pn.family_name) provider, e.visit_id, obsjoins.encounter_id "Encounter_id", et.name "Encounter_Type",
 diagname1.name "Diagnosis_1",
 diagname2.name "Diagnosis_2",
 diagname3.name "Diagnosis_3",
