@@ -47,7 +47,7 @@
         <reportingVersion>0.9.8-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
         <reportingrestVersion>1.6-SNAPSHOT</reportingrestVersion>
-        <serializationxstreamVersion>0.2.9</serializationxstreamVersion>
+        <serializationxstreamVersion>0.2.10-SNAPSHOT</serializationxstreamVersion>
         <idgenVersion>4.0</idgenVersion>
         <providermanagementVersion>2.3</providermanagementVersion>
         <eventVersion>2.2.1</eventVersion>
