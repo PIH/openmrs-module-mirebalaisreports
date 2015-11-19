@@ -477,9 +477,17 @@
                             <banSnapshots>true</banSnapshots>
                         </property>
                         <property>
+                            <name>allergyuiVersion</name>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                        <property>
                             <name>serializationxstreamVersion</name>
                             <banSnapshots>true</banSnapshots>
                         </property>
+                        <!--      <property>
+                                  <name>webservicesRestVersion</name>
+                                  <banSnapshots>true</banSnapshots>
+                              </property>-->
                     </properties>
                 </configuration>
             </plugin>
