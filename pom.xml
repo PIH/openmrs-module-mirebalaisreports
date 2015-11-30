@@ -33,7 +33,7 @@
     <properties>
         <openMRSVersion>1.10.2</openMRSVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-        <metadatasharingVersion>1.1.9</metadatasharingVersion>
+        <metadatasharingVersion>1.1.10</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.6</metadatadeployVersion>
         <emrapiVersion>1.12-SNAPSHOT</emrapiVersion>
@@ -47,7 +47,7 @@
         <reportingVersion>0.9.9-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
         <reportingrestVersion>1.6-SNAPSHOT</reportingrestVersion>
-        <serializationxstreamVersion>0.2.9</serializationxstreamVersion>
+        <serializationxstreamVersion>0.2.10</serializationxstreamVersion>
         <idgenVersion>4.2</idgenVersion>
         <providermanagementVersion>2.3</providermanagementVersion>
         <eventVersion>2.2.1</eventVersion>
