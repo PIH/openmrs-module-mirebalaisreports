@@ -54,7 +54,7 @@
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
         <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
         <webservicesRestVersion>2.14-SNAPSHOT</webservicesRestVersion>
-        <appointmentschedulingVersion>1.5-SNAPSHOT</appointmentschedulingVersion>
+        <appointmentschedulingVersion>1.5</appointmentschedulingVersion>
         <testutilsVersion>1.6-SNAPSHOT</testutilsVersion>
         <printerVersion>1.2-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.7</addresshierarchyVersion>
