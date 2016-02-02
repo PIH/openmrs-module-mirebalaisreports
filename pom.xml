@@ -36,7 +36,7 @@
         <metadatasharingVersion>1.1.10</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.7</metadatadeployVersion>
-        <emrapiVersion>1.12-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.13-SNAPSHOT</emrapiVersion>
         <coreappsVersion>1.10-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
         <emrVersion>2.0-SNAPSHOT</emrVersion>
@@ -333,14 +333,7 @@
             <version>${registrationcoreVersion}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- TODO figure out why we still need the 1.9 subproject for testing-->
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.9</artifactId>
-            <version>${emrapiVersion}</version>
-            <scope>test</scope>
-        </dependency>
+        
         <!-- OpenMRS modules -->
 
         <!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
