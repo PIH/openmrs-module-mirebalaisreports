@@ -57,7 +57,7 @@
         <appointmentschedulingVersion>1.5</appointmentschedulingVersion>
         <testutilsVersion>1.6-SNAPSHOT</testutilsVersion>
         <printerVersion>1.2-SNAPSHOT</printerVersion>
-        <addresshierarchyVersion>2.7</addresshierarchyVersion>
+        <addresshierarchyVersion>2.8</addresshierarchyVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <registrationcoreVersion>1.4-SNAPSHOT</registrationcoreVersion>
         <!-- Need to phase this out. -->
