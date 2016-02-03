@@ -39,7 +39,7 @@
         <emrapiVersion>1.13-SNAPSHOT</emrapiVersion>
         <coreappsVersion>1.10-SNAPSHOT</coreappsVersion>
         <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
-        <emrVersion>2.0-SNAPSHOT</emrVersion>
+        <emrVersion>2.0</emrVersion>
         <uiframeworkVersion>3.5</uiframeworkVersion>
         <appframeworkVersion>2.5-SNAPSHOT</appframeworkVersion>
         <htmlformentryVersion>3.0-SNAPSHOT</htmlformentryVersion>
