@@ -42,7 +42,7 @@
         <emrVersion>2.1-SNAPSHOT</emrVersion>
         <uiframeworkVersion>3.5</uiframeworkVersion>
         <appframeworkVersion>2.5-SNAPSHOT</appframeworkVersion>
-        <htmlformentryVersion>3.0-SNAPSHOT</htmlformentryVersion>
+        <htmlformentryVersion>2.7</htmlformentryVersion>
         <calculationVersion>1.1</calculationVersion>
         <reportingVersion>0.9.8.1</reportingVersion>
         <reportinguiVersion>1.0-SNAPSHOT</reportinguiVersion>
@@ -559,6 +559,10 @@
                         </property>
                         <property>
                             <name>htmlformentry19extVersion</name>
+                            <banSnapshots>true</banSnapshots>
+                        </property>
+                        <property>
+                            <name>htmlformentryVersion</name>
                             <banSnapshots>true</banSnapshots>
                         </property>
                     </properties>
