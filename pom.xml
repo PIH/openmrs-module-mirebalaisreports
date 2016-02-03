@@ -38,8 +38,8 @@
         <metadatadeployVersion>1.7</metadatadeployVersion>
         <emrapiVersion>1.13-SNAPSHOT</emrapiVersion>
         <coreappsVersion>1.10-SNAPSHOT</coreappsVersion>
-        <paperrecordVersion>1.0-SNAPSHOT</paperrecordVersion>
-        <emrVersion>2.0-SNAPSHOT</emrVersion>
+        <paperrecordVersion>1.1-SNAPSHOT</paperrecordVersion>
+        <emrVersion>2.1-SNAPSHOT</emrVersion>
         <uiframeworkVersion>3.5</uiframeworkVersion>
         <appframeworkVersion>2.5-SNAPSHOT</appframeworkVersion>
         <htmlformentryVersion>3.0-SNAPSHOT</htmlformentryVersion>
@@ -51,12 +51,12 @@
         <idgenVersion>4.2</idgenVersion>
         <providermanagementVersion>2.4</providermanagementVersion>
         <eventVersion>2.2.1</eventVersion>
-        <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
-        <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
+        <dispensingVersion>1.1-SNAPSHOT</dispensingVersion>
+        <radiologyappVersion>1.1-SNAPSHOT</radiologyappVersion>
         <webservicesRestVersion>2.14-SNAPSHOT</webservicesRestVersion>
         <appointmentschedulingVersion>1.5</appointmentschedulingVersion>
         <testutilsVersion>1.6-SNAPSHOT</testutilsVersion>
-        <printerVersion>1.2-SNAPSHOT</printerVersion>
+        <printerVersion>1.3-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.8</addresshierarchyVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <registrationcoreVersion>1.4-SNAPSHOT</registrationcoreVersion>
