@@ -32,6 +32,7 @@
 
     <properties>
         <openMRSVersion>1.10.2</openMRSVersion>
+        <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <emrapiVersion>1.13-SNAPSHOT</emrapiVersion>
         <paperrecordVersion>1.0</paperrecordVersion>
