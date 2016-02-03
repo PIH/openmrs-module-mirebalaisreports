@@ -52,11 +52,11 @@
         <providermanagementVersion>2.4</providermanagementVersion>
         <eventVersion>2.2.1</eventVersion>
         <dispensingVersion>1.0-SNAPSHOT</dispensingVersion>
-        <radiologyappVersion>1.0-SNAPSHOT</radiologyappVersion>
+        <radiologyappVersion>1.1-SNAPSHOT</radiologyappVersion>
         <webservicesRestVersion>2.14-SNAPSHOT</webservicesRestVersion>
         <appointmentschedulingVersion>1.5</appointmentschedulingVersion>
         <testutilsVersion>1.6-SNAPSHOT</testutilsVersion>
-        <printerVersion>1.2-SNAPSHOT</printerVersion>
+        <printerVersion>1.3-SNAPSHOT</printerVersion>
         <addresshierarchyVersion>2.8</addresshierarchyVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <registrationcoreVersion>1.4-SNAPSHOT</registrationcoreVersion>
