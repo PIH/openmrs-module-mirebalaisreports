@@ -31,7 +31,7 @@
 	</modules>
 
     <properties>
-        <openMRSVersion>1.10.2</openMRSVersion>
+        <openMRSVersion>1.10.4-SNAPSHOT</openMRSVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <emrapiVersion>1.13-SNAPSHOT</emrapiVersion>
