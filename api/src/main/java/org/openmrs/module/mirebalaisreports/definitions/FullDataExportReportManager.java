@@ -266,6 +266,12 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("admissionStatus", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "admissionStatus"), null);
         dsd.addColumn("requestedAdmissionLocation", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "requestedAdmissionLocation.name"), null);
         dsd.addColumn("requestedTransferLocation", libraries.getDefinition(EncounterDataDefinition.class, EncounterDataLibrary.PREFIX + "requestedTransferLocation.name"), null);
+        dsd.addColumn("department", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.department"), "");
+        dsd.addColumn("commune", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.commune"), "");
+        dsd.addColumn("section", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.section"), "");
+        dsd.addColumn("locality", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.locality"), "");
+        dsd.addColumn("street_landmark", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.preferredAddress.streetLandmark"), "");
+
 
         return dsd;
     }
