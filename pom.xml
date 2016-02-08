@@ -31,7 +31,7 @@
 	</modules>
 
     <properties>
-        <openMRSVersion>1.10.4-SNAPSHOT</openMRSVersion>
+        <openMRSVersion>1.10.4</openMRSVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <emrapiVersion>1.13-SNAPSHOT</emrapiVersion>
@@ -431,10 +431,12 @@
                         <property>
                             <name>openMRSVersion</name>
                             <version>[1.9.0,1.10.0-!)</version>
+                            <banSnapshots>true</banSnapshots>
                         </property>
                         <property>
                             <name>openMRSwebVersion</name>
                             <version>[1.9.0,1.10.0-!)</version>
+                            <banSnapshots>true</banSnapshots>
                         </property>
                         <property>
                             <name>htmlwidgetsVersion</name>
