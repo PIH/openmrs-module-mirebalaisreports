@@ -191,7 +191,7 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>reporting-api</artifactId>
+            <artifactId>reporting-api-tests</artifactId>
             <version>${reportingVersion}</version>
             <type>test-jar</type>
             <scope>test</scope>
