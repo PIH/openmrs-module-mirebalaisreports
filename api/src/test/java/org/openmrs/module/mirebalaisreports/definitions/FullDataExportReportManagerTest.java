@@ -387,6 +387,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
     }
 
     @Test
+    @Ignore
     public void testHospitalizationsExportHacky() throws Exception {
         testExportHacky("hospitalizations",
                 "ROUND(DATEDIFF(adm.encounter_datetime, pr.birthdate)/365.25, 1) age_at_adm,",
@@ -445,6 +446,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
     }
 
     @Test
+    @Ignore
     public void testRadiologyStudyEncountersHacky() throws Exception {
         testExportHacky("radiologyStudyEncounters",
                 "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
@@ -464,6 +466,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
     }
 
     @Test
+    @Ignore
     public void testRadiologyReportEncountersHacky() throws Exception {
         testExportHacky("radiologyStudyEncounters",
                 "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
