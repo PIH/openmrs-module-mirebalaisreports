@@ -7,6 +7,8 @@ import org.openmrs.OpenmrsObject;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.config.Components;
+import org.openmrs.module.pihcore.config.Config;
 import org.openmrs.module.radiologyapp.RadiologyProperties;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -40,6 +42,9 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
     @Autowired
     protected RadiologyProperties radiologyProperties;
+
+    @Autowired
+    protected Config config;
 
     public abstract String getUuid();
 
@@ -96,6 +101,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "oncIntakeEnc", mrp.getOncologyIntakeEncounterType());
         sql = replace(sql, "chemoEnc", mrp.getChemotherapyEncounterType());
         sql = replace(sql, "ncdNoteEnc", mrp.getNCDConsultEncounterType());
+        sql = replace(sql, "mentalHealthEnc", mrp.getMentalHealthAssessmentEncounterType());
 
         sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
         sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());
@@ -138,36 +144,45 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "boardingFor", mrp.getBoardingForConcept());
         sql = replace(sql, "typeOfPatient", mrp.getTypeOfPatientConcept());
 
-        sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
-        sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());
-        sql = replace(sql, "transferOutDispoConcept", mrp.getTransferOutOfHospitalDispositionConcept());
-        sql = replace(sql, "transferWithinDispoConcept", mrp.getTransferWithinHospitalDispositionConcept());
-        sql = replace(sql, "deathDispoConcept", mrp.getDeathDispositionConcept());
-        sql = replace(sql, "leftWithoutSeeingDispoConcept", mrp.getLeftWithoutSeeingClinicianDispositionConcept());
-        sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
-        sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
-        sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
+        if (config.isComponentEnabled(Components.ADT)) {
+            sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
+            sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());
+            sql = replace(sql, "transferOutDispoConcept", mrp.getTransferOutOfHospitalDispositionConcept());
+            sql = replace(sql, "transferWithinDispoConcept", mrp.getTransferWithinHospitalDispositionConcept());
+            sql = replace(sql, "deathDispoConcept", mrp.getDeathDispositionConcept());
+            sql = replace(sql, "leftWithoutSeeingDispoConcept", mrp.getLeftWithoutSeeingClinicianDispositionConcept());
+            sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
+            sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
+            sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
+        }
 
         // sets for radiological exam modalities
-        sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
-        sql = replace(sql, "ctOrderables", radiologyProperties.getCTScanOrderablesConcept());
-        sql = replace(sql, "ultrasoundOrderables", radiologyProperties.getUltrasoundOrderablesConcept());
+        if (config.isComponentEnabled(Components.RADIOLOGY)) {
+            sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
+            sql = replace(sql, "ctOrderables", radiologyProperties.getCTScanOrderablesConcept());
+            sql = replace(sql, "ultrasoundOrderables", radiologyProperties.getUltrasoundOrderablesConcept());
 
-        // sets for anatomical groupings of radiological exams
-        sql = replace(sql, "radiologyChest", mrp.getChestRadiologyExamSetConcept());
-        sql = replace(sql, "radiologyHeadNeck", mrp.getHeadAndNeckRadiologyExamSetConcept());
-        sql = replace(sql, "radiologySpine", mrp.getSpineRadiologyExamSetConcept());
-        sql = replace(sql, "radiologyVascular", mrp.getVascularRadiologyExamSetConcept());
-        sql = replace(sql, "radiologyAbdomenPelvis", mrp.getAbdomenAndPelvisRadiologyExamSetConcept());
-        sql = replace(sql, "radiologyMusculoskeletal", mrp.getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept());
+            // sets for anatomical groupings of radiological exams
+            sql = replace(sql, "radiologyChest", mrp.getChestRadiologyExamSetConcept());
+            sql = replace(sql, "radiologyHeadNeck", mrp.getHeadAndNeckRadiologyExamSetConcept());
+            sql = replace(sql, "radiologySpine", mrp.getSpineRadiologyExamSetConcept());
+            sql = replace(sql, "radiologyVascular", mrp.getVascularRadiologyExamSetConcept());
+            sql = replace(sql, "radiologyAbdomenPelvis", mrp.getAbdomenAndPelvisRadiologyExamSetConcept());
+            sql = replace(sql, "radiologyMusculoskeletal", mrp.getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept());
+        }
 
         log.debug("Replacing metadata references complete.");
         return sql;
     }
 
     protected String replace(String sql, String oldValue, OpenmrsObject newValue) {
-        String s = sql.replace(":" + oldValue, newValue.getId().toString());
-        return s;
+        if (newValue != null) {  // some replacemnets, like the radiology encounter types, aren't available on all systems, so just ignore in these cases
+            String s = sql.replace(":" + oldValue, newValue.getId().toString());
+            return s;
+        }
+        else {
+            return sql;
+        }
     }
 
     protected ReportProcessorConfiguration constructSaveToDiskReportProcessorConfiguration() {

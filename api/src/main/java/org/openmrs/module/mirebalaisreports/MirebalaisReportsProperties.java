@@ -27,6 +27,7 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -84,6 +85,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String LAB_RESULTS_DATA_EXPORT_REPORT_DEFINITION_UUID = "109d8490-45d4-11e5-b970-0800200c9a66";
     public static final String ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID = "202e6ee0-45d6-11e5-b970-0800200c9a66";
     public static final String NCD_DATA_EXPORT_REPORT_DEFINITION_UUID = "13629220-6b9e-11e5-a837-0800200c9a66";
+    public static final String MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID = "d2e7c170-e703-11e5-a837-0800200c9a66";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
@@ -108,63 +110,59 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String NEONATAL_ICU_UUID = "62a9500e-a1a5-4235-844f-3a8cc0765d53";
 
     public Location getOutpatientLocation() {
-		return getRequiredLocationByUuid(OUTPATIENT_CLINIC_UUID);
+		return getLocationByUuid(OUTPATIENT_CLINIC_UUID);
 	}
 
 	public Location getWomenLocation() {
-		return getRequiredLocationByUuid(WOMEN_CLINIC_UUID);
+		return getLocationByUuid(WOMEN_CLINIC_UUID);
 	}
 
     public Location getEmergencyLocation() {
-        return getRequiredLocationByUuid(EMERGENCY_DEPARTMENT_UUID);
+        return getLocationByUuid(EMERGENCY_DEPARTMENT_UUID);
     }
 
     public Location getEmergencyReceptionLocation() {
-        return getRequiredLocationByUuid(EMERGENCY_RECEPTION_UUID);
+        return getLocationByUuid(EMERGENCY_RECEPTION_UUID);
     }
 
     public Location getMirebalaisHospitalLocation() {
-        return getRequiredLocationByUuid(MIREBALAIS_HOSPITAL_UUID);
+        return getLocationByUuid(MIREBALAIS_HOSPITAL_UUID);
     }
 
     public Location getClinicRegistrationLocation() {
-        return getRequiredLocationByUuid(CLINIC_REGISTRATION_UUID);
+        return getLocationByUuid(CLINIC_REGISTRATION_UUID);
     }
 
     public Location getWomensInternalMedicineLocation() {
-        return getRequiredLocationByUuid(WOMENS_INTERNAL_MEDICINE_UUID);
+        return getLocationByUuid(WOMENS_INTERNAL_MEDICINE_UUID);
     }
 
     public Location getMensInternalMedicineLocation() {
-        return getRequiredLocationByUuid(MENS_INTERNAL_MEDICINE_UUID);
+        return getLocationByUuid(MENS_INTERNAL_MEDICINE_UUID);
     }
 
     public Location getSurgicalWardLocation() {
-        return getRequiredLocationByUuid(SURGICAL_WARD_UUID);
+        return getLocationByUuid(SURGICAL_WARD_UUID);
     }
 
     public Location getAntepartumWardLocation() {
-        return getRequiredLocationByUuid(ANTEPARTUM_WARD_UUID);
+        return getLocationByUuid(ANTEPARTUM_WARD_UUID);
     }
 
     public Location getLaborAndDeliveryLocation() {
-        return getRequiredLocationByUuid(LABOR_AND_DELIVERY_UUID);
+        return getLocationByUuid(LABOR_AND_DELIVERY_UUID);
     }
 
     public Location getPostpartumWardLocation() {
-        return getRequiredLocationByUuid(POSTPARTUM_WARD_UUID);
+        return getLocationByUuid(POSTPARTUM_WARD_UUID);
     }
 
     public Location getNeonatalIcuLocation() {
-        return getRequiredLocationByUuid(NEONATAL_ICU_UUID);
+        return getLocationByUuid(NEONATAL_ICU_UUID);
     }
 
-    private Location getRequiredLocationByUuid(String uuid) {
-		Location location = locationService.getLocationByUuid(uuid);
-		if (location == null) {
-			throw new IllegalStateException("Missing required location with uuid: " + uuid);
-		}
-		return location;
+    private Location getLocationByUuid(String uuid) {
+		return locationService.getLocationByUuid(uuid);
 	}
 
     public List<Provider> getAllProviders(){
@@ -186,27 +184,23 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public static final String ZL_EMR_ID_UUID = "a541af1e-105c-40bf-b345-ba1fd6a59b85";
 
 	public PatientIdentifierType getZlEmrIdentifierType() {
-		return getRequiredIdentifierTypeByUuid(ZL_EMR_ID_UUID);
+		return getIdentifierTypeByUuid(ZL_EMR_ID_UUID);
 	}
 
 	public static final String DOSSIER_NUMBER_UUID = "e66645eb-03a8-4991-b4ce-e87318e37566";
 
 	public PatientIdentifierType getDossierNumberIdentifierType() {
-		return getRequiredIdentifierTypeByUuid(DOSSIER_NUMBER_UUID);
+		return getIdentifierTypeByUuid(DOSSIER_NUMBER_UUID);
 	}
 
 	public static final String HIV_EMR_ID_UUID = "139766e8-15f5-102d-96e4-000c29c2a5d7";
 
 	public PatientIdentifierType getHivEmrIdentifierType() {
-		return getRequiredIdentifierTypeByUuid(HIV_EMR_ID_UUID);
+		return getIdentifierTypeByUuid(HIV_EMR_ID_UUID);
 	}
 
-	private PatientIdentifierType getRequiredIdentifierTypeByUuid(String uuid) {
-		PatientIdentifierType t = patientService.getPatientIdentifierTypeByUuid(uuid);
-		if (t == null) {
-			throw new IllegalStateException("Missing required patient identifier type with uuid: " + uuid);
-		}
-		return t;
+	private PatientIdentifierType getIdentifierTypeByUuid(String uuid) {
+		return patientService.getPatientIdentifierTypeByUuid(uuid);
 	}
 
 
@@ -217,23 +211,19 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String UNKNOWN_PATIENT_PERSON_ATTRIBUTE_UUID = "8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47";
 
 	public PersonAttributeType getTestPatientPersonAttributeType() {
-		return getRequiredPersonAttributeTypeByUuid(TEST_PERSON_ATTRIBUTE_UUID);
+		return getPersonAttributeTypeByUuid(TEST_PERSON_ATTRIBUTE_UUID);
 	}
 
     public PersonAttributeType getTelephoneNumberPersonAttributeType() {
-        return getRequiredPersonAttributeTypeByUuid(TELEPHONE_PERSON_ATTRIBUTE_UUID);
+        return getPersonAttributeTypeByUuid(TELEPHONE_PERSON_ATTRIBUTE_UUID);
     }
 
     public PersonAttributeType getUnknownPatientPersonAttributeType() {
-        return getRequiredPersonAttributeTypeByUuid(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_UUID);
+        return getPersonAttributeTypeByUuid(UNKNOWN_PATIENT_PERSON_ATTRIBUTE_UUID);
     }
 
-	private PersonAttributeType getRequiredPersonAttributeTypeByUuid(String uuid) {
-		PersonAttributeType t = personService.getPersonAttributeTypeByUuid(uuid);
-		if (t == null) {
-			throw new IllegalStateException("Missing required person attribute type with uuid: " + uuid);
-		}
-		return t;
+	private PersonAttributeType getPersonAttributeTypeByUuid(String uuid) {
+		return personService.getPersonAttributeTypeByUuid(uuid);
 	}
 
 
@@ -258,71 +248,76 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String NCD_CONSULT_ENCOUNTER_TYPE_UUID = "ae06d311-1866-455b-8a64-126a9bd74171";
 
 	public EncounterType getRegistrationEncounterType() {
-		return getRequiredEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
+		return getEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
 	}
 
 	public EncounterType getCheckInEncounterType() {
-		return getRequiredEncounterTypeByUuid(CHECK_IN_ENCOUNTER_TYPE_UUID);
+		return getEncounterTypeByUuid(CHECK_IN_ENCOUNTER_TYPE_UUID);
 	}
 
 	public EncounterType getPaymentEncounterType() {
-		return getRequiredEncounterTypeByUuid(PAYMENT_ENCOUNTER_TYPE_UUID);
+		return getEncounterTypeByUuid(PAYMENT_ENCOUNTER_TYPE_UUID);
 	}
 
 	public EncounterType getVitalsEncounterType() {
-		return getRequiredEncounterTypeByUuid(VITALS_ENCOUNTER_TYPE_UUID);
+		return getEncounterTypeByUuid(VITALS_ENCOUNTER_TYPE_UUID);
 	}
 
 	public EncounterType getConsultEncounterType() {
-		return getRequiredEncounterTypeByUuid(CONSULT_ENCOUNTER_TYPE_UUID);
+		return getEncounterTypeByUuid(CONSULT_ENCOUNTER_TYPE_UUID);
 	}
 
 	public EncounterType getRadiologyOrderEncounterType() {
-		return getRequiredEncounterTypeByUuid(RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID);
+		return getEncounterTypeByUuid(RADIOLOGY_ORDER_ENCOUNTER_TYPE_UUID);
 	}
 
     public EncounterType getRadiologyStudyEncounterType() {
-        return getRequiredEncounterTypeByUuid(RADIOLOGY_STUDY_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(RADIOLOGY_STUDY_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getRadiologyReportEncounterType() {
-        return getRequiredEncounterTypeByUuid(RADIOLOGY_REPORT_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(RADIOLOGY_REPORT_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getPostOpNoteEncounterType() {
-        return getRequiredEncounterTypeByUuid(POST_OP_NOTE_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(POST_OP_NOTE_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getAdmissionEncounterType() {
-        return getRequiredEncounterTypeByUuid(ADMISSION_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(ADMISSION_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getExitFromInpatientEncounterType() {
-        return getRequiredEncounterTypeByUuid(EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(EXIT_FROM_INPATIENT_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getTransferEncounterType() {
-        return getRequiredEncounterTypeByUuid(TRANSFER_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(TRANSFER_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getLabResultsEncounterType() {
-        return getRequiredEncounterTypeByUuid(LAB_RESULTS_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(LAB_RESULTS_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getOncologyEncounterType() {
-        return getRequiredEncounterTypeByUuid(ONCOLOGY_CONSULT_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(ONCOLOGY_CONSULT_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getOncologyIntakeEncounterType() {
-        return getRequiredEncounterTypeByUuid(ONCOLOGY_INTAKE_ENCOUNTER_TYPE);
+        return getEncounterTypeByUuid(ONCOLOGY_INTAKE_ENCOUNTER_TYPE);
     }
 
     public EncounterType getChemotherapyEncounterType() {
-        return getRequiredEncounterTypeByUuid(CHEMOTHERAPY_ENCOUNTER_TYPE);
+        return getEncounterTypeByUuid(CHEMOTHERAPY_ENCOUNTER_TYPE);
     }
 
     public EncounterType getNCDConsultEncounterType() {
-        return getRequiredEncounterTypeByUuid(NCD_CONSULT_ENCOUNTER_TYPE_UUID);
+        return getEncounterTypeByUuid(NCD_CONSULT_ENCOUNTER_TYPE_UUID);
+    }
+
+    // TODO switch everything to us EncounterTypes instead of the hard coded constants in this file
+    public EncounterType getMentalHealthAssessmentEncounterType() {
+        return getEncounterTypeByUuid(EncounterTypes.MENTAL_HEALTH_ASSESSMENT.uuid());
     }
 
     /**
@@ -347,14 +342,9 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return encounterTypes;
 	}
 
-	private EncounterType getRequiredEncounterTypeByUuid(String uuid) {
-		EncounterType encounterType = encounterService.getEncounterTypeByUuid(uuid);
-		if (encounterType == null) {
-			throw new IllegalStateException("Missing required encounter type with uuid: " + uuid);
-		}
-		return encounterType;
+	private EncounterType getEncounterTypeByUuid(String uuid) {
+		return encounterService.getEncounterTypeByUuid(uuid);
 	}
-
 
     //***** CONCEPT SOURCES *****
 
@@ -423,11 +413,13 @@ public class MirebalaisReportsProperties extends EmrProperties {
     private Concept getConceptForDisposition(String dispositionCode) {
         Concept conceptForDisposition = null;
         Disposition disposition = dispositionService.getDispositionByUniqueId(dispositionCode);
-        String conceptCode = disposition.getConceptCode();
-        if ( StringUtils.isNotBlank(conceptCode) ) {
-            String[] conceptMap = conceptCode.split(":");
-            if ( (conceptMap !=null) && (conceptMap.length == 2) ) {
-                conceptForDisposition = conceptService.getConceptByMapping(conceptMap[1], conceptMap[0]);
+        if (disposition != null) {
+            String conceptCode = disposition.getConceptCode();
+            if (StringUtils.isNotBlank(conceptCode)) {
+                String[] conceptMap = conceptCode.split(":");
+                if ((conceptMap != null) && (conceptMap.length == 2)) {
+                    conceptForDisposition = conceptService.getConceptByMapping(conceptMap[1], conceptMap[0]);
+                }
             }
         }
         return conceptForDisposition;
@@ -438,73 +430,73 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public static final String AMOUNT_PATIENT_PAID_CONCEPT_UUID  = "5d1bc5de-6a35-4195-8631-7322941fe528";
 
 	public Concept getAmountPaidConcept() {
-		return getRequiredConceptByUuid(AMOUNT_PATIENT_PAID_CONCEPT_UUID);
+		return getConceptByUuid(AMOUNT_PATIENT_PAID_CONCEPT_UUID);
 	}
 
 	public static final String WEIGHT_CONCEPT_UUID = "3ce93b62-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getWeightConcept() {
-		return getRequiredConceptByUuid(WEIGHT_CONCEPT_UUID);
+		return getConceptByUuid(WEIGHT_CONCEPT_UUID);
 	}
 
 	public static final String HEIGHT_CONCEPT_UUID = "3ce93cf2-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getHeightConcept() {
-		return getRequiredConceptByUuid(HEIGHT_CONCEPT_UUID);
+		return getConceptByUuid(HEIGHT_CONCEPT_UUID);
 	}
 
 	public static final String MUAC_CONCEPT_UUID = "e3e03a93-de7f-41ea-b8f2-60b220b970e9";
 
 	public Concept getMuacConcept() {
-		return getRequiredConceptByUuid(MUAC_CONCEPT_UUID);
+		return getConceptByUuid(MUAC_CONCEPT_UUID);
 	}
 
 	public static final String TEMPERATURE_CONCEPT_UUID = "3ce939d2-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getTemperatureConcept() {
-		return getRequiredConceptByUuid(TEMPERATURE_CONCEPT_UUID);
+		return getConceptByUuid(TEMPERATURE_CONCEPT_UUID);
 	}
 
 	public static final String PULSE_CONCEPT_UUID = "3ce93824-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getPulseConcept() {
-		return getRequiredConceptByUuid(PULSE_CONCEPT_UUID);
+		return getConceptByUuid(PULSE_CONCEPT_UUID);
 	}
 
 	public static final String RESPIRATORY_RATE_CONCEPT_UUID = "3ceb11f8-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getRespiratoryRateConcept() {
-		return getRequiredConceptByUuid(RESPIRATORY_RATE_CONCEPT_UUID);
+		return getConceptByUuid(RESPIRATORY_RATE_CONCEPT_UUID);
 	}
 
 	public static final String BLOOD_OXYGEN_SATURATION_CONCEPT_UUID = "3ce9401c-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getBloodOxygenSaturationConcept() {
-		return getRequiredConceptByUuid(BLOOD_OXYGEN_SATURATION_CONCEPT_UUID);
+		return getConceptByUuid(BLOOD_OXYGEN_SATURATION_CONCEPT_UUID);
 	}
 
 	public static final String SYSTOLIC_BP_CONCEPT_UUID = "3ce934fa-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getSystolicBpConcept() {
-		return getRequiredConceptByUuid(SYSTOLIC_BP_CONCEPT_UUID);
+		return getConceptByUuid(SYSTOLIC_BP_CONCEPT_UUID);
 	}
 
 	public static final String DIASTOLIC_BP_CONCEPT_UUID = "3ce93694-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getDiastolicBpConcept() {
-		return getRequiredConceptByUuid(DIASTOLIC_BP_CONCEPT_UUID);
+		return getConceptByUuid(DIASTOLIC_BP_CONCEPT_UUID);
 	}
 
 	public static final String DIAGNOSIS_CODED_CONCEPT_UUID = "226ed7ad-b776-4b99-966d-fd818d3302c2";
 
 	public Concept getCodedDiagnosisConcept() {
-		return getRequiredConceptByUuid(DIAGNOSIS_CODED_CONCEPT_UUID);
+		return getConceptByUuid(DIAGNOSIS_CODED_CONCEPT_UUID);
 	}
 
 	public static final String DIAGNOSIS_NONCODED_CONCEPT_UUID = "970d41ce-5098-47a4-8872-4dd843c0df3f";
 
 	public Concept getNonCodedDiagnosisConcept() {
-		return getRequiredConceptByUuid(DIAGNOSIS_NONCODED_CONCEPT_UUID);
+		return getConceptByUuid(DIAGNOSIS_NONCODED_CONCEPT_UUID);
 	}
 
     public Concept getDiagnosisOrderConcept() {
@@ -522,73 +514,73 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	public static final String CLINICAL_IMPRESSIONS_CONCEPT_UUID = "3cd9d956-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getClinicalImpressionsConcept() {
-		return getRequiredConceptByUuid(CLINICAL_IMPRESSIONS_CONCEPT_UUID);
+		return getConceptByUuid(CLINICAL_IMPRESSIONS_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_WEEKLY_NOTIFIABLE_DISEASES_CONCEPT_UUID = "ddb35fb6-e69b-49cb-9540-ba11cf40ffd7";
 
 	public Concept getSetOfWeeklyNotifiableDiseases() {
-		return getRequiredConceptByUuid(SET_OF_WEEKLY_NOTIFIABLE_DISEASES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_WEEKLY_NOTIFIABLE_DISEASES_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_URGENT_DISEASES_CONCEPT_UUID = "0f8dc745-5f4d-494d-805b-6f8c8b5fe258";
 
 	public Concept getSetOfUrgentDiseases() {
-		return getRequiredConceptByUuid(SET_OF_URGENT_DISEASES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_URGENT_DISEASES_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_WOMENS_HEALTH_DIAGNOSES_CONCEPT_UUID = "27b6675d-02ea-4331-a5fc-9a8224f90660";
 
 	public Concept getSetOfWomensHealthDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_WOMENS_HEALTH_DIAGNOSES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_WOMENS_HEALTH_DIAGNOSES_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_PSYCHOLOGICAL_DIAGNOSES_CONCEPT_UUID = "3b85c049-1e2d-4f58-bad4-bf3bc98ed098";
 
 	public Concept getSetOfPsychologicalDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_PSYCHOLOGICAL_DIAGNOSES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_PSYCHOLOGICAL_DIAGNOSES_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_PEDIATRIC_DIAGNOSES_CONCEPT_UUID = "231ac3ac-2ad4-4c41-9989-7e6b85393b51";
 
 	public Concept getSetOfPediatricDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_PEDIATRIC_DIAGNOSES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_PEDIATRIC_DIAGNOSES_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_OUTPATIENT_DIAGNOSES_CONCEPT_UUID = "11c8b2ab-2d4a-4d3e-8733-e10e5a3f1404";
 
 	public Concept getSetOfOutpatientDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_OUTPATIENT_DIAGNOSES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_OUTPATIENT_DIAGNOSES_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_NCD_DIAGNOSES_CONCEPT_UUID = "6581641f-ee7e-4a8a-b271-2148e6ffec77";
 
 	public Concept getSetOfNcdDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_NCD_DIAGNOSES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_NCD_DIAGNOSES_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_NON_DIAGNOSIS_CONCEPT_UUID = "a2d2124b-fc2e-4aa2-ac87-792d4205dd8d";
 
 	public Concept getSetOfNonDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_NON_DIAGNOSIS_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_NON_DIAGNOSIS_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_EMERGENCY_DIAGNOSIS_CONCEPT_UUID = "cfe2f068-0dd1-4522-80f5-c71a5b5f2c8b";
 
 	public Concept getSetOfEmergencyDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_EMERGENCY_DIAGNOSIS_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_EMERGENCY_DIAGNOSIS_CONCEPT_UUID);
 	}
 
 	public static final String SET_OF_AGE_RESTRICTED_DISEASES_CONCEPT_UUID = "2231e6b8-6259-426d-a9b2-d3cb8fbbd6a3";
 
 	public Concept getSetOfAgeRestrictedDiagnoses() {
-		return getRequiredConceptByUuid(SET_OF_AGE_RESTRICTED_DISEASES_CONCEPT_UUID);
+		return getConceptByUuid(SET_OF_AGE_RESTRICTED_DISEASES_CONCEPT_UUID);
 	}
 
     public static final String RETURN_VISIT_DATE_CONCEPT_UUID = "3ce94df0-26fe-102b-80cb-0017a47871b2";
 
     public Concept getReturnVisitDate() {
-        return getRequiredConceptByUuid(RETURN_VISIT_DATE_CONCEPT_UUID);
+        return getConceptByUuid(RETURN_VISIT_DATE_CONCEPT_UUID);
     }
 
     public static final String TIMING_OF_PRESCRIPTION_CONCEPT_MAP = "9292";
@@ -606,43 +598,43 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String TRANSFER_OUT_LOCATION_CONCEPT_UUID = "113a5ce0-6487-4f45-964d-2dcbd7d23b67";
 
     public Concept getTransferOutLocationConcept() {
-        return getRequiredConceptByUuid(TRANSFER_OUT_LOCATION_CONCEPT_UUID);
+        return getConceptByUuid(TRANSFER_OUT_LOCATION_CONCEPT_UUID);
     }
 
     public static final String OCCURRENCE_OF_TRAUMA_CONCEPT_UUID = "f8134959-62d2-4f94-af6c-3580312b07a0";
 
     public Concept getOccurrenceOfTraumaConcept() {
-        return getRequiredConceptByUuid(OCCURRENCE_OF_TRAUMA_CONCEPT_UUID);
+        return getConceptByUuid(OCCURRENCE_OF_TRAUMA_CONCEPT_UUID);
     }
 
     public static final String TRAUMA_TYPE_CONCEPT_UUID = "7c5ef8cd-3c2b-46c1-b995-20e52c11ce94";
 
     public Concept getTraumaTypeConcept() {
-        return getRequiredConceptByUuid(TRAUMA_TYPE_CONCEPT_UUID);
+        return getConceptByUuid(TRAUMA_TYPE_CONCEPT_UUID);
     }
 
     public static final String CODED_DIAGNOSIS_CONCEPT_UUID = "226ed7ad-b776-4b99-966d-fd818d3302c2";
 
     public Concept getCodedDiagnosis() {
-        return getRequiredConceptByUuid(CODED_DIAGNOSIS_CONCEPT_UUID);
+        return getConceptByUuid(CODED_DIAGNOSIS_CONCEPT_UUID);
     }
 
     public static final String NON_CODED_DIAGNOSIS_CONCEPT_UUID = "970d41ce-5098-47a4-8872-4dd843c0df3f";
 
     public Concept getNonCodedDiagnosis() {
-        return getRequiredConceptByUuid(NON_CODED_DIAGNOSIS_CONCEPT_UUID);
+        return getConceptByUuid(NON_CODED_DIAGNOSIS_CONCEPT_UUID);
     }
 
     public static final String SURGICAL_SERVICE_CONCEPT_UUID = "84834856-23f3-4885-994e-33091d587964";
 
     public Concept getSurgicalService() {
-        return getRequiredConceptByUuid(SURGICAL_SERVICE_CONCEPT_UUID);
+        return getConceptByUuid(SURGICAL_SERVICE_CONCEPT_UUID);
     }
 
     public static final String OTHER_ASSISTANT_CONCEPT_UUID = "bb34602b-0d91-4fe9-a88e-ff86c4af913d";
 
     public Concept getOtherAssistant() {
-        return getRequiredConceptByUuid(OTHER_ASSISTANT_CONCEPT_UUID);
+        return getConceptByUuid(OTHER_ASSISTANT_CONCEPT_UUID);
     }
 
     public static final String CHEST_RADIOLOGY_EXAM_SET_UUID = "cf739c45-e5e6-4544-b06a-16670898706e";
@@ -653,47 +645,43 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String MUSCULOSKELETAL_NON_CRANIAL_AND_SPINAL_RADIOLOGY_EXAM_SET_UUID = "2d26d7be-f7fa-400a-9e26-2fdf5e01e9ab";
 
     public Concept getChestRadiologyExamSetConcept() {
-        return getRequiredConceptByUuid(CHEST_RADIOLOGY_EXAM_SET_UUID);
+        return getConceptByUuid(CHEST_RADIOLOGY_EXAM_SET_UUID);
     }
 
     public Concept getSpineRadiologyExamSetConcept() {
-        return getRequiredConceptByUuid(SPINE_RADIOLOGY_EXAM_SET_UUID);
+        return getConceptByUuid(SPINE_RADIOLOGY_EXAM_SET_UUID);
     }
 
     public Concept getHeadAndNeckRadiologyExamSetConcept() {
-        return getRequiredConceptByUuid(HEAD_AND_NECK_RADIOLOGY_EXAM_SET_UUID);
+        return getConceptByUuid(HEAD_AND_NECK_RADIOLOGY_EXAM_SET_UUID);
     }
 
     public Concept getVascularRadiologyExamSetConcept() {
-        return getRequiredConceptByUuid(VASCULAR_RADIOLOGY_EXAM_SET_UUID);
+        return getConceptByUuid(VASCULAR_RADIOLOGY_EXAM_SET_UUID);
     }
 
     public Concept getAbdomenAndPelvisRadiologyExamSetConcept() {
-        return getRequiredConceptByUuid(ABDOMEN_AND_PELVIS_RADIOLOGY_EXAM_SET_UUID);
+        return getConceptByUuid(ABDOMEN_AND_PELVIS_RADIOLOGY_EXAM_SET_UUID);
     }
 
     public Concept getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept() {
-        return getRequiredConceptByUuid(MUSCULOSKELETAL_NON_CRANIAL_AND_SPINAL_RADIOLOGY_EXAM_SET_UUID);
+        return getConceptByUuid(MUSCULOSKELETAL_NON_CRANIAL_AND_SPINAL_RADIOLOGY_EXAM_SET_UUID);
     }
 
     public static final String BOARDING_FOR_CONCEPT_UUID = "83a54c1d-510e-4860-8971-61755c71f0ed";
 
     public Concept getBoardingForConcept() {
-        return getRequiredConceptByUuid(BOARDING_FOR_CONCEPT_UUID);
+        return getConceptByUuid(BOARDING_FOR_CONCEPT_UUID);
     }
 
     public static final String TYPE_OF_PATIENT_CONCEPT_UUID = "4813f780-ba12-48c3-befb-401ac0246929";
 
     public Concept getTypeOfPatientConcept() {
-        return getRequiredConceptByUuid(TYPE_OF_PATIENT_CONCEPT_UUID);
+        return getConceptByUuid(TYPE_OF_PATIENT_CONCEPT_UUID);
     }
 
-	private Concept getRequiredConceptByUuid(String uuid) {
-		Concept c = conceptService.getConceptByUuid(uuid);
-		if (c == null) {
-			throw new IllegalStateException("Missing required concept with uuid: " + uuid);
-		}
-		return c;
+	private Concept getConceptByUuid(String uuid) {
+		return conceptService.getConceptByUuid(uuid);
 	}
 
 
@@ -712,55 +700,51 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ANESTHESIOLOGIST_ENCOUNTER_ROLE_UUID = "de11b25c-a641-4630-9524-5b85ece9a4f8";
 
     public EncounterRole getDispenserEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
+        return getEncounterRoleByUuid(ENCOUNTER_ROLE_DISPENSER_UUID);
     }
 
     public EncounterRole getPrescribedByEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ENCOUNTER_ROLE_PRESCRIBED_BY_UUID);
+        return getEncounterRoleByUuid(ENCOUNTER_ROLE_PRESCRIBED_BY_UUID);
     }
 
     public EncounterRole getConsultingClinicianEncounterRole() {
-        return getRequiredEncounterRoleByUuid(CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(CONSULTING_CLINICIAN_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getAttendingSurgeonEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(ATTENDING_SURGEON_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getAssistingSurgeonEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ASSISTING_SURGEON_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(ASSISTING_SURGEON_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getAdministrativeClerkEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ADMINISTRATIVE_CLERK_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(ADMINISTRATIVE_CLERK_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getNurseEncounterRole() {
-        return getRequiredEncounterRoleByUuid(NURSE_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(NURSE_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getRadiologyTechnicianEncounterRole() {
-        return getRequiredEncounterRoleByUuid(RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(RADIOLOGY_TECHNICIAN_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getOrderingProviderEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ORDERING_PROVIDER_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(ORDERING_PROVIDER_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getPrincipalResultsInterpreterEncounterRole() {
-        return getRequiredEncounterRoleByUuid(PRINCIPAL_RESULTS_INTERPRETER_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(PRINCIPAL_RESULTS_INTERPRETER_ENCOUNTER_ROLE_UUID);
     }
 
     public EncounterRole getAnesthesiologistEncounterRole() {
-        return getRequiredEncounterRoleByUuid(ANESTHESIOLOGIST_ENCOUNTER_ROLE_UUID);
+        return getEncounterRoleByUuid(ANESTHESIOLOGIST_ENCOUNTER_ROLE_UUID);
     }
 
-    private EncounterRole getRequiredEncounterRoleByUuid(String uuid) {
-        EncounterRole role = encounterService.getEncounterRoleByUuid(uuid);
-        if (role== null) {
-            throw new IllegalStateException("Missing required encounter role with uuid: " + uuid);
-        }
-        return role;
+    private EncounterRole getEncounterRoleByUuid(String uuid) {
+        return encounterService.getEncounterRoleByUuid(uuid);
     }
 
     /**
