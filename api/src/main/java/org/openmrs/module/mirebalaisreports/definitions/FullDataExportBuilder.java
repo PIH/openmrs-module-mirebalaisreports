@@ -64,8 +64,6 @@ public class FullDataExportBuilder {
                 // TODO should/can these be more generic?
                 configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "diagnosesdataexport",
                         Arrays.asList("diagnoses")));
-                configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
-                        Arrays.asList("encounters")));
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISITS_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitsdataexport",
                         Arrays.asList("visits")));
             }
@@ -123,6 +121,8 @@ public class FullDataExportBuilder {
             // basic reports
             configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "patientsdataexport",
                     Arrays.asList("patients")));
+            configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
+                    Arrays.asList("encounters")));
 
         }
         return configurations;
