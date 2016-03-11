@@ -23,18 +23,25 @@ INNER JOIN provider pv ON pv.provider_id = ep.provider_id
 INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 -- Straight Obs Joins
 INNER JOIN
-(select o.encounter_id,
-max(CASE when crs.name = 'CIEL' and crt.code = '163225' then o.value_numeric end) 'ZLDSI',
-max(CASE when crs.name = 'CIEL' and crt.code = '163228' then o.value_numeric end) 'CES-D',
-max(CASE when crs.name = 'CIEL' and crt.code = '163222' then o.value_numeric end) 'CGI-S',
-max(CASE when crs.name = 'CIEL' and crt.code = '163223' then o.value_numeric end) 'CGI-I',
-max(CASE when crs.name = 'CIEL' and crt.code = '163224' then o.value_numeric end) 'CGI-E',
-max(CASE when crs.name = 'CIEL' and crt.code = '163226' then o.value_numeric end) 'WHODAS',
-max(CASE when crs.name = 'CIEL' and crt.code = '163227' then o.value_numeric end) 'AIMS',
--- TODO add suicidal thoughts and time frame when it is more clear
-group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health diagnosis' then cn.name end separator ',') 'diagnoses',
-group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health medication' then cn.name end separator ',') 'medication',
-max(CASE when crs.name = 'PIH' and crt.code = 'PATIENT PLAN COMMENTS' then cn.name end) 'patient_plan_comments'
+-- TODO figure out how to break out suicidal thoughts and security plan
+  (select o.encounter_id,
+     max(CASE when crs.name = 'CIEL' and crt.code = '163225' then o.value_numeric end) 'ZLDSI',
+     max(CASE when crs.name = 'CIEL' and crt.code = '163228' then o.value_numeric end) 'CES-D',
+     max(CASE when crs.name = 'CIEL' and crt.code = '163222' then o.value_numeric end) 'CGI-S',
+     max(CASE when crs.name = 'CIEL' and crt.code = '163223' then o.value_numeric end) 'CGI-I',
+     max(CASE when crs.name = 'CIEL' and crt.code = '163224' then o.value_numeric end) 'CGI-E',
+     max(CASE when crs.name = 'CIEL' and crt.code = '163226' then o.value_numeric end) 'WHODAS',
+     max(CASE when crs.name = 'CIEL' and crt.code = '163227' then cn.name end) 'AIMS',
+     max(CASE when crs.name = 'PIH' and crt.code = '6797' then o.value_numeric end) 'seizure_freq_in_months',
+     group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health diagnosis' then cn.name end separator ',') 'diagnoses',
+     group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health intervention' then cn.name end separator ',') 'interventions',
+     max(CASE when crs.name = 'PIH' and crt.code = 'Mental health intervention' then o.comments end) 'interventions_other',
+     group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health medication' then cn.name end separator ',') 'medications',
+     max(CASE when crs.name = 'PIH' and crt.code = 'Medication comments (text)' then o.value_text end) 'medication_comments',
+     max(CASE when crs.name = 'PIH' and crt.code = 'TYPE OF PATIENT' then cn.name end) 'hospitalized',
+     group_concat(CASE when crs.name = 'PIH' and crt.code = 'Type of referral role' then cn.name end separator ',') 'referred_to',
+     max(CASE when crs.name = 'PIH' and crt.code = 'PATIENT PLAN COMMENTS' then o.value_text end) 'patient_plan_comments',
+     max(CASE when crs.name = 'PIH' and crt.code = 'RETURN VISIT DATE' then o.value_datetime end) 'return_visit_date'
 from encounter e, concept_reference_map crm,  concept_reference_term crt, concept_reference_source crs, obs o
 LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
 LEFT OUTER JOIN obs obs2 on obs2.obs_id = o.obs_group_id
