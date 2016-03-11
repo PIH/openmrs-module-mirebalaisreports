@@ -24,13 +24,13 @@ INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 -- Straight Obs Joins
 INNER JOIN
 (select o.encounter_id,
-max(CASE when crs.name = 'CIEL' and crt.code = '163225' then cn.name end) 'ZLDSI',
-max(CASE when crs.name = 'CIEL' and crt.code = '163228' then cn.name end) 'CES-D',
-max(CASE when crs.name = 'CIEL' and crt.code = '163222' then cn.name end) 'CGI-S',
-max(CASE when crs.name = 'CIEL' and crt.code = '163223' then cn.name end) 'CGI-I',
-max(CASE when crs.name = 'CIEL' and crt.code = '163224' then cn.name end) 'CGI-E',
-max(CASE when crs.name = 'CIEL' and crt.code = '163226' then cn.name end) 'WHODAS',
-max(CASE when crs.name = 'CIEL' and crt.code = '163227' then cn.name end) 'AIMS',
+max(CASE when crs.name = 'CIEL' and crt.code = '163225' then o.value_numeric end) 'ZLDSI',
+max(CASE when crs.name = 'CIEL' and crt.code = '163228' then o.value_numeric end) 'CES-D',
+max(CASE when crs.name = 'CIEL' and crt.code = '163222' then o.value_numeric end) 'CGI-S',
+max(CASE when crs.name = 'CIEL' and crt.code = '163223' then o.value_numeric end) 'CGI-I',
+max(CASE when crs.name = 'CIEL' and crt.code = '163224' then o.value_numeric end) 'CGI-E',
+max(CASE when crs.name = 'CIEL' and crt.code = '163226' then o.value_numeric end) 'WHODAS',
+max(CASE when crs.name = 'CIEL' and crt.code = '163227' then o.value_numeric end) 'AIMS',
 -- TODO add suicidal thoughts and time frame when it is more clear
 group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health diagnosis' then cn.name end separator ',') 'diagnoses',
 group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health medication' then cn.name end separator ',') 'medication',
@@ -44,7 +44,7 @@ where 1=1
 and crm2.concept_reference_term_id = crt2.concept_reference_term_id
 and crt2.concept_source_id = crs2.concept_source_id) obsgrp on obsgrp.concept_id = obs2.concept_id
 where 1=1
-and e.encounter_type= :ncdNoteEnc
+and e.encounter_type= :mentalHealthEnc
 and crm.concept_reference_term_id = crt.concept_reference_term_id
 and crt.concept_source_id = crs.concept_source_id
 and crm.concept_id = o.concept_id
