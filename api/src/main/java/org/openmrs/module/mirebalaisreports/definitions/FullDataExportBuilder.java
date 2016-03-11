@@ -97,7 +97,7 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "dispensingdataexport",
                         Arrays.asList("dispensing")));
             }
-            if (config.isComponentEnabled(Components.VITALS)) {
+            if (config.isComponentEnabled(Components.VITALS) || config.isComponentEnabled(Components.UHM_VITALS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "vitalsdataexport",
                         Arrays.asList("vitals")));
             }
