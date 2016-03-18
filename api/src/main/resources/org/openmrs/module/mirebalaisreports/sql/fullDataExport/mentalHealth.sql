@@ -25,6 +25,7 @@ INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 INNER JOIN
 -- TODO figure out how to break out suicidal thoughts and security plan
   (select o.encounter_id,
+     group_concat(CASE when crs.name = 'PIH' and crt.code = 'Role of referring person' then cn.name end separator ',') 'referred_by',
      max(CASE when crs.name = 'CIEL' and crt.code = '163225' then o.value_numeric end) 'ZLDSI',
      max(CASE when crs.name = 'CIEL' and crt.code = '163228' then o.value_numeric end) 'CES-D',
      max(CASE when crs.name = 'CIEL' and crt.code = '163222' then o.value_numeric end) 'CGI-S',
@@ -33,7 +34,9 @@ INNER JOIN
      max(CASE when crs.name = 'CIEL' and crt.code = '163226' then o.value_numeric end) 'WHODAS',
      max(CASE when crs.name = 'CIEL' and crt.code = '163227' then cn.name end) 'AIMS',
      max(CASE when crs.name = 'PIH' and crt.code = '6797' then o.value_numeric end) 'seizure_freq_in_months',
+     max(CASE when crs.name = 'PIH' and crt.code = 'Suicidal evaluation' then cn.name end) 'suicidal_eval',
      group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health diagnosis' then cn.name end separator ',') 'diagnoses',
+     group_concat(CASE when crs.name = 'PIH' and crt.code = 'Type of provider' then cn.name end separator ',') 'provider_type',
      group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health intervention' then cn.name end separator ',') 'interventions',
      max(CASE when crs.name = 'PIH' and crt.code = 'Mental health intervention' then o.comments end) 'interventions_other',
      group_concat(CASE when crs.name = 'PIH' and crt.code = 'Mental health medication' then cn.name end separator ',') 'medications',
