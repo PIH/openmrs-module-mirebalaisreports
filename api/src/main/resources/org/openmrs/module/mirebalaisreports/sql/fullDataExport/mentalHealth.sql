@@ -26,6 +26,7 @@ INNER JOIN
 -- TODO figure out how to break out suicidal thoughts and security plan
   (select o.encounter_id,
      group_concat(CASE when crs.name = 'PIH' and crt.code = 'Role of referring person' then cn.name end separator ',') 'referred_by',
+     group_concat(CASE when crs.name = 'PIH' and crt.code = 'Role of referring person' then o.comments end separator ',') 'referred_by_other',
      max(CASE when crs.name = 'CIEL' and crt.code = '163225' then o.value_numeric end) 'ZLDSI',
      max(CASE when crs.name = 'CIEL' and crt.code = '163228' then o.value_numeric end) 'CES-D',
      max(CASE when crs.name = 'CIEL' and crt.code = '163222' then o.value_numeric end) 'CGI-S',
