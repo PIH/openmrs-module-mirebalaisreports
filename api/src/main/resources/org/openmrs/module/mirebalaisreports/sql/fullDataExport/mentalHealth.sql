@@ -47,7 +47,7 @@ INNER JOIN
      max(CASE when crs.name = 'PIH' and crt.code = 'PATIENT PLAN COMMENTS' then o.value_text end) 'patient_plan_comments',
      max(CASE when crs.name = 'PIH' and crt.code = 'RETURN VISIT DATE' then o.value_datetime end) 'return_visit_date'
 from encounter e, concept_reference_map crm,  concept_reference_term crt, concept_reference_source crs, obs o
-LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
+LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'fr' and cn.locale_preferred = '1'  and cn.voided = 0
 LEFT OUTER JOIN obs obs2 on obs2.obs_id = o.obs_group_id
 LEFT OUTER JOIN
 (select crm2.concept_id,crs2.name, crt2.code from concept_reference_map crm2, concept_reference_term crt2, concept_reference_source crs2
