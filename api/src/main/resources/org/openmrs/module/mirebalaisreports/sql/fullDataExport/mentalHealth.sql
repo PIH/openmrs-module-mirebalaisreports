@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  e.encounter_datetime, el.name encounter_location,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, ref_num.identifier ref_num, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  e.encounter_datetime, el.name encounter_location,
 CONCAT(pn.given_name, ' ',pn.family_name) provider,e.visit_id,
 obsjoins.*
 FROM patient p
@@ -7,6 +7,9 @@ INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier W
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 -- ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
+-- Most recent reference number (used in standalone MH system)
+LEFT OUTER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :refNum
+            AND voided = 0 ORDER BY date_created DESC) ref_num ON p.patient_id = ref_num.patient_id
 -- Unknown patient
 LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id =:unknownPt
             AND un.voided = 0

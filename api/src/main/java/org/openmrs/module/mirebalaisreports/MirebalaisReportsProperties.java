@@ -28,6 +28,7 @@ import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
+import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -199,10 +200,13 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return getIdentifierTypeByUuid(HIV_EMR_ID_UUID);
 	}
 
+    public PatientIdentifierType getUserEnteredReferenceNumberIdentifierType() {
+        return getIdentifierTypeByUuid(HaitiPatientIdentifierTypes.USER_ENTERED_REF_NUMBER.uuid());
+    }
+
 	private PatientIdentifierType getIdentifierTypeByUuid(String uuid) {
 		return patientService.getPatientIdentifierTypeByUuid(uuid);
 	}
-
 
 	//***** PERSON ATTRIBUTE TYPES
 

@@ -78,6 +78,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         MirebalaisReportsProperties mrp = mirebalaisReportsProperties;
 
         sql = replace(sql, "zlId", mrp.getZlEmrIdentifierType());
+        sql = replace(sql, "refNum", mrp.getUserEnteredReferenceNumberIdentifierType());
         sql = replace(sql, "dosId", mrp.getDossierNumberIdentifierType());
         sql = replace(sql, "hivId", mrp.getHivEmrIdentifierType());
 
