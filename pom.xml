@@ -32,8 +32,9 @@
 
     <properties>
         <openMRSVersion>1.10.4</openMRSVersion>
-        <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
+        <openMRSwebVersion>1.10.4</openMRSwebVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
+        <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <emrapiVersion>1.14-SNAPSHOT</emrapiVersion>
         <paperrecordVersion>1.1</paperrecordVersion>
         <emrVersion>2.0</emrVersion>
@@ -42,30 +43,29 @@
         <metadatasharingVersion>1.2</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
         <metadatadeployVersion>1.7</metadatadeployVersion>
-        <metadatadeployVersion>1.7</metadatadeployVersion>
         <htmlformentryVersion>3.2</htmlformentryVersion>
         <htmlformentry19extVersion>1.7</htmlformentry19extVersion>
-        <htmlformentryuiVersion>1.4</htmlformentryuiVersion>
+        <htmlformentryuiVersion>1.5</htmlformentryuiVersion>
         <calculationVersion>1.1</calculationVersion>
         <reportingVersion>0.9.9</reportingVersion>
-        <reportinguiVersion>1.0</reportinguiVersion>
+        <reportinguiVersion>1.1</reportinguiVersion>
         <reportingrestVersion>1.6</reportingrestVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
         <serializationxstreamVersion>0.2.11</serializationxstreamVersion>
         <idgenVersion>4.3</idgenVersion>
         <namephoneticsVersion>1.5</namephoneticsVersion>
-        <pacsintegrationVersion>1.1</pacsintegrationVersion>
+        <pacsintegrationVersion>1.2</pacsintegrationVersion>
         <addresshierarchyVersion>2.8</addresshierarchyVersion>
         <providermanagementVersion>2.4</providermanagementVersion>
         <eventVersion>2.3</eventVersion>
         <logicVersion>0.5.2</logicVersion>
         <importpatientfromwsVersion>1.0</importpatientfromwsVersion>
         <uilibraryVersion>1.5</uilibraryVersion>
-        <appuiVersion>1.4</appuiVersion>
+        <appuiVersion>1.5.1</appuiVersion>
         <dispensingVersion>1.0</dispensingVersion>
-        <uicommonsVersion>1.8-SNAPSHOT</uicommonsVersion>
+        <uicommonsVersion>1.9-SNAPSHOT</uicommonsVersion>
         <registrationcoreVersion>1.4</registrationcoreVersion>
-        <registrationappVersion>1.5-SNAPSHOT</registrationappVersion>
+        <registrationappVersion>1.5</registrationappVersion>
         <radiologyappVersion>1.0</radiologyappVersion>
         <coreappsVersion>1.10-SNAPSHOT</coreappsVersion>
         <webservicesRestVersion>2.13</webservicesRestVersion>
@@ -75,7 +75,7 @@
         <printerVersion>1.2</printerVersion>
         <allergyapiVersion>1.4</allergyapiVersion>
         <allergyuiVersion>1.5</allergyuiVersion>
-        <chartsearchVersion>1.5</chartsearchVersion>
+        <chartsearchVersion>1.6</chartsearchVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.4.0</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -367,12 +367,7 @@
             <version>${supercsvVersion}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>addresshierarchy-api</artifactId>
-            <version>${addresshierarchyVersion}</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>registrationcore-api</artifactId>
