@@ -305,6 +305,12 @@
             <version>${coreappsVersion}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-api</artifactId>
+            <version>${addresshierarchyVersion}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- we include the rest and reporting rest dependencies just so that the versions updater properly updates rest version numbers -->
         <dependency>
