@@ -70,6 +70,12 @@ public class FullDataExportBuilder {
                         Arrays.asList("patients")));
             }
 
+            // Haiti-specific
+            if (config.getCountry().equals(ConfigDescriptor.Country.HAITI)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
+                        Arrays.asList("encounters")));
+            }
+
             // others that depend on enabled components
             if (config.isComponentEnabled(Components.PATIENT_REGISTRATION) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "registrationdataexport",
@@ -121,10 +127,6 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID, "mentalhealthdataexport",
                         Arrays.asList("mentalHealth")));
             }
-
-            // basic reports
-            configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
-                    Arrays.asList("encounters")));
 
         }
         return configurations;
