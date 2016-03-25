@@ -71,51 +71,53 @@ public class FullDataExportBuilder {
             }
 
             // others that depend on enabled components
-            if (config.isComponentEnabled(Components.PATIENT_REGISTRATION)) {
+            if (config.isComponentEnabled(Components.PATIENT_REGISTRATION) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "registrationdataexport",
                         Arrays.asList("registration")));
             }
-            if (config.isComponentEnabled(Components.CHECK_IN)) {
+            if (config.isComponentEnabled(Components.CHECK_IN) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID, "checkinsdataexport",
                         Arrays.asList("checkins")));
             }
-            if (config.isComponentEnabled(Components.RADIOLOGY)) {
+            if (config.isComponentEnabled(Components.RADIOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "radiologydataexport",
                         Arrays.asList("radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters")));
             }
-            if (config.isComponentEnabled(Components.SURGERY)) {
+            if (config.isComponentEnabled(Components.SURGERY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID, "surgerydataexport",
                         Arrays.asList("postOpNote1", "postOpNote2")));
             }
-            if (config.isComponentEnabled(Components.ADT) && config.isComponentEnabled(Components.SURGERY)) {
+            if ((config.isComponentEnabled(Components.ADT) && config.isComponentEnabled(Components.SURGERY))
+                    || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "hospitalizationsdataexport",
                         Arrays.asList("hospitalizations", "postOpNote1", "postOpNote2")));
             }
-            if (config.isComponentEnabled(Components.CONSULT)) {
+            if (config.isComponentEnabled(Components.CONSULT) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "consultationsdataexport",
                         Arrays.asList("consultations")));
             }
-            if (config.isComponentEnabled(Components.DISPENSING)) {
+            if (config.isComponentEnabled(Components.DISPENSING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "dispensingdataexport",
                         Arrays.asList("dispensing")));
             }
-            if (config.isComponentEnabled(Components.VITALS) || config.isComponentEnabled(Components.UHM_VITALS)) {
+            if ((config.isComponentEnabled(Components.VITALS) || config.isComponentEnabled(Components.UHM_VITALS))
+                    || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "vitalsdataexport",
                         Arrays.asList("vitals")));
             }
-            if (config.isComponentEnabled(Components.LAB_RESULTS)) {
+            if (config.isComponentEnabled(Components.LAB_RESULTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.LAB_RESULTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "labresultsdataexport",
                         Arrays.asList("labReports")));
             }
-            if (config.isComponentEnabled(Components.ONCOLOGY)) {
+            if (config.isComponentEnabled(Components.ONCOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "oncologydataexport",
                         Arrays.asList("oncology")));
             }
-            if (config.isComponentEnabled(Components.NCD)) {
+            if (config.isComponentEnabled(Components.NCD) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.NCD_DATA_EXPORT_REPORT_DEFINITION_UUID, "ncddataexport",
                         Arrays.asList("ncd")));
             }
-            if (config.isComponentEnabled(Components.MENTAL_HEALTH)) {
+            if (config.isComponentEnabled(Components.MENTAL_HEALTH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID, "mentalhealthdataexport",
                         Arrays.asList("mentalHealth")));
             }
