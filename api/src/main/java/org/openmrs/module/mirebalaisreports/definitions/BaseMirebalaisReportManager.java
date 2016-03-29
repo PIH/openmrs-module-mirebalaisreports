@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.emrapi.EmrApiProperties;
+import org.openmrs.module.emrapi.descriptor.MissingConceptException;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.config.Components;
@@ -137,13 +138,20 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "notDx", mrp.getSetOfNonDiagnoses());
         sql = replace(sql, "ed", mrp.getSetOfEmergencyDiagnoses());
         sql = replace(sql, "ageRst", mrp.getSetOfAgeRestrictedDiagnoses());
-        sql = replace(sql, "dispo", dispositionService.getDispositionDescriptor().getDispositionConcept());
+
         sql = replace(sql, "transfOut", mrp.getTransferOutLocationConcept());
         sql = replace(sql, "traumaOccur", mrp.getOccurrenceOfTraumaConcept());
         sql = replace(sql, "traumaType", mrp.getTraumaTypeConcept());
         sql = replace(sql, "rvd", mrp.getReturnVisitDate());
         sql = replace(sql, "boardingFor", mrp.getBoardingForConcept());
         sql = replace(sql, "typeOfPatient", mrp.getTypeOfPatientConcept());
+
+        try {
+            sql = replace(sql, "dispo", dispositionService.getDispositionDescriptor().getDispositionConcept());
+        }
+        catch (MissingConceptException e) {
+            // some installs, like Liberia, aren't currently configured with dispositions, so we don't want to fail here
+        }
 
         if (config.isComponentEnabled(Components.ADT)) {
             sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
