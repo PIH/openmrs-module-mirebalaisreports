@@ -8,7 +8,6 @@ import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.descriptor.MissingConceptException;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.config.Components;
 import org.openmrs.module.pihcore.config.Config;
 import org.openmrs.module.radiologyapp.RadiologyProperties;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -153,32 +152,33 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
             // some installs, like Liberia, aren't currently configured with dispositions, so we don't want to fail here
         }
 
-        if (config.isComponentEnabled(Components.ADT)) {
-            sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
-            sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());
-            sql = replace(sql, "transferOutDispoConcept", mrp.getTransferOutOfHospitalDispositionConcept());
-            sql = replace(sql, "transferWithinDispoConcept", mrp.getTransferWithinHospitalDispositionConcept());
-            sql = replace(sql, "deathDispoConcept", mrp.getDeathDispositionConcept());
-            sql = replace(sql, "leftWithoutSeeingDispoConcept", mrp.getLeftWithoutSeeingClinicianDispositionConcept());
-            sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
-            sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
-            sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
-        }
+        sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
+        sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());
+        sql = replace(sql, "transferOutDispoConcept", mrp.getTransferOutOfHospitalDispositionConcept());
+        sql = replace(sql, "transferWithinDispoConcept", mrp.getTransferWithinHospitalDispositionConcept());
+        sql = replace(sql, "deathDispoConcept", mrp.getDeathDispositionConcept());
+        sql = replace(sql, "leftWithoutSeeingDispoConcept", mrp.getLeftWithoutSeeingClinicianDispositionConcept());
+        sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
+        sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
+        sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
 
         // sets for radiological exam modalities
-        if (config.isComponentEnabled(Components.RADIOLOGY)) {
+        try {
             sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
             sql = replace(sql, "ctOrderables", radiologyProperties.getCTScanOrderablesConcept());
             sql = replace(sql, "ultrasoundOrderables", radiologyProperties.getUltrasoundOrderablesConcept());
-
-            // sets for anatomical groupings of radiological exams
-            sql = replace(sql, "radiologyChest", mrp.getChestRadiologyExamSetConcept());
-            sql = replace(sql, "radiologyHeadNeck", mrp.getHeadAndNeckRadiologyExamSetConcept());
-            sql = replace(sql, "radiologySpine", mrp.getSpineRadiologyExamSetConcept());
-            sql = replace(sql, "radiologyVascular", mrp.getVascularRadiologyExamSetConcept());
-            sql = replace(sql, "radiologyAbdomenPelvis", mrp.getAbdomenAndPelvisRadiologyExamSetConcept());
-            sql = replace(sql, "radiologyMusculoskeletal", mrp.getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept());
         }
+        catch (IllegalStateException e) {
+            // some installs aren't currently configured for radiology, so we don't want to fail here
+        }
+
+        // sets for anatomical groupings of radiological exams
+        sql = replace(sql, "radiologyChest", mrp.getChestRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyHeadNeck", mrp.getHeadAndNeckRadiologyExamSetConcept());
+        sql = replace(sql, "radiologySpine", mrp.getSpineRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyVascular", mrp.getVascularRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyAbdomenPelvis", mrp.getAbdomenAndPelvisRadiologyExamSetConcept());
+        sql = replace(sql, "radiologyMusculoskeletal", mrp.getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept());
 
         log.debug("Replacing metadata references complete.");
         return sql;
