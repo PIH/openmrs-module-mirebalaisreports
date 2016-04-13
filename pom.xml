@@ -380,6 +380,13 @@
             <version>${registrationcoreVersion}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>registrationapp-api</artifactId>
+            <version>${registrationappVersion}</version>
+            <scope>test</scope>
+        </dependency>
         
         <!-- OpenMRS modules -->
 
