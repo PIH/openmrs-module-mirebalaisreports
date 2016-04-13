@@ -16,6 +16,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Cohort;
 import org.openmrs.GlobalProperty;
@@ -27,7 +28,6 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.reporting.BaseInpatientReportTest;
-import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -54,6 +54,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyIds;
 
+// this test has been moved to the Mirebalais module, since we can no longer get the BaseReportTest context to fire up properly when running Mirebalais Reports tests in Bamoboo
+@Ignore
 @SkipBaseSetup
 public class InpatientStatsMonthlyReportManagerTest extends BaseInpatientReportTest {
 
