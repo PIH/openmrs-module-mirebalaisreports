@@ -14,7 +14,6 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.pihcore.reporting.BaseInpatientReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -35,8 +34,6 @@ import java.util.Map;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-// this test has been moved to the Mirebalais module, since we can no longer get the BaseReportTest context to fire up properly when running Mirebalais Reports tests in Bamoboo
-@Ignore
 @SkipBaseSetup
 public class InpatientStatsDailyReportManagerTest extends BaseInpatientReportTest {
 

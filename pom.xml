@@ -47,7 +47,7 @@
         <htmlformentry19extVersion>1.7</htmlformentry19extVersion>
         <htmlformentryuiVersion>1.5</htmlformentryuiVersion>
         <calculationVersion>1.1</calculationVersion>
-        <reportingVersion>0.9.9</reportingVersion>
+        <reportingVersion>0.9.10-SNAPSHOT</reportingVersion>
         <reportinguiVersion>1.1</reportinguiVersion>
         <reportingrestVersion>1.6</reportingrestVersion>
         <htmlwidgetsVersion>1.6.4</htmlwidgetsVersion>
@@ -153,7 +153,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.openmrs.module</groupId>
+            <groupId>org.openmrs.module</groupId>@Ignore
             <artifactId>emrapi-api-1.10</artifactId>
             <version>${emrapiVersion}</version>
             <scope>provided</scope>

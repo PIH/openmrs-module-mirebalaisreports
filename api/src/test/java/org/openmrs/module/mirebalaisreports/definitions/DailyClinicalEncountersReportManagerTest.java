@@ -1,7 +1,6 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Cohort;
 import org.openmrs.Encounter;
@@ -33,9 +32,6 @@ import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWith
 /**
  *
  */
-
-// this test has been moved to the Mirebalais module, since we can no longer get the BaseReportTest context to fire up properly when running Mirebalais Reports tests in Bamoboo
-@Ignore
 @SkipBaseSetup
 public class DailyClinicalEncountersReportManagerTest extends BaseReportTest {
 
