@@ -147,20 +147,19 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
 
         try {
             sql = replace(sql, "dispo", dispositionService.getDispositionDescriptor().getDispositionConcept());
+            sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
+            sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());
+            sql = replace(sql, "transferOutDispoConcept", mrp.getTransferOutOfHospitalDispositionConcept());
+            sql = replace(sql, "transferWithinDispoConcept", mrp.getTransferWithinHospitalDispositionConcept());
+            sql = replace(sql, "deathDispoConcept", mrp.getDeathDispositionConcept());
+            sql = replace(sql, "leftWithoutSeeingDispoConcept", mrp.getLeftWithoutSeeingClinicianDispositionConcept());
+            sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
+            sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
+            sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
         }
         catch (MissingConceptException e) {
             // some installs, like Liberia, aren't currently configured with dispositions, so we don't want to fail here
         }
-
-        sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
-        sql = replace(sql, "dischargeDispoConcept", mrp.getDischargeDispositionConcept());
-        sql = replace(sql, "transferOutDispoConcept", mrp.getTransferOutOfHospitalDispositionConcept());
-        sql = replace(sql, "transferWithinDispoConcept", mrp.getTransferWithinHospitalDispositionConcept());
-        sql = replace(sql, "deathDispoConcept", mrp.getDeathDispositionConcept());
-        sql = replace(sql, "leftWithoutSeeingDispoConcept", mrp.getLeftWithoutSeeingClinicianDispositionConcept());
-        sql = replace(sql, "leftWithoutCompletingDispoConcept", mrp.getLeftWithoutCompletingTreatmentDispositionConcept());
-        sql = replace(sql, "stillHospitalizedDispoConcept", mrp.getStillHospitalizedDispositionConcept());
-        sql = replace(sql, "edObservationDispoConcept", mrp.getEdObservationDispositionConcept());
 
         // sets for radiological exam modalities
         try {
