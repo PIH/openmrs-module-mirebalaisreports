@@ -137,6 +137,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "notDx", mrp.getSetOfNonDiagnoses());
         sql = replace(sql, "ed", mrp.getSetOfEmergencyDiagnoses());
         sql = replace(sql, "ageRst", mrp.getSetOfAgeRestrictedDiagnoses());
+        sql = replace(sql, "oncology", mrp.getSetOfOncologyDiagnoses());
 
         sql = replace(sql, "transfOut", mrp.getTransferOutLocationConcept());
         sql = replace(sql, "traumaOccur", mrp.getOccurrenceOfTraumaConcept());

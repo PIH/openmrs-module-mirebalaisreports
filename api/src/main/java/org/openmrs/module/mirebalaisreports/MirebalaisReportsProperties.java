@@ -581,6 +581,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return getConceptByUuid(SET_OF_AGE_RESTRICTED_DISEASES_CONCEPT_UUID);
 	}
 
+    public static final String SET_OF_ONCOLOGY_DIAGNOSES_CONCEPT_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
+
+    public Concept getSetOfOncologyDiagnoses() {
+        return getConceptByUuid(SET_OF_ONCOLOGY_DIAGNOSES_CONCEPT_UUID);
+    }
+
     public static final String RETURN_VISIT_DATE_CONCEPT_UUID = "3ce94df0-26fe-102b-80cb-0017a47871b2";
 
     public Concept getReturnVisitDate() {

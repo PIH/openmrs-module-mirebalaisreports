@@ -11,6 +11,7 @@ IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :ncd)
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :notDx), TRUE, FALSE) non_diagnosis,
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :ed), TRUE, FALSE) ed,
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :ageRst ), TRUE, FALSE) age_restricted,
+IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :oncology ), TRUE, FALSE) oncology,
 o.date_created,
 
 -- Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
