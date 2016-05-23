@@ -25,6 +25,8 @@ import org.openmrs.module.mirebalaisreports.library.EncounterDataLibrary;
 import org.openmrs.module.pihcore.config.Config;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.pihcore.reporting.dataset.manager.CheckInDataSetManager;
+import org.openmrs.module.pihcore.reporting.dataset.manager.ConsultationsDataSetManager;
+import org.openmrs.module.pihcore.reporting.dataset.manager.DiagnosesDataSetManager;
 import org.openmrs.module.pihcore.reporting.dataset.manager.RegistrationDataSetManager;
 import org.openmrs.module.pihcore.reporting.dataset.manager.VitalsDataSetManager;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -57,7 +59,6 @@ import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.query.encounter.definition.BasicEncounterQuery;
-import org.openmrs.module.reporting.query.encounter.definition.SqlEncounterQuery;
 import org.openmrs.module.reporting.query.obs.definition.BasicObsQuery;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -97,7 +98,13 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
     private CheckInDataSetManager checkInDataSetManager;
 
     @Autowired
+    private ConsultationsDataSetManager consultationsDataSetManager;
+
+    @Autowired
     private VitalsDataSetManager vitalsDataSetManager;
+
+    @Autowired
+    private DiagnosesDataSetManager diagnosesDataSetManager;
 
     @Autowired
     Config config;
@@ -190,23 +197,27 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             else if ("registration".equals(key)) {
                 dsd = registrationDataSetManager.constructDataSet();
             }
-            // TODO: This is really ugly. We need to get this into proper configuration--new Liberia check-ins report uses a manager, the old is a sql report
-            else if ("checkins".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE)) {
+            // TODO: This is really ugly. We need to get this into proper configuration--Liberia check-ins report uses a manager, but Haiti "falls through" to old sql report
+            else if ("checkins".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
                 dsd = checkInDataSetManager.constructDataSet();
+            }
+            // TODO: This is really ugly. We need to get this into proper configuration--Liberia consultation report uses a manager, but Haiti "falls through" to old sql report
+            else if ("consultations".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
+                dsd = consultationsDataSetManager.constructDataSet();
             }
             // TODO turn this on to replace current SQL data query with vitals data set manager (which reorganizes fields and adds chief complaint)
             /*else if ("vitals".equals(key)) {
                 dsd = vitalsDataSetManager.constructDataSet();
             }*/
+            // TODO: This is really ugly. We need to get this into proper configuration--Liberia diagnoses report uses a manager, but Haiti "falls through" to old sql report
+            else if ("diagnoses".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
+                dsd = diagnosesDataSetManager.constructDataSet();
+            }
             else if ("encounters".equals(key)) {
                 dsd = constructEncountersDataSetDefinition();
             }
             else if ("dispensing".equals(key)) {
                 dsd = constructDispensingDataSetDefinition();
-            }
-            else if ("consultations-new".equals(key)) {
-                dsd = constructConsultationsDataSetDefinition();
-                key = "consultations";
             }
             else {
                 dsd = constructSqlDataSetDefinition(key);
@@ -339,7 +350,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
     }
 
     // TODO not yet being used, still using old SQL definition
-    private DataSetDefinition constructConsultationsDataSetDefinition() {
+   /* private DataSetDefinition constructConsultationsDataSetDefinition() {
         EncounterDataSetDefinition dsd = new EncounterDataSetDefinition();
 
         dsd.addParameter(getStartDateParameter());
@@ -387,7 +398,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
         dsd.addColumn("retrospective", libraries.getDefinition(EncounterDataDefinition.class, "mirebalais.encounterDataCalculation.retrospective"), "");
 
         return dsd;
-    }
+    }*/
     
     private PatientIdentifierDataDefinition constructPatientIdentifierDataDefinition(PatientIdentifierType type) {
         PatientIdentifierDataDefinition patientIdentifierDataDefinition = new PatientIdentifierDataDefinition();
