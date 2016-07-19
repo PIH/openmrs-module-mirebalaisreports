@@ -46,7 +46,7 @@ public class FullDataExportBuilder {
             "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
             "hospitalizations", "postOpNote1", "postOpNote2",
             "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
-            "dispensing", "encounters"
+            "dispensing", "encounters", "edTriage"
     );
 
     private List<Configuration> configurations;
@@ -127,6 +127,10 @@ public class FullDataExportBuilder {
             if (config.isComponentEnabled(Components.MENTAL_HEALTH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID, "mentalhealthdataexport",
                         Arrays.asList("mentalHealth")));
+            }
+            if (config.isComponentEnabled(Components.ED_TRIAGE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID, "edtriagedataexport",
+                        Arrays.asList("edTriage")));
             }
 
         }
