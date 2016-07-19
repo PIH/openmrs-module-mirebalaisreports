@@ -46,7 +46,7 @@ public class FullDataExportBuilder {
             "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
             "hospitalizations", "postOpNote1", "postOpNote2",
             "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
-            "dispensing", "encounters", "edTriage"
+            "dispensing", "encounters"
     );
 
     private List<Configuration> configurations;
