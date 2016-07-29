@@ -24,7 +24,6 @@ INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 -- Straight Obs Joins
 INNER JOIN
 (select o.encounter_id,
--- These all have individual questions...the others have the same question but will soon be in different sets!
 max(CASE when crs.name = 'PIH' and crt.code = 'Triage queue status' then cn.name end) 'Triage_queue_status',
 max(CASE when crs.name = 'PIH' and crt.code = 'Triage color classification' then cn.name end) 'Triage_Color',
 max(CASE when crs.name = 'PIH' and crt.code = 'Triage score' then o.value_numeric end) 'Triage_Score',
@@ -38,34 +37,44 @@ max(CASE when crs.name = 'PIH' and crt.code = 'SYSTOLIC BLOOD PRESSURE' then o.v
 max(CASE when crs.name = 'PIH' and crt.code = 'DIASTOLIC BLOOD PRESSURE' then o.value_numeric end) 'Diastolic_Blood_Pressure',
 max(CASE when crs.name = 'PIH' and crt.code = 'TEMPERATURE (C)' then o.value_numeric end) 'Temperature_(C)',
 max(CASE when sets.name = 'PIH' and sets.code = 'Response triage symptom' then cn.name end) 'Response',
+max(CASE when answers.name = 'PIH' and answers.code = 'Traumatic Injury' then cn.name end) 'Trauma_Present',
 max(CASE when sets.name = 'PIH' and sets.code = 'Neurological triage symptom' then cn.name end) 'Neurological',
 max(CASE when sets.name = 'PIH' and sets.code = 'Burn triage symptom' then cn.name end) 'Burn',
 max(CASE when sets.name = 'PIH' and sets.code = 'Glucose triage symptom' then cn.name end) 'Glucose',
-max(CASE when sets.name = 'PIH' and sets.code = 'Trauma triage symptom' then cn.name end) 'Trauma',
+max(CASE when sets.name = 'PIH' and sets.code = 'Trauma triage symptom' and answers.code is null  then cn.name end) 'Trauma_type',
 max(CASE when sets.name = 'PIH' and sets.code = 'Digestive triage symptom' then cn.name end) 'Digestive',
 max(CASE when sets.name = 'PIH' and sets.code = 'Pregrancy triage symptom' then cn.name end) 'Pregnancy',
 max(CASE when sets.name = 'PIH' and sets.code = 'Respiratory triage symptom' then cn.name end) 'Respiratory',
 max(CASE when sets.name = 'PIH' and sets.code = 'Pain triage symptom' then cn.name end) 'Pain',
-max(CASE when sets.name = 'PIH' and sets.code = 'Other triage symptom' then cn.name end) 'Other'
+max(CASE when sets.name = 'PIH' and sets.code = 'Other triage symptom' then cn.name end) 'Other_Symptom',
+max(CASE when crs.name = 'PIH' and crt.code = 'CLINICAL IMPRESSION COMMENTS' then o.value_text end) 'Clinical_Impression',
+max(CASE when crs.name = 'PIH' and crt.code = 'B-HCG' then cn.name end) 'Pregnancy_Test',
+max(CASE when crs.name = 'PIH' and crt.code = 'SERUM GLUCOSE' then o.value_numeric end) 'Glucose_Value',
+max(CASE when crs.name = 'PIH' and crt.code = 'Paracetamol dose (mg)' then o.value_numeric end) 'Paracetamol_dose',
+group_concat(distinct CASE when crs.name = 'PIH' and crt.code = 'Emergency treatment' then cn.name end order by cn.name separator ',') 'Treatment_Administered'
 from encounter e, concept_reference_map crm,  concept_reference_term crt, concept_reference_source crs, obs o
-LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
+LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'fr' and cn.locale_preferred = '1'  and cn.voided = 0
 LEFT OUTER JOIN obs obs2 on obs2.obs_id = o.obs_group_id
 LEFT OUTER JOIN
 (select crm2.concept_id,crs2.name, crt2.code from concept_reference_map crm2, concept_reference_term crt2, concept_reference_source crs2
 where 1=1
 and crm2.concept_reference_term_id = crt2.concept_reference_term_id
 and crt2.concept_source_id = crs2.concept_source_id) obsgrp on obsgrp.concept_id = obs2.concept_id
--- The following brings in the tables for the observations whose answers are contained in sets.
--- Note that this would only work if the answers of each question are in unique sets
+-- The following joins in the concept tables that are used above for the concepts that are grouped into sets
 LEFT OUTER JOIN
 (select crss.name, crts.code,cs.concept_id  from concept_reference_source crss, concept_reference_term crts, concept_reference_map crms, concept_set cs
 where crms.concept_reference_term_id = crts.concept_reference_term_id
 and crts.concept_source_id = crss.concept_source_id
--- and crss.name = 'PIH'
--- and crts.code = 'Burn triage symptom'
 and cs.concept_set = crms.concept_id) sets on sets.concept_id = o.value_coded
+-- The following joins in the concept tables that are used specifically for trauma (because the "trauma present" button answers
+-- the same question as the trauma symptoms dropdown
+LEFT OUTER JOIN
+(select crsa.name, crta.code, crma.concept_id  from concept_reference_source crsa, concept_reference_term crta, concept_reference_map crma
+where crma.concept_reference_term_id = crta.concept_reference_term_id
+and crta.concept_source_id = crsa.concept_source_id
+and crsa.name = 'PIH' and crta.code = 'Traumatic Injury') answers on answers.concept_id = o.value_coded
 where 1=1
-and e.encounter_type = :EDTriageEnc
+and e.encounter_type=:EDTriageEnc
 and crm.concept_reference_term_id = crt.concept_reference_term_id
 and crt.concept_source_id = crs.concept_source_id
 and crm.concept_id = o.concept_id
@@ -79,7 +88,7 @@ WHERE p.voided = 0
 -- exclude test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id =:testPt
                          AND voided = 0)
-AND date(e.encounter_datetime) >= :startDate
-AND date(e.encounter_datetime) <= :endDate
+AND date(e.encounter_datetime) >=:startDate
+AND date(e.encounter_datetime) <=:endDate
 GROUP BY e.encounter_id
 ;
