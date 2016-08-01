@@ -24,36 +24,53 @@ INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 -- Straight Obs Joins
 INNER JOIN
 (select o.encounter_id,
-max(CASE when crs.name = 'PIH' and crt.code = 'Triage queue status' then cn.name end) 'Triage_queue_status',
-max(CASE when crs.name = 'PIH' and crt.code = 'Triage color classification' then cn.name end) 'Triage_Color',
+max(CASE when crs.name = 'PIH' and crt.code = 'Triage queue status' and cnf.name is not null then cnf.name
+         when crs.name = 'PIH' and crt.code = 'Triage queue status' and cnf.name is null then cne.name end) 'Triage_queue_status',
+max(CASE when crs.name = 'PIH' and crt.code = 'Triage color classification' and cnf.name is not null then cnf.name
+         when crs.name = 'PIH' and crt.code = 'Triage color classification' and cnf.name is null then cne.name end) 'Triage_Color',
 max(CASE when crs.name = 'PIH' and crt.code = 'Triage score' then o.value_numeric end) 'Triage_Score',
 max(CASE when crs.name = 'CIEL' and crt.code = '160531' then o.value_text end) 'Chief_Complaint',
 max(CASE when crs.name = 'PIH' and crt.code = 'WEIGHT (KG)' then o.value_numeric end) 'Weight_(KG)',
-max(CASE when crs.name = 'PIH' and crt.code = 'Mobility' then cn.name end) 'Mobility',
+max(CASE when crs.name = 'PIH' and crt.code = 'Mobility' and cnf.name is not null then cnf.name
+         when crs.name = 'PIH' and crt.code = 'Mobility' and cnf.name is null then cne.name end) 'Mobility',
 max(CASE when crs.name = 'PIH' and crt.code = 'RESPIRATORY RATE' then o.value_numeric end) 'Respiratory_Rate',
 max(CASE when crs.name = 'PIH' and crt.code = 'BLOOD OXYGEN SATURATION' then o.value_numeric end) 'Blood_Oxygen_Saturation',
 max(CASE when crs.name = 'PIH' and crt.code = 'PULSE' then o.value_numeric end) 'Pulse',
 max(CASE when crs.name = 'PIH' and crt.code = 'SYSTOLIC BLOOD PRESSURE' then o.value_numeric end) 'Systolic_Blood_Pressure',
 max(CASE when crs.name = 'PIH' and crt.code = 'DIASTOLIC BLOOD PRESSURE' then o.value_numeric end) 'Diastolic_Blood_Pressure',
 max(CASE when crs.name = 'PIH' and crt.code = 'TEMPERATURE (C)' then o.value_numeric end) 'Temperature_(C)',
-max(CASE when sets.name = 'PIH' and sets.code = 'Response triage symptom' then cn.name end) 'Response',
-max(CASE when answers.name = 'PIH' and answers.code = 'Traumatic Injury' then cn.name end) 'Trauma_Present',
-max(CASE when sets.name = 'PIH' and sets.code = 'Neurological triage symptom' then cn.name end) 'Neurological',
-max(CASE when sets.name = 'PIH' and sets.code = 'Burn triage symptom' then cn.name end) 'Burn',
-max(CASE when sets.name = 'PIH' and sets.code = 'Glucose triage symptom' then cn.name end) 'Glucose',
-max(CASE when sets.name = 'PIH' and sets.code = 'Trauma triage symptom' and answers.code is null  then cn.name end) 'Trauma_type',
-max(CASE when sets.name = 'PIH' and sets.code = 'Digestive triage symptom' then cn.name end) 'Digestive',
-max(CASE when sets.name = 'PIH' and sets.code = 'Pregrancy triage symptom' then cn.name end) 'Pregnancy',
-max(CASE when sets.name = 'PIH' and sets.code = 'Respiratory triage symptom' then cn.name end) 'Respiratory',
-max(CASE when sets.name = 'PIH' and sets.code = 'Pain triage symptom' then cn.name end) 'Pain',
-max(CASE when sets.name = 'PIH' and sets.code = 'Other triage symptom' then cn.name end) 'Other_Symptom',
+max(CASE when sets.name = 'PIH' and sets.code = 'Response triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Response triage symptom' and cnf.name is null then cne.name end) 'Response',
+max(CASE when answers.name = 'PIH' and answers.code = 'Traumatic Injury' and cnf.name is not null then cnf.name
+         when answers.name = 'PIH' and answers.code = 'Traumatic Injury' and cnf.name is null then cne.name end) 'Trauma_Present',
+max(CASE when sets.name = 'PIH' and sets.code = 'Neurological triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Neurological triage symptom' and cnf.name is null then cne.name end) 'Neurological',
+max(CASE when sets.name = 'PIH' and sets.code = 'Burn triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Burn triage symptom' and cnf.name is null then cne.name end) 'Burn',
+max(CASE when sets.name = 'PIH' and sets.code = 'Glucose triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Glucose triage symptom' and cnf.name is null then cne.name end) 'Glucose',
+max(CASE when sets.name = 'PIH' and sets.code = 'Trauma triage symptom' and answers.code is null  and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Trauma triage symptom' and answers.code is null and cnf.name is null then cne.name end) 'Trauma_type',
+max(CASE when sets.name = 'PIH' and sets.code = 'Digestive triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Digestive triage symptom' and cnf.name is null then cne.name end) 'Digestive',
+max(CASE when sets.name = 'PIH' and sets.code = 'Pregrancy triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Pregrancy triage symptom' and cnf.name is null then cne.name end) 'Pregnancy',
+max(CASE when sets.name = 'PIH' and sets.code = 'Respiratory triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Respiratory triage symptom' and cnf.name is null then cne.name end) 'Respiratory',
+max(CASE when sets.name = 'PIH' and sets.code = 'Pain triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Pain triage symptom' and cnf.name is null then cne.name end) 'Pain',
+max(CASE when sets.name = 'PIH' and sets.code = 'Other triage symptom' and cnf.name is not null then cnf.name
+         when sets.name = 'PIH' and sets.code = 'Other triage symptom' and cnf.name is null then cne.name end) 'Other_Symptom',
 max(CASE when crs.name = 'PIH' and crt.code = 'CLINICAL IMPRESSION COMMENTS' then o.value_text end) 'Clinical_Impression',
-max(CASE when crs.name = 'PIH' and crt.code = 'B-HCG' then cn.name end) 'Pregnancy_Test',
+max(CASE when crs.name = 'PIH' and crt.code = 'B-HCG' then cnf.name end) 'Pregnancy_Test',
 max(CASE when crs.name = 'PIH' and crt.code = 'SERUM GLUCOSE' then o.value_numeric end) 'Glucose_Value',
 max(CASE when crs.name = 'PIH' and crt.code = 'Paracetamol dose (mg)' then o.value_numeric end) 'Paracetamol_dose',
-group_concat(distinct CASE when crs.name = 'PIH' and crt.code = 'Emergency treatment' then cn.name end order by cn.name separator ',') 'Treatment_Administered'
+group_concat(distinct CASE when crs.name = 'PIH' and crt.code = 'Emergency treatment' and cnf.name is not null then cnf.name
+                           when crs.name = 'PIH' and crt.code = 'Emergency treatment' and cnf.name is null then cne.name end order by cne.name separator ',') 'Treatment_Administered'
 from encounter e, concept_reference_map crm,  concept_reference_term crt, concept_reference_source crs, obs o
-LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'fr' and cn.locale_preferred = '1'  and cn.voided = 0
+-- the following will pull in French and English names of the coded answers.  The above CASE logic will show French if present and otherwise English
+LEFT OUTER JOIN concept_name cnf on o.value_coded = cnf.concept_id and cnf.locale = 'fr' and cnf.locale_preferred = '1'  and cnf.voided = 0
+LEFT OUTER JOIN concept_name cne on o.value_coded = cne.concept_id and cne.locale = 'en' and cne.locale_preferred = '1'  and cne.voided = 0
 LEFT OUTER JOIN obs obs2 on obs2.obs_id = o.obs_group_id
 LEFT OUTER JOIN
 (select crm2.concept_id,crs2.name, crt2.code from concept_reference_map crm2, concept_reference_term crt2, concept_reference_source crs2
@@ -74,7 +91,7 @@ where crma.concept_reference_term_id = crta.concept_reference_term_id
 and crta.concept_source_id = crsa.concept_source_id
 and crsa.name = 'PIH' and crta.code = 'Traumatic Injury') answers on answers.concept_id = o.value_coded
 where 1=1
-and e.encounter_type=:EDTriageEnc
+and e.encounter_type =:EDTriageEnc
 and crm.concept_reference_term_id = crt.concept_reference_term_id
 and crt.concept_source_id = crs.concept_source_id
 and crm.concept_id = o.concept_id
