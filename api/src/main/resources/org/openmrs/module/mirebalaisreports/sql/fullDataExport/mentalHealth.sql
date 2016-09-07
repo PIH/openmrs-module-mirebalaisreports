@@ -1,6 +1,6 @@
 SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, ref_num.identifier ref_num, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  e.encounter_datetime, el.name encounter_location,
 CONCAT(pn.given_name, ' ',pn.family_name) provider,e.visit_id,
-obsjoins.*
+obsjoins.*, obs_occ.name "occupation"
 FROM patient p
 -- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId
@@ -24,9 +24,26 @@ INNER JOIN location el ON e.location_id = el.location_id
 INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
 INNER JOIN provider pv ON pv.provider_id = ep.provider_id
 INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
+-- Join in most recent observation of occupation
+LEFT OUTER JOIN (select o1.obs_id, cn_occ.name from obs o1, concept_name cn_occ
+  where cn_occ.concept_id = o1.value_coded
+  and cn_occ.voided = 0
+  and cn_occ.locale = 'fr'
+  and cn_occ.locale_preferred = '1') obs_occ 
+  on obs_occ.obs_id  =
+    (select obs_id from obs o2, concept_reference_map crm, concept_reference_term crt, concept_reference_source crs
+    where o2.person_id =p.patient_id
+    and o2.voided = 0
+    and crm.concept_id = o2.concept_id
+    and crt.concept_reference_term_id = crm.concept_reference_term_id
+    and crs.concept_source_id = crt.concept_source_id
+    and crs.name = 'PIH'
+    and crt.code = 'Occupation'
+    order by o2.obs_datetime desc
+    limit 1)
 -- Straight Obs Joins
+-- note that Suicidal Thoughts is modeled as a diagnosis and Security Plan as an psychological intervention
 INNER JOIN
--- TODO figure out how to break out suicidal thoughts and security plan
   (select o.encounter_id,
      group_concat(CASE when crs.name = 'PIH' and crt.code = 'Role of referring person' then cn.name end separator ',') 'referred_by',
      group_concat(CASE when crs.name = 'PIH' and crt.code = 'Role of referring person' then o.comments end separator ',') 'referred_by_other',
