@@ -103,6 +103,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "diagnosesdataexport",
                         Arrays.asList("diagnoses")));
             }
+            if (config.isComponentEnabled(Components.PRIMARY_CARE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "diagnosesdataexport",
+                        Arrays.asList("diagnoses")));
+            }
             if (config.isComponentEnabled(Components.DISPENSING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "dispensingdataexport",
                         Arrays.asList("dispensing")));
