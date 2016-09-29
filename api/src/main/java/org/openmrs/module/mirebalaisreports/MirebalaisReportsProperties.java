@@ -88,6 +88,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String NCD_DATA_EXPORT_REPORT_DEFINITION_UUID = "13629220-6b9e-11e5-a837-0800200c9a66";
     public static final String MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID = "d2e7c170-e703-11e5-a837-0800200c9a66";
     public static final String ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID = "87588ec0-4deb-11e6-bdf4-0800200c9a66";
+    public static final String VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID = "228BCF82-D496-49B0-929B-5B3C6AF3767E";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
@@ -327,6 +328,22 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterType getEDTriageEncounterType() {
         return getEncounterTypeByUuid(EncounterTypes.EMERGENCY_TRIAGE.uuid());
+    }
+
+    public EncounterType getPedsInitialConsultEncounterType() {
+        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_PEDS_INITIAL_CONSULT.uuid());
+    }
+
+    public EncounterType getPedsFollowupConsultEncounterType() {
+        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_PEDS_FOLLOWUP_CONSULT.uuid());
+    }
+
+    public EncounterType getAdultInitialConsultEncounterType() {
+        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_ADULT_INITIAL_CONSULT.uuid());
+    }
+
+    public EncounterType getAdultFollowupConsultEncounterType() {
+        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_ADULT_FOLLOWUP_CONSULT.uuid());
     }
 
     /**
