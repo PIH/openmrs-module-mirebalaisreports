@@ -138,7 +138,7 @@ public class FullDataExportBuilder {
             }
             if (config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitnotedataexport",
-                        Arrays.asList("allergies", "dispositions", "exams", "feeding", "history", "primaryCarePlans")));
+                        Arrays.asList("allergies", "dispositions", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
             }
 
         }
