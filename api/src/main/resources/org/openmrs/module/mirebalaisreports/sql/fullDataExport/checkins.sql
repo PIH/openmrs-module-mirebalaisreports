@@ -33,7 +33,7 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = :chkEnc
 
 --Provider with Administrative Clerk encounter role
-INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id = 2
+INNER JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id AND ep.voided = 0 AND ep.encounter_role_id =:clerkEncRole
 INNER JOIN provider epp ON ep.provider_id = epp.provider_id
 INNER JOIN person_name provn ON epp.person_id = provn.person_id AND provn.voided = 0
 
@@ -46,10 +46,10 @@ INNER JOIN person_name pn ON u.person_id = pn.person_id AND pn.voided = 0
 INNER JOIN location el ON e.location_id = el.location_id
 
 --Payment amount
-LEFT OUTER JOIN obs pd ON e.encounter_id = pd.encounter_id AND pd.voided = 0 AND pd.concept_id = 124
+LEFT OUTER JOIN obs pd ON e.encounter_id = pd.encounter_id AND pd.voided = 0 AND pd.concept_id =:paid
 
 --Type of visit
-LEFT OUTER JOIN obs reason ON e.encounter_id = reason.encounter_id AND reason.voided = 0 AND reason.concept_id = 1244
+LEFT OUTER JOIN obs reason ON e.encounter_id = reason.encounter_id AND reason.voided = 0 AND reason.concept_id =:reasonForVisit
 LEFT OUTER JOIN concept_name reason_n ON reason.value_coded = reason_n.concept_id AND reason_n.voided = 0 AND reason_n.locale = 'fr' AND reason_n.locale_preferred = 1
 
 WHERE p.voided = 0

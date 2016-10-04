@@ -206,9 +206,9 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
                 dsd = consultationsDataSetManager.constructDataSet();
             }
             // TODO turn this on to replace current SQL data query with vitals data set manager (which reorganizes fields and adds chief complaint)
-            /*else if ("vitals".equals(key)) {
+            else if ("vitals".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.HAITI) && !config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS) )) {
                 dsd = vitalsDataSetManager.constructDataSet();
-            }*/
+            }
             // TODO: This is really ugly. We need to get this into proper configuration--Liberia diagnoses report uses a manager, but Haiti "falls through" to old sql report
             else if ("diagnoses".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
                 dsd = diagnosesDataSetManager.constructDataSet();

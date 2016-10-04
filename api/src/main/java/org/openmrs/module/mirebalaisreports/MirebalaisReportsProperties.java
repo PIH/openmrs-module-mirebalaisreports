@@ -459,6 +459,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return getConceptByUuid(AMOUNT_PATIENT_PAID_CONCEPT_UUID);
 	}
 
+    public static final String REASON_FOR_VISIT_CONCEPT_UUID  = "e2964359-790a-419d-be53-602e828dcdb9";
+
+    public Concept getReasonForVisitConcept() {
+        return getConceptByUuid(REASON_FOR_VISIT_CONCEPT_UUID);
+    }
+
 	public static final String WEIGHT_CONCEPT_UUID = "3ce93b62-26fe-102b-80cb-0017a47871b2";
 
 	public Concept getWeightConcept() {
