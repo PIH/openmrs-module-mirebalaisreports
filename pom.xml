@@ -35,10 +35,10 @@
         <openMRSwebVersion>1.10.4</openMRSwebVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-        <emrapiVersion>1.18-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.18</emrapiVersion>
         <paperrecordVersion>1.1</paperrecordVersion>
         <emrVersion>2.0</emrVersion>
-        <uiframeworkVersion>3.8</uiframeworkVersion>
+        <uiframeworkVersion>3.9</uiframeworkVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
         <metadatasharingVersion>1.2.2</metadatasharingVersion>
         <metadatamappingVersion>1.0.1</metadatamappingVersion>
