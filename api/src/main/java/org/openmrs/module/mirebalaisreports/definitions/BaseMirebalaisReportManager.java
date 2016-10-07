@@ -85,6 +85,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "testPt", mrp.getTestPatientPersonAttributeType());
         sql = replace(sql, "phoneType", mrp.getTelephoneNumberPersonAttributeType());
         sql = replace(sql, "unknownPt", mrp.getUnknownPatientPersonAttributeType());
+        sql = replace(sql, "clerkEncRole", mrp.getAdministrativeClerkEncounterRole());
 
         sql = replace(sql, "regEnc", mrp.getRegistrationEncounterType());
         sql = replace(sql, "chkEnc", mrp.getCheckInEncounterType());
@@ -104,6 +105,10 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "ncdNoteEnc", mrp.getNCDConsultEncounterType());
         sql = replace(sql, "mentalHealthEnc", mrp.getMentalHealthAssessmentEncounterType());
         sql = replace(sql, "EDTriageEnc", mrp.getEDTriageEncounterType());
+        sql = replace(sql, "PedInitEnc", mrp.getPedsInitialConsultEncounterType());
+        sql = replace(sql, "PedFollowEnc", mrp.getPedsFollowupConsultEncounterType());
+        sql = replace(sql, "AdultInitEnc", mrp.getAdultInitialConsultEncounterType());
+        sql = replace(sql, "AdultFollowEnc", mrp.getAdultFollowupConsultEncounterType());
 
         sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
         sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());
@@ -114,6 +119,7 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "icd10", mrp.getIcd10ConceptSource());
 
         sql = replace(sql, "paid", mrp.getAmountPaidConcept());
+        sql = replace(sql, "reasonForVisit", mrp.getReasonForVisitConcept());
         sql = replace(sql, "wt", mrp.getWeightConcept());
         sql = replace(sql, "ht", mrp.getHeightConcept());
         sql = replace(sql, "muac", mrp.getMuacConcept());
