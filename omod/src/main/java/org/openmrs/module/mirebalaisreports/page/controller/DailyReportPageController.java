@@ -1,5 +1,6 @@
 package org.openmrs.module.mirebalaisreports.page.controller;
 
+import org.openmrs.api.context.Context;
 import org.openmrs.module.coreapps.CoreAppsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -30,6 +31,7 @@ public class DailyReportPageController {
         model.addAttribute("reportDefinition", reportDefinition);
         model.addAttribute("dashboardUrlWithoutQueryParams", coreAppsProperties.getDashboardUrlWithoutQueryParams());
         model.addAttribute("privilegePatientDashboard", MirebalaisReportsProperties.PRIVILEGE_PATIENT_DASHBOARD);
+        model.addAttribute("hideCounts", Context.getAdministrationService().getGlobalProperty(MirebalaisReportsProperties.DAILY_CHECKINS_HIDE_COUNTS));
     }
 
 }

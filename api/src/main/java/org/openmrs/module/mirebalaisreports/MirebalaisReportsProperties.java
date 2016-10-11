@@ -56,6 +56,9 @@ public class MirebalaisReportsProperties extends EmrProperties {
     //***** PRIVILEGES ******
     public static final String PRIVILEGE_PATIENT_DASHBOARD = "App: coreapps.patientDashboard";
 
+    //***** GLOBAL PROPERTIES ******
+    public static final String DAILY_CHECKINS_HIDE_COUNTS= "mirebalaisreports.dailyCheckins.hideCounts";
+
     //***** REPORT DEFINITIONS *****
     public static final String FULL_DATA_EXPORT_REPORT_DEFINITION_UUID = "8c3752e2-20bb-11e3-b5bd-0bec7fb71852";
     public static final String DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID = "6d9b292a-2aad-11e3-a840-5b9e0b589afb";
