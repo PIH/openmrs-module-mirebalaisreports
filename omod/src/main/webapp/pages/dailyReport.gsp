@@ -9,6 +9,8 @@
     ui.includeJavascript("mirebalaisreports", "dailyReport.js")
     ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
     ui.includeCss("mirebalaisreports", "dailyReport.css")
+
+    def hideCounts = (hideCounts != null) ? hideCounts : false
 %>
 
 <%= ui.includeFragment("appui", "messages", [ codes: [
@@ -62,11 +64,12 @@
 
     <div ng-show="hasResults()">
         <div ng-repeat="dataset in currentData().dataSets">
-            <div ng-include=" 'include/' + dataset.definition.name + '.page' " class="dataset"></div>
+            <!-- do not include byLocation table for Thomonde -->
+            <div ng-include=" 'include/' + dataset.definition.name + '.page' " class="dataset" ng-show="!((dataset.definition.name == 'byLocation') && '${hideCounts}' == 'true')"></div>
         </div>
     </div>
 
-    <div id="view-cohort" ng-show="viewingCohort">
+    <div id="view-cohort" ng-show="viewingCohort && '${hideCounts}' !== 'true'">
 
         <img ng-show="viewingCohort.loading" src="${ ui.resourceLink("uicommons", "images/spinner.gif") }"/>
 
