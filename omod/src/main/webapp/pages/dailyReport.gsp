@@ -10,7 +10,8 @@
     ui.includeJavascript("mirebalaisreports", "ui-bootstrap-tpls-0.6.0.min.js")
     ui.includeCss("mirebalaisreports", "dailyReport.css")
 
-    def hideCounts = (hideCounts != null) ? hideCounts : false
+    def CHECKINS_REPORT_DEFINITION_UUID = "f170699a-50af-11e3-ba00-27a0ac7f78d9"
+    def hideCounts = ((hideCounts != null) && (reportDefinition.uuid == CHECKINS_REPORT_DEFINITION_UUID)) ? hideCounts : false
 %>
 
 <%= ui.includeFragment("appui", "messages", [ codes: [
