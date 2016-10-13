@@ -3,7 +3,7 @@ SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value u
 										 --Mark as retrospective if more than 30 minutes elapsed between encounter date and creation
 IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,
 
-e.visit_id, pr.birthdate, pr.birthdate_estimated, boarding_for_l.name as boarding_for, adt.encounter_id as dispo_encounter_id, addr_section.user_generated_id as section_communale_CDC_ID
+e.visit_id, pr.birthdate, pr.birthdate_estimated, boarding_for_l.name as boarding_for, adt.encounter_id as dispo_encounter_id, addr_section.user_generated_id as section_communale_CDC_ID,cn_pro.name as "procedure"
 
 FROM patient p
 
@@ -81,6 +81,15 @@ LEFT OUTER JOIN location boarding_for_l ON boarding_for.value_text = boarding_fo
 LEFT OUTER JOIN encounter adt ON p.patient_id = adt.patient_id AND adt.encounter_type IN (:admitEnc, :exitEnc, :transferEnc) AND adt.encounter_datetime = e.encounter_datetime AND adt.voided = 0
 LEFT OUTER JOIN encounter_type adt_t ON adt.encounter_type = adt_t.encounter_type_id
 LEFT OUTER JOIN location adt_l ON adt.location_id = adt_l.location_id
+
+-- Include outpatient procedures
+LEFT OUTER JOIN obs pro ON e.encounter_id = pro.encounter_id AND pro.voided = 0 AND pro.concept_id = 
+  (select crm.concept_id from concept_reference_map crm, concept_reference_term crt, concept_reference_source crs
+   where crt.concept_reference_term_id = crm.concept_reference_term_id
+   and crs.concept_source_id = crt.concept_source_id
+   and crs.name = 'PIH'
+   and crt.code = 'Outpatient procedure')
+LEFT OUTER JOIN concept_name cn_pro on cn_pro.concept_id = pro.value_coded and cn_pro.voided = 0 and cn_pro.locale = 'fr' and cn_pro.locale_preferred = 1
 
 WHERE p.voided = 0
 
