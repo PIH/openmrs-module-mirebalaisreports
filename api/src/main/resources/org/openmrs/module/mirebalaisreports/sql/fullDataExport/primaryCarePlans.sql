@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, e.encounter_datetime, el.name encounter_location, et.name,
+SELECT p.patient_id, dos.identifier dossierId, zl.identifier zlemr, zl_loc.name loc_registered, e.encounter_datetime, el.name encounter_location, et.name,
 CONCAT(pn.given_name, ' ',pn.family_name) provider, obsjoins.*,
 Medication_1,
 Dose_Quantity_1,
@@ -58,6 +58,9 @@ Frequency_8,
 Instructions_8
 FROM patient p
 INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type in (:AdultInitEnc, :AdultFollowEnc, :PedInitEnc, :PedFollowEnc)
+-- Most recent Dossier ID
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:dosId
+            AND voided = 0 ORDER BY date_created DESC) dos ON p.patient_id = dos.patient_id
 -- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:zlId
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id

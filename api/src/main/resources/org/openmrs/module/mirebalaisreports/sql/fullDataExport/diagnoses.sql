@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) entered_by, CONCAT(provn.given_name, ' ', provn.family_name) provider, IF(o.concept_id = :coded, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = :coded, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_fr, icd.code icd10_code,
+SELECT p.patient_id, dos.identifier dossierId, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_id, el.name encounter_location, o.obs_id, o.obs_datetime, CONCAT(pn.given_name, ' ', pn.family_name) entered_by, CONCAT(provn.given_name, ' ', provn.family_name) provider, IF(o.concept_id = :coded, dn.name, o.value_text) diagnosis_entered, psn.name dx_order, scn.name certainty, IF(o.concept_id = :coded, TRUE, FALSE) coded, o.value_coded diagnosis_concept, en.name diagnosis_coded_fr, icd.code icd10_code,
 
 -- Checks to see if diagnosis is a member of a variety of concept sets
 IF(o.value_coded IN(SELECT concept_id FROM concept_set WHERE concept_set = :notifiable), TRUE, FALSE) notifiable,
@@ -21,7 +21,9 @@ e.visit_id, pr.birthdate, pr.birthdate_estimated, et.name as encounter_type,
 addr_section.user_generated_id as section_communale_CDC_ID
 
 FROM patient p
-
+-- Most recent Dossier ID
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:dosId
+            AND voided = 0 ORDER BY date_created DESC) dos ON p.patient_id = dos.patient_id
 --Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 

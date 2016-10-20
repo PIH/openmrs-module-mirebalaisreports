@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, a.date_created,
+SELECT p.patient_id, dos.identifier dossierId, zl.identifier zlemr, zl_loc.name loc_registered, a.date_created,
 CONCAT(pn.given_name, ' ',pn.family_name) "creator",
 a.date_changed,
 CONCAT(pn_ch.given_name, ' ',pn_ch.family_name) "changed_by",
@@ -9,6 +9,9 @@ group_concat(cn_reaction.name separator ',') 'reaction',
 a.comment "comment"
 FROM patient p
 INNER JOIN allergy a on a.patient_id = p.patient_id and a.voided = 0
+-- Most recent Dossier ID
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:dosId
+            AND voided = 0 ORDER BY date_created DESC) dos ON p.patient_id = dos.patient_id
 -- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:zlId
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
