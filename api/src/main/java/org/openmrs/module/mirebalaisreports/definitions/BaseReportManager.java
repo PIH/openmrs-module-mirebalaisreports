@@ -116,6 +116,7 @@ public abstract class BaseReportManager implements ReportManager {
         design.setRendererType(CsvReportRenderer.class);
         design.addPropertyValue("blacklistRegex", "[^\\p{InBasicLatin}\\p{L}]");
         design.addPropertyValue("characterEncoding", "ISO-8859-1");
+        design.addPropertyValue("dateFormat", "dd-MMM-yyyy HH:mm:ss");
         return design;
     }
 
