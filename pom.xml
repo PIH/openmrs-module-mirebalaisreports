@@ -66,7 +66,7 @@
         <uicommonsVersion>1.9-SNAPSHOT</uicommonsVersion>
         <registrationcoreVersion>1.6</registrationcoreVersion>
         <registrationappVersion>1.6</registrationappVersion>
-        <radiologyappVersion>1.1</radiologyappVersion>
+        <radiologyappVersion>1.2</radiologyappVersion>
         <coreappsVersion>1.11.2-SNAPSHOT</coreappsVersion>
         <webservicesRestVersion>2.16</webservicesRestVersion>
         <appointmentschedulingVersion>1.7.0</appointmentschedulingVersion>
