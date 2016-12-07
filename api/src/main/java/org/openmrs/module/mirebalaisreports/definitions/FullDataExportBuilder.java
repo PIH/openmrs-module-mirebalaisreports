@@ -46,7 +46,7 @@ public class FullDataExportBuilder {
             "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
             "hospitalizations", "postOpNote1", "postOpNote2",
             "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
-            "dispensing", "encounters"
+            "dispensing", "encounters", "billable"
     );
 
     private List<Configuration> configurations;
@@ -64,8 +64,13 @@ public class FullDataExportBuilder {
                 // TODO should/can these be more generic?
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISITS_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitsdataexport",
                         Arrays.asList("visits")));
+
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "patientsdataexport",
                         Arrays.asList("patients")));
+
+                configurations.add(new Configuration(MirebalaisReportsProperties.BILLABLE_EXPORT_REPORT_DEFINITION_UUID, "billabledataexport",
+                        Arrays.asList("billable")));
+
             }
 
             // Haiti-specific
