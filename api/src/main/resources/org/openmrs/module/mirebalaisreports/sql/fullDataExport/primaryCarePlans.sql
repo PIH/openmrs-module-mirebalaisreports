@@ -77,7 +77,10 @@ INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
  (select
 o.encounter_id,
 max(CASE when  crs.name = 'CIEL' and crt.code = '162749' then o.value_text end) "Clinical_Plan",
-group_concat(CASE when  crs.name = 'PIH' and crt.code = 'Lab test ordered coded' then cn.name end  separator ',' ) "Lab_Tests"
+group_concat(CASE when  crs.name = 'PIH' and crt.code = 'Lab test ordered coded' then cn.name end  separator ',' ) "Lab_Tests",
+max(CASE when  crs.name = 'PIH' and crt.code = 'HUM Disposition categories' then cn.name end) "Disposition",
+max(CASE when  crs.name = 'PIH' and crt.code = 'DISPOSITION COMMENTS' then o.value_text end) "Comment",
+max(CASE when  crs.name = 'PIH' and crt.code = 'RETURN VISIT DATE' then o.value_datetime end) "Return_visit_date"
 from obs o
 -- join in mapping of obs question (not needed if this is a standalone export)
 INNER JOIN concept_reference_map crm on crm.concept_id = o.concept_id
