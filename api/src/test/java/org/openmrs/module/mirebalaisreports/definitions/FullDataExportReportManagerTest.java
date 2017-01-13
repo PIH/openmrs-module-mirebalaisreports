@@ -292,9 +292,9 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         Provider dispensedBy = data.randomProvider().save();
         Provider prescribedBy = data.randomProvider().save();
 
-        // note that we are just using a consult encounter, since encounter type isn't relevant to the query
+        // note that we are just using a check-in encounter, since encounter type isn't relevant to the query
         Encounter enc = data.encounter().visit(visit).patient(patient)
-                .encounterType(emrApiProperties.getConsultEncounterType())
+                .encounterType(emrApiProperties.getCheckInEncounterType())
                 .provider(mirebalaisReportsProperties.getDispenserEncounterRole(), dispensedBy)
                 .provider(mirebalaisReportsProperties.getPrescribedByEncounterRole(), prescribedBy)
                 .encounterDatetime(date).location(mirebalaisHospital).save();

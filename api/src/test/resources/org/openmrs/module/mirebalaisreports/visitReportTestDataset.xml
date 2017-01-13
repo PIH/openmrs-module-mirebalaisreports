@@ -1,8 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-    <global_property property="emr.consultEncounterType" property_value="92fd09b4-5335-4f7e-9f63-b2a663fd09a6" uuid="4f55827e-26fe-102b-99cb-0017a47871b4"/>
-    <global_property property="emr.checkInEncounterType" property_value="55a0d3ea-a4d7-4e88-8f01-5aceb2d3c61b" uuid="4f55827e-26fe-102b-99cb-0017a47871b5"/>
-
     <location location_id="100" name="Outpatient Clinic" description="KE" creator="1" date_created="2005-09-22 00:00:00.0" retired="false" uuid="199e7d87-92a0-4398-a0f8-11d012178164"/>
     <location location_id="200" name="Women Clinic" description="SF" creator="1" date_created="2005-09-22 00:00:00.0" retired="false" uuid="9b2066a2-7087-47f6-9b3a-b001037432a3"/>
 
