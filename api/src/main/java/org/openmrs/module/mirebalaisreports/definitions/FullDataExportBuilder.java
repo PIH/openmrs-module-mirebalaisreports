@@ -104,11 +104,8 @@ public class FullDataExportBuilder {
             if (config.isComponentEnabled(Components.CONSULT) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "consultationsdataexport",
                         Arrays.asList("consultations")));
-                // TODO is this the right place to enable this report?
-                configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "diagnosesdataexport",
-                        Arrays.asList("diagnoses")));
             }
-            if (config.isComponentEnabled(Components.PRIMARY_CARE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            if (config.isComponentEnabled(Components.CONSULT) || config.isComponentEnabled(Components.PRIMARY_CARE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID, "diagnosesdataexport",
                         Arrays.asList("diagnoses")));
             }
