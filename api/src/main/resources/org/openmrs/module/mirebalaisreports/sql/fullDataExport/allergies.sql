@@ -10,7 +10,7 @@ a.comment "comment"
 FROM patient p
 INNER JOIN allergy a on a.patient_id = p.patient_id and a.voided = 0
 -- Most recent Dossier ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:dosId
+LEFT OUTER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:dosId
             AND voided = 0 ORDER BY date_created DESC) dos ON p.patient_id = dos.patient_id
 -- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:zlId
