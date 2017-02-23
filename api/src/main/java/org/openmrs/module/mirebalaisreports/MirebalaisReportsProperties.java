@@ -20,6 +20,7 @@ import org.openmrs.ConceptSource;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.OrderType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.Provider;
@@ -28,6 +29,7 @@ import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
+import org.openmrs.module.pihcore.metadata.core.OrderTypes;
 import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +96,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID = "228BCF82-D496-49B0-929B-5B3C6AF3767E";
     public static final String BILLABLE_EXPORT_REPORT_DEFINITION_UUID = "6bd65742-5b45-4f50-a5a8-90c81a387f90";
     public static final String ALLERGIES_EXPORT_REPORT_DEFINITION_UUID = "3b83bbd7-f16a-4df1-9ba8-280c0e4ea977";
+    public static final String PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID = "7877eef3-a3bb-4efc-a9ef-3582378053ca";
     public static final String VISIT_REGISTER_DATA_EXPORT_REPORT_DEFINITION_UUID = "0492f862-f48b-11e6-bc64-92361f002671";
 
     // TODO: 2/17/17 UHM-2723,2712,2714,2713
@@ -795,6 +798,11 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     private EncounterRole getEncounterRoleByUuid(String uuid) {
         return encounterService.getEncounterRoleByUuid(uuid);
+    }
+
+    // ****** ORDER TYPES *********
+    public OrderType getTestOrderType() {
+        return orderService.getOrderTypeByUuid(OrderTypes.TEST_ORDER.uuid());
     }
 
     /**

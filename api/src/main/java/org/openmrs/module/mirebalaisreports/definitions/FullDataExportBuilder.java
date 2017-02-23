@@ -140,11 +140,15 @@ public class FullDataExportBuilder {
             }
             if (config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitnotedataexport",
-                        Arrays.asList("chiefComplaint", "diagnoses", "dispositions", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
+                        Arrays.asList("chiefComplaint", "diagnoses", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
             }
             if (config.isComponentEnabled(Components.ALLERGIES) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ALLERGIES_EXPORT_REPORT_DEFINITION_UUID, "allergiesdataexport",
                         Arrays.asList("allergies")));
+            }
+            if (config.isComponentEnabled(Components.LAB_TRACKING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID, "pathologydataexport",
+                        Arrays.asList("pathology")));
             }
 
         }

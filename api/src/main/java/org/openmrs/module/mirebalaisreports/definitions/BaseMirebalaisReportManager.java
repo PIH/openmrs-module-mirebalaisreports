@@ -153,6 +153,8 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "boardingFor", mrp.getBoardingForConcept());
         sql = replace(sql, "typeOfPatient", mrp.getTypeOfPatientConcept());
 
+        sql = replace(sql, "testOrder", mrp.getTestOrderType());
+
         try {
             sql = replace(sql, "dispo", dispositionService.getDispositionDescriptor().getDispositionConcept());
             sql = replace(sql, "admitDispoConcept", mrp.getAdmissionDispositionConcept());
