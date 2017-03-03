@@ -1,5 +1,6 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.apache.commons.io.IOUtils;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.reporting.common.MessageUtil;
@@ -7,15 +8,17 @@ import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.reporting.report.renderer.ReportDesignRenderer;
+import org.openmrs.util.OpenmrsClassLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @Component
 public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
@@ -27,7 +30,7 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.2";
+        return "1.0.9";
     }
 
     @Override
@@ -66,18 +69,22 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
 
-        ReportDesign design = csvReportDesign(reportDefinition);
+        InputStream is = OpenmrsClassLoader.getInstance().getResourceAsStream("org/openmrs/module/mirebalaisreports/reportTemplates/WeeklyMonitoringReportTemplate.xls");
+        byte[] excelTemplate = IOUtils.toByteArray(is);
 
-        design.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "weeklymonitoringdataexport." +
+        Properties designProperties = new Properties();
+        designProperties.put("repeatingSections", "sheet:1,row:20,dataset:weeklyMonitoring");
+
+        return Arrays.asList(xlsReportDesign(reportDefinition, excelTemplate, designProperties));
+
+
+/*        design.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY, "weeklymonitoringdataexport." +
                 "{{ formatDate request.reportDefinition.parameterMappings.startDate \"yyyyMMdd\" }}." +
                 "{{ formatDate request.reportDefinition.parameterMappings.endDate \"yyyyMMdd\" }}." +
                 "{{ formatDate request.evaluateStartDatetime \"yyyyMMdd\" }}." +
-                "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");
+                "{{ formatDate request.evaluateStartDatetime \"HHmm\" }}");*/
 
-        // used to save this report to disk when running it as part of scheduled backup
-        design.addReportProcessor(constructSaveToDiskReportProcessorConfiguration());
 
-        return Arrays.asList(design);
     }
 
     @Override
