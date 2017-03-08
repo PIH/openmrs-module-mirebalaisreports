@@ -30,7 +30,7 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.9";
+        return "1.0.10";
     }
 
     @Override
