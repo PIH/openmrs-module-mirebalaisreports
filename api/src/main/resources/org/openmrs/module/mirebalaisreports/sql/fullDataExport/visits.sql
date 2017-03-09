@@ -81,7 +81,7 @@ LEFT OUTER JOIN visit prv ON p.patient_id = prv.patient_id AND prv.voided = 0 AN
 WHERE p.voided = 0
 
 -- Excludes test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id :testPt 
+AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id =:testPt 
 AND voided = 0)
 
 AND v.date_started >= :startDate 
