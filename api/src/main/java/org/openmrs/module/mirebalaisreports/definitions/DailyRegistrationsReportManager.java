@@ -3,6 +3,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.openmrs.Location;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
+import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefinition;
@@ -11,8 +12,10 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +23,11 @@ import java.util.Map;
  */
 @Component
 public class DailyRegistrationsReportManager extends DailyIndicatorByLocationReportDefinition {
+
+    @Override
+    public List<ConfigDescriptor.Country> getCountries() {
+        return Arrays.asList(ConfigDescriptor.Country.HAITI);
+    }
 
     @Override
     public String getUuid() {

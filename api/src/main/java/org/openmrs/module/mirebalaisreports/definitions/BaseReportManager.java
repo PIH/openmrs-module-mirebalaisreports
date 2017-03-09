@@ -17,6 +17,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
+import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
@@ -40,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +57,14 @@ public abstract class BaseReportManager implements ReportManager {
 	 * @return the message code prefix used for all translations for the report
 	 */
 	protected abstract String getMessageCodePrefix();
+
+    public List<ConfigDescriptor.Country> getCountries() {
+        return Collections.emptyList();
+    }
+
+    public List<ConfigDescriptor.Site> getSites() {
+        return Collections.emptyList();
+    }
 
 	@Override
 	public String getName() {

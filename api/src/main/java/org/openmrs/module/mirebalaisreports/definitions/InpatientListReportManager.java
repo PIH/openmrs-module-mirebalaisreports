@@ -1,6 +1,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.pihcore.reporting.cohort.definition.InpatientLocationCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -10,6 +11,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +19,10 @@ import java.util.List;
 @Component
 public class InpatientListReportManager extends BaseMirebalaisReportManager {
 
+    @Override
+    public List<ConfigDescriptor.Site> getSites() {
+        return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
+    }
 
     @Override
     public String getUuid() {

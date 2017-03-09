@@ -14,6 +14,7 @@ import org.openmrs.module.appointmentscheduling.reporting.dataset.definition.App
 import org.openmrs.module.appointmentscheduling.reporting.query.definition.BasicAppointmentQuery;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.converter.AppointmentStatusToStatusTypeInFrenchConverter;
+import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.converter.DateConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
@@ -42,6 +43,11 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Autowired
     private AllDefinitionLibraries libraries;
+
+    @Override
+    public List<ConfigDescriptor.Site> getSites() {
+        return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
+    }
 
     @Override
     public String getUuid() {

@@ -1,6 +1,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -20,6 +21,11 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
     private static final String REPEATING_SECTION = "sheet:1,row:20,dataset:weeklyMonitoring";
 
     private static final String MESSAGE_CODE_PREFIX = "mirebalaisreports.weeklymonitoringdataexport.";
+
+    @Override
+    public List<ConfigDescriptor.Country> getCountries() {
+        return Arrays.asList(ConfigDescriptor.Country.HAITI);
+    }
 
     @Override
     public String getUuid() {

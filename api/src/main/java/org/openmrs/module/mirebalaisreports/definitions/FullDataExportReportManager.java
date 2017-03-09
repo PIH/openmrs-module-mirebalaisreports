@@ -85,6 +85,8 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 	public static final String SQL_DIR = "org/openmrs/module/mirebalaisreports/sql/fullDataExport/";
 	public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
+	// DON'T NEED TO SET COUNTRY OR SITE HERE, AS THIS IS HANDLED BY THE FULL DATA EXPORT BUILDER
+
     @Autowired
     private AllDefinitionLibraries libraries;
 

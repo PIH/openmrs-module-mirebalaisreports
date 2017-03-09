@@ -2,6 +2,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
+import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -14,6 +15,11 @@ import java.util.List;
 
 @Component
 public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager {
+
+    @Override
+    public List<ConfigDescriptor.Country> getCountries() {
+        return Arrays.asList(ConfigDescriptor.Country.HAITI, ConfigDescriptor.Country.LIBERIA);
+    }
 
     @Override
     public String getUuid() {

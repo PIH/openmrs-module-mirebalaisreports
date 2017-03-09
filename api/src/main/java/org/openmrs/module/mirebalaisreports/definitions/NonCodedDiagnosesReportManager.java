@@ -21,6 +21,7 @@ import org.openmrs.Provider;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
+import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -51,6 +52,11 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 
 	@Autowired
 	SessionFactory sessionFactory;
+
+	@Override
+	public List<ConfigDescriptor.Country> getCountries() {
+		return Arrays.asList(ConfigDescriptor.Country.HAITI);
+	}
 
     @Override
     public String getUuid() {
