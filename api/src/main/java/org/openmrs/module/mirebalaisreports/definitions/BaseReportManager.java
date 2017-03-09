@@ -15,24 +15,32 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.apache.commons.io.IOUtils;
+import org.openmrs.Location;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
+import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
+import org.openmrs.module.reporting.report.ReportProcessorConfiguration;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.processor.DiskReportProcessor;
 import org.openmrs.module.reporting.report.renderer.CsvReportRenderer;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
+import org.openmrs.util.OpenmrsClassLoader;
 import org.openmrs.util.OpenmrsUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +88,32 @@ public abstract class BaseReportManager implements ReportManager {
 		return context;
 	}
 
+    public Parameter getStartDateParameter() {
+        return new Parameter("startDate", "mirebalaisreports.parameter.startDate", Date.class);
+    }
+
+    public Parameter getEndDateParameter() {
+        return new Parameter("endDate", "mirebalaisreports.parameter.endDate", Date.class);
+    }
+
+    public Parameter getLocationParameter() {
+        return new Parameter("location", "mirebalaisreports.parameter.location", Location.class);
+    }
+
+    protected List<Parameter> getStartAndEndDateParameters() {
+        List<Parameter> l = new ArrayList<Parameter>();
+        l.add(getStartDateParameter());
+        l.add(getEndDateParameter());
+        return l;
+    }
+
+    protected Map<String,Object> getStartAndEndDateMappings() {
+        Map<String, Object> mappings =  new HashMap<String, Object>();
+        mappings.put("startDate","${startDate}");
+        mappings.put("endDate", "${endDate}");
+        return mappings;
+    }
+
 	protected String translate(String code) {
 		String messageCode = getMessageCodePrefix()+code;
 		String translation = MessageUtil.translate(messageCode);
@@ -89,23 +123,37 @@ public abstract class BaseReportManager implements ReportManager {
 		return translation;
 	}
 
-    protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition, byte[] excelTemplate, Properties designProperties) {
+    public CohortIndicator buildIndicator(String name, CohortDefinition cd, String mappings) {
+        CohortIndicator indicator = new CohortIndicator(name);
+        indicator.addParameter(getStartDateParameter());
+        indicator.addParameter(getEndDateParameter());
+        indicator.addParameter(getLocationParameter());
+        indicator.setCohortDefinition(map(cd, mappings));
+        return indicator;
+    }
+
+    protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition, String templateName, String repeatingSections) throws IOException{
+
+        InputStream is = OpenmrsClassLoader.getInstance().getResourceAsStream("org/openmrs/module/mirebalaisreports/reportTemplates/" + templateName + ".xls");
+        byte[] excelTemplate = IOUtils.toByteArray(is);
+
         ReportDesign design = new ReportDesign();
         design.setName("mirebalaisreports.output.excel");
         design.setReportDefinition(reportDefinition);
         design.setRendererType(XlsReportRenderer.class);
-        if (excelTemplate != null) {
-            ReportDesignResource resource = new ReportDesignResource();
-            resource.setName("template");
-            resource.setExtension("xls");
-            resource.setContentType("application/vnd.ms-excel");
-            resource.setContents(excelTemplate);
-            resource.setReportDesign(design);
-            design.addResource(resource);
-            if (designProperties != null) {
-                design.setProperties(designProperties);
-            }
-        }
+
+        ReportDesignResource resource = new ReportDesignResource();
+        resource.setName("template");
+        resource.setExtension("xls");
+        resource.setContentType("application/vnd.ms-excel");
+        resource.setContents(excelTemplate);
+        resource.setReportDesign(design);
+        design.addResource(resource);
+
+        Properties designProperties = new Properties();
+        designProperties.put("repeatingSections", repeatingSections);
+        design.setProperties(designProperties);
+
         return design;
     }
 
@@ -118,6 +166,18 @@ public abstract class BaseReportManager implements ReportManager {
         design.addPropertyValue("characterEncoding", "ISO-8859-1");
         design.addPropertyValue("dateFormat", "dd-MMM-yyyy HH:mm:ss");
         return design;
+    }
+
+    protected ReportProcessorConfiguration constructSaveToDiskReportProcessorConfiguration() {
+        Properties saveToDiskProperties = new Properties();
+        saveToDiskProperties.put(DiskReportProcessor.SAVE_LOCATION, OpenmrsUtil.getApplicationDataDirectory() + "reports");
+        saveToDiskProperties.put(DiskReportProcessor.COMPRESS_OUTPUT, "true");
+
+        ReportProcessorConfiguration saveToDiskProcessorConfiguration
+                = new ReportProcessorConfiguration("saveToDisk", DiskReportProcessor.class, saveToDiskProperties, true, false);
+        saveToDiskProcessorConfiguration.setProcessorMode(ReportProcessorConfiguration.ProcessorMode.AUTOMATIC);
+
+        return saveToDiskProcessorConfiguration;
     }
 
     public <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {

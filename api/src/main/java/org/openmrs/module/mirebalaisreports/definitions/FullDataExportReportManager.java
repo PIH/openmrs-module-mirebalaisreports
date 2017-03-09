@@ -140,10 +140,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 
 	@Override
 	public List<Parameter> getParameters() {
-		List<Parameter> l = new ArrayList<Parameter>();
-		l.add(getStartDateParameter());
-		l.add(getEndDateParameter());
-		return l;
+		return getStartAndEndDateParameters();
 	}
 
 	@Override
@@ -227,9 +224,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
             dsd.addParameter(getStartDateParameter());
             dsd.addParameter(getEndDateParameter());
 
-			Map<String, Object> mappings =  new HashMap<String, Object>();
-			mappings.put("startDate","${startDate}");
-			mappings.put("endDate", "${endDate}");
+			Map<String, Object> mappings =  getStartAndEndDateMappings();
 
 			rd.addDataSetDefinition(key, dsd, mappings);
 		}

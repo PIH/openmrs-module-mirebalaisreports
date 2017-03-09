@@ -14,7 +14,6 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
@@ -28,12 +27,10 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.util.OpenmrsClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -132,13 +129,7 @@ public class InpatientStatsMonthlyReportManager extends BaseMirebalaisReportMana
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
-        InputStream is = OpenmrsClassLoader.getInstance().getResourceAsStream("org/openmrs/module/mirebalaisreports/reportTemplates/InpatientStatsMonthly.xls");
-        byte[] excelTemplate = IOUtils.toByteArray(is);
-
-        Properties designProperties = new Properties();
-        designProperties.put("repeatingSections", "sheet:1,column:3,dataset:dsd");
-
-        return Arrays.asList(xlsReportDesign(reportDefinition, excelTemplate, designProperties));
+        return Arrays.asList(xlsReportDesign(reportDefinition, "InpatientStatsMonthly", "sheet:1,column:3,dataset:dsd"));
     }
 
 }

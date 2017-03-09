@@ -2,24 +2,20 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Location;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.descriptor.MissingConceptException;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.pihcore.config.Config;
 import org.openmrs.module.radiologyapp.RadiologyProperties;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.indicator.CohortIndicator;
-import org.openmrs.module.reporting.report.ReportProcessorConfiguration;
-import org.openmrs.module.reporting.report.processor.DiskReportProcessor;
-import org.openmrs.util.OpenmrsUtil;
+import org.openmrs.module.reporting.common.MessageUtil;
+import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * Includes helpful methods for dealing with Mirebalais Metadata (this class exists so that someday we might consider
@@ -52,25 +48,26 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         this.mirebalaisReportsProperties = mirebalaisReportsProperties;
     }
 
-    public Parameter getStartDateParameter() {
-        return new Parameter("startDate", "mirebalaisreports.parameter.startDate", Date.class);
-    }
+    protected ReportDefinition constructSqlReportDefinition(String sqlFileName) {
+        ReportDefinition rd = new ReportDefinition();
+        rd.setName(getMessageCodePrefix() + "name");
+        rd.setDescription(getMessageCodePrefix() + "description");
+        rd.setParameters(getParameters());
+        rd.setUuid(getUuid());
 
-    public Parameter getEndDateParameter() {
-        return new Parameter("endDate", "mirebalaisreports.parameter.endDate", Date.class);
-    }
+        SqlDataSetDefinition sqlDsd = new SqlDataSetDefinition();
+        sqlDsd.setName(MessageUtil.translate(getMessageCodePrefix() + "name"));
+        sqlDsd.setDescription(MessageUtil.translate(getMessageCodePrefix() + "description"));
 
-    public Parameter getLocationParameter() {
-        return new Parameter("location", "mirebalaisreports.parameter.location", Location.class);
-    }
+        String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + sqlFileName + ".sql");
+        sqlDsd.setSqlQuery(applyMetadataReplacements(sql));
+        sqlDsd.addParameters(getParameters());
 
-    public CohortIndicator buildIndicator(String name, CohortDefinition cd, String mappings) {
-        CohortIndicator indicator = new CohortIndicator(name);
-        indicator.addParameter(getStartDateParameter());
-        indicator.addParameter(getEndDateParameter());
-        indicator.addParameter(getLocationParameter());
-        indicator.setCohortDefinition(map(cd, mappings));
-        return indicator;
+        Map<String, Object> mappings = getStartAndEndDateMappings();
+
+        rd.addDataSetDefinition(sqlFileName, sqlDsd, mappings);
+
+        return rd;
     }
 
     protected String applyMetadataReplacements(String sql) {
@@ -201,19 +198,5 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         else {
             return sql;
         }
-    }
-
-    protected ReportProcessorConfiguration constructSaveToDiskReportProcessorConfiguration() {
-
-        Properties saveToDiskProperties = new Properties();
-        saveToDiskProperties.put(DiskReportProcessor.SAVE_LOCATION, OpenmrsUtil.getApplicationDataDirectory() + "reports");
-        saveToDiskProperties.put(DiskReportProcessor.COMPRESS_OUTPUT, "true");
-
-        ReportProcessorConfiguration saveToDiskProcessorConfiguration
-                = new ReportProcessorConfiguration("saveToDisk", DiskReportProcessor.class, saveToDiskProperties, true, false);
-        saveToDiskProcessorConfiguration.setProcessorMode(ReportProcessorConfiguration.ProcessorMode.AUTOMATIC);
-
-        return saveToDiskProcessorConfiguration;
-
     }
 }

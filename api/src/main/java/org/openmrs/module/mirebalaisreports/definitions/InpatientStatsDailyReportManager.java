@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -237,7 +238,8 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
         //} catch (IOException e) {
         //    throw new IllegalStateException("Unable to load excel template", e);
         //}
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        //return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        return Collections.EMPTY_LIST;
     }
 
 }

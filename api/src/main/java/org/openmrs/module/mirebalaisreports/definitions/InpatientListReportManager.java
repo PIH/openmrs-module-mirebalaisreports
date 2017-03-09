@@ -10,7 +10,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -69,7 +69,9 @@ public class InpatientListReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        //return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
+        return Collections.EMPTY_LIST;
+
     }
 
     private Parameter getEffectiveDateParameter() {
