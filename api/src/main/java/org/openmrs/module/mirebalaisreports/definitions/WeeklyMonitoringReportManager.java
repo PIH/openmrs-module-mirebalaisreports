@@ -26,13 +26,13 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
     }
 
     @Override
-    public String getName() {
-        return "weeklyMonitoring";
+    public List<ConfigDescriptor.Country> getCountries() {
+        return Arrays.asList(ConfigDescriptor.Country.HAITI);
     }
 
     @Override
-    public List<ConfigDescriptor.Country> getCountries() {
-        return Arrays.asList(ConfigDescriptor.Country.HAITI);
+    public String getName() {
+        return "weeklyMonitoring";
     }
 
     @Override
