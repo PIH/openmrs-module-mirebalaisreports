@@ -53,10 +53,14 @@ import java.util.Properties;
  */
 public abstract class BaseReportManager implements ReportManager {
 
+    public enum Category { OVERVIEW, DAILLY, DATA_EXPORT };
+
 	/**
 	 * @return the message code prefix used for all translations for the report
 	 */
 	protected abstract String getMessageCodePrefix();
+
+    public Category getCategory() { return null; }
 
     public List<ConfigDescriptor.Country> getCountries() {
         return Collections.emptyList();

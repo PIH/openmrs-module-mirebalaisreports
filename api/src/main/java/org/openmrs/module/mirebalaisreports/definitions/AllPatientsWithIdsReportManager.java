@@ -12,8 +12,15 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
+
 @Component
 public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager{
+
+    @Override
+    public Category getCategory() {
+        return DATA_EXPORT;
+    }
 
     @Override
     public List<ConfigDescriptor.Country> getCountries() {
@@ -23,6 +30,11 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
     @Override
     public String getUuid() {
         return MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID;
+    }
+
+    @Override
+    public String getName() {
+        return "allpatientswithids";
     }
 
     @Override

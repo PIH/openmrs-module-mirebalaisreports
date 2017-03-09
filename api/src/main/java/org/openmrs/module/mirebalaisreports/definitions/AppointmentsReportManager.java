@@ -38,11 +38,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
+
 @Component
 public class AppointmentsReportManager extends BaseMirebalaisReportManager {
 
     @Autowired
     private AllDefinitionLibraries libraries;
+
+    @Override
+    public Category getCategory() {
+        return DATA_EXPORT;
+    }
 
     @Override
     public List<ConfigDescriptor.Site> getSites() {
@@ -52,6 +59,11 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
     @Override
     public String getUuid() {
         return MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID;
+    }
+
+    @Override
+    public String getName() {
+        return "appointments";
     }
 
     @Override

@@ -11,16 +11,24 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
+
 @Component
 public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
-
-    private static final String FILE_NAME = "weeklyMonitoring";
 
     private static final String EXCEL_TEMPLATE_NAME = "WeeklyMonitoringReportTemplate";
 
     private static final String REPEATING_SECTION = "sheet:1,row:20,dataset:weeklyMonitoring";
 
-    private static final String MESSAGE_CODE_PREFIX = "mirebalaisreports.weeklymonitoringdataexport.";
+    @Override
+    public Category getCategory() {
+        return DATA_EXPORT;
+    }
+
+    @Override
+    public String getName() {
+        return "weeklyMonitoring";
+    }
 
     @Override
     public List<ConfigDescriptor.Country> getCountries() {
@@ -44,7 +52,7 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public ReportDefinition constructReportDefinition() {
-        return constructSqlReportDefinition(FILE_NAME);
+        return constructSqlReportDefinition(getName());
     }
 
     @Override
@@ -54,6 +62,6 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     protected String getMessageCodePrefix() {
-        return MESSAGE_CODE_PREFIX;
+        return  "mirebalaisreports.weeklymonitoringdataexport.";
     }
 }
