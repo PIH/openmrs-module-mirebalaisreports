@@ -55,7 +55,7 @@ public class FullDataExportBuilderTest extends EncounterDataSetManagerTest {
     public void shouldSetupTheReportWithAllDataSets() throws Exception {
         FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", null);
         ReportDefinition reportDefinition = builder.buildReportManager(configuration).constructReportDefinition();
-        Assert.assertEquals(17, reportDefinition.getDataSetDefinitions().size());
+        Assert.assertEquals(16, reportDefinition.getDataSetDefinitions().size());
     }
 
     @Test
