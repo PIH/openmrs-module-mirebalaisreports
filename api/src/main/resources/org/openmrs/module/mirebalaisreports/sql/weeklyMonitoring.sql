@@ -122,7 +122,7 @@ o.obs_id,
 o.encounter_id,
 o.obs_datetime,
 rm.source,
-rm.code, -- remove these!
+rm.code, 
 (CASE 
   when rm.source = 'PIH' and rm.code = 'CHOLERA' then 'Cholera'
   when rm.source = 'PIH' and rm.code = 'Diphtheria' then 'Diphtheria Probable'
