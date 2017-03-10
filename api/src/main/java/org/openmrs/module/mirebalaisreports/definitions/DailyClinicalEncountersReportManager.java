@@ -28,6 +28,11 @@ import java.util.Map;
 public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocationReportDefinition {
 
     @Override
+    public Category getCategory() {
+        return Category.DAILY;
+    }
+
+    @Override
     public List<ConfigDescriptor.Site> getSites() {
         return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
     }
@@ -43,8 +48,13 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
     }
 
     @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.dailyClinicalEncounters.";
+    public String getName() {
+        return "dailyClinicalEncounters";
+    }
+
+    @Override
+    public Integer getOrder() {
+        return REPORTING_OVERVIEW_REPORTS_ORDER.indexOf(getUuid());
     }
 
     @Override

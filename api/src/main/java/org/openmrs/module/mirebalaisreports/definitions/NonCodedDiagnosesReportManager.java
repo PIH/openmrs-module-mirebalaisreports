@@ -64,6 +64,11 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
     }
 
     @Override
+	public String getName() {
+		return "noncodeddiagnoses";
+	}
+
+    @Override
     public String getVersion() {
         return "1.2";
     }
@@ -76,11 +81,6 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 	}
 
 //***** INSTANCE METHODS
-
-	@Override
-	protected String getMessageCodePrefix() {
-		return "mirebalaisreports.noncodeddiagnoses.";
-	}
 
 	@Override
 	public List<Parameter> getParameters() {

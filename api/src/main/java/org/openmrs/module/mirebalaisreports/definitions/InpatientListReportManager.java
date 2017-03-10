@@ -30,13 +30,13 @@ public class InpatientListReportManager extends BaseMirebalaisReportManager {
     }
 
     @Override
-    public String getVersion() {
-        return "1.1";
+    public String getName() {
+        return "inpatientList";
     }
 
     @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.inpatientList.";
+    public String getVersion() {
+        return "1.1";
     }
 
     @Override

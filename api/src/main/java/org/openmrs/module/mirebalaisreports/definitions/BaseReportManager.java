@@ -17,6 +17,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
@@ -41,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,14 +55,34 @@ import java.util.Properties;
  */
 public abstract class BaseReportManager implements ReportManager {
 
-    public enum Category { OVERVIEW, DAILLY, DATA_EXPORT };
+    public enum Category { OVERVIEW, DAILY, DATA_EXPORT, DATA_QUALITY, MONITORING };
+
+     // TODO these control display order, should really be somewhere else?
+     public static final List<String> REPORTING_OVERVIEW_REPORTS_ORDER = Arrays.asList(
+        MirebalaisReportsProperties.DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID,
+        MirebalaisReportsProperties.DAILY_CHECK_INS_REPORT_DEFINITION_UUID,
+        MirebalaisReportsProperties.DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID,
+         MirebalaisReportsProperties.INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID,
+        MirebalaisReportsProperties.INPATIENT_STATS_MONTHLY_REPORT_DEFINITION_UUID);
+
+    public static final List<String> REPORTING_DATA_EXPORT_REPORTS_ORDER = Arrays.asList(
+            MirebalaisReportsProperties.USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.LQAS_DIAGNOSES_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID);
+
+    public static final List<String> REPORTING_MONITORING_REPORTS_ORDER = Arrays.asList(
+            MirebalaisReportsProperties.WEEKLY_MONITORING_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.MONTHLY_STATS_REPORTING_DEFINITION_UUID
+    );
 
 	/**
 	 * @return the message code prefix used for all translations for the report
 	 */
-	protected abstract String getMessageCodePrefix();
 
     public Category getCategory() { return null; }
+
+    public Integer getOrder() { return 9999; }
 
     public List<ConfigDescriptor.Country> getCountries() {
         return Collections.emptyList();
@@ -72,8 +94,12 @@ public abstract class BaseReportManager implements ReportManager {
 
 	@Override
 	public String getName() {
-		return translate("name");
+		return null;
 	}
+
+    public String getMessageCodePrefix() {
+        return "mirebalaisreports." + (getName() != null ? getName() : "") + ".";
+    }
 
 	@Override
 	public String getDescription() {

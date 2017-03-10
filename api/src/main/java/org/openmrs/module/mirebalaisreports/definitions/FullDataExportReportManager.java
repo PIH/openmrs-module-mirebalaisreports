@@ -136,7 +136,7 @@ public class FullDataExportReportManager extends BaseMirebalaisReportManager {
 	//***** INSTANCE METHODS
 
 	@Override
-	protected String getMessageCodePrefix() {
+	public String getMessageCodePrefix() {
 		return messageCodePrefix;
 	}
 

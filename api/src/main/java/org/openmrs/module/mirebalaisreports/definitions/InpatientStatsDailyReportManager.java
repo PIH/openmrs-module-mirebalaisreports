@@ -56,6 +56,12 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
     private AdtService adtService;
 
     @Override
+    public Category getCategory() {
+  //      return Category.DAILY;
+        return null;  // right now we custom set up the link to this in the Custom App Loader Factory, so we don't set the category here
+    }
+
+    @Override
     public List<ConfigDescriptor.Site> getSites() {
         return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
     }
@@ -66,13 +72,18 @@ public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManage
     }
 
     @Override
-    public String getVersion() {
-        return "1.1-SNAPSHOT";
+    public String getName() {
+        return "inpatientStatsDaily";
     }
 
     @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.inpatientStatsDaily.";
+    public Integer getOrder() {
+        return REPORTING_OVERVIEW_REPORTS_ORDER.indexOf(getUuid());
+    }
+
+    @Override
+    public String getVersion() {
+        return "1.1";
     }
 
     @Override

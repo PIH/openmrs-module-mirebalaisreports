@@ -38,13 +38,18 @@ public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
     }
 
     @Override
-    public String getVersion() {
-        return "1.3"; // latest change: changed filename in report design
+    public String getName() {
+        return "lqasdiagnoses";
     }
 
     @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.lqasdiagnoses.";
+    public Integer getOrder() {
+        return REPORTING_DATA_EXPORT_REPORTS_ORDER.indexOf(getUuid()) + 1000;
+    }
+
+    @Override
+    public String getVersion() {
+        return "1.3"; // latest change: changed filename in report design
     }
 
     @Override

@@ -51,6 +51,11 @@ public class InpatientStatsMonthlyReportManager extends BaseMirebalaisReportMana
     protected ConceptService conceptService;
 
     @Override
+    public Category getCategory() {
+        return Category.DAILY;
+    }
+
+    @Override
     public List<ConfigDescriptor.Site> getSites() {
         return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
     }
@@ -61,13 +66,18 @@ public class InpatientStatsMonthlyReportManager extends BaseMirebalaisReportMana
     }
 
     @Override
-    public String getVersion() {
-        return "1.0-SNAPSHOT";
+    public String getName() {
+        return "inpatientStatsMonthlyReport";
     }
 
     @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.inpatientStatsMonthlyReport.";
+    public Integer getOrder() {
+        return REPORTING_OVERVIEW_REPORTS_ORDER.indexOf(getUuid());
+    }
+
+    @Override
+    public String getVersion() {
+        return "1.0";
     }
 
     @Override

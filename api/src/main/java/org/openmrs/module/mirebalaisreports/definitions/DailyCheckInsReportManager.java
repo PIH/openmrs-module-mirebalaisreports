@@ -25,6 +25,11 @@ import java.util.Map;
 public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDefinition {
 
     @Override
+    public Category getCategory() {
+        return Category.DAILY;
+    }
+
+    @Override
     public List<ConfigDescriptor.Country> getCountries() {
         return Arrays.asList(ConfigDescriptor.Country.HAITI);
     }
@@ -35,13 +40,18 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
     }
 
     @Override
+    public String getName() {
+        return "dailyCheckInEncounters";
+    }
+
+    @Override
     public String getVersion() {
         return "1.2";
     }
 
     @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.dailyCheckInEncounters.";
+    public Integer getOrder() {
+        return REPORTING_OVERVIEW_REPORTS_ORDER.indexOf(getUuid());
     }
 
     @Override

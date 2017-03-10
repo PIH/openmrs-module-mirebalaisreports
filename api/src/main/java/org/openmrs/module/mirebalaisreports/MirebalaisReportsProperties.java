@@ -99,6 +99,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID = "7877eef3-a3bb-4efc-a9ef-3582378053ca";
     public static final String VISIT_REGISTER_DATA_EXPORT_REPORT_DEFINITION_UUID = "0492f862-f48b-11e6-bc64-92361f002671";
     public static final String WEEKLY_MONITORING_REPORT_DEFINITION_UUID = "bfac0d81-09fc-4981-adf2-d6fa9e5ec852";
+    public static final String MONTHLY_STATS_REPORTING_DEFINITION_UUID = "172163ed-c9eb-418c-bc32-f32a861ee7c9";
 
     // TODO: 2/17/17 UHM-2723,2712,2714,2713
     public static final String MORBIDITY_REGISTER_DATA_EXPORT_REPORT_DEFINITION_UUID = "89a7c198-f537-11e6-bc64-92361f002671";

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
+import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.MONITORING;
 
 @Component
 public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
@@ -22,12 +22,17 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public Category getCategory() {
-        return DATA_EXPORT;
+        return MONITORING;
     }
 
     @Override
     public List<ConfigDescriptor.Country> getCountries() {
         return Arrays.asList(ConfigDescriptor.Country.HAITI);
+    }
+
+    @Override
+    public Integer getOrder() {
+        return REPORTING_MONITORING_REPORTS_ORDER.indexOf(getUuid());
     }
 
     @Override
@@ -60,8 +65,4 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
         return Arrays.asList(xlsReportDesign(reportDefinition, EXCEL_TEMPLATE_NAME, REPEATING_SECTION));
     }
 
-    @Override
-    protected String getMessageCodePrefix() {
-        return  "mirebalaisreports.weeklymonitoringdataexport.";
-    }
 }
