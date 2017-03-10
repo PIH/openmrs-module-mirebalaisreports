@@ -57,6 +57,11 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
     }
 
     @Override
+    public Integer getOrder() {
+        return REPORTING_DATA_EXPORT_REPORTS_ORDER.indexOf(getUuid()) + 1000;
+    }
+
+    @Override
     public String getUuid() {
         return MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID;
     }
@@ -64,11 +69,6 @@ public class AppointmentsReportManager extends BaseMirebalaisReportManager {
     @Override
     public String getName() {
         return "appointments";
-    }
-
-    @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.appointments.";
     }
 
     @Override

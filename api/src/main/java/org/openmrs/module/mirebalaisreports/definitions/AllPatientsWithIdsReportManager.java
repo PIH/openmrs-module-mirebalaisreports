@@ -28,6 +28,11 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
     }
 
     @Override
+    public Integer getOrder() {
+        return REPORTING_DATA_EXPORT_REPORTS_ORDER.indexOf(getUuid()) + 1000;
+    }
+
+    @Override
     public String getUuid() {
         return MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID;
     }
@@ -40,11 +45,6 @@ public class AllPatientsWithIdsReportManager extends BaseMirebalaisReportManager
     @Override
     public String getVersion() {
         return "1.16";
-    }
-
-    @Override
-    protected String getMessageCodePrefix() {
-        return "mirebalaisreports.allpatientswithids.";
     }
 
     @Override
