@@ -194,63 +194,11 @@ LEFT OUTER JOIN obs oc on oc.encounter_id = o.encounter_id and oc.voided = 0 and
 LEFT OUTER JOIN concept_name c_name on c_name.concept_id = oc.value_coded and  c_name.locale = 'en' and c_name.locale_preferred = '1' and c_name.voided = 0
 where o.concept_id = (select concept_id from report_mapping where source = 'PIH' and code = 'DIAGNOSIS')
 and o.voided = 0 
-AND date(o.obs_datetime) >= '2016-02-01' -- :startDate 
-AND date(o.obs_datetime) <= '2017-04-01' -- :endDate 
+AND date(o.obs_datetime) >= :startDate 
+AND date(o.obs_datetime) <= :endDate 
 group by o.obs_id, rm.source, rm.code
 ) oo
 where diagnosis is not null
 group by Morbides
 ) tab on dx.morbides = tab.Morbides
-;
-
-
-
-
-
-select * from concept_name where name like '%cholera%';
-
-select * from report_mapping where concept_id = 561;
-
-
-select * from obs o
-where o.concept_id = (select concept_id from report_mapping where source = 'PIH' and code = 'DIAGNOSIS')
-and o.voided = 0 
-AND date(o.obs_datetime) >= '2017-02-01' -- :startDate 
-AND date(o.obs_datetime) <= '2017-04-01' -- :endDate 
-group by obs_id;
-
-
-
-select
-(CASE 
-  when rm.source = 'PIH' and rm.code = 'CHOLERA' then 'Cholera'
-  when rm.source = 'PIH' and rm.code = 'Diphtheria' then 'Diptheria'
-  when ((rm.source = 'PIH' and rm.code = 'VIRAL MENINGITIS') or (rm.source = 'PIH' and rm.code = 'Bacterial meningitis')) then 'Meningite Suspecte'
-  when rm.source = 'PIH' and rm.code = 'Acute flassic paralysis' then 'Paralysie Flasque Aigue'
-  when ((rm.source = 'PIH' and rm.code = 'MEASLES') or (rm.source = 'PIH' and rm.code = 'Rubella')) then 'Rougeole/Rubeole Suspecte'
-  when rm.source = 'PIH' and rm.code = 'Acute hemorrhagic fever' then 'Syndrome de Fievre Hemorragique Aigue'
-  when rm.source = 'CIEL' and rm.code = '139479' then 'Syndrome Rubeole Congenital'
- end) 'Diagnosis',
- c_name.name "Certainty",
--- pr.gender,
--- round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) "Age",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) < 5 and pr.gender = 'M' then 1 else 0 end) "ML5",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) < 5 and pr.gender = 'F' then 1 else 0 end) "FL5",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) >= 5 and round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) <15 and pr.gender = 'M' then 1 else 0 end) "ML14",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) >= 5 and round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) <15 and pr.gender = 'F' then 1 else 0 end) "FL14",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) > 15 and round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) <50 and pr.gender = 'M' then 1 else 0 end) "ML50",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) > 15 and round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) <50 and pr.gender = 'F' then 1 else 0 end) "FL50",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) > 50 and pr.gender = 'M' then 1 else 0 end) "MG50",
-(CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) > 50 and pr.gender = 'F' then 1 else 0 end) "FG50"
-from obs o
-INNER JOIN person pr on pr.person_id = o.person_id
-INNER JOIN report_mapping rm on o.value_coded = rm.concept_id
-LEFT OUTER JOIN obs oc on oc.encounter_id = o.encounter_id and oc.voided = 0 and oc.concept_id =
-    (select concept_id from report_mapping where source = 'PIH' and code = 'CLINICAL IMPRESSION DIAGNOSIS CONFIRMED' )
-LEFT OUTER JOIN concept_name c_name on c_name.concept_id = oc.value_coded and  c_name.locale = 'en' and c_name.locale_preferred = '1' and c_name.voided = 0
-where o.concept_id = (select concept_id from report_mapping where source = 'PIH' and code = 'DIAGNOSIS')
-and o.voided = 0 
-AND date(o.obs_datetime) >= :startDate 
-AND date(o.obs_datetime) <= :endDate 
-group by o.obs_id
 ;
