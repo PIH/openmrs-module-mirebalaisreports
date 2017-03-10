@@ -176,8 +176,6 @@ rm.code, -- remove these!
   when rm.source = 'PIH' and rm.code = 'HUMAN IMMUNODEFICIENCY VIRUS' then 'VIH Confirme'
  end) 'Diagnosis',
  c_name.name "Certainty",
--- pr.gender,
--- round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) "Age",
 (CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) < 5 and pr.gender = 'M' then 1 else 0 end) "ML5",
 (CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) < 5 and pr.gender = 'F' then 1 else 0 end) "FL5",
 (CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) >= 5 and round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) <15 and pr.gender = 'M' then 1 else 0 end) "ML14",
