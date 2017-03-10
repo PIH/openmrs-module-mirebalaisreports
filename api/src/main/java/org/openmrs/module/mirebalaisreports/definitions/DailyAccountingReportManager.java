@@ -14,11 +14,11 @@ import java.util.List;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.MONITORING;
 
 @Component
-public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
+public class DailyAccountingReportManager extends BaseMirebalaisReportManager {
 
-    private static final String EXCEL_TEMPLATE_NAME = "WeeklyMonitoringReportTemplate";
+    private static final String EXCEL_TEMPLATE_NAME = "DailyAccountingReportTemplate";
 
-    private static final String REPEATING_SECTION = "sheet:1,row:21,dataset:weeklyMonitoring";
+    private static final String REPEATING_SECTION = "sheet:1,row:6,dataset:dailyAccounting";
 
     @Override
     public Category getCategory() {
@@ -37,17 +37,17 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getName() {
-        return "weeklyMonitoring";
+        return "dailyAccounting";
     }
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.WEEKLY_MONITORING_REPORT_DEFINITION_UUID;
+        return MirebalaisReportsProperties.DAILY_ACCOUNTING_REPORTING_DEFINITION_UUID;
     }
 
     @Override
     public String getVersion() {
-        return "1.1-SNAPSHOT";
+        return "1.0-SNAPSHOT";
     }
 
     @Override

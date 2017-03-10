@@ -73,7 +73,10 @@ public abstract class BaseReportManager implements ReportManager {
 
     public static final List<String> REPORTING_MONITORING_REPORTS_ORDER = Arrays.asList(
             MirebalaisReportsProperties.WEEKLY_MONITORING_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MONTHLY_STATS_REPORTING_DEFINITION_UUID
+            MirebalaisReportsProperties.MONTHLY_STATS_REPORTING_DEFINITION_UUID,
+            MirebalaisReportsProperties.DAILY_ACCOUNTING_REPORTING_DEFINITION_UUID,
+            MirebalaisReportsProperties.VISIT_REGISTRY_REPORTING_DEFINITION_UUID,
+            MirebalaisReportsProperties.MORBIDITY_REGISTRY_REPORTING_DEFINITION_UUID
     );
 
 	/**
@@ -196,6 +199,7 @@ public abstract class BaseReportManager implements ReportManager {
 
         return design;
     }
+
 
     protected ReportDesign csvReportDesign(ReportDefinition reportDefinition) {
         ReportDesign design = new ReportDesign();

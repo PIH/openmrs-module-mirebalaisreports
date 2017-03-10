@@ -14,14 +14,14 @@ import java.util.List;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.MONITORING;
 
 @Component
-public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
+public class VisitRegistryReportTemplate extends BaseMirebalaisReportManager{
 
-    private static final String EXCEL_TEMPLATE_NAME = "WeeklyMonitoringReportTemplate";
+    private static final String EXCEL_TEMPLATE_NAME = "VisitRegistryTemplate";
 
-    private static final String REPEATING_SECTION = "sheet:1,row:21,dataset:weeklyMonitoring";
+    private static final String REPEATING_SECTION = "sheet:1,row:7,dataset:visitRegistry";
 
     @Override
-    public Category getCategory() {
+    public BaseReportManager.Category getCategory() {
         return MONITORING;
     }
 
@@ -37,17 +37,17 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public String getName() {
-        return "weeklyMonitoring";
+        return "visitRegistry";
     }
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.WEEKLY_MONITORING_REPORT_DEFINITION_UUID;
+        return MirebalaisReportsProperties.VISIT_REGISTRY_REPORTING_DEFINITION_UUID;
     }
 
     @Override
     public String getVersion() {
-        return "1.1-SNAPSHOT";
+        return "1.0-SNAPSHOT";
     }
 
     @Override
@@ -64,5 +64,6 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
         return Arrays.asList(xlsReportDesign(reportDefinition, EXCEL_TEMPLATE_NAME, REPEATING_SECTION));
     }
+
 
 }

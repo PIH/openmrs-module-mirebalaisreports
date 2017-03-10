@@ -97,15 +97,11 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String BILLABLE_EXPORT_REPORT_DEFINITION_UUID = "6bd65742-5b45-4f50-a5a8-90c81a387f90";
     public static final String ALLERGIES_EXPORT_REPORT_DEFINITION_UUID = "3b83bbd7-f16a-4df1-9ba8-280c0e4ea977";
     public static final String PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID = "7877eef3-a3bb-4efc-a9ef-3582378053ca";
-    public static final String VISIT_REGISTER_DATA_EXPORT_REPORT_DEFINITION_UUID = "0492f862-f48b-11e6-bc64-92361f002671";
     public static final String WEEKLY_MONITORING_REPORT_DEFINITION_UUID = "bfac0d81-09fc-4981-adf2-d6fa9e5ec852";
     public static final String MONTHLY_STATS_REPORTING_DEFINITION_UUID = "172163ed-c9eb-418c-bc32-f32a861ee7c9";
-
-    // TODO: 2/17/17 UHM-2723,2712,2714,2713
-    public static final String MORBIDITY_REGISTER_DATA_EXPORT_REPORT_DEFINITION_UUID = "89a7c198-f537-11e6-bc64-92361f002671";
-    public static final String MONITORING_DATA_EXPORT_REPORT_DEFINITION_UUID = "89a7bb30-f537-11e6-bc64-92361f002671";
-    public static final String ACCOUNTING_DATA_EXPORT_REPORT_DEFINITION_UUID = "89a7c03a-f537-11e6-bc64-92361f002671";
-    public static final String STATISTICS_DATA_EXPORT_REPORT_DEFINITION_UUID = "89a7c288-f537-11e6-bc64-92361f002671";
+    public static final String DAILY_ACCOUNTING_REPORTING_DEFINITION_UUID = "e0c7b080-d63f-414d-92d2-05078490ea89";
+    public static final String MORBIDITY_REGISTRY_REPORTING_DEFINITION_UUID = "9d77c3bf-19c8-484d-af94-e2f2bb487797";
+    public static final String VISIT_REGISTRY_REPORTING_DEFINITION_UUID = "4f4dbafc-eda6-4910-b9aa-b7be62bef49f";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
