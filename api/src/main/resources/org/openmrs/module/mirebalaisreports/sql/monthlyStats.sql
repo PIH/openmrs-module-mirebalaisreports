@@ -50,7 +50,7 @@ select 'IST'
 UNION ALL
 select 'Toxi-Infection Alimentaire Collective (TIAC)'
 UNION ALL
-select 'LËpre'
+select 'Lƒçpre'
 UNION ALL
 select 'Leptospirose'
 UNION ALL
@@ -70,13 +70,13 @@ select 'Phenomene Anormal'
 UNION ALL
 select 'Rage Humaine'
 UNION ALL
-select 'Rougeole/RubÈole'
+select 'Rougeole/Rub√©ole'
 UNION ALL
 select 'Rubeole Congenital'
 UNION ALL
 select 'Syndrome Icterique Febrile'
 UNION ALL
-select 'Syndrome respiratoire aigu sÈvËre (SRAS)'
+select 'Syndrome respiratoire aigu s√©vƒçre (SRAS)'
 UNION ALL
 select 'Syphilis'
 UNION ALL
@@ -145,7 +145,7 @@ rm.code, -- remove these!
   when rm.source = 'PIH' and rm.code = 'Filariasis' then 'Filariose lymphatique'  
   when ((rm.source = 'PIH' and rm.code = 'Upper respiratory tract infection') or (rm.source = 'PIH' and rm.code = 'Acute respiratory infections NOS')) then 'Infection Respiratoire Aigue'
   when rm.source = 'PIH' and rm.code = 'SEXUALLY TRANSMITTED INFECTION' then 'IST'  
-  when rm.source = 'PIH' and rm.code = 'LEPROSY' then 'LËpre'  
+  when rm.source = 'PIH' and rm.code = 'LEPROSY' then 'Lƒçpre'  
   when rm.source = 'PIH' and rm.code = '7582' then 'Leptospirose'
   when rm.source = 'PIH' and rm.code = 'MALARIA' then 'Malaria Confirmee Traitee'
   when rm.source = 'PIH' and rm.code = 'MALNUTRITION' then 'Malnutrition'
@@ -154,10 +154,10 @@ rm.code, -- remove these!
   when rm.source = 'PIH' and rm.code = 'Acute flassic paralysis' then 'Paralysie Flasque Aigue'
   when rm.source = 'PIH' and rm.code = 'Intestinal parasites' then 'Parasitose intestinale'
   when rm.source = 'PIH' and rm.code = 'Rabies' then 'Rage Humaine'
-  when ((rm.source = 'PIH' and rm.code = 'MEASLES') or (rm.source = 'PIH' and rm.code = 'Rubella')) then 'Rougeole/RubÈole'
+  when ((rm.source = 'PIH' and rm.code = 'MEASLES') or (rm.source = 'PIH' and rm.code = 'Rubella')) then 'Rougeole/Rub√©ole'
   when rm.source = 'CIEL' and rm.code = '139479' then 'Rubeole Congenital'
   when rm.source = 'PIH' and rm.code = 'Icteric febrile syndrome' then 'Syndrome Icterique Febrile'
-  when rm.source = 'PIH' and rm.code = 'SARS' then 'Syndrome respiratoire aigu sÈvËre (SRAS)'
+  when rm.source = 'PIH' and rm.code = 'SARS' then 'Syndrome respiratoire aigu s√©vƒçre (SRAS)'
   when rm.source = 'PIH' and rm.code = 'SYPHILIS' then 'Syphilis'
   when rm.source = 'PIH' and rm.code = 'Congenital Syphilis' then 'Syphilis congenitales'
   when rm.source = 'PIH' and rm.code = 'Tetanus' then 'Tetanos'
