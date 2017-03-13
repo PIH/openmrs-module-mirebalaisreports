@@ -1,4 +1,4 @@
-select cn.name "Catégorie", sum(o.value_numeric) "Nbr" from
+select cn.name "Catégorie", CEIL(sum(o.value_numeric)) "Nbr" from
 obs o
 INNER JOIN obs os on os.encounter_id = o.encounter_id and os.voided = 0 and os.concept_id = 
     (select concept_id from report_mapping where source = 'PIH' and code = 'Type of HUM visit') 
@@ -10,7 +10,7 @@ AND date(o.obs_datetime) >=  :startDate
 AND date(o.obs_datetime) <=  :endDate 
 group by cn.name
 UNION ALL
-  select 'Total pour cette période', sum(o.value_numeric) "Nbr" from
+  select 'Total pour cette période', CEIL(sum(o.value_numeric)) "Nbr" from
 obs o
 where 1=1
 and o.voided = 0
@@ -20,7 +20,7 @@ AND date(o.obs_datetime) <=  :endDate
 UNION ALL
 select ' ',' ' 
 UNION ALL
-select 'Nombre de patients exonérés', count(o.person_id) from
+select 'Nombre de patients exonérés', CEIL(count(o.person_id)) from
 obs o
 where 1=1
 and o.voided = 0
@@ -31,7 +31,7 @@ AND date(o.obs_datetime) <=  :endDate
 UNION ALL
 select ' ',' ' 
 UNION ALL
-select 'Nombre de patients ayant payés plus déune fois', count(o.person_id) from
+select 'Nombre de patients ayant payés plus déune fois', CEIL(count(o.person_id)) from
 obs o
 where 1=1
 and o.voided = 0
