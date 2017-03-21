@@ -18,7 +18,7 @@ public class VisitRegistryReportTemplate extends BaseMirebalaisReportManager{
 
     private static final String EXCEL_TEMPLATE_NAME = "VisitRegistryTemplate";
 
-    private static final String REPEATING_SECTION = "sheet:1,row:7,dataset:visitRegistry";
+    private static final String REPEATING_SECTION = "sheet:1,row:9,dataset:visitRegistry";
 
     @Override
     public BaseReportManager.Category getCategory() {
