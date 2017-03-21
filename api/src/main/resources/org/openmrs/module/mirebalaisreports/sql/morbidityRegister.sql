@@ -1,11 +1,12 @@
-SELECT dos.identifier "No Dossier", date(e.encounter_datetime) "Date de la visite", pn.given_name "Prenom",pn.family_name "Nom de famille",pr.birthdate "Date de naissance",
-pr.gender "Sexe", pa.city_village "Commune", pa.address2 "Adresse" ,
-IF(IFNULL(prev_checkin.encounter_id,'null')='null','1',' ') "nouvelles",
-IF(IFNULL(prev_checkin.encounter_id,'null')='null',' ','1') "Subsequentes",
-dx_join.clin_impr "impression clinique",
-dx_join.DX_JOINED "diagnostic confirme",
-IF(IFNULL(prev_diag.obs_id,'null')='null','1',' ') "cas n",
-IF(IFNULL(prev_diag.obs_id,'null')='null',' ','1') "cas a"
+SELECT date(e.encounter_datetime) "Date",  dos.identifier "Dossier", pn.given_name "Prenom",pn.family_name "Nom de famille",pr.gender "Sexe",ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) "Age",
+ pa.address2 "Adresse" ,pa.city_village "Commune",
+IF(IFNULL(prev_checkin.encounter_id,'null')='null','1',' ') "Nouv",
+IF(IFNULL(prev_checkin.encounter_id,'null')='null',' ','1') "Subs",
+dx_join.clin_impr "Impression clinique",
+dx_join.DX_JOINED "Diagnostic confirme",
+IF(IFNULL(prev_diag.obs_id,'null')='null','1',' ') "N",
+IF(IFNULL(prev_diag.obs_id,'null')='null',' ','1') "A",
+null "Evolution"
 FROM patient p
 -- Most recent Dossier ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:dosId
