@@ -18,7 +18,7 @@ public class MorbidityRegisterReportManager extends BaseMirebalaisReportManager{
 
     private static final String EXCEL_TEMPLATE_NAME = "MorbidityRegisterTemplate";
 
-    private static final String REPEATING_SECTION = "sheet:1,row:6,dataset:morbidityRegister";
+    private static final String REPEATING_SECTION = "sheet:1,row:7,dataset:morbidityRegister";
 
     @Override
     public BaseReportManager.Category getCategory() {
