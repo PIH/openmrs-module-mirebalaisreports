@@ -1,4 +1,4 @@
-select dx.morbides "Phenomenes_mordbides_ou_non_morbides",
+select dx.morbides "Maladies/Symptomes",
 HL1 "H<1",
 FL1 "F<1",
 HL4 "H_1-4",
