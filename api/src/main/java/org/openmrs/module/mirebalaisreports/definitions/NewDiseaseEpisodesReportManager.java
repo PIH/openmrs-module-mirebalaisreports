@@ -18,8 +18,7 @@ public class NewDiseaseEpisodesReportManager extends BaseMirebalaisReportManager
 
     private static final String EXCEL_TEMPLATE_NAME = "NewDiseaseEpisodesReportTemplate";
 
-    private static final String REPEATING_SECTION = "sheet:1,row:6,dataset:newDiseaseEpisodes";
-    private static final String REPEATING_SECTION = "sheet:1,row:8,dataset:monthlyStats";
+    private static final String REPEATING_SECTION = "sheet:1,row:8,dataset:newDiseaseEpisode";
 
     @Override
     public BaseReportManager.Category getCategory() {
