@@ -190,6 +190,13 @@ LEFT OUTER JOIN obs oc on oc.encounter_id = o.encounter_id and oc.voided = 0 and
     (select concept_id from report_mapping where source = 'PIH' and code = 'CLINICAL IMPRESSION DIAGNOSIS CONFIRMED' )
 LEFT OUTER JOIN concept_name c_name on c_name.concept_id = oc.value_coded and  c_name.locale = 'en' and c_name.locale_preferred = '1' and c_name.voided = 0
 where o.concept_id = (select concept_id from report_mapping where source = 'PIH' and code = 'DIAGNOSIS')
+and not exists -- qualify result for NEW diagnoses
+   (select 1 from obs o_prev 
+    where o_prev.obs_id <> o.obs_id   
+    and o_prev.person_id = o.person_id
+    and o_prev.concept_id = o.concept_id
+    and o_prev.value_coded = o.value_coded
+    )
 and o.voided = 0 
 AND date(o.obs_datetime) >= :startDate 
 AND date(o.obs_datetime) <= :endDate 
