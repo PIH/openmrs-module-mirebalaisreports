@@ -1,4 +1,4 @@
-select cn.name "Catégorie", CEIL(sum(o.value_numeric)) "Amount" from
+select cn.name "Catégorie", CEIL(sum(o.value_numeric)) "Montant" from
 obs o
 INNER JOIN obs os on os.encounter_id = o.encounter_id and os.voided = 0 and os.concept_id = 
     (select concept_id from report_mapping where source = 'PIH' and code = 'Type of HUM visit') 
@@ -12,7 +12,7 @@ group by cn.name
 UNION ALL
 select ' ',' ' 
 UNION ALL
-  select 'Total pour cette période', CEIL(sum(o.value_numeric)) "Amount" from
+  select 'Total pour cette période', CEIL(sum(o.value_numeric)) "Montant" from
 obs o
 where 1=1
 and o.voided = 0
