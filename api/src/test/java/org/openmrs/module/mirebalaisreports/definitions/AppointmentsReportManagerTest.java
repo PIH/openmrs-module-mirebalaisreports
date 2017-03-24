@@ -11,9 +11,9 @@ import org.openmrs.module.appointmentscheduling.AppointmentBlock;
 import org.openmrs.module.appointmentscheduling.AppointmentType;
 import org.openmrs.module.appointmentscheduling.TimeSlot;
 import org.openmrs.module.appointmentscheduling.api.AppointmentService;
+import org.openmrs.module.haiticore.org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.paperrecord.PaperRecordProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.core.PersonAttributeTypes;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -52,7 +52,7 @@ public class AppointmentsReportManagerTest extends BaseReportTest {
         Patient patient = data.randomPatient()
                 .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
                 .identifier(paperRecordProperties.getPaperRecordIdentifierType(), "A000001", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
-                .personAttribute(Metadata.lookup(PersonAttributeTypes.TELEPHONE_NUMBER), "123-4567")
+                .personAttribute(Metadata.lookup(HaitiPersonAttributeTypes.TELEPHONE_NUMBER), "123-4567")
                 .save();
 
         Date startDate = new DateTime(2014,1,1,9,0,0).toDate();
