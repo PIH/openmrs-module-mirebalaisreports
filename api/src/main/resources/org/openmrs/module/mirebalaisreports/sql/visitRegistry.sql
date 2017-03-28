@@ -1,4 +1,4 @@
-SELECT dos.identifier "No Dossier", date(e.encounter_datetime) "Date de la visite", pn.given_name "Prenom",pn.family_name "Nom de famille",pr.birthdate "Date de naissance",
+SELECT dos.identifier "No Dossier", date(e.encounter_datetime) "Date de la visite", pn.given_name "Prenom",pn.family_name "Nom de famille",ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) "Age",
 pr.gender "Sexe",pa.city_village "Commune",  pa.address2 "Adresse", 
 IF(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25<1,"1","") "0-1 ans",
 IF(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25>=1 and DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25<5,"1","") "1-4 ans",
