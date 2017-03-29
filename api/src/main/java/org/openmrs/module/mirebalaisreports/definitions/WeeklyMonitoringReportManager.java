@@ -18,7 +18,7 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     private static final String EXCEL_TEMPLATE_NAME = "WeeklyMonitoringReportTemplate";
 
-    private static final String REPEATING_SECTION = "sheet:1,row:17,dataset:weeklyMonitoring";
+    private static final String REPEATING_SECTION = "sheet:1,row:18,dataset:weeklyMonitoring";
 
     @Override
     public Category getCategory() {
