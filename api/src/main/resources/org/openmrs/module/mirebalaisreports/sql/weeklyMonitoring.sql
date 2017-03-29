@@ -72,19 +72,31 @@ select 'Lepre Suspecte'
 UNION ALL
 select 'Malnutrition'
 UNION ALL
+select 'Microcéphalie'
+UNION ALL
 select 'Paludisme Suspect'
+UNION ALL
+select 'Paludisme Teste'
 UNION ALL
 select 'Paludisme cas Teste'
 UNION ALL
 select 'Paludisme Confirme'
 UNION ALL
+select 'Paludisme Traite'
+UNION ALL
 select 'Rage Humaine'
+UNION ALL
+select 'Syndrome de Guillain Barré'
 UNION ALL
 select 'Syndrome Icterique Febrile'
 UNION ALL
 select 'Tuberculose Confirme (TPM+)'
 UNION ALL
 select 'VIH Confirme'
+UNION ALL
+select 'Zika femme enceintes'
+UNION ALL
+select 'Zika suspect'
 UNION ALL
 select 'Autres Cas VUS Avec D''Autres Conditions') dx
 LEFT OUTER JOIN
@@ -164,6 +176,10 @@ rm.code,
   when rm.source = 'PIH' and rm.code = 'Icteric febrile syndrome' then 'Syndrome Icterique Febrile'  
   when rm.source = 'PIH' and rm.code = 'TUBERCULOSIS' then 'Tuberculose Confirme (TPM+)'
   when rm.source = 'PIH' and rm.code = 'HUMAN IMMUNODEFICIENCY VIRUS' then 'VIH Confirme'
+  when ((rm.source = 'PIH' and rm.code = 'Microcephaly due to Zika virus') 
+     or (rm.source = 'PIH' and rm.code = 'Microcephalus')) then 'Microcéphalie'
+  when rm.source = 'CIEL' and rm.code = '139233' then 'Syndrome de Guillain Barré'
+   when rm.source = 'CIEL' and rm.code = '122746' then 'Zika suspect'
  end) 'Diagnosis',
  c_name.name "Certainty",
 (CASE when round(DATEDIFF(o.obs_datetime, pr.birthdate)/365.25, 1) < 5 and pr.gender = 'M' then 1 else 0 end) "ML5",
@@ -177,11 +193,12 @@ rm.code,
 from obs o
 INNER JOIN person pr on pr.person_id = o.person_id
 INNER JOIN report_mapping rm on o.value_coded = rm.concept_id
+-- join in certainty (confirmed/suspected)
 LEFT OUTER JOIN obs oc on oc.encounter_id = o.encounter_id and oc.voided = 0 and oc.obs_group_id = o.obs_group_id and oc.concept_id =
     (select concept_id from report_mapping where source = 'PIH' and code = 'CLINICAL IMPRESSION DIAGNOSIS CONFIRMED' )
 LEFT OUTER JOIN concept_name c_name on c_name.concept_id = oc.value_coded and  c_name.locale = 'en' and c_name.locale_preferred = '1' and c_name.voided = 0
 where o.concept_id = (select concept_id from report_mapping where source = 'PIH' and code = 'DIAGNOSIS')
-and not exists -- qualify result for NEW diagnoses
+and not exists -- qualify result on NEW diagnoses
    (select 1 from obs o_prev 
     where o_prev.obs_id <> o.obs_id   
     and o_prev.person_id = o.person_id
