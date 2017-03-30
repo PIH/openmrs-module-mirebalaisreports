@@ -44,13 +44,15 @@ select 'Fievre Hemorragique'
 UNION ALL
 select 'Filariose lymphatique'
 UNION ALL
+select 'Hypertension essentielle'
+UNION ALL
 select 'Infection Respiratoire Aigue'
 UNION ALL
 select 'IST'
 UNION ALL
 select 'Toxi-Infection Alimentaire Collective (TIAC)'
 UNION ALL
-select 'Lčpre'
+select 'Lèpre'
 UNION ALL
 select 'Leptospirose'
 UNION ALL
@@ -76,7 +78,7 @@ select 'Rubeole Congenital'
 UNION ALL
 select 'Syndrome Icterique Febrile'
 UNION ALL
-select 'Syndrome respiratoire aigu sévčre (SRAS)'
+select 'Syndrome respiratoire aigu sévère (SRAS)'
 UNION ALL
 select 'Syphilis'
 UNION ALL
@@ -124,11 +126,6 @@ nullif(sum(ML1)+sum(ML4)+sum(ML9)+ sum(ML14)+sum(ML24)+sum(ML49)+sum(MG50),0) "H
 nullif(sum(FL1)+sum(FL4)+sum(FL9)+ sum(FL14)+sum(FL24)+sum(FL49)+sum(FG50),0) "FTotal"
 from (
 select
-o.obs_id,
-o.encounter_id,
-o.obs_datetime,
-rm.source,
-rm.code, -- remove these!
 (CASE 
   when rm.source = 'PIH' and rm.code = 'Bitten by suspected rabid animal' then 'Agression par animal suspect de rage'
   when rm.source = 'PIH' and rm.code = 'Anthrax' then 'Charbon Cutane'
@@ -136,19 +133,38 @@ rm.code, -- remove these!
   when rm.source = 'PIH' and rm.code = 'CHOLERA' then 'Cholera'
   when rm.source = 'PIH' and rm.code = 'PERTUSSIS' then 'Coqueluche'
   when rm.source = 'CIEL' and rm.code = '142592' then 'Dengue'
-  when rm.source = 'CIEL' and rm.code = '161887' then 'Diarrhee Aqueuse'  
-  when rm.source = 'PIH' and rm.code = 'Bloody diarrhea' then 'Diarrhee Sanglante'  
+  when ((rm.source = 'CIEL' and rm.code = '161887') OR
+        (rm.source = 'PIH' and rm.code = 'GASTROENTERITIS')) then 'Diarrhee Aqueuse'
+  when ((rm.source = 'PIH' and rm.code = 'AMOEBIASIS')) OR
+        (rm.source = 'PIH' and rm.code = 'Bloody diarrhea') then 'Diarrhee Sanglante'      
   when rm.source = 'PIH' and rm.code = 'Diphtheria' then 'Diphtheria'  
   when rm.source = 'PIH' and rm.code = 'EPILEPSY' then 'Epilepsie'  
   when rm.source = 'PIH' and rm.code = 'Fever of unknown origin' then 'Fievre d''origine indeterminee'  
   when rm.source = 'CIEL' and rm.code = '123112' then 'Fievre Hemorragique'  
-  when rm.source = 'PIH' and rm.code = 'Filariasis' then 'Filariose lymphatique'  
-  when ((rm.source = 'PIH' and rm.code = 'Upper respiratory tract infection') or (rm.source = 'PIH' and rm.code = 'Acute respiratory infections NOS')) then 'Infection Respiratoire Aigue'
-  when rm.source = 'PIH' and rm.code = 'SEXUALLY TRANSMITTED INFECTION' then 'IST'  
-  when rm.source = 'PIH' and rm.code = 'LEPROSY' then 'Lčpre'  
+  when rm.source = 'PIH' and rm.code = 'Filariasis' then 'Filariose lymphatique' 
+   when rm.source = 'PIH' and rm.code = 'HYPERTENSION' then 'Hypertension essentielle' 
+  when ((rm.source = 'PIH' and rm.code = 'Upper respiratory tract infection') 
+     or (rm.source = 'PIH' and rm.code = 'Acute respiratory infections NOS') 
+     or (rm.source = 'PIH' and rm.code = 'COUGH') 
+     or (rm.source = 'PIH' and rm.code = 'INFLUENZA')    
+     or (rm.source = 'PIH' and rm.code = 'BRONCHITIS')   
+     or (rm.source = 'PIH' and rm.code = 'PNEUMONIA')    
+     or (rm.source = 'PIH' and rm.code = 'BRONCHOPNEUMONIA')) then 'Infection Respiratoire Aigue'
+  when ((rm.source = 'PIH' and rm.code = 'SEXUALLY TRANSMITTED INFECTION') 
+     or (rm.source = 'PIH' and rm.code = 'Trichomoniasis') 
+     or (rm.source = 'PIH' and rm.code = 'GONORRHEA')    
+     or (rm.source = 'PIH' and rm.code = 'SYPHILIS')   
+     or (rm.source = 'PIH' and rm.code = 'Genital Herpes')) then 'IST'  
+  when rm.source = 'PIH' and rm.code = 'LEPROSY' then 'Lèpre'  
   when rm.source = 'PIH' and rm.code = '7582' then 'Leptospirose'
   when rm.source = 'PIH' and rm.code = 'MALARIA' then 'Malaria Confirmee Traitee'
-  when rm.source = 'PIH' and rm.code = 'MALNUTRITION' then 'Malnutrition'
+  when ((rm.source = 'PIH' and rm.code = 'MALNUTRITION') 
+     or (rm.source = 'PIH' and rm.code = 'KWASHIORKOR') 
+     or (rm.source = 'PIH' and rm.code = 'MARASMUS')    
+     or (rm.source = 'PIH' and rm.code = 'Marasmic Kwashiorkor')   
+     or (rm.source = 'PIH' and rm.code = 'MALNUTRITION M1') 
+     or (rm.source = 'PIH' and rm.code = 'MALNUTRITION M2')    
+     or (rm.source = 'PIH' and rm.code = 'MALNUTRITION M3')) then 'Malnutrition'
   when rm.source = 'PIH' and rm.code = 'Bacterial meningitis' then 'Meningite bacteriennes'
   when rm.source = 'PIH' and rm.code = 'MUMPS' then 'Oreillons'
   when rm.source = 'PIH' and rm.code = 'Acute flassic paralysis' then 'Paralysie Flasque Aigue'
@@ -157,7 +173,7 @@ rm.code, -- remove these!
   when ((rm.source = 'PIH' and rm.code = 'MEASLES') or (rm.source = 'PIH' and rm.code = 'Rubella')) then 'Rougeole/Rubéole'
   when rm.source = 'CIEL' and rm.code = '139479' then 'Rubeole Congenital'
   when rm.source = 'PIH' and rm.code = 'Icteric febrile syndrome' then 'Syndrome Icterique Febrile'
-  when rm.source = 'PIH' and rm.code = 'SARS' then 'Syndrome respiratoire aigu sévčre (SRAS)'
+  when rm.source = 'PIH' and rm.code = 'SARS' then 'Syndrome respiratoire aigu sévère (SRAS)'
   when rm.source = 'PIH' and rm.code = 'SYPHILIS' then 'Syphilis'
   when rm.source = 'PIH' and rm.code = 'Congenital Syphilis' then 'Syphilis congenitales'
   when rm.source = 'PIH' and rm.code = 'Tetanus' then 'Tetanos'
