@@ -44,7 +44,7 @@ select 'Fievre Hemorragique'
 UNION ALL
 select 'Filariose lymphatique'
 UNION ALL
-select 'Hypertension essentielle'
+select 'HTA: Hypertension artérielle'
 UNION ALL
 select 'Infection Respiratoire Aigue'
 UNION ALL
@@ -142,7 +142,7 @@ select
   when rm.source = 'PIH' and rm.code = 'Fever of unknown origin' then 'Fievre d''origine indeterminee'  
   when rm.source = 'CIEL' and rm.code = '123112' then 'Fievre Hemorragique'  
   when rm.source = 'PIH' and rm.code = 'Filariasis' then 'Filariose lymphatique' 
-   when rm.source = 'PIH' and rm.code = 'HYPERTENSION' then 'Hypertension essentielle' 
+   when rm.source = 'PIH' and rm.code = 'HYPERTENSION' then 'HTA: Hypertension artérielle' 
   when ((rm.source = 'PIH' and rm.code = 'Upper respiratory tract infection') 
      or (rm.source = 'PIH' and rm.code = 'Acute respiratory infections NOS') 
      or (rm.source = 'PIH' and rm.code = 'COUGH') 
