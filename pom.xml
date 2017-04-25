@@ -655,6 +655,7 @@
                         </property>
                         <property>
                             <name>registrationcoreVersion</name>
+                            <version>[1.6]</version>
                             <banSnapshots>true</banSnapshots>
                         </property>
                     </properties>
