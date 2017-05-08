@@ -36,7 +36,7 @@ import org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
-import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
 import org.openmrs.module.reporting.common.Birthdate;
@@ -367,10 +367,10 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
 
     private void setUpPatientsBasedOnCoreMetadata() {
         Patient patient = data.patient().name("Christy","Lee").gender("F")
-                .identifier(Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID), "TT200E", Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC))
+                .identifier(Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID), "TT200E", Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC))
                 .address("1050 Wishard Blvd", "RG5", "Indianapolis", "IN").save();
         data.patient().name("Bobby", "Joe").gender("M")
-                .identifier(Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID), "TT201C", Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC))
+                .identifier(Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID), "TT201C", Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC))
                 .address("", "", "Kapina").save();
         data.encounter().patient(patient).encounterType(Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION))
                 .encounterDatetime("2013-09-08").location(Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC)).save();
@@ -487,7 +487,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
 
     @Test @Ignore("H2 cannot handle DATE() function to cast a timestamp to a date")
     public void shouldSuccessfullyRenderConsultationsToExcel() throws Exception {
-        PatientIdentifierType zlEmrId = Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID);
+        PatientIdentifierType zlEmrId = Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID);
         Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
         Location clinicRegistration = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
         Location womensWard = Metadata.lookup(MirebalaisLocations.WOMENS_INTERNAL_MEDICINE);

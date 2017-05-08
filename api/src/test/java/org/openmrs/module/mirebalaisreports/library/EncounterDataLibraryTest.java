@@ -36,7 +36,7 @@ import org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
-import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -93,7 +93,7 @@ public class EncounterDataLibraryTest extends BaseReportTest {
         Location clinicRegistration = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
         Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
         Location womensWard = Metadata.lookup(MirebalaisLocations.WOMENS_INTERNAL_MEDICINE);
-        PatientIdentifierType zlEmrId = Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID);
+        PatientIdentifierType zlEmrId = Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID);
         PersonAttributeType unknownPatient = Metadata.lookup(HaitiPersonAttributeTypes.UNKNOWN_PATIENT);
         EncounterRole consultingClinician = mirebalaisReportsProperties.getConsultingClinicianEncounterRole();
         EncounterRole attendingSurgeonRole = mirebalaisReportsProperties.getAttendingSurgeonEncounterRole();

@@ -13,7 +13,7 @@ import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
-import org.openmrs.module.pihcore.metadata.haiti.HaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -47,7 +47,7 @@ public class DailyClinicalEncountersReportManagerTest extends BaseReportTest {
     public void setUp() throws Exception {
         EmrApiProperties eap = emrApiProperties;
 
-        PatientIdentifierType zlemrId = Metadata.lookup(HaitiPatientIdentifierTypes.ZL_EMR_ID);
+        PatientIdentifierType zlemrId = Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID);
         Location registrationDesk = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
         Location outpatient = Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC);
         Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
