@@ -67,6 +67,7 @@ public abstract class BaseReportManager implements ReportManager {
 
     public static final List<String> REPORTING_DATA_EXPORT_REPORTS_ORDER = Arrays.asList(
             MirebalaisReportsProperties.USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.RELATIONSHIPS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.LQAS_DIAGNOSES_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID);
