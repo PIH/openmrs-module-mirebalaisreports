@@ -368,6 +368,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getEncounterTypeByUuid(EncounterTypes.NCD_ADULT_FOLLOWUP_CONSULT.uuid());
     }
 
+    public EncounterType getMedicationDispensedEncountertype() {
+	    return getEncounterTypeByUuid(EncounterTypes.MEDICATION_DISPENSED.uuid());
+    }
+
     /**
 	 * @return all encounter types <em>except for</em> Registration, Payment, and Check-In
 	 */
