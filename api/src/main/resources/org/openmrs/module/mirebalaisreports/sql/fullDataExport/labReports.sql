@@ -7,7 +7,7 @@ INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier W
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 -- ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
---Unknown patient
+-- Unknown patient
 LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id =:unknownPt 
             AND un.voided = 0
 -- Gender
@@ -60,7 +60,12 @@ max(CASE when crs.name = 'PIH' and crt.code = 'TRIGLYCERIDES' then o.value_numer
 max(CASE when crs.name = 'PIH' and crt.code = 'MALARIAL SMEAR' then cn.name end) 'Malarial_Smear',
 max(CASE when crs.name = 'PIH' and crt.code = 'LACTATE DEHYDROGENASE' then o.value_numeric end) 'Lactate_Dehydrogenase',
 max(CASE when crs.name = 'PIH' and crt.code = 'RESULT OF HIV TEST' then cn.name end) 'HIV_Test',
-max(CASE when crs.name = 'PIH' and crt.code = 'HIV VIRAL LOAD' then o.value_numeric end) 'HIV_Viral_Load'
+max(CASE when crs.name = 'PIH' and crt.code = 'HIV VIRAL LOAD' then o.value_numeric end) 'HIV_Viral_Load',
+ max(CASE when crs.name = 'CIEL' and crt.code = '164920' then cn.name end) 'Zika_rRT-PCR',
+max(CASE when crs.name = 'CIEL' and crt.code = '164924' then cn.name end) 'Chikungunya_rRT-PCR',
+max(CASE when crs.name = 'CIEL' and crt.code = '164926' then cn.name end) 'Dengue_rRT-PCR',
+max(CASE when crs.name = 'CIEL' and crt.code = '164934' then cn.name end) 'Zika_IgG',
+max(CASE when crs.name = 'CIEL' and crt.code = '164930' then cn.name end) 'Zika_IgM'
 from encounter e, concept_reference_map crm,  concept_reference_term crt, concept_reference_source crs, obs o
 LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
 LEFT OUTER JOIN obs obs2 on obs2.obs_id = o.obs_group_id
