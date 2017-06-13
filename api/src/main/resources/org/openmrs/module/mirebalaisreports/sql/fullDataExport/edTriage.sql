@@ -1,6 +1,20 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  e.encounter_datetime, el.name encounter_location,
+SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  
+v.date_started "ED_Visit_Start_Datetime",
+e.encounter_datetime "Triage_datetime", el.name encounter_location,
 CONCAT(pn.given_name, ' ',pn.family_name) provider,
-obsjoins.*
+obsjoins.*,    
+ed.encounter_datetime "EDNote_Datetime",
+cn_disp_ed.name "EDNote_Disposition",
+ed_diagname1.name "ED_Diagnosis1",
+ed_diagname2.name "ED_Diagnosis2",
+ed_diagname3.name "ED_Diagnosis3",
+ed_diag_nc.value_text "ED_Diagnosis_noncoded",
+ec.encounter_datetime "Consult_Datetime",
+cn_disp_cons.name "Consult_Disposition",
+cons_diagname1.name "Cons_Diagnosis1",
+cons_diagname2.name "Cons_Diagnosis2",
+cons_diagname3.name "Cons_Diagnosis3",
+cons_diag_nc.value_text "Cons_Diagnosis_noncoded"
 FROM patient p
 -- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =:zlId
@@ -21,6 +35,46 @@ INNER JOIN location el ON e.location_id = el.location_id
 INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
 INNER JOIN provider pv ON pv.provider_id = ep.provider_id
 INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
+-- join in Emergency visit
+LEFT OUTER JOIN visit v on v.visit_id = e.visit_id
+-- latest disposition of consult note from that visit 
+LEFT OUTER JOIN encounter ec on ec.encounter_id = 
+      (select encounter_id from encounter ec2 where ec2.visit_id = e.visit_id and ec2.encounter_type = :consEnc and ec2.voided = 0 
+      and ec2.form_id = (select form_id from form where uuid = 'a3fc5c38-eb32-11e2-981f-96c0fcb18276')  -- uuid for form id for consult note 
+      order by ec2.encounter_datetime desc limit 1)
+LEFT OUTER JOIN obs disp_cons on disp_cons.encounter_id = ec.encounter_id and disp_cons.voided = 0 and disp_cons.concept_id = 
+      (select concept_id from report_mapping where source = 'PIH' and code = 'HUM Disposition categories')
+LEFT OUTER JOIN concept_name cn_disp_cons on cn_disp_cons.concept_id = disp_cons.value_coded and cn_disp_cons.voided = 0 and cn_disp_cons.locale = 'fr' and cn_disp_cons.locale_preferred = '1'  
+-- latest disposition of ED note from that visit 
+LEFT OUTER JOIN encounter ed on ed.encounter_id = 
+      (select encounter_id from encounter ed2 where ed2.visit_id = e.visit_id and ed2.encounter_type = :consEnc and ed2.voided = 0 
+      and ed2.form_id = (select form_id from form where uuid = '793915d6-f8d9-11e2-8ff2-fd54ab5fdb2a') -- uuid for form id for ED note 
+      order by ed2.encounter_datetime desc limit 1)
+LEFT OUTER JOIN obs disp_ed on disp_ed.encounter_id = ed.encounter_id and disp_ed.voided = 0 and disp_ed.concept_id = 
+      (select concept_id from report_mapping where source = 'PIH' and code = 'HUM Disposition categories')
+LEFT OUTER JOIN concept_name cn_disp_ed on cn_disp_ed.concept_id = disp_ed.value_coded and cn_disp_ed.voided = 0 and cn_disp_ed.locale = 'fr' and cn_disp_ed.locale_preferred = '1'  
+-- Diagnoses for latest ED Note (bringing back 3 coded diagnoses, 1 non-coded)
+inner join report_mapping diag on diag.source = 'PIH' and diag.code = 'DIAGNOSIS'
+inner join report_mapping diag_nc on diag_nc.source = 'PIH' and diag_nc.code = 'Diagnosis or problem, non-coded'
+left outer join obs ed_diag1 on ed_diag1.encounter_id = ed.encounter_id and ed_diag1.voided = 0 and ed_diag1.concept_id = diag.concept_id
+left outer join concept_name ed_diagname1 on ed_diagname1.concept_id = ed_diag1.value_coded and ed_diagname1.locale = 'fr' and ed_diagname1.voided = 0 and ed_diagname1.locale_preferred=1
+left outer join obs ed_diag2 on ed_diag2.encounter_id = ed.encounter_id and ed_diag2.voided = 0 and ed_diag2.concept_id = diag.concept_id
+     and ed_diag2.obs_id <> ed_diag1.obs_id
+left outer join concept_name ed_diagname2 on ed_diagname2.concept_id = ed_diag2.value_coded and ed_diagname2.locale = 'fr' and ed_diagname2.voided = 0 and ed_diagname2.locale_preferred=1
+left outer join obs ed_diag3 on ed_diag3.encounter_id = ed.encounter_id and ed_diag3.voided = 0 and ed_diag3.concept_id = diag.concept_id
+     and ed_diag3.obs_id not in (ed_diag1.obs_id,ed_diag2.obs_id)
+left outer join concept_name ed_diagname3 on ed_diagname3.concept_id = ed_diag3.value_coded and ed_diagname3.locale = 'fr' and ed_diagname3.voided = 0 and ed_diagname3.locale_preferred=1
+left outer join obs ed_diag_nc on ed_diag_nc.encounter_id = ed.encounter_id and ed_diag_nc.voided = 0 and ed_diag_nc.concept_id = diag_nc.concept_id
+-- Diagnoses for Consult Note (bringing back 3 coded diagnoses, 1 non-coded)
+left outer join obs cons_diag1 on cons_diag1.encounter_id = ec.encounter_id and cons_diag1.voided = 0 and cons_diag1.concept_id = diag.concept_id
+left outer join concept_name cons_diagname1 on cons_diagname1.concept_id = cons_diag1.value_coded and cons_diagname1.locale = 'fr' and cons_diagname1.voided = 0 and cons_diagname1.locale_preferred=1
+left outer join obs cons_diag2 on cons_diag2.encounter_id = ec.encounter_id and cons_diag2.voided = 0 and cons_diag2.concept_id = diag.concept_id
+     and cons_diag2.obs_id <> cons_diag1.obs_id
+left outer join concept_name cons_diagname2 on cons_diagname2.concept_id = cons_diag2.value_coded and cons_diagname2.locale = 'fr' and cons_diagname2.voided = 0 and cons_diagname2.locale_preferred=1
+left outer join obs cons_diag3 on cons_diag3.encounter_id = ec.encounter_id and cons_diag3.voided = 0 and cons_diag3.concept_id = diag.concept_id
+     and cons_diag3.obs_id not in (cons_diag1.obs_id,cons_diag2.obs_id)
+left outer join concept_name cons_diagname3 on cons_diagname3.concept_id = cons_diag3.value_coded and cons_diagname3.locale = 'fr' and cons_diagname3.voided = 0 and cons_diagname3.locale_preferred=1
+left outer join obs cons_diag_nc on cons_diag_nc.encounter_id = ec.encounter_id and cons_diag_nc.voided = 0 and cons_diag_nc.concept_id = diag_nc.concept_id
 -- Straight Obs Joins
 INNER JOIN
 (select o.encounter_id,
