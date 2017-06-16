@@ -120,7 +120,8 @@ max(CASE when crs.name = 'PIH' and crt.code = 'B-HCG' then cnf.name end) 'Pregna
 max(CASE when crs.name = 'PIH' and crt.code = 'SERUM GLUCOSE' then o.value_numeric end) 'Glucose_Value',
 max(CASE when crs.name = 'PIH' and crt.code = 'Paracetamol dose (mg)' then o.value_numeric end) 'Paracetamol_dose',
 group_concat(distinct CASE when crs.name = 'PIH' and crt.code = 'Emergency treatment' and cnf.name is not null then cnf.name
-                           when crs.name = 'PIH' and crt.code = 'Emergency treatment' and cnf.name is null then cne.name end order by cne.name separator ',') 'Treatment_Administered'
+                           when crs.name = 'PIH' and crt.code = 'Emergency treatment' and cnf.name is null then cne.name end order by cne.name separator ',') 'Treatment_Administered',
+max(CASE when crs.name = 'PIH' and crt.code = '3077' then round(o.value_numeric/60,0) end) 'Wait_Minutes' 
 from encounter e, concept_reference_map crm,  concept_reference_term crt, concept_reference_source crs, obs o
 -- the following will pull in French and English names of the coded answers.  The above CASE logic will show French if present and otherwise English
 LEFT OUTER JOIN concept_name cnf on o.value_coded = cnf.concept_id and cnf.locale = 'fr' and cnf.locale_preferred = '1'  and cnf.voided = 0
