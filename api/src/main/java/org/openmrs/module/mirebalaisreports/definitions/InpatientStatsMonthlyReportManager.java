@@ -42,7 +42,7 @@ import java.util.Properties;
  * Monthly version of the inpatient stats report. This uses the underlying DSD from the daily version of this report
  */
 @Component
-public class InpatientStatsMonthlyReportManager extends BaseMirebalaisReportManager {
+public class InpatientStatsMonthlyReportManager extends BasePihReportManager {
 
     @Autowired
     protected AllDefinitionLibraries libraries;

@@ -18,10 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 /**
- * Includes helpful methods for dealing with Mirebalais Metadata (this class exists so that someday we might consider
+ * Includes helpful methods for dealing with PIH Metadata (this class exists so that someday we might consider
  * moving BaseReportManager into a shared refapp module)
  */
-public abstract class BaseMirebalaisReportManager extends BaseReportManager {
+public abstract class BasePihReportManager extends BaseReportManager {
 
     public static final String SQL_DIR = "org/openmrs/module/mirebalaisreports/sql/";
 
@@ -49,6 +49,10 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
     }
 
     protected ReportDefinition constructSqlReportDefinition(String sqlFileName) {
+        return constructSqlReportDefinition(sqlFileName, null);
+    }
+
+    protected ReportDefinition constructSqlReportDefinition(String sqlFileName, Map<String,Object> mappings) {
         ReportDefinition rd = new ReportDefinition();
         rd.setName(getMessageCodePrefix() + "name");
         rd.setDescription(getMessageCodePrefix() + "description");
@@ -62,8 +66,6 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + sqlFileName + ".sql");
         sqlDsd.setSqlQuery(applyMetadataReplacements(sql));
         sqlDsd.addParameters(getParameters());
-
-        Map<String, Object> mappings = getStartAndEndDateMappings();
 
         rd.addDataSetDefinition(sqlFileName, sqlDsd, mappings);
 
@@ -188,6 +190,9 @@ public abstract class BaseMirebalaisReportManager extends BaseReportManager {
         sql = replace(sql, "radiologyVascular", mrp.getVascularRadiologyExamSetConcept());
         sql = replace(sql, "radiologyAbdomenPelvis", mrp.getAbdomenAndPelvisRadiologyExamSetConcept());
         sql = replace(sql, "radiologyMusculoskeletal", mrp.getMusculoskeletalNonCranialAndSpinalRadiologyExamSetConcept());
+
+        // programs
+        sql = replace(sql, "zikaProgram", mrp.getZikaProgram());
 
         log.debug("Replacing metadata references complete.");
         return sql;

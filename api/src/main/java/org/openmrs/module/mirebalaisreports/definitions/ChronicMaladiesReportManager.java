@@ -14,11 +14,11 @@ import java.util.List;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.MONITORING;
 
 @Component
-public class NewDiseaseEpisodesReportManager extends BasePihReportManager {
+public class ChronicMaladiesReportManager extends BasePihReportManager {
 
-    private static final String EXCEL_TEMPLATE_NAME = "NewDiseaseEpisodesReportTemplate";
+    private static final String EXCEL_TEMPLATE_NAME = "ChronicMaladiesReportTemplate";
 
-    private static final String REPEATING_SECTION = "sheet:1,row:9,dataset:newDiseaseEpisodes";
+    private static final String REPEATING_SECTION = "sheet:1,row:7,dataset:chronicMaladies";
 
     @Override
     public BaseReportManager.Category getCategory() {
@@ -33,17 +33,16 @@ public class NewDiseaseEpisodesReportManager extends BasePihReportManager {
     @Override
     public Integer getOrder() {
         return REPORTING_MONITORING_REPORTS_ORDER.indexOf(getUuid());
-
     }
 
     @Override
     public String getName() {
-        return "newDiseaseEpisodes";
+        return "chronicMaladies";
     }
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.NEW_DISEASE_EPISODES_REPORTING_DEFINITION_UUID;
+        return MirebalaisReportsProperties.CHRONIC_MALADIES_REPORTING_DEFINITION_UUID;
     }
 
     @Override
@@ -65,8 +64,4 @@ public class NewDiseaseEpisodesReportManager extends BasePihReportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
         return Arrays.asList(xlsReportDesign(reportDefinition, EXCEL_TEMPLATE_NAME, REPEATING_SECTION));
     }
-
-
-
-
 }

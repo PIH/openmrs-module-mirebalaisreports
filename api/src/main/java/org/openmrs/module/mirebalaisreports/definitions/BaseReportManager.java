@@ -66,6 +66,8 @@ public abstract class BaseReportManager implements ReportManager {
         MirebalaisReportsProperties.INPATIENT_STATS_MONTHLY_REPORT_DEFINITION_UUID);
 
     public static final List<String> REPORTING_DATA_EXPORT_REPORTS_ORDER = Arrays.asList(
+            MirebalaisReportsProperties.PROGRAMS_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.ZIKA_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.RELATIONSHIPS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.LQAS_DIAGNOSES_REPORT_DEFINITION_UUID,
@@ -77,7 +79,8 @@ public abstract class BaseReportManager implements ReportManager {
             MirebalaisReportsProperties.NEW_DISEASE_EPISODES_REPORTING_DEFINITION_UUID,
             MirebalaisReportsProperties.ACCOUNTING_REPORTING_DEFINITION_UUID,
             MirebalaisReportsProperties.VISIT_REGISTRY_REPORTING_DEFINITION_UUID,
-            MirebalaisReportsProperties.MORBIDITY_REGISTRY_REPORTING_DEFINITION_UUID
+            MirebalaisReportsProperties.MORBIDITY_REGISTRY_REPORTING_DEFINITION_UUID,
+            MirebalaisReportsProperties.CHRONIC_MALADIES_REPORTING_DEFINITION_UUID
     );
 
 	/**
@@ -95,6 +98,8 @@ public abstract class BaseReportManager implements ReportManager {
     public List<ConfigDescriptor.Site> getSites() {
         return Collections.emptyList();
     }
+
+    public String getComponent() { return null; }  // null==don't restrict by component
 
 	@Override
 	public String getName() {

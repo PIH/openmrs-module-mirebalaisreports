@@ -14,7 +14,7 @@ import java.util.List;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.MONITORING;
 
 @Component
-public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
+public class WeeklyMonitoringReportManager extends BasePihReportManager {
 
     private static final String EXCEL_TEMPLATE_NAME = "WeeklyMonitoringReportTemplate";
 
@@ -57,7 +57,7 @@ public class WeeklyMonitoringReportManager extends BaseMirebalaisReportManager {
 
     @Override
     public ReportDefinition constructReportDefinition() {
-        return constructSqlReportDefinition(getName());
+        return constructSqlReportDefinition(getName(), getStartAndEndDateMappings());
     }
 
     @Override

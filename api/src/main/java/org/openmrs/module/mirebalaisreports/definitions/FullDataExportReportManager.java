@@ -78,7 +78,7 @@ import java.util.Map;
  * Responsible for defining the full data export report
  * @see FullDataExportBuilder
  */
-public class FullDataExportReportManager extends BaseMirebalaisReportManager {
+public class FullDataExportReportManager extends BasePihReportManager {
 
 	//***** CONSTANTS *****
 

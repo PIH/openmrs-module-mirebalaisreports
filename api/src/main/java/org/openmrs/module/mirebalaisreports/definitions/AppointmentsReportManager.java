@@ -41,7 +41,7 @@ import java.util.Map;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
 
 @Component
-public class AppointmentsReportManager extends BaseMirebalaisReportManager {
+public class AppointmentsReportManager extends BasePihReportManager {
 
     @Autowired
     private AllDefinitionLibraries libraries;

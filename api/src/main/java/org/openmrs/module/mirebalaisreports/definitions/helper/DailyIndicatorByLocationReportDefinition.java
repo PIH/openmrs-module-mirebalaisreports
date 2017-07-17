@@ -4,7 +4,7 @@ import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
-import org.openmrs.module.mirebalaisreports.definitions.BaseMirebalaisReportManager;
+import org.openmrs.module.mirebalaisreports.definitions.BasePihReportManager;
 import org.openmrs.module.pihcore.metadata.core.Locations;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  *
  */
-public abstract class DailyIndicatorByLocationReportDefinition extends BaseMirebalaisReportManager {
+public abstract class DailyIndicatorByLocationReportDefinition extends BasePihReportManager {
 
     public static final String MAP_DAY_TO_START_AND_END_DATE = "startDate=${day},endDate=${day+1d-1ms}";
 

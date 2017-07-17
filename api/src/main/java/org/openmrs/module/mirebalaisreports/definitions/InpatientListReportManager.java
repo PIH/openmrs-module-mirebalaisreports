@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class InpatientListReportManager extends BaseMirebalaisReportManager {
+public class InpatientListReportManager extends BasePihReportManager {
 
     @Override
     public List<ConfigDescriptor.Site> getSites() {

@@ -16,7 +16,7 @@ import java.util.List;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
 
 @Component
-public class UsersAndProvidersReportManager extends BaseMirebalaisReportManager {
+public class UsersAndProvidersReportManager extends BasePihReportManager {
 
     @Override
     public Category getCategory() {

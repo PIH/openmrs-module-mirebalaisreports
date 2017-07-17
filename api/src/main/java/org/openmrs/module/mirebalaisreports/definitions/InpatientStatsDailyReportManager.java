@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class InpatientStatsDailyReportManager extends BaseMirebalaisReportManager {
+public class InpatientStatsDailyReportManager extends BasePihReportManager {
 
     @Autowired
     private AllDefinitionLibraries libraries;

@@ -14,7 +14,7 @@ import java.util.List;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.MONITORING;
 
 @Component
-public class MorbidityRegisterReportManager extends BaseMirebalaisReportManager{
+public class MorbidityRegisterReportManager extends BasePihReportManager {
 
     private static final String EXCEL_TEMPLATE_NAME = "MorbidityRegisterTemplate";
 
@@ -57,7 +57,7 @@ public class MorbidityRegisterReportManager extends BaseMirebalaisReportManager{
 
     @Override
     public ReportDefinition constructReportDefinition() {
-        return constructSqlReportDefinition(getName());
+        return constructSqlReportDefinition(getName(), getStartAndEndDateMappings());
     }
 
     @Override

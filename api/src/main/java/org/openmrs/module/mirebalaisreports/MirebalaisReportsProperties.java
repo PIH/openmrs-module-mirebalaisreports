@@ -23,7 +23,9 @@ import org.openmrs.Location;
 import org.openmrs.OrderType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
+import org.openmrs.Program;
 import org.openmrs.Provider;
+import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
@@ -31,6 +33,7 @@ import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
 import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.haiti.mirebalais.PihHaitiPrograms;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,6 +51,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     @Autowired
     private DispositionService dispositionService;
+
+    @Autowired
+    protected ProgramWorkflowService programWorkflowService;
+
 
     //***** DATE FORMATS ******
     public static final String DATE_FORMAT = "dd MMM yyyy";
@@ -103,6 +110,9 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ACCOUNTING_REPORTING_DEFINITION_UUID = "e0c7b080-d63f-414d-92d2-05078490ea89";
     public static final String MORBIDITY_REGISTRY_REPORTING_DEFINITION_UUID = "9d77c3bf-19c8-484d-af94-e2f2bb487797";
     public static final String VISIT_REGISTRY_REPORTING_DEFINITION_UUID = "4f4dbafc-eda6-4910-b9aa-b7be62bef49f";
+    public static final String PROGRAMS_REPORT_DEFINITION_UUID = "345556d3-0975-49c5-9123-e712f8ccbe99";
+    public static final String ZIKA_REPORT_DEFINITION_UUID = "c6bafa69-1745-4838-9171-cffaacf8fb1d";
+    public static final String CHRONIC_MALADIES_REPORTING_DEFINITION_UUID = "66a975d4-790e-4348-9a88-8dfbcf551afc";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
@@ -814,6 +824,11 @@ public class MirebalaisReportsProperties extends EmrProperties {
     // ****** ORDER TYPES *********
     public OrderType getTestOrderType() {
         return orderService.getOrderTypeByUuid(OrderTypes.TEST_ORDER.uuid());
+    }
+
+    // ****** PROGRAMS ************
+    public Program getZikaProgram() {
+        return programWorkflowService.getProgramByUuid(PihHaitiPrograms.ZIKA.uuid());
     }
 
     /**

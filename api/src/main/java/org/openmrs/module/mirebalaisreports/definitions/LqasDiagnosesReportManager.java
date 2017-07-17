@@ -23,7 +23,7 @@ import java.util.Map;
  * concordance of diagnoses in the dossier with the paper record available in the HUM system.
  */
 @Component
-public class LqasDiagnosesReportManager extends BaseMirebalaisReportManager {
+public class LqasDiagnosesReportManager extends BasePihReportManager {
 
     public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
