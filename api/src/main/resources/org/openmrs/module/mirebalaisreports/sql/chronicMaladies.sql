@@ -1,4 +1,4 @@
-select maladies, newold "nouveaux_anciens",
+select sort_order, maladies, newold "nouveaux_anciens",
 nullif(sum(L10),0) "<10ans",
 nullif(sum(L15),0) "10-14ans",
 nullif(sum(L25),0) "15-24ans",
@@ -6,41 +6,41 @@ nullif(sum(L50),0) "25-49ans",
 nullif(sum(G50),0) "50ans_et+",
 nullif((sum(L10) + sum(L15) + sum(L25) + sum(L50) + sum(G50)),0) "Total_des_cas_référés"
 from
-(select 'Diabète' as maladies, 'nouveaux' as newold
+(select 1 as sort_order,'Diabète' as maladies, 'nouveaux' as newold
 UNION ALL
-select 'Diabète' as maladies, 'anciens' as newold
+select 2 as sort_order,'Diabète' as maladies, 'anciens' as newold
 UNION ALL
-select 'HTA' as maladies, 'nouveaux' as newold
+select 3 as sort_order,'HTA' as maladies, 'nouveaux' as newold
 UNION ALL
-select 'HTA' as maladies, 'anciens' as newold
+select 4 as sort_order,'HTA' as maladies, 'anciens' as newold
 UNION ALL
-select 'Cancer du col de l''utérus' as maladies, 'nouveaux' as newold
+select 5 as sort_order,'Cancer du col de l''utérus' as maladies, 'nouveaux' as newold
 UNION ALL
-select 'Cancer du col de l''utérus' as maladies, 'anciens' as newold
+select 6 as sort_order,'Cancer du col de l''utérus' as maladies, 'anciens' as newold
 UNION ALL
-select 'cancer du sein' as maladies, 'nouveaux' as newold
+select 7 as sort_order,'cancer du sein' as maladies, 'nouveaux' as newold
 UNION ALL
-select 'cancer du sein' as maladies, 'anciens' as newold
+select 8 as sort_order,'cancer du sein' as maladies, 'anciens' as newold
 UNION ALL
-select 'cancer de la prostate' as maladies, 'nouveaux' as newold
+select 9 as sort_order,'cancer de la prostate' as maladies, 'nouveaux' as newold
 UNION ALL
-select 'cancer de la prostate' as maladies, 'anciens' as newold
+select 10 as sort_order,'cancer de la prostate' as maladies, 'anciens' as newold
 UNION ALL
-select 'Obésité','nouveaux'
+select 11 as sort_order,'Obésité','nouveaux'
 UNION ALL
-select 'Obésité','anciens'
+select 12 as sort_order,'Obésité','anciens'
 UNION ALL
-select 'Glaucome','nouveaux'
+select 13 as sort_order,'Glaucome','nouveaux'
 UNION ALL
-select 'Glaucome','anciens'
+select 14 as sort_order,'Glaucome','anciens'
 UNION ALL
-select 'Cataracte','nouveaux'
+select 15 as sort_order,'Cataracte','nouveaux'
 UNION ALL
-select 'Cataracte','anciens'
+select 16 as sort_order,'Cataracte','anciens'
 UNION ALL
-select 'Insuffisance rénale','nouveaux'
+select 17 as sort_order,'Insuffisance rénale','nouveaux'
 UNION ALL
-select 'Insuffisance rénale','anciens'
+select 18 as sort_order,'Insuffisance rénale','anciens'
 ) dx
 LEFT OUTER JOIN
 (
@@ -121,4 +121,5 @@ and e_vitals.encounter_type in (select et.encounter_type_id from encounter_type 
 order by Diagnosis desc
 ) tab on dx.maladies = tab.Diagnosis and dx.newold = tab.recurrent
 group by maladies, newold
+order by sort_order
 ;
