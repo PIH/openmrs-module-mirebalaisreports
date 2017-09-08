@@ -459,7 +459,7 @@ public class FullDataExportReportManager extends BasePihReportManager {
 
         // --Most recent Numero Dossier
         // LEFT OUTER JOIN (SELECT patient_id, identifier FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 ORDER BY date_created DESC) nd ON p.patient_id = nd.patient_id
-        dsd.addColumn("numero_dossier", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentDossierNumber.identifier"), "");
+        dsd.addColumn("numero_dossier", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.allDossierNumbers.identifier"), "");
 
         // --Number of Numero Dossiers
         // LEFT OUTER JOIN (SELECT patient_id, COUNT(patient_identifier_id) num FROM patient_identifier WHERE identifier_type = 4 AND voided = 0 GROUP BY patient_id) numnd ON p.patient_id = numnd.patient_id
