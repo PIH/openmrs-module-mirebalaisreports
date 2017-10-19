@@ -9,6 +9,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.contrib.testdata.TestDataManager;
+import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.deploy.bundle.haiti.PihHaitiProgramsBundle;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.Locations;
@@ -35,6 +36,9 @@ public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
 
     @Autowired
     private ProgramWorkflowService programWorkflowService;
+
+    @Autowired
+    private MirebalaisReportsProperties mirebalaisReportsProperties;
 
     @Autowired
     private HIVProgramSummaryReportManager manager;
@@ -78,6 +82,14 @@ public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
         // third patient in range, but in Zika program
         testData.patientProgram().patient(p3).program(zikaProgram).dateEnrolled(DateUtil.parseDate("2017-09-05", "yyyy-MM-dd")).save();
 
+        // first patient tests negative for HIV, second patient tests positive, 3rd patient tests positive but out of query range
+        testData.obs().person(p1).concept(mirebalaisReportsProperties.getHivTestResultConcept()).value(mirebalaisReportsProperties.getNegativeConcept())
+                .obsDatetime(DateUtil.parseDate("2017-09-05", "yyyy-MM-dd")).save();
+        testData.obs().person(p2).concept(mirebalaisReportsProperties.getHivTestResultConcept()).value(mirebalaisReportsProperties.getPositiveConcept())
+                .obsDatetime(DateUtil.parseDate("2017-09-05", "yyyy-MM-dd")).save();
+        testData.obs().person(p3).concept(mirebalaisReportsProperties.getHivTestResultConcept()).value(mirebalaisReportsProperties.getPositiveConcept())
+                .obsDatetime(DateUtil.parseDate("2017-08-05", "yyyy-MM-dd")).save();
+
         EvaluationContext context = new EvaluationContext();
         context.addParameterValue("startDate", DateUtil.parseDate("2017-09-01", "yyyy-MM-dd"));
         context.addParameterValue("endDate", DateUtil.parseDate("2017-10-01", "yyyy-MM-dd"));
@@ -90,6 +102,8 @@ public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
         DataSetRow row = i.next();
         assertFalse(i.hasNext());
         assertThat((Cohort) row.getColumnValue("newEnrollmentsInHIV"), isCohortWithExactlyMembers(p1));
+        assertThat((Cohort) row.getColumnValue("testedForHIV"), isCohortWithExactlyMembers(p1,p2));
+        assertThat((Cohort) row.getColumnValue("testedPositiveForHIV"), isCohortWithExactlyMembers(p2));
 
     }
 

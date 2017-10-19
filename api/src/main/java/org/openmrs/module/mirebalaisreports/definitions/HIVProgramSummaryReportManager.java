@@ -3,7 +3,9 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.PihHaitiPrograms;
+import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
+import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -22,6 +24,9 @@ public class HIVProgramSummaryReportManager extends BasePihReportManager {
 
     @Autowired
     private ProgramWorkflowService programWorkflowService;
+
+    @Autowired
+    private MirebalaisReportsProperties mirebalaisReportsProperties;
 
     @Override
     public String getUuid() {
@@ -61,11 +66,27 @@ public class HIVProgramSummaryReportManager extends BasePihReportManager {
         CohortCrossTabDataSetDefinition cohortDsd = new CohortCrossTabDataSetDefinition();
         cohortDsd.setParameters(getStartAndEndDateParameters());
 
+        // Patients tested for HIV
+        CodedObsCohortDefinition testedForHIV = new CodedObsCohortDefinition();
+        testedForHIV.setQuestion(mirebalaisReportsProperties.getHivTestResultConcept());
+        testedForHIV.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
+        testedForHIV.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
+        cohortDsd.addColumn("testedForHIV", map(testedForHIV, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+        // Patients tested positive for HIV
+        CodedObsCohortDefinition testedPositiveForHIV = new CodedObsCohortDefinition();
+        testedPositiveForHIV.setQuestion(mirebalaisReportsProperties.getHivTestResultConcept());
+        testedPositiveForHIV.setValueList(Collections.singletonList(mirebalaisReportsProperties.getPositiveConcept()));
+        testedPositiveForHIV.setOperator(SetComparator.IN);
+        testedPositiveForHIV.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
+        testedPositiveForHIV.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
+        cohortDsd.addColumn("testedPositiveForHIV", map(testedPositiveForHIV, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+        // New Enrollments in HIV program in interval
         ProgramEnrollmentCohortDefinition enrolledInHIV = new ProgramEnrollmentCohortDefinition();
         enrolledInHIV.setPrograms(Collections.singletonList(programWorkflowService.getProgramByUuid(PihHaitiPrograms.HIV.uuid())));
         enrolledInHIV.addParameter(new Parameter("enrolledOnOrAfter", "On or after", Date.class));
         enrolledInHIV.addParameter(new Parameter("enrolledOnOrBefore", "On or before", Date.class));
-
         cohortDsd.addColumn("newEnrollmentsInHIV", map(enrolledInHIV, "enrolledOnOrAfter=${startDate},enrolledOnOrBefore=${endDate}"));
 
         return cohortDsd;

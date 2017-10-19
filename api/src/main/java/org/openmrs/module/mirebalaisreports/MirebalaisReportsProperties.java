@@ -755,9 +755,29 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getConceptByUuid(TYPE_OF_PATIENT_CONCEPT_UUID);
     }
 
+    public static final String HIV_TEST_RESULT_CONCEPT_MAPPING = "PIH:RESULT OF HIV TEST";
+
+    public Concept getHivTestResultConcept() { return getConceptByMapping(HIV_TEST_RESULT_CONCEPT_MAPPING); }
+
+    public static final String POSITIVE_CONCEPT_MAPPING = "CIEL:POSITIVE";
+
+    public Concept getPositiveConcept() { return getConceptByMapping(POSITIVE_CONCEPT_MAPPING); }
+
+    public static final String NEGATIVE_CONCEPT_MAPPING = "CIEL:NEGATIVE";
+
+    public Concept getNegativeConcept() { return getConceptByMapping(NEGATIVE_CONCEPT_MAPPING); }
+
 	private Concept getConceptByUuid(String uuid) {
 		return conceptService.getConceptByUuid(uuid);
 	}
+
+    private Concept getConceptByMapping(String mapping) {
+        int index = mapping.indexOf(":");
+        String mappingCode = mapping.substring(0, index).trim();
+        String conceptCode = mapping.substring(index + 1, mapping.length()).trim();
+        Concept c = conceptService.getConceptByMapping(conceptCode, mappingCode);
+        return c;
+    }
 
 
     // ****** ENCOUNTER ROLES ****

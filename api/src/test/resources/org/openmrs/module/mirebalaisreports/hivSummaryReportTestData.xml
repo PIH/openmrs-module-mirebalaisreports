@@ -15,4 +15,17 @@
     <!-- Zika Program Outcome -->
     <concept concept_id="9993560" retired="0" datatype_id="2" class_id="21" is_set="0" creator="2" date_created="2017-05-24 12:17:22.0" changed_by="2" date_changed="2017-10-05 11:10:07.0" uuid="e39310c1-2936-4395-83a5-f4d49061a117" />
 
+    <!-- HIV Test result + mapping (concept reference sources installed by coreMetadata... 3=PIH, 14=CIEL) -->
+    <concept concept_id="9992812" retired="0" datatype_id="2" class_id="1" is_set="0" creator="2" date_created="2007-05-12 14:04:56.0" changed_by="2" date_changed="2017-10-05 11:09:11.0" uuid="3ce17cec-26fe-102b-80cb-0017a47871b2" />
+    <concept_reference_term concept_reference_term_id="9999261" concept_source_id="3" code="RESULT OF HIV TEST" creator="2" date_created="2010-11-23 19:00:00.0" date_changed="2017-10-05 11:09:11.0" changed_by="2" retired="0" uuid="aebfbd55-8154-3267-bd14-8e9044795276" />
+    <concept_reference_map concept_map_id="9999952" concept_reference_term_id="9999261" concept_map_type_id="1" creator="2" date_created="2010-11-24 07:49:58.0" concept_id="9992812" changed_by="2" date_changed="2017-10-05 11:09:11.0" uuid="7586fd96-4943-102e-96e9-000c29c2a5d7" />
+    <!-- Positive answer + mapping (concept reference sources installed by coreMetadata... 3=PIH, 14=CIEL) -->
+    <concept concept_id="9992768" retired="0" datatype_id="4" class_id="11" is_set="0" creator="2" date_created="2003-12-31 19:00:00.0" changed_by="2" date_changed="2017-10-05 11:09:11.0" uuid="3cd3a7a2-26fe-102b-80cb-0017a47871b2" />
+    <concept_reference_term concept_reference_term_id="9999137" concept_source_id="14" code="POSITIVE" creator="2" date_created="2010-11-23 19:00:00.0" date_changed="2017-10-05 11:09:11.0" changed_by="2" retired="0" uuid="fd3ec7d5-c4d8-369d-8289-6fe3a1f3af0c" />
+    <concept_reference_map concept_map_id="9999953" concept_reference_term_id="9999137" concept_map_type_id="1" creator="2" date_created="2010-11-24 07:49:58.0" concept_id="9992768" changed_by="2" date_changed="2017-10-05 11:09:11.0" uuid="8886fd96-4943-102e-96e9-000c29c2a5d7" />
+    <!-- Negative answer + mapping (concept reference sources installed by coreMetadata... 3=PIH, 14=CIEL) -->
+    <concept concept_id="9992761" retired="0" datatype_id="4" class_id="11" is_set="0" creator="2" date_created="2003-12-31 19:00:00.0" changed_by="2" date_changed="2017-10-05 11:09:11.0" uuid="3cd28732-26fe-102b-80cb-0017a47871b2" />
+    <concept_reference_term concept_reference_term_id="9999113" concept_source_id="14" code="NEGATIVE" creator="2" date_created="2010-11-23 19:00:00.0" date_changed="2017-10-05 11:09:11.0" changed_by="2" retired="0" uuid="85d6acb1-980d-32fc-a552-5d5bf1b8135b" />
+    <concept_reference_map concept_map_id="9999954" concept_reference_term_id="9999113" concept_map_type_id="1" creator="2" date_created="2010-11-24 07:49:58.0" concept_id="9992761" changed_by="2" date_changed="2017-10-05 11:09:11.0" uuid="9986fd96-4943-102e-96e9-000c29c2a5d7" />
+
 </dataset>
