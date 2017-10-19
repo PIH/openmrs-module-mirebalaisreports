@@ -2,7 +2,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.PihHaitiPrograms;
 import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefinition;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -24,15 +22,6 @@ public class HIVProgramSummaryReportManager extends BasePihReportManager {
 
     @Autowired
     private ProgramWorkflowService programWorkflowService;
-
-    // TODO fix category and country, add "order"
-    @Override
-    public Category getCategory() {
-        return Category.OVERVIEW;
-    }
-
-    @Override
-    public List<ConfigDescriptor.Country> getCountries() { return Arrays.asList(ConfigDescriptor.Country.HAITI); }
 
     @Override
     public String getUuid() {
