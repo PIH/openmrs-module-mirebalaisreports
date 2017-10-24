@@ -64,7 +64,7 @@
         <appuiVersion>1.5.1</appuiVersion>
         <dispensingVersion>1.0</dispensingVersion>
         <uicommonsVersion>1.9-SNAPSHOT</uicommonsVersion>
-        <registrationcoreVersion>1.7.2-SNAPSHOT</registrationcoreVersion>
+        <registrationcoreVersion>1.8.0</registrationcoreVersion>
         <registrationappVersion>1.10.0-SNAPSHOT</registrationappVersion>
         <radiologyappVersion>1.2</radiologyappVersion>
         <coreappsVersion>1.16.0</coreappsVersion>
