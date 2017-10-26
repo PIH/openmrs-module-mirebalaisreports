@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+// TODO not currently used and may be abandoned
+
 @Component
 public class HIVProgramSummaryReportManager extends BasePihReportManager {
 
