@@ -2,7 +2,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.PihHaitiPrograms;
+import org.openmrs.module.pihcore.metadata.core.program.HIVProgram;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
 import org.openmrs.module.reporting.common.SetComparator;
@@ -86,7 +86,7 @@ public class HIVProgramSummaryReportManager extends BasePihReportManager {
 
         // New Enrollments in HIV program in interval
         ProgramEnrollmentCohortDefinition enrolledInHIV = new ProgramEnrollmentCohortDefinition();
-        enrolledInHIV.setPrograms(Collections.singletonList(programWorkflowService.getProgramByUuid(PihHaitiPrograms.HIV.uuid())));
+        enrolledInHIV.setPrograms(Collections.singletonList(programWorkflowService.getProgramByUuid(HIVProgram.HIV.uuid())));
         enrolledInHIV.addParameter(new Parameter("enrolledOnOrAfter", "On or after", Date.class));
         enrolledInHIV.addParameter(new Parameter("enrolledOnOrBefore", "On or before", Date.class));
         cohortDsd.addColumn("newEnrollmentsInHIV", map(enrolledInHIV, "enrolledOnOrAfter=${startDate},enrolledOnOrBefore=${endDate}"));

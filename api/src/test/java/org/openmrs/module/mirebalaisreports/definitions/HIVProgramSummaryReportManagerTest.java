@@ -10,11 +10,13 @@ import org.openmrs.Program;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.deploy.bundle.haiti.PihHaitiProgramsBundle;
+import org.openmrs.module.pihcore.deploy.bundle.core.program.HIVProgramBundle;
+import org.openmrs.module.pihcore.deploy.bundle.core.program.ZikaProgramBundle;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.Locations;
+import org.openmrs.module.pihcore.metadata.core.program.HIVProgram;
+import org.openmrs.module.pihcore.metadata.core.program.ZikaProgram;
 import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.PihHaitiPrograms;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -44,7 +46,10 @@ public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
     private HIVProgramSummaryReportManager manager;
 
     @Autowired
-    private PihHaitiProgramsBundle programsBundle;
+    private HIVProgramBundle hivProgramBundle;
+
+    @Autowired
+    private ZikaProgramBundle zikaProgramBundle;
 
     @Autowired
     TestDataManager testData;
@@ -55,7 +60,8 @@ public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
     @Before
     public void before() throws Exception {
         executeDataSet("org/openmrs/module/mirebalaisreports/hivSummaryReportTestData.xml");
-        deployService.installBundle(programsBundle);
+        deployService.installBundle(zikaProgramBundle);
+        deployService.installBundle(hivProgramBundle);
     }
 
     @Test
@@ -64,8 +70,8 @@ public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
         PatientIdentifierType zlemrId = Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID);
         Location unknown = Metadata.lookup(Locations.UNKNOWN);
 
-        Program hivProgram = programWorkflowService.getProgramByUuid(PihHaitiPrograms.HIV.uuid());
-        Program zikaProgram = programWorkflowService.getProgramByUuid(PihHaitiPrograms.ZIKA.uuid());
+        Program hivProgram = programWorkflowService.getProgramByUuid(HIVProgram.HIV.uuid());
+        Program zikaProgram = programWorkflowService.getProgramByUuid(ZikaProgram.ZIKA.uuid());
 
         // create three test patients (stolen from Daily Clinical Encounters test)
         p1 = testData.patient().name("Mary", "Rodriguez").gender("F").birthdate("1946-05-26", false).dateCreated("2013-10-01").identifier(zlemrId, "Y2ARM5", unknown).save();

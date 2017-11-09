@@ -32,8 +32,8 @@ import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
+import org.openmrs.module.pihcore.metadata.core.program.ZikaProgram;
 import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.PihHaitiPrograms;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -849,7 +849,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     // ****** PROGRAMS ************
     public Program getZikaProgram() {
-        return programWorkflowService.getProgramByUuid(PihHaitiPrograms.ZIKA.uuid());
+        return programWorkflowService.getProgramByUuid(ZikaProgram.ZIKA.uuid());
     }
 
     /**
