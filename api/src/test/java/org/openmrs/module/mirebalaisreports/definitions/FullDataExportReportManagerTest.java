@@ -357,12 +357,12 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         assertThat(Double.valueOf((String) row.getColumnValue("amount")), is(60.0));
         assertThat((String) row.getColumnValue("instructions"), is("some instructions"));
         assertThat((String) row.getColumnValue("patientIdentifier"), is("2AA00V"));
-        assertThat((String) row.getColumnValue("dispensedLocation"), is("Mirebalais"));
+        assertThat((String) row.getColumnValue("dispensedLocation"), is("Hôpital Universitaire de Mirebalais"));
         assertThat((String) row.getColumnValue("dispensedDatetime"), is("30 Aug 2013 10:11 AM"));
         assertThat((String) row.getColumnValue("dispensedBy"), is(dispensedBy.getName()));
         assertThat((String) row.getColumnValue("prescribedBy"), is(prescribedBy.getName()));
         assertThat((String) row.getColumnValue("typeOfPrescription"), is("Discharge"));
-        assertThat((String) row.getColumnValue("locationOfPrescription"), is("Mirebalais"));
+        assertThat((String) row.getColumnValue("locationOfPrescription"), is("Hôpital Universitaire de Mirebalais"));
     }
 
     private void setUpPatientsBasedOnCoreMetadata() {
