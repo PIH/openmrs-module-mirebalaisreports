@@ -90,7 +90,10 @@ public class FullDataExportBuilder {
             }
             if (config.isComponentEnabled(Components.RADIOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "radiologydataexport",
-                        Arrays.asList("radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters", "radiologyConsolidated")));
+                        Arrays.asList("radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters")));
+                configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_CONSOIDATED_DATA_EXPORT_REPORT_DEFINITION_UUID, "radiologyconsolidateddataexport",
+                        Arrays.asList("radiologyConsolidated")));
+
             }
             if (config.isComponentEnabled(Components.SURGERY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID, "surgerydataexport",
