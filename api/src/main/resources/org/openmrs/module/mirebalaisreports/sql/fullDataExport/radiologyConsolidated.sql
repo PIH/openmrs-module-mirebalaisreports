@@ -16,36 +16,11 @@ CASE
 END AS anatomical_grouping,
 addr_section.user_generated_id as section_communale_CDC_ID,
 o.order_id,
-/*JAS information related to the completed study*/
-/*JAS time when study was completed in PACS */
-       (select obs_datetime from obs obstudy inner join encounter e2 on obstudy.encounter_id=e2.encounter_id where obstudy.order_id=o.order_id and obstudy.concept_id=627 and e2.voided=0) as date_completed, /*date of the completed study; concept 627=radiology study construct*/
-/*JAS name of the tech */
-       (select concat(family_name,', ',given_name)
-			from
-				((person_name pn_study inner join provider pr_study on pn_study.person_id=pr_study.person_id)
-                  inner join encounter_provider ep_study on pr_study.provider_id=ep_study.provider_id)
-				  inner join encounter e_study on ep_study.encounter_id=e_study.encounter_id
-			where
-				e_study.encounter_id=(
-					select obstudy2.encounter_id
-						from
-							obs obstudy2 inner join encounter e_for_obs on obstudy2.encounter_id=e_for_obs.encounter_id
-						where obstudy2.order_id=o.order_id and e_for_obs.voided=0 and obstudy2.concept_id=627)) as study_tech,
-
-/*JAS information related to the report*/
-/*JAS date of the report result; concept 632=radiology report construct. Use the latest report.*/
-	   (select obs_datetime
-               from obs obsrep
-               where obsrep.order_id=o.order_id and
-               obsrep.obs_id=(select max(obs_id) from obs obsrep2 where obsrep2.order_id=o.order_id and obsrep2.concept_id=632)) as date_reported,
-/*JAS provider who reported. Use the latest report.*/
-	   (select concat(given_name,' ',family_name) from
-               (person_name pn3 inner join provider pr3 on pn3.person_id=pr3.person_id)
-			   inner join encounter_provider ep3 on pr3.provider_id=ep3.provider_id
-               where encounter_id=(select max(encounter_id) from obs obstudy3 where obstudy3.order_id=o.order_id and obstudy3.concept_id=632)) as radiologist,
-/*JAS text of the report */
-	   (select value_text
-               from obs obsrep4 where obsrep4.encounter_id=(select max(encounter_id) from obs obsrep3 where obsrep3.order_id=o.order_id and obsrep3.concept_id=632) and obsrep4.concept_id=631) as report
+obsstudy.obs_datetime "date_completed",
+concat(pn_study.family_name,', ',pn_study.given_name) as study_tech,  
+obsreport.obs_datetime as date_reported,
+concat(pn_report.family_name,', ',pn_report.given_name) as radiologist, 
+report_comments.value_text as report
 FROM patient p /*Most recent ZL EMR ID*/
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 /*ZL EMR ID location*/
@@ -79,6 +54,22 @@ INNER JOIN orders o ON e.encounter_id = o.encounter_id AND o.voided = 0
 INNER JOIN concept_name ocn_en ON o.concept_id = ocn_en.concept_id AND ocn_en.voided = 0 AND ocn_en.locale = 'en'
 /*French order name*/
 LEFT OUTER JOIN concept_name ocn_fr ON o.concept_id = ocn_fr.concept_id AND ocn_fr.voided = 0 AND ocn_fr.locale = 'fr'
+/*Radiology study information*/
+LEFT OUTER JOIN obs obsstudy on obsstudy.order_id = o.order_id and obsstudy.voided = 0 and obsstudy.concept_id =  
+    (select concept_id from report_mapping where source= 'PIH' and code = 'Radiology study construct')
+LEFT OUTER JOIN encounter encstudy on encstudy.encounter_id = obsstudy.encounter_id and encstudy.voided = 0
+LEFT OUTER JOIN encounter_provider epr_study on epr_study.encounter_id = encstudy.encounter_id and epr_study.voided = 0
+LEFT OUTER JOIN provider pr_study on pr_study.provider_id = epr_study.provider_id and pr_study.retired = 0
+LEFT OUTER JOIN person_name pn_study on pn_study.person_id = pr_study.person_id and pn_study.voided = 0
+/*Radiology report information*/
+LEFT OUTER JOIN obs obsreport on obsreport.order_id = o.order_id and obsreport.voided = 0 and obsreport.concept_id = 
+    (select concept_id from report_mapping where source= 'PIH' and code = 'Radiology report construct')
+LEFT OUTER JOIN encounter encreport on encreport.encounter_id = obsreport.encounter_id and encreport.voided = 0
+LEFT OUTER JOIN encounter_provider epr_report on epr_report.encounter_id = encreport.encounter_id and epr_report.voided = 0
+LEFT OUTER JOIN provider pr_report on pr_report.provider_id = epr_report.provider_id and pr_report.retired = 0
+LEFT OUTER JOIN person_name pn_report on pn_report.person_id = pr_report.person_id and pn_report.voided = 0
+LEFT OUTER JOIN obs report_comments on report_comments.encounter_id = encreport.encounter_id and report_comments.voided = 0 and report_comments.concept_id  =
+     (select concept_id from report_mapping where source= 'PIH' and code = 'Radiology report comments')
 WHERE p.voided = 0
 /*Exclude test patients*/
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt AND voided = 0)
