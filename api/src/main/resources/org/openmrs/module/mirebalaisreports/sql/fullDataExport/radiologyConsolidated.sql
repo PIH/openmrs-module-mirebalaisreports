@@ -19,7 +19,7 @@ o.order_id,
 obsstudy.obs_datetime "date_completed",
 concat(pn_study.family_name,', ',pn_study.given_name) as study_tech,  
 obsreport.obs_datetime as date_reported,
-concat(pn_report.family_name,', ',pn_report.given_name) as radiologist, 
+concat(pn_report.given_name,' ',pn_report.family_name) as radiologist, 
 report_comments.value_text as report
 FROM patient p /*Most recent ZL EMR ID*/
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
