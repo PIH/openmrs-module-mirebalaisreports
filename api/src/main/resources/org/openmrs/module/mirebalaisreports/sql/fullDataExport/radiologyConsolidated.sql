@@ -22,7 +22,7 @@ obsreport.obs_datetime as date_reported,
 concat(pn_report.given_name,' ',pn_report.family_name) as radiologist, 
 report_comments.value_text as report
 FROM patient p /*Most recent ZL EMR ID*/
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = 5 AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 /*ZL EMR ID location*/
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
 /*Unknown patient*/
