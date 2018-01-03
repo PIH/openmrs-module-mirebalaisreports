@@ -31,8 +31,8 @@
 	</modules>
 
     <properties>
-        <openMRSVersion>1.10.6</openMRSVersion>
-        <openMRSwebVersion>1.10.6</openMRSwebVersion>
+        <openMRSVersion>1.11.9-SNAPSHOT</openMRSVersion>
+        <openMRSwebVersion>1.11.9-SNAPSHOT</openMRSwebVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <emrapiVersion>1.23.0</emrapiVersion>
@@ -155,7 +155,7 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.10</artifactId>
+            <artifactId>emrapi-api-1.11</artifactId>
             <version>${emrapiVersion}</version>
             <scope>provided</scope>
         </dependency>
