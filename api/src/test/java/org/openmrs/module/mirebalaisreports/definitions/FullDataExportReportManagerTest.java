@@ -306,21 +306,21 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         Drug someDrug = conceptService.getDrugByUuid("05ec820a-d297-44e3-be6e-698531d9dd3f");
 
         Obs medication = data.obs().person(patient).concept(dispensingProperties.getMedicationConcept()).obsDatetime(date)
-                .value(someMedication).value(someDrug).save();
+                .value(someMedication).value(someDrug).get();
         Obs dosage = data.obs().person(patient).concept(dispensingProperties.getDosageConcept()).obsDatetime(date)
-                .value(100).save();
+                .value(100).get();
         Obs dosageUnits = data.obs().person(patient).concept(dispensingProperties.getDosageUnitsConcept()).obsDatetime(date)
-                .value("mg").save();
+                .value("mg").get();
         Obs frequency = data.obs().person(patient).concept(dispensingProperties.getMedicationFrequencyConcept()).obsDatetime(date)
-                .value(someFrequency).save();
+                .value(someFrequency).get();
         Obs duration = data.obs().person(patient).concept(dispensingProperties.getMedicationDurationConcept()).obsDatetime(date)
-                .value(30).save();
+                .value(30).get();
         Obs durationUnits = data.obs().person(patient).concept(dispensingProperties.getMedicationDurationUnitsConcept()).obsDatetime(date)
-                .value(someDurationUnits).save();
+                .value(someDurationUnits).get();
         Obs amount = data.obs().person(patient).concept(dispensingProperties.getDispensedAmountConcept()).obsDatetime(date)
-                .value(60).save();
+                .value(60).get();
         Obs instructions = data.obs().person(patient).concept(dispensingProperties.getAdministrationInstructions()).obsDatetime(date)
-                .value("some instructions").save();
+                .value("some instructions").get();
 
         data.obs().person(patient).concept(dispensingProperties.getDispensingConstructConcept())
                 .obsDatetime(date).member(medication).member(dosage).member(dosageUnits).member(frequency)

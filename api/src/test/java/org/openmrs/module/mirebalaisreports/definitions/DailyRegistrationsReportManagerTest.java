@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyMembers;
+import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyMembers;
 
 @SkipBaseSetup
 public class DailyRegistrationsReportManagerTest extends BaseReportTest {

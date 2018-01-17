@@ -26,8 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 import static org.junit.Assert.assertThat;
-import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyIds;
-import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyMembers;
+import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyIds;
+import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyMembers;;
+
 
 @SkipBaseSetup
 public class DailyCheckInsReportManagerTest extends BaseReportTest {
