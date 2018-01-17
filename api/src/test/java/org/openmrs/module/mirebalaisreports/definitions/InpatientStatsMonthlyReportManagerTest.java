@@ -52,7 +52,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyIds;
+import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyIds;
 
 @SkipBaseSetup
 public class InpatientStatsMonthlyReportManagerTest extends BaseInpatientReportTest {

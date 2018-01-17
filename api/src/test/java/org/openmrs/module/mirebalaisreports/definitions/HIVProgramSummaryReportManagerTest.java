@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.openmrs.module.reporting.common.ReportingMatchers.isCohortWithExactlyMembers;
+import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyMembers;
 
 @SkipBaseSetup
 public class HIVProgramSummaryReportManagerTest extends BaseReportTest {

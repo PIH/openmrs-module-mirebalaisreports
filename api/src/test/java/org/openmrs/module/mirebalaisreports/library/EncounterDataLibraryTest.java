@@ -107,7 +107,7 @@ public class EncounterDataLibraryTest extends BaseReportTest {
         addr.setStateProvince("IN");
 
         User paulaMorris = data.user().personName("Paula", null, "Morris").username("pmorris").gender("F").save();
-        Provider surgeon = data.randomProvider().personName("Bob", null, "MD").gender("M").save();
+        Provider surgeon = data.provider().identifier("ABC123").personName("Bob", null, "MD").gender("M").save();
 
         Patient p1 = data.randomPatient().clearIdentifiers().identifier(zlEmrId, "Y2C4VA", mirebalaisHospital).personAttribute(unknownPatient, "false")
                 .female().birthdate("1946-05-26", false).dateCreated("2013-10-01").uuid("be7890be-36a4-11e3-b90a-a351ac6b1528")
