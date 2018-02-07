@@ -21,9 +21,9 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type = :mentalHealthEnc
 INNER JOIN location el ON e.location_id = el.location_id
 --  Provider Name
-INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
-INNER JOIN provider pv ON pv.provider_id = ep.provider_id
-INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
+LEFT OUTER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
+LEFT OUTER JOIN provider pv ON pv.provider_id = ep.provider_id
+LEFT OUTER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 -- Join in most recent observation of occupation
 LEFT OUTER JOIN (select o1.obs_id, cn_occ.name from obs o1, concept_name cn_occ
   where cn_occ.concept_id = o1.value_coded
@@ -86,7 +86,7 @@ and o.encounter_id = e.encounter_id
 and e.voided = 0
 and o.voided = 0
 group by o.encounter_id
-) obsjoins ON obsjoins.encounter_id = ep.encounter_id
+) obsjoins ON obsjoins.encounter_id = e.encounter_id
 --  end columns joins
 WHERE p.voided = 0
 -- exclude test patients
