@@ -11,7 +11,7 @@ select pn.family_name as 'Nom', pn.given_name as 'PrĂŠnom',
        zl.identifier as 'ZL ID',
        dos.identifier as Dossier,
        t.value as TelephoneNumber,
-       section.user_generated_id as 'Section Communale CDC ID'
+       ahe_section.user_generated_id as 'Section Communale CDC ID'
 
   from patient pat
 
@@ -44,19 +44,11 @@ select pn.family_name as 'Nom', pn.given_name as 'PrĂŠnom',
   and zl.voided = 0
   and zl.preferred= 1
 
- left outer join address_hierarchy_entry section
-     on section.name = pa.address3
-     and section.level_id = (select address_hierarchy_level_id from address_hierarchy_level where address_field='ADDRESS_3')
+LEFT OUTER JOIN address_hierarchy_entry ahe_country on ahe_country.level_id = 1 and ahe_country.name = pa.country 
+LEFT OUTER JOIN address_hierarchy_entry ahe_dept on ahe_dept.level_id = 2 and ahe_dept.parent_id = ahe_country.address_hierarchy_entry_id and ahe_dept.name = pa.state_province
+LEFT OUTER JOIN address_hierarchy_entry ahe_commune on ahe_commune.level_id = 3 and ahe_commune.parent_id = ahe_dept.address_hierarchy_entry_id and ahe_commune.name = pa.city_village
+LEFT OUTER JOIN address_hierarchy_entry ahe_section on ahe_section.level_id = 4 and ahe_section.parent_id = ahe_commune.address_hierarchy_entry_id and ahe_section.name = pa.address3
 
-left outer join address_hierarchy_entry commune
-      on commune.name  = pa.city_village
-      and commune.address_hierarchy_entry_id = section.parent_id
-      and commune.level_id = (select address_hierarchy_level_id from address_hierarchy_level  where address_field='CITY_VILLAGE')
-
-left outer join address_hierarchy_entry department
-      on department.name = pa.state_province
-      and department.address_hierarchy_entry_id = commune.parent_id
-      and department.level_id = (select address_hierarchy_level_id from address_hierarchy_level  where address_field='STATE_PROVINCE')
 
 where pat.voided = 0
 
