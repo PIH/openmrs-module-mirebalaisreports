@@ -1,7 +1,8 @@
 SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  
 v.date_started "ED_Visit_Start_Datetime",
 e.encounter_datetime "Triage_datetime", el.name encounter_location,
-CONCAT(pn.given_name, ' ',pn.family_name) provider,
+-- CONCAT(pn.given_name, ' ',pn.family_name) provider,
+pr_names "providers",
 obsjoins.*,    
 ed.encounter_datetime "EDNote_Datetime",
 cn_disp_ed.name "EDNote_Disposition",
@@ -32,9 +33,13 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type =:EDTriageEnc
 INNER JOIN location el ON e.location_id = el.location_id
 -- Provider Name
-INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
-INNER JOIN provider pv ON pv.provider_id = ep.provider_id
-INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
+-- INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
+-- INNER JOIN provider pv ON pv.provider_id = ep.provider_id
+-- INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
+LEFT OUTER JOIN (select ep.encounter_id, GROUP_CONCAT(CONCAT(pn.given_name, ' ',pn.family_name)) pr_names from encounter_provider ep
+     INNER JOIN provider pv ON pv.provider_id = ep.provider_id
+     INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
+     group by ep.encounter_id) pr on pr.encounter_id = e.encounter_id
 -- join in Emergency visit
 LEFT OUTER JOIN visit v on v.visit_id = e.visit_id
 -- latest disposition of consult note from that visit 
@@ -154,7 +159,7 @@ and o.encounter_id = e.encounter_id
 and e.voided = 0
 and o.voided = 0
  group by o.encounter_id
-) obsjoins ON obsjoins.encounter_id = ep.encounter_id
+) obsjoins ON obsjoins.encounter_id = e.encounter_id
 -- end columns joins
 WHERE p.voided = 0
 -- exclude test patients
