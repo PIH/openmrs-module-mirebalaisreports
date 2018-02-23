@@ -99,6 +99,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String LAB_RESULTS_DATA_EXPORT_REPORT_DEFINITION_UUID = "109d8490-45d4-11e5-b970-0800200c9a66";
     public static final String ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID = "202e6ee0-45d6-11e5-b970-0800200c9a66";
     public static final String NCD_DATA_EXPORT_REPORT_DEFINITION_UUID = "13629220-6b9e-11e5-a837-0800200c9a66";
+    public static final String NCD_DATA_PROGRAM_EXPORT_REPORT_DEFINITION_UUID = "1de224fc-82d4-40cc-be07-f2e95ed2e452";
     public static final String MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID = "d2e7c170-e703-11e5-a837-0800200c9a66";
     public static final String ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID = "87588ec0-4deb-11e6-bdf4-0800200c9a66";
     public static final String VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID = "228BCF82-D496-49B0-929B-5B3C6AF3767E";

@@ -132,6 +132,8 @@ public class FullDataExportBuilder {
             if (config.isComponentEnabled(Components.NCD) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.NCD_DATA_EXPORT_REPORT_DEFINITION_UUID, "ncddataexport",
                         Arrays.asList("ncd")));
+                configurations.add(new Configuration(MirebalaisReportsProperties.NCD_DATA_PROGRAM_EXPORT_REPORT_DEFINITION_UUID, "ncdprogramdataexport",
+                        Arrays.asList("ncdProgram")));
             }
             if (config.isComponentEnabled(Components.MENTAL_HEALTH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID, "mentalhealthdataexport",
