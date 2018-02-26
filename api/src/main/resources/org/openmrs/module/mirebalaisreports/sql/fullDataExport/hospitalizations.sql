@@ -26,7 +26,7 @@ dis_dispo.dispo_datetime outcome_datetime,
 dis_dispo.disposition_location transfer_out_location,
 IF(pr.death_date IS NOT NULL AND pr.death_date < ADDDATE(:endDate, INTERVAL 1 DAY), IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Décès < 48 hrs', 'Décès >= 48 hrs'), null) died,
 v.visit_id as visit_id, pr.birthdate, pr.birthdate_estimated,
-addr_section.user_generated_id as section_communale_CDC_ID
+ahe_section.user_generated_id as section_communale_CDC_ID
 
 FROM patient p
 
@@ -46,9 +46,10 @@ INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
 
 -- CDC ID of address
-LEFT OUTER JOIN address_hierarchy_entry addr_section ON addr_section.name = pa.address3 AND addr_section.level_id = (SELECT address_hierarchy_level_id FROM address_hierarchy_level WHERE address_field='ADDRESS_3')
-LEFT OUTER JOIN address_hierarchy_entry addr_commune ON addr_commune.name  = pa.city_village AND addr_commune.address_hierarchy_entry_id = addr_section.parent_id AND addr_commune.level_id = (SELECT address_hierarchy_level_id FROM address_hierarchy_level WHERE address_field='CITY_VILLAGE')
-LEFT OUTER JOIN address_hierarchy_entry addr_department ON addr_department.name = pa.state_province AND addr_department.address_hierarchy_entry_id = addr_commune.parent_id AND addr_department.level_id = (SELECT address_hierarchy_level_id FROM address_hierarchy_level WHERE address_field='STATE_PROVINCE')
+LEFT OUTER JOIN address_hierarchy_entry ahe_country on ahe_country.level_id = 1 and ahe_country.name = pa.country 
+LEFT OUTER JOIN address_hierarchy_entry ahe_dept on ahe_dept.level_id = 2 and ahe_dept.parent_id = ahe_country.address_hierarchy_entry_id and ahe_dept.name = pa.state_province
+LEFT OUTER JOIN address_hierarchy_entry ahe_commune on ahe_commune.level_id = 3 and ahe_commune.parent_id = ahe_dept.address_hierarchy_entry_id and ahe_commune.name = pa.city_village
+LEFT OUTER JOIN address_hierarchy_entry ahe_section on ahe_section.level_id = 4 and ahe_section.parent_id = ahe_commune.address_hierarchy_entry_id and ahe_section.name = pa.address3
 
 -- Most recent name
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
