@@ -11,7 +11,8 @@ select pn.family_name as 'Nom', pn.given_name as 'PrĂŠnom',
        zl.identifier as 'ZL ID',
        dos.identifier as Dossier,
        t.value as TelephoneNumber,
-       ahe_section.user_generated_id as 'Section Communale CDC ID'
+       ahe_section.user_generated_id as 'Section Communale CDC ID',
+       bio.date_created "Last Biometric Date"
 
   from patient pat
 
@@ -43,6 +44,13 @@ select pn.family_name as 'Nom', pn.given_name as 'PrĂŠnom',
   and zl.identifier_type = :zlId
   and zl.voided = 0
   and zl.preferred= 1
+
+ left outer join patient_identifier bio on bio.patient_identifier_id = 
+    (select patient_identifier_id from patient_identifier bio2
+    where pat.patient_id = bio2.patient_id
+    and bio2.identifier_type = :biometricId
+    and bio2.voided = 0
+    order by bio2.date_created desc limit 1)
 
 LEFT OUTER JOIN address_hierarchy_entry ahe_country on ahe_country.level_id = 1 and ahe_country.name = pa.country 
 LEFT OUTER JOIN address_hierarchy_entry ahe_dept on ahe_dept.level_id = 2 and ahe_dept.parent_id = ahe_country.address_hierarchy_entry_id and ahe_dept.name = pa.state_province
