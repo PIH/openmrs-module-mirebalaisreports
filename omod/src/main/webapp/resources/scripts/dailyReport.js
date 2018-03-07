@@ -1,4 +1,8 @@
-var app = angular.module('dailyReport', ['ui.bootstrap']).
+var app = angular.module('dailyReport', ['ui.bootstrap']).config(function($templateRequestProvider){
+    $templateRequestProvider.httpOptions({
+        headers: { Accept: 'text/html' }
+    });
+}).
 
     filter('translate', function() {
         return function(input, prefix) {
