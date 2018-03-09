@@ -171,7 +171,6 @@ public class FullDataExportReportManager extends BasePihReportManager {
         ReportDefinition rd = new ReportDefinition();
 		rd.setName(getMessageCodePrefix() + "name");
 		rd.setDescription(getMessageCodePrefix() + "description");
-		rd.setParameters(getParameters());
         rd.setUuid(getUuid());
 
         CompositionCohortDefinition baseCohortDefinition = new CompositionCohortDefinition();
@@ -184,76 +183,57 @@ public class FullDataExportReportManager extends BasePihReportManager {
         baseCohortDefinition.setCompositionString("NOT testPatient");
         rd.setBaseCohortDefinition(new Mapped<CohortDefinition>(baseCohortDefinition, null));
 
-
-        Map<String, Object> mappings =  null;
-
         for (String key : dataSets) {
+
+            Map<String, Object> mappings = new HashMap<String, Object>();
 
 			log.debug("Adding dataSet: " + key);
 
             DataSetDefinition dsd;
             if ("patients".equals(key)) {
                 dsd = constructPatientsDataSetDefinition();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             else if ("registration".equals(key)) {
                 dsd = registrationDataSetManager.constructDataSet();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO: This is really ugly. We need to get this into proper configuration--Liberia check-ins report uses a manager, but Haiti "falls through" to old sql report
             else if ("checkins".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
                 dsd = checkInDataSetManager.constructDataSet();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO: This is really ugly. We need to get this into proper configuration--Liberia consultation report uses a manager, but Haiti "falls through" to old sql report
             else if ("consultations".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
                 dsd = consultationsDataSetManager.constructDataSet();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO turn this on to replace current SQL data query with vitals data set manager (which reorganizes fields and adds chief complaint)
             else if ("vitals".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.HAITI) && !config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS) )) {
                 dsd = vitalsDataSetManager.constructDataSet();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO: This is really ugly. We need to get this into proper configuration--Liberia diagnoses report uses a manager, but Haiti "falls through" to old sql report
             else if ("diagnoses".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
                 dsd = diagnosesDataSetManager.constructDataSet();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             else if ("encounters".equals(key)) {
                 dsd = constructEncountersDataSetDefinition();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             else if ("dispensing".equals(key)) {
                 dsd = constructDispensingDataSetDefinition();
-                dsd.addParameter(getStartDateParameter());
-                dsd.addParameter(getEndDateParameter());
-                mappings =  getStartAndEndDateMappings();
+                addStartAndEndDateParameters(rd, dsd, mappings);
             }
             else {
                 dsd = constructSqlDataSetDefinition(key);
-
                 // only add start and end date if they are specified in the defined SQL
                 if (((SqlDataSetDefinition) dsd).getSqlQuery().contains(":startDate")) {
-                    dsd.addParameter(getStartDateParameter());
-                    dsd.addParameter(getEndDateParameter());
-                    mappings =  getStartAndEndDateMappings();
+                    addStartAndEndDateParameters(rd, dsd, mappings);
                 }
             }
+
             dsd.setName(MessageUtil.translate("mirebalaisreports.fulldataexport." + key + ".name"));
             dsd.setDescription(MessageUtil.translate("mirebalaisreports.fulldataexport." + key + ".description"));
 
@@ -262,6 +242,13 @@ public class FullDataExportReportManager extends BasePihReportManager {
 
 		return rd;
 	}
+
+	private void addStartAndEndDateParameters(ReportDefinition rd, DataSetDefinition dsd, Map<String, Object> mappings) {
+        rd.addParameters(getParameters());
+        dsd.addParameter(getStartDateParameter());
+        dsd.addParameter(getEndDateParameter());
+        mappings.putAll(getStartAndEndDateMappings());
+    }
 
     private DataSetDefinition constructEncountersDataSetDefinition() {
         EncounterDataSetDefinition dsd = new EncounterDataSetDefinition();
