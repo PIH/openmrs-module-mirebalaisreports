@@ -36,7 +36,7 @@ INNER JOIN location el ON e.location_id = el.location_id
 -- INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
 -- INNER JOIN provider pv ON pv.provider_id = ep.provider_id
 -- INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
-LEFT OUTER JOIN (select ep.encounter_id, GROUP_CONCAT(CONCAT(pn.given_name, ' ',pn.family_name)) pr_names from encounter_provider ep
+LEFT OUTER JOIN (select ep.encounter_id, GROUP_CONCAT(CONCAT(pn.given_name, ' ',pn.family_name) order by ep.date_created asc) pr_names from encounter_provider ep
      INNER JOIN provider pv ON pv.provider_id = ep.provider_id
      INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
      group by ep.encounter_id) pr on pr.encounter_id = e.encounter_id
