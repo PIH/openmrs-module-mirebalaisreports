@@ -1,4 +1,5 @@
 select  
+p.patient_id,
 pid.identifier "ZL_EMR_ID", 
 dos.identifier "Dossier_ID", 
 d.given_name, d.family_name, d.birthdate, birthdate_estimated, d.gender, d.country, d.department, d.commune, d.section_communal, d.locality, d.street_landmark,
