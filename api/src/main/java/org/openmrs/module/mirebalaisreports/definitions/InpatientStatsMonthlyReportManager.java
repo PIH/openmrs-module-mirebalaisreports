@@ -57,7 +57,7 @@ public class InpatientStatsMonthlyReportManager extends BasePihReportManager {
 
     @Override
     public List<ConfigDescriptor.Site> getSites() {
-        return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
+        return Arrays.asList(); //Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
     }
 
     @Override
