@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class CohortFragmentController {
 
-    public SimpleObject getCohort(@RequestParam("memberIds") Cohort cohort,
+    public SimpleObject getCohort(@RequestParam("memberIds") List<Integer> memberIds,
                                   @SpringBean AllDefinitionLibraries libraries,
                                   @SpringBean DataSetDefinitionService dsdService) throws EvaluationException {
 
@@ -47,6 +47,7 @@ public class CohortFragmentController {
         dsd.addColumn("zlEmrId", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.preferredZlEmrId.identifier"), "");
         dsd.addColumn("dossierNumber", libraries.getDefinition(PatientDataDefinition.class, "mirebalais.patientDataCalculation.mostRecentDossierNumber.identifier"), "");
 
+        Cohort cohort = new Cohort(memberIds);
         EvaluationContext context = new EvaluationContext();
         context.setBaseCohort(cohort);
         DataSet result = dsdService.evaluate(dsd, context);
