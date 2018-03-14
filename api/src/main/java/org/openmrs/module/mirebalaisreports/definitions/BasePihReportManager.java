@@ -80,6 +80,7 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sql = replace(sql, "refNum", mrp.getUserEnteredReferenceNumberIdentifierType());
         sql = replace(sql, "dosId", mrp.getDossierNumberIdentifierType());
         sql = replace(sql, "hivId", mrp.getHivEmrIdentifierType());
+        sql = replace(sql, "biometricId", mrp.getBiometricIdentifierType());
 
         sql = replace(sql, "testPt", mrp.getTestPatientPersonAttributeType());
         sql = replace(sql, "phoneType", mrp.getTelephoneNumberPersonAttributeType());

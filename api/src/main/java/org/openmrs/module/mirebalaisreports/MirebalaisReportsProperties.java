@@ -30,6 +30,7 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionService;
+import org.openmrs.module.haiticore.metadata.HaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
 import org.openmrs.module.pihcore.metadata.core.program.ZikaProgram;
@@ -211,26 +212,31 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
 	//***** IDENTIFIER TYPES *****
 
-	public static final String ZL_EMR_ID_UUID = "a541af1e-105c-40bf-b345-ba1fd6a59b85";
 
-	public PatientIdentifierType getZlEmrIdentifierType() {
-		return getIdentifierTypeByUuid(ZL_EMR_ID_UUID);
+    public static final String DOSSIER_NUMBER_UUID = "e66645eb-03a8-4991-b4ce-e87318e37566";
+
+    public static final String HIV_EMR_ID_UUID = "139766e8-15f5-102d-96e4-000c29c2a5d7";
+
+    public PatientIdentifierType getZlEmrIdentifierType() {
+		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.ZL_EMR_ID.uuid());
 	}
-
-	public static final String DOSSIER_NUMBER_UUID = "e66645eb-03a8-4991-b4ce-e87318e37566";
 
 	public PatientIdentifierType getDossierNumberIdentifierType() {
-		return getIdentifierTypeByUuid(DOSSIER_NUMBER_UUID);
+		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.DOSSIER_NUMBER.uuid());
 	}
 
-	public static final String HIV_EMR_ID_UUID = "139766e8-15f5-102d-96e4-000c29c2a5d7";
 
 	public PatientIdentifierType getHivEmrIdentifierType() {
-		return getIdentifierTypeByUuid(HIV_EMR_ID_UUID);
+		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.HIVEMR_V1.uuid());
 	}
 
     public PatientIdentifierType getUserEnteredReferenceNumberIdentifierType() {
         return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.USER_ENTERED_REF_NUMBER.uuid());
+    }
+
+
+    public PatientIdentifierType getBiometricIdentifierType() {
+        return getIdentifierTypeByUuid(HaitiPatientIdentifierTypes.BIOMETRIC_REF_NUMBER.uuid());
     }
 
 	private PatientIdentifierType getIdentifierTypeByUuid(String uuid) {
