@@ -155,6 +155,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID, "pathologydataexport",
                         Arrays.asList("pathology")));
             }
+            if (config.isComponentEnabled(Components.BIOMETRICS_FINGERPRINTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID, "fingerprintsdataexport",
+                        Arrays.asList("patientsWithFingerprints")));
+            }
 
         }
         return configurations;

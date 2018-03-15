@@ -117,6 +117,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ZIKA_REPORT_DEFINITION_UUID = "c6bafa69-1745-4838-9171-cffaacf8fb1d";
     public static final String CHRONIC_MALADIES_REPORTING_DEFINITION_UUID = "66a975d4-790e-4348-9a88-8dfbcf551afc";
     public static final String HIV_SUMMARY_REPORT_DEFINITION_UUID = "bccfa83d-3c28-42ea-9240-941aa93a2cce";
+    public static final String PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID = "bf1fbee4-0a35-4d7c-9054-6681f3c06463";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
