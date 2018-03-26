@@ -96,7 +96,7 @@ public class DailyClinicalEncountersReportManagerTest extends BaseReportTest {
 
         DataSet byLocation = data.getDataSets().get("byLocation");
         for (DataSetRow row : byLocation) {
-            if (row.getColumnValue("rowLabel").equals("ui.i18n.Location.name.199e7d87-92a0-4398-a0f8-11d012178164")) {
+            if (row.getColumnValue("rowLabel").equals("Klinik Ekstèn")) {
                 assertThat((Cohort) row.getColumnValue("clinicalCheckIns"), isCohortWithExactlyMembers(p2, p4));
                 assertThat((Cohort) row.getColumnValue("vitals"), isCohortWithExactlyMembers(p2, p3));
                 assertThat((Cohort) row.getColumnValue("consults"), isCohortWithExactlyMembers(p2, p4));

@@ -84,7 +84,7 @@ public class DailyRegistrationsReportManagerTest extends BaseReportTest {
 
         DataSet byLocation = data.getDataSets().get("byLocation");
         for (DataSetRow row : byLocation) {
-            if (row.getColumnValue("rowLabel").equals("ui.i18n.Location.name.787a2422-a7a2-400e-bdbb-5c54b2691af5")) {
+            if (row.getColumnValue("rowLabel").equals("Biwo Resepsyon")) {
                 assertThat((Cohort) row.getColumnValue("registrations"), isCohortWithExactlyMembers(p1));
             } else {
                 assertThat((Cohort) row.getColumnValue("registrations"), isCohortWithExactlyMembers());

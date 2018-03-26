@@ -85,7 +85,7 @@ public class DailyCheckInsReportManagerTest extends BaseReportTest {
 
         DataSet byLocation = data.getDataSets().get("byLocation");
         for (DataSetRow row : byLocation) {
-            if (row.getColumnValue("rowLabel").equals("ui.i18n.Location.name.199e7d87-92a0-4398-a0f8-11d012178164")) {
+            if (row.getColumnValue("rowLabel").equals("Klinik Ekstèn")) {
                 for (Map.Entry<String, Object> e : row.getColumnValuesByKey().entrySet()) {
                     if ("mirebalaisreports.dailyCheckInEncounters.CLINICAL_new".equals(e.getKey())) {
                         assertThat((Cohort) e.getValue(), isCohortWithExactlyMembers(p2));
