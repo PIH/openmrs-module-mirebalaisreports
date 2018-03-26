@@ -46,7 +46,7 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3";
     }
 
     @Override
@@ -105,7 +105,7 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
                 "PIH:Procedure only", "PIH:Social assistance and psychosocial support", "PIH:Request scheduled appointment",
                 "PIH:ID card only"));
         byLocationDsd.setVaryingParameters(getParameterOptions());
-        byLocationDsd.setRowLabelTemplate("{{ message location.uuid prefix=\"ui.i18n.Location.name.\" }}");
+        byLocationDsd.setRowLabelTemplate("{{ location.name }}");
 
         reportDefinition.addDataSetDefinition("overall", map(overallDsd, MAP_DAY_TO_START_AND_END_DATE));
         //reportDefinition.addDataSetDefinition("dataQuality", map(dataQualityDsd, MAP_DAY_TO_START_AND_END_DATE));

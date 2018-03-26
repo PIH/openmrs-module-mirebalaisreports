@@ -44,7 +44,7 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3";
     }
 
     @Override
@@ -106,7 +106,7 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
         byLocationDsd.addColumn(renameParameters(consults));
         byLocationDsd.addColumn(consultWithoutVitals);
         byLocationDsd.setVaryingParameters(getParameterOptions());
-        byLocationDsd.setRowLabelTemplate("{{ message location.uuid prefix=\"ui.i18n.Location.name.\" }}");
+        byLocationDsd.setRowLabelTemplate("{{ location.name }}");
 
         reportDefinition.addDataSetDefinition("byLocation", map(byLocationDsd, MAP_DAY_TO_START_AND_END_DATE));
     }

@@ -46,7 +46,7 @@ public class DailyRegistrationsReportManager extends DailyIndicatorByLocationRep
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3";
     }
 
     @Override
@@ -81,7 +81,7 @@ public class DailyRegistrationsReportManager extends DailyIndicatorByLocationRep
         byLocationDsd.addParameter(getEndDateParameter());
         byLocationDsd.addColumn(regByLocation);
         byLocationDsd.setVaryingParameters(getParameterOptions());
-        byLocationDsd.setRowLabelTemplate("ui.i18n.Location.name.{{ location.uuid }}");
+        byLocationDsd.setRowLabelTemplate("{{ location.name }}");
 
         CohortCrossTabDataSetDefinition overallDsd = new CohortCrossTabDataSetDefinition();
         overallDsd.setName("overall");
