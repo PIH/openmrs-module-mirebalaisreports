@@ -70,7 +70,7 @@ public class NonCodedDiagnosesReportManager extends BaseReportManager {
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3-SNAPSHOT";
     }
 	public void setEmrApiProperties(EmrApiProperties emrApiProperties) {
 		this.emrApiProperties = emrApiProperties;

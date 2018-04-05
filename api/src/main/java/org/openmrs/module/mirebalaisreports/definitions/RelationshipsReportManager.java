@@ -42,7 +42,7 @@ public class RelationshipsReportManager extends BasePihReportManager {
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3-SNAPSHOT";
     }
 
     @Override

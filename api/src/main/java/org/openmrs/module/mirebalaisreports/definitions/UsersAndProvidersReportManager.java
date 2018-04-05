@@ -45,7 +45,7 @@ public class UsersAndProvidersReportManager extends BasePihReportManager {
 
     @Override
     public String getVersion() {
-        return "1.3"; // last change: standardized download filename
+        return "1.4-SNAPSHOT"; // last change: standardized download filename
     }
 
     @Override

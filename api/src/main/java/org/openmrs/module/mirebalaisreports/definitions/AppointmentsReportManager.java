@@ -136,7 +136,7 @@ public class AppointmentsReportManager extends BasePihReportManager {
 
     @Override
     public String getVersion() {
-        return "1.10"; // last change: updated disk processor to save to /home/tomcat6 directory
+        return "1.11-SNAPSHOT"; // last change: updated disk processor to save to /home/tomcat6 directory
     }
 
     @Override
