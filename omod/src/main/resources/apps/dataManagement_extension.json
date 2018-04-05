@@ -9,7 +9,6 @@
         "order": 15,
         "requiredPrivilege": "App: coreapps.dataMgmt",
         "extensionParams": {
-            "featureToggle": "dataMgmt"
         }
     }
 ]

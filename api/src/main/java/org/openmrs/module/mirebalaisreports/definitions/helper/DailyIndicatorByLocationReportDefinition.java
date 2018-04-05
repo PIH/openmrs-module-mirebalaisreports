@@ -3,7 +3,6 @@ package org.openmrs.module.mirebalaisreports.definitions.helper;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
-import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.mirebalaisreports.definitions.BasePihReportManager;
 import org.openmrs.module.pihcore.metadata.core.Locations;
 import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
@@ -40,9 +39,6 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BasePihRe
 
     @Autowired
     protected ConceptService conceptService;
-
-    @Autowired
-    protected FeatureToggleProperties featureToggles;
 
     @Override
     public List<Parameter> getParameters() {
