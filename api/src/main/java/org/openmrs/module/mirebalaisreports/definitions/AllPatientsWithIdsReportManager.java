@@ -44,7 +44,7 @@ public class AllPatientsWithIdsReportManager extends BasePihReportManager {
 
     @Override
     public String getVersion() {
-        return "1.18";
+        return "1.19-SNAPSHOT";
     }
 
     @Override
