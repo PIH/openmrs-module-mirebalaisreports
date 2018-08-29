@@ -151,7 +151,7 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ALLERGIES_EXPORT_REPORT_DEFINITION_UUID, "allergiesdataexport",
                         Arrays.asList("allergies")));
             }
-            if (config.isComponentEnabled(Components.LAB_TRACKING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            if (config.isComponentEnabled(Components.PATHOLOGY_TRACKING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID, "pathologydataexport",
                         Arrays.asList("pathology")));
             }
