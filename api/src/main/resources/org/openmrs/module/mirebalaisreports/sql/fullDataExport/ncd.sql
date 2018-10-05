@@ -37,6 +37,7 @@ max(CASE when rm.source = 'CIEL' and rm.code = '163081' then o.value_numeric end
 Round(max(CASE when rm.source = 'CIEL' and rm.code = '163080' then o.value_numeric end)/max(CASE when rm.source = 'CIEL' and rm.code = '163081' then o.value_numeric end),2) 'Waist/Hip Ratio',
 group_concat(CASE when rm.source = 'PIH' and rm.code = 'NYHA CLASS' then cn.name end separator ',') 'NYHA_CLASS',
 max(CASE when rm.source = 'PIH' and rm.code = 'PATIENTS FLUID MANAGEMENT' then cn.name end) 'Patients_Fluid_Management',
+group_concat(CASE when rm.source = 'PIH' and rm.code = 'Type of diabetes diagnosis' then cn.name end separator ',') 'Diabetes_type',
 max(CASE when rm.source = 'PIH' and rm.code = 'Hypoglycemia symptoms' then cn.name end) 'Hypoglycemia_symptoms',
 max(CASE when rm.source = 'PIH' and rm.code = 'Puffs per week of salbutamol' then o.value_numeric end) 'Puffs_week_salbutamol',
 max(CASE when rm.source = 'PIH' and rm.code = 'Asthma classification' then cn.name end) 'Asthma_classification',
