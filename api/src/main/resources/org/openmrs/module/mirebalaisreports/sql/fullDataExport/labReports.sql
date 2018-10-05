@@ -25,7 +25,7 @@ INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
 INNER JOIN 
 (select o.encounter_id,
 max(CASE when crs.name = 'PIH' and crt.code = 'DATE OF LABORATORY TEST' then date(o.value_datetime) end) 'Date_of_Lab_Test',
-max(CASE when crs.name = 'CIEL' and crt.code = '159951' then date(o.value_datetime) end) 'Date_of_Collection',
+max(CASE when crs.name = 'PIH' and crt.code = '11781' then cn.name end) 'Estimated_Collection_Date',
 max(CASE when crs.name = 'PIH' and crt.code = 'HEMOGLOBIN' then o.value_numeric end) 'Hemoglobin',
 max(CASE when crs.name = 'PIH' and crt.code = 'HbA1c' then o.value_numeric end) 'HbA1c',
 max(CASE when crs.name = 'PIH' and crt.code = 'HEMATOCRIT' then o.value_numeric end) 'Hematocrit',
@@ -61,7 +61,7 @@ max(CASE when crs.name = 'PIH' and crt.code = 'MALARIAL SMEAR' then cn.name end)
 max(CASE when crs.name = 'PIH' and crt.code = 'LACTATE DEHYDROGENASE' then o.value_numeric end) 'Lactate_Dehydrogenase',
 max(CASE when crs.name = 'PIH' and crt.code = 'RESULT OF HIV TEST' then cn.name end) 'HIV_Test',
 max(CASE when crs.name = 'PIH' and crt.code = 'HIV VIRAL LOAD' then o.value_numeric end) 'HIV_Viral_Load',
- max(CASE when crs.name = 'CIEL' and crt.code = '164920' then cn.name end) 'Zika_rRT-PCR',
+max(CASE when crs.name = 'CIEL' and crt.code = '164920' then cn.name end) 'Zika_rRT-PCR',
 max(CASE when crs.name = 'CIEL' and crt.code = '164924' then cn.name end) 'Chikungunya_rRT-PCR',
 max(CASE when crs.name = 'CIEL' and crt.code = '164926' then cn.name end) 'Dengue_rRT-PCR',
 max(CASE when crs.name = 'CIEL' and crt.code = '164934' then cn.name end) 'Zika_IgG',
