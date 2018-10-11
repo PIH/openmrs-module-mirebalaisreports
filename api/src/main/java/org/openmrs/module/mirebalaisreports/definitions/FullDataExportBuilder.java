@@ -44,7 +44,7 @@ public class FullDataExportBuilder {
 
     public final List<String> dataSetOptions = Arrays.asList(
             "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
-            "hospitalizations", "postOpNote1", "postOpNote2",
+            "hospitalizations", "postOpNote1", "postOpNote2", "hivCounselingTest",
             "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
             "dispensing", "encounters"
     );
@@ -159,6 +159,11 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID, "fingerprintsdataexport",
                         Arrays.asList("patientsWithFingerprints")));
             }
+            if (config.isComponentEnabled(Components.VCT) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.VCT_REPORT_DEFINITION_UUID, "vctdataexport",
+                        Arrays.asList("hivCounselingTest")));
+            }
+
 
         }
         return configurations;
