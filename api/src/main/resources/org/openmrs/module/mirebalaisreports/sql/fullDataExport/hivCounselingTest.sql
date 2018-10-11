@@ -70,8 +70,8 @@ FROM
     encounter e
         INNER JOIN
     current_name_address cna ON cna.person_id = e.patient_id
-        AND date(e.encounter_datetime) >=:startDate
-  	    AND date(e.encounter_datetime) <=:endDate
+        AND date(e.encounter_datetime) >= :startDate
+  	    AND date(e.encounter_datetime) <= :endDate
         AND e.form_id = (SELECT
             form_id
         FROM
