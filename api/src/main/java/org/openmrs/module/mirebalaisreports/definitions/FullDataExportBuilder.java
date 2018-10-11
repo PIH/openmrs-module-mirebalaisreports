@@ -44,7 +44,7 @@ public class FullDataExportBuilder {
 
     public final List<String> dataSetOptions = Arrays.asList(
             "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
-            "hospitalizations", "postOpNote1", "postOpNote2", "hivCounselingTest",
+            "hospitalizations", "postOpNote1", "postOpNote2",
             "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
             "dispensing", "encounters"
     );
