@@ -1,6 +1,5 @@
 SELECT
     CONCAT(family_name, ' ', given_name) AS 'PRÉNOM NOM (SURNOMS)',
-    e.encounter_id,
     pa.value AS 'PRÉNOM DE LA MÈRE',
     commune AS 'Commune',
     section_communal AS 'Sect. Comm',
