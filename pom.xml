@@ -180,6 +180,12 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
+            <artifactId>emrapi-api-2.2</artifactId>
+            <version>${emrapiVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
             <artifactId>emr-api</artifactId>
             <version>${emrVersion}</version>
             <type>test-jar</type>
@@ -437,17 +443,17 @@
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>2.4</version>
 				</plugin>
-                <plugin>
-                    <groupId>org.jasig.maven</groupId>
-                    <artifactId>sass-maven-plugin</artifactId>
-                    <version>1.1.1</version>
-                    <configuration>
-                        <sassSourceDirectory>${basedir}/src/main/webapp</sassSourceDirectory>
-                        <outputDirectory>${basedir}/src/main/webapp/resources/styles</outputDirectory>
-                        <baseOutputDirectory>${basedir}/src/main/webapp/resources/styles</baseOutputDirectory>
-                        <skin>scss</skin>
-                    </configuration>
-                </plugin>
+                <!--<plugin>-->
+                    <!--<groupId>org.jasig.maven</groupId>-->
+                    <!--<artifactId>sass-maven-plugin</artifactId>-->
+                    <!--<version>1.1.1</version>-->
+                    <!--<configuration>-->
+                        <!--<sassSourceDirectory>${basedir}/src/main/webapp</sassSourceDirectory>-->
+                        <!--<outputDirectory>${basedir}/src/main/webapp/resources/styles</outputDirectory>-->
+                        <!--<baseOutputDirectory>${basedir}/src/main/webapp/resources/styles</baseOutputDirectory>-->
+                        <!--<skin>scss</skin>-->
+                    <!--</configuration>-->
+                <!--</plugin>-->
                 <plugin>
                     <groupId>de.saumya.mojo</groupId>
                     <artifactId>gem-maven-plugin</artifactId>
