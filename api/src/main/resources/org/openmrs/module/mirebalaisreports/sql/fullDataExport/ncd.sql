@@ -15,7 +15,7 @@ INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
 --  Most recent address
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created desc) n ON p.patient_id = n.person_id
-INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type in (:AdultNCDInitEnc, :AdultNCDFollowEnc) 
+INNER JOIN encounter e ON p.patient_id = e.patient_id and e.voided = 0 AND e.encounter_type in (:AdultNCDInitEnc, :AdultNCDFollowEnc, :vitEnc, :labResultEnc)
 INNER JOIN location el ON e.location_id = el.location_id
 --  Provider Name 
 INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
@@ -32,6 +32,10 @@ max(CASE when rm.source = 'PIH' and rm.code = 'Prior treatment for chronic disea
 max(CASE when rm.source = 'PIH' and rm.code = 'Chronic disease controlled during initial visit' then cn.name end) 'Disease_controlled_initial_visit',
 group_concat(CASE when rm.source = 'PIH' and rm.code = 'NCD category' then cn.name end separator ',') 'NCD_category',
 max(CASE when rm.source = 'PIH' and rm.code = 'NCD category' then o.comments end) 'Other_NCD_category',
+max(CASE when rm.source = 'CIEL' and rm.code = '5089' then o.value_numeric end) 'Weight_kg',
+max(CASE when rm.source = 'CIEL' and rm.code = '5090' then o.value_numeric end) 'Height_cm',
+max(CASE when rm.source = 'CIEL' and rm.code = '5085' then o.value_numeric end) 'Systolic_BP',
+max(CASE when rm.source = 'CIEL' and rm.code = '5086' then o.value_numeric end) 'Diastolic_BP',
 max(CASE when rm.source = 'CIEL' and rm.code = '163080' then o.value_numeric end) 'Waist_cm',
 max(CASE when rm.source = 'CIEL' and rm.code = '163081' then o.value_numeric end) 'hip_cm',
 Round(max(CASE when rm.source = 'CIEL' and rm.code = '163080' then o.value_numeric end)/max(CASE when rm.source = 'CIEL' and rm.code = '163081' then o.value_numeric end),2) 'Waist/Hip Ratio',
@@ -47,13 +51,14 @@ max(CASE when rm.source = 'PIH' and rm.code = 'Lack of meds in last 2 days' then
 max(CASE when rm.source = 'PIH' and rm.code = 'PATIENT HOSPITALIZED SINCE LAST VISIT' then cn.name end) 'Patient_hospitalized_since_last_visit',
 group_concat(CASE when rm.source = 'PIH' and rm.code = 'Medications prescribed at end of visit' then cn.name end separator ',') 'Medications_Prescribed',
 max(CASE when rm.source = 'PIH' and rm.code = 'Medications prescribed at end of visit' then o.comments end) 'Other_meds',
+max(CASE when rm.source = 'CIEL' and rm.code = '159644' then o.value_numeric end) 'HbA1c',
 max(CASE when rm.source = 'PIH' and rm.code = 'PATIENT PLAN COMMENTS' then o.value_text end) 'Patient_Plan_Comments'
 from encounter e, report_mapping rm, obs o
 LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
 LEFT OUTER JOIN obs obs2 on obs2.obs_id = o.obs_group_id
 LEFT OUTER JOIN report_mapping obsgrp on obsgrp.concept_id = obs2.concept_id
 where 1=1 
-and e.encounter_type in (:AdultNCDInitEnc, :AdultNCDFollowEnc) 
+and e.encounter_type in (:AdultNCDInitEnc, :AdultNCDFollowEnc, :vitEnc, :labResultEnc)
 and rm.concept_id = o.concept_id
 and o.encounter_id = e.encounter_id
 and e.voided = 0
