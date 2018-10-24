@@ -287,6 +287,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ONCOLOGY_INTAKE_ENCOUNTER_TYPE = "f9cfdf8b-d086-4658-9b9d-45a62896da03";
     public static final String CHEMOTHERAPY_ENCOUNTER_TYPE = "828964fa-17eb-446e-aba4-e940b0f4be5b";
     public static final String NCD_CONSULT_ENCOUNTER_TYPE_UUID = "ae06d311-1866-455b-8a64-126a9bd74171";
+    public static final String VCT_ENCOUNTER_TYPE_UUID = "616b66fe-f189-11e7-8c3f-9a214cf093ae";
 
 	public EncounterType getRegistrationEncounterType() {
 		return getEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
@@ -324,6 +325,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getEncounterTypeByUuid(POST_OP_NOTE_ENCOUNTER_TYPE_UUID);
     }
 
+    public EncounterType getVCTEncounterType() {
+        return getEncounterTypeByUuid(VCT_ENCOUNTER_TYPE_UUID);
+    }
+
     public EncounterType getAdmissionEncounterType() {
         return getEncounterTypeByUuid(ADMISSION_ENCOUNTER_TYPE_UUID);
     }
@@ -349,7 +354,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     }
 
     public EncounterType getChemotherapyEncounterType() {
-        return getEncounterTypeByUuid(CHEMOTHERAPY_ENCOUNTER_TYPE);
+	    return getEncounterTypeByUuid(CHEMOTHERAPY_ENCOUNTER_TYPE);
     }
 
     public EncounterType getNCDConsultEncounterType() {
