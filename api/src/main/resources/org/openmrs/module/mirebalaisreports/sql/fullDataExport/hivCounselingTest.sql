@@ -65,6 +65,7 @@ SELECT
 FROM
   encounter e
   INNER JOIN
+  -- Patient's demographics
   current_name_address cna ON cna.person_id = e.patient_id
 							  AND date(e.encounter_datetime) >= :startDate
 							  AND date(e.encounter_datetime) <= :endDate
