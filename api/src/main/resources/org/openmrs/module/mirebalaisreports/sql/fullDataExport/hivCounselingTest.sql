@@ -1,5 +1,6 @@
 SELECT
   e.patient_id as 'patient_id',
+  zl.identifier zlemr,
   CONCAT(family_name, ' ', given_name) AS 'PRÉNOM NOM (SURNOMS)',
   pa.value                             AS 'PRÉNOM DE LA MÈRE',
   commune                              AS 'Commune',
@@ -53,6 +54,16 @@ SELECT
      AND concept_name_type = 'FULLY_SPECIFIED'
      AND voided = 0)                   AS 'RÉSULTAT TEST RPR',
   DATE(rprrd.value_datetime)           AS 'DATE RESULTAT RPR',
+  DATE(hepbd.value_datetime)		   AS  'DATE TEST HEPATITE B',
+  (SELECT name
+   FROM
+     concept_name
+   WHERE
+     concept_id = hepbr.value_coded
+     AND locale = 'fr'
+     AND concept_name_type = 'FULLY_SPECIFIED'
+     AND voided = 0)                   AS 'TEST HEPATITE B QUALITATIVE',
+  DATE(hepbrd.value_datetime)		   AS 'DATE RESULTATS HEPATITE B',
   DATE(postd.value_datetime)           AS 'DATE POST-TEST COUNSELING',
   DATE(tbd.obs_datetime)               AS 'DATE ÉVALUATION TB',
   tb_evaluation.tb_result              AS 'TB EVALUATION',
@@ -67,9 +78,12 @@ FROM
   INNER JOIN
   -- Patient's demographics
   current_name_address cna ON cna.person_id = e.patient_id
-							  AND date(e.encounter_datetime) >= :startDate
-							  AND date(e.encounter_datetime) <= :endDate
-                              AND e.encounter_type = :vctEnc
+							   AND date(e.encounter_datetime) >= :startDate
+							   AND date(e.encounter_datetime) <= :endDate
+                               AND e.encounter_type = :vctEnc -- 41
+  -- Most recent ZL EMR ID
+  INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId -- 3
+            AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON e.patient_id = zl.patient_id
   -- Name of Mother                                               
   LEFT OUTER JOIN
   person_attribute pa ON pa.person_id = e.patient_id
@@ -101,8 +115,8 @@ FROM
   -- Reason for HIV screening note
   LEFT JOIN
   (SELECT
-     person_id,
-     encounter_id,
+     o.person_id,
+     o.encounter_id,
      GROUP_CONCAT(name
                   SEPARATOR ', ') AS notes
    FROM
@@ -111,11 +125,11 @@ FROM
                    AND locale = 'fr'
                    AND concept_name_type = 'FULLY_SPECIFIED'
                    AND cn.voided = 0
-                   AND o.concept_id = (SELECT concept_id
+                   AND o.concept_id IN (SELECT concept_id
                                        FROM
-                                         report_mapping rm
+                                         report_mapping rm 
                                        WHERE
-                                         rm.source = 'PIH' AND rm.code = 11535)
+                                         rm.source = 'PIH' AND rm.code IN (11535, 11559, 11527, 3082))
    GROUP BY o.encounter_id) reason_hiv_screen ON reason_hiv_screen.person_id = e.patient_id
                                                  AND e.encounter_id = reason_hiv_screen.encounter_id
   -- Victim of gender-based violence
@@ -232,6 +246,65 @@ FROM
                                                             report_mapping rm
                                                           WHERE
                                                             rm.source = 'PIH' AND rm.code = 11523)
+                                            AND voided = 0)
+-- Date of Hepatitis B test construct (should be in obs_gid of Hepatitis B test construct)
+LEFT JOIN
+  obs hepbd ON hepbd.person_id = e.patient_id
+               AND hepbd.concept_id = (SELECT concept_id
+                                       FROM
+                                         report_mapping rm
+                                       WHERE
+                                         rm.source = 'PIH' AND rm.code = 3267)
+               AND hepbd.voided = 0
+               AND e.encounter_id = hepbd.encounter_id
+               AND hepbd.obs_group_id IN (SELECT obs_id
+                                          FROM
+                                            obs
+                                          WHERE
+                                            concept_id = (SELECT concept_id
+                                                          FROM
+                                                            report_mapping rm
+                                                          WHERE
+                                                            rm.source = 'PIH' AND rm.code = 11576)
+                                            AND voided = 0)
+-- Hep B test results
+LEFT JOIN
+obs hepbr ON hepbr.person_id = e.patient_id
+             AND hepbr.concept_id = (SELECT concept_id
+                                   FROM
+                                     report_mapping rm
+                                   WHERE
+                                     rm.source = 'CIEL' AND rm.code = 1322)
+             AND hepbr.voided = 0
+             AND e.encounter_id = hepbr.encounter_id
+             AND hepbr.obs_group_id IN (SELECT obs_id
+                                      FROM
+                                        obs
+                                      WHERE
+                                        concept_id = (SELECT concept_id
+                                                      FROM
+                                                        report_mapping rm
+                                                      WHERE
+                                                        rm.source = 'PIH' AND rm.code = 11576)
+                                        AND voided = 0)
+LEFT JOIN
+  obs hepbrd ON hepbrd.person_id = e.patient_id
+               AND hepbrd.concept_id = (SELECT concept_id
+                                       FROM
+                                         report_mapping rm
+                                       WHERE
+                                         rm.source = 'PIH' AND rm.code = 10783)
+               AND hepbrd.voided = 0
+               AND e.encounter_id = hepbrd.encounter_id
+               AND hepbrd.obs_group_id IN (SELECT obs_id
+                                          FROM
+                                            obs
+                                          WHERE
+                                            concept_id = (SELECT concept_id
+                                                          FROM
+                                                            report_mapping rm
+                                                          WHERE
+                                                            rm.source = 'PIH' AND rm.code = 11576)
                                             AND voided = 0)
   -- Date of post-test counseling
   LEFT JOIN
