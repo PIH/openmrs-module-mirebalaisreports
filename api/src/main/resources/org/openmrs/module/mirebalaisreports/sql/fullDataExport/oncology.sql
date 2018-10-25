@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_datetime, el.name encounter_location,
+SELECT p.patient_id, zl.identifier zlemr, dos.identifier dossier_id, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark, e.encounter_datetime, el.name encounter_location,
 CONCAT(pn.given_name, ' ',pn.family_name) provider, e.visit_id, obsjoins.encounter_id "Encounter_id", et.name "Encounter_Type",
 diagname1.name "Diagnosis_1",
 diagname2.name "Diagnosis_2",
@@ -43,7 +43,7 @@ INNER JOIN location el ON e.location_id = el.location_id
 INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id and ep.voided = 0
 INNER JOIN provider pv ON pv.provider_id = ep.provider_id
 INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
--- Encounter ype
+-- Encounter type
 INNER JOIN encounter_type et on e.encounter_type = et.encounter_type_id
 -- Joins for all other fields
 INNER JOIN
@@ -109,6 +109,10 @@ LEFT OUTER JOIN concept_name cn on cn.concept_id = o_disp.value_coded and cn.loc
 where e_disp.voided = 0
 and e_disp.encounter_type = :dispEnc
 group by e_disp.encounter_id) disp on disp.encounter_id = e.encounter_id
+-- DOSSIER ID (The UUID is for Hôpital Universitaire de Mirebalais - Prensipal)
+LEFT OUTER JOIN
+(SELECT patient_id, location_id, identifier_type, identifier from patient_identifier WHERE identifier_type = :dosId
+  AND location_id = (select location_id from location where uuid = '24bd1390-5959-11e4-8ed6-0800200c9a66') and voided = 0 ORDER BY date_created DESC) dos ON p.patient_id = dos.patient_id
 WHERE p.voided = 0
 -- exclude test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt
@@ -117,5 +121,4 @@ AND (e.encounter_type <> :dispEnc or disp.Outpatient_chemo is not null)
 AND date(e.encounter_datetime) >= :startDate
 AND date(e.encounter_datetime) <= :endDate
 GROUP BY e.encounter_id
-order by e.encounter_datetime
-;
+order by e.encounter_datetime;
