@@ -1,4 +1,4 @@
-SELECT p.patient_id, zl.identifier zlemr, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  
+SELECT p.patient_id, zl.identifier zlemr, dos.identifier dossier_id, zl_loc.name loc_registered, un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc, pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,  
 v.date_started "ED_Visit_Start_Datetime",
 e.encounter_datetime "Triage_datetime", el.name encounter_location,
 -- CONCAT(pn.given_name, ' ',pn.family_name) provider,
@@ -80,6 +80,11 @@ left outer join obs cons_diag3 on cons_diag3.encounter_id = ec.encounter_id and 
      and cons_diag3.obs_id not in (cons_diag1.obs_id,cons_diag2.obs_id)
 left outer join concept_name cons_diagname3 on cons_diagname3.concept_id = cons_diag3.value_coded and cons_diagname3.locale = 'fr' and cons_diagname3.voided = 0 and cons_diagname3.locale_preferred=1
 left outer join obs cons_diag_nc on cons_diag_nc.encounter_id = ec.encounter_id and cons_diag_nc.voided = 0 and cons_diag_nc.concept_id = diag_nc.concept_id
+-- DOSSIER ID (The UUID is for Hôpital Universitaire de Mirebalais - Prensipal)
+LEFT OUTER JOIN
+(SELECT patient_id, location_id, identifier_type, identifier from patient_identifier WHERE identifier_type = :dosId
+  AND location_id = (select location_id from location where uuid = '24bd1390-5959-11e4-8ed6-0800200c9a66') and voided = 0 ORDER BY date_created DESC) 
+  dos ON p.patient_id = dos.patient_id
 -- Straight Obs Joins
 INNER JOIN
 (select o.encounter_id,
