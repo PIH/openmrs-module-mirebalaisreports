@@ -39,6 +39,8 @@ group_concat(CASE when rm.source = 'PIH' and rm.code = 'NCD category' then cn.na
 max(CASE when rm.source = 'PIH' and rm.code = 'NCD category' then o.comments end) 'Other_NCD_category',
 max(CASE when rm.source = 'CIEL' and rm.code = '5089' then o.value_numeric end) 'Weight_kg',
 max(CASE when rm.source = 'CIEL' and rm.code = '5090' then o.value_numeric end) 'Height_cm',
+ROUND(max(CASE when rm.source = 'CIEL' and rm.code = '5089' then o.value_numeric end)/((max(CASE when rm.source = 'CIEL' and rm.code = '5090' then o.value_numeric end)
+/100)*(max(CASE when rm.source = 'CIEL' and rm.code = '5090' then o.value_numeric end)/100)),1) 'BMI',
 max(CASE when rm.source = 'CIEL' and rm.code = '5085' then o.value_numeric end) 'Systolic_BP',
 max(CASE when rm.source = 'CIEL' and rm.code = '5086' then o.value_numeric end) 'Diastolic_BP',
 max(CASE when rm.source = 'CIEL' and rm.code = '163080' then o.value_numeric end) 'Waist_cm',
