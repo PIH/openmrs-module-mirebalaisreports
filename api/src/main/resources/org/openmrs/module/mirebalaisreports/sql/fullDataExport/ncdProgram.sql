@@ -1,13 +1,13 @@
-select  
+select
 p.patient_id,
 pid.identifier "ZL_EMR_ID", 
 dos.identifier "Dossier_ID", 
 d.given_name, d.family_name, d.birthdate, birthdate_estimated, d.gender, d.country, d.department, d.commune, d.section_communal, d.locality, d.street_landmark,
-pp.date_enrolled "Enrolled_in_Program",
+DATE(pp.date_enrolled) "Enrolled_in_Program",
 cn_state.name "Program_State",
 cn_out.name "Program_Outcome",
-last_ncd_enc.encounter_datetime "last_NCD_encounter",
-obs_next_appt.value_datetime "next_NCD_appointment",
+DATE(last_ncd_enc.encounter_datetime) "last_NCD_encounter",
+DATE(obs_next_appt.value_datetime) "next_NCD_appointment",
 cats.Hypertension,
 cats.Diabetes,
 cats.Heart_Failure,
@@ -23,14 +23,16 @@ cn_visit_adherence.name "visit_adherence",
 cn_recent_hosp.name "recent_hospitalization",
 meds.meds "NCD_meds_prescribed",
 Case when lower(meds.meds) like '%insulin%' then 'oui' else 'non' end "prescribed_insulin",
-HbA1c_test.value_numeric "HbA1c_result",
-HbA1c_coll_date.value_datetime "HbA1c_collection_date",
-HbA1c_date.value_datetime "HbA1c_result_date",
+HbA1c_results.value_numeric "HbA1c_result",
+HbA1c_results.HbA1c_coll_date "HbA1c_collection_date",
+DATE(HbA1c_date.value_datetime) "HbA1c_result_date",
 bp_diast.value_numeric "BP_Diastolic",
 bp_syst.value_numeric "BP_Systolic",
-creat_test.value_numeric "Creatinine_Result",
-creat_coll_date.value_datetime "Creatinine_collection_date",
-creat_date.value_datetime "Creatinine_result_date",
+height.value_numeric Height,
+weight.value_numeric weight,
+creat_results.value_numeric "Creatinine_Result",
+DATE(creat_results.creat_coll_date) "Creatinine_collection_date",
+DATE(creat_date.value_datetime) "Creatinine_result_date",
 diagname1.name "Last_Diagnosis_1",
 diagname2.name "Last_Diagnosis_2",
 diagname3.name "Last_Diagnosis_3",
@@ -39,7 +41,8 @@ from patient p
 -- only return patients in program
 INNER JOIN patient_program pp on pp.patient_id = p.patient_id and pp.voided = 0 and pp.program_id in
       (select program_id from program where uuid = '515796ec-bf3a-11e7-abc4-cec278b6b50a') -- uuid of the NCD program
-LEFT OUTER JOIN patient_identifier pid ON pid.patient_identifier_id = (select pid2.patient_identifier_id from patient_identifier pid2 where pid2.patient_id = p.patient_id and pid2.identifier_type = :zlId
+LEFT OUTER JOIN patient_identifier pid ON pid.patient_identifier_id = (select pid2.patient_identifier_id from patient_identifier pid2 where
+ pid2.patient_id = p.patient_id and pid2.identifier_type = :zlId
                                                  order by pid2.preferred desc, pid2.date_created desc limit 1)
 LEFT OUTER JOIN patient_identifier dos on dos.patient_identifier_id = 
      (select patient_identifier_id from patient_identifier dos2
@@ -67,17 +70,16 @@ LEFT OUTER JOIN encounter last_ncd_enc on last_ncd_enc.encounter_id =
 LEFT OUTER JOIN obs obs_next_appt on obs_next_appt.encounter_id = last_ncd_enc.encounter_id and obs_next_appt.concept_id =
      (select concept_id from report_mapping rm_next where rm_next.source = 'PIH' and rm_next.code = 'RETURN VISIT DATE')
      and obs_next_appt.voided = 0
--- last collected HbA1c test 
-LEFT OUTER JOIN obs HbA1c_test on HbA1c_test.voided = 0 and HbA1c_test.obs_id =
-   (select obs_id from obs o2 where o2.person_id = p.patient_id 
-    and o2.concept_id =
-      (select concept_id from report_mapping rm_HbA1c where rm_HbA1c.source = 'PIH' and rm_HbA1c.code = 'HbA1c')
-    order by o2.obs_datetime desc limit 1  
-    )
-LEFT OUTER JOIN obs HbA1c_coll_date on HbA1c_coll_date.encounter_id = HbA1c_test.encounter_id and HbA1c_coll_date.voided = 0
-  and HbA1c_coll_date.concept_id =  
-      (select concept_id from report_mapping rm_HbA1c_coll_date where rm_HbA1c_coll_date.source = 'PIH' and rm_HbA1c_coll_date.code = 'SPUTUM COLLECTION DATE')
-LEFT OUTER JOIN obs HbA1c_date on HbA1c_date.encounter_id = HbA1c_test.encounter_id and HbA1c_date.voided = 0
+-- last collected HbA1c test
+LEFT OUTER JOIN
+    (SELECT person_id, value_numeric, HbA1c_test.encounter_id, DATE(obs_datetime), DATE(edate.encounter_datetime) HbA1c_coll_date from obs HbA1c_test JOIN encounter
+    edate ON edate.patient_id = HbA1c_test.person_id and HbA1c_test.encounter_id = edate.encounter_id AND
+    HbA1c_test.voided = 0 and HbA1c_test.concept_id =
+    (select concept_id from report_mapping rm_HbA1c where rm_HbA1c.source = 'PIH' and rm_HbA1c.code = 'HbA1c') and 
+    obs_datetime IN (select max(obs_datetime) from obs o2 where o2.voided = 0 and o2.concept_id = (select concept_id from report_mapping rm_HbA1c 
+    where rm_HbA1c.source = 'PIH' and rm_HbA1c.code = 'HbA1c') 
+    group by o2.person_id)) HbA1c_results on HbA1c_results.person_id = p.patient_id
+LEFT OUTER JOIN obs HbA1c_date on HbA1c_date.encounter_id = HbA1c_results.encounter_id and HbA1c_date.voided = 0
   and HbA1c_date.concept_id =  
       (select concept_id from report_mapping rm_HbA1c_date where rm_HbA1c_date.source = 'PIH' and rm_HbA1c_date.code = 'DATE OF LABORATORY TEST')
 -- last collected Blood Pressure
@@ -92,20 +94,31 @@ LEFT OUTER JOIN obs bp_diast on bp_diast.encounter_id = bp_syst.encounter_id
    (select concept_id from report_mapping rm_diast where rm_diast.source = 'PIH' and rm_diast.code = 'Diastolic Blood Pressure')
   and bp_diast.voided = 0 
 -- last collected Creatinine test
-LEFT OUTER JOIN obs creat_test on creat_test.obs_id =
-   (select obs_id from obs o2 where o2.person_id = p.patient_id 
-    and o2.concept_id =
-      (select concept_id from report_mapping rm_syst where rm_syst.source = 'PIH' and rm_syst.code = 'Creatinine mg per dL')
-    order by o2.obs_datetime desc limit 1  
-    ) and creat_test.voided = 0
-LEFT OUTER JOIN obs creat_coll_date on creat_coll_date.encounter_id = creat_test.encounter_id 
-  and creat_coll_date.concept_id =  
-      (select concept_id from report_mapping rm_creat_coll_date where rm_creat_coll_date.source = 'PIH' and rm_creat_coll_date.code = 'SPUTUM COLLECTION DATE')
-      and creat_coll_date.voided = 0
-LEFT OUTER JOIN obs creat_date on creat_date.encounter_id = creat_test.encounter_id 
+LEFT OUTER JOIN
+(SELECT person_id, value_numeric, creat_test.encounter_id, DATE(obs_datetime), DATE(edate.encounter_datetime) creat_coll_date from obs creat_test JOIN encounter
+    edate ON edate.patient_id = creat_test.person_id and creat_test.encounter_id = edate.encounter_id AND
+    creat_test.voided = 0 and creat_test.concept_id =
+    (select concept_id from report_mapping rm_syst where rm_syst.source = 'PIH' and rm_syst.code = 'Creatinine mg per dL') and 
+    obs_datetime IN (select max(obs_datetime) from obs o2 where o2.voided = 0 and o2.concept_id = (select concept_id from report_mapping rm_syst 
+    where rm_syst.source = 'PIH' and rm_syst.code = 'HbA1c') 
+    group by o2.person_id)) creat_results on creat_results.person_id = p.patient_id
+LEFT OUTER JOIN obs creat_date on creat_date.encounter_id = creat_results.encounter_id 
   and creat_date.concept_id =  
       (select concept_id from report_mapping rm_creat_date where rm_creat_date.source = 'PIH' and rm_creat_date.code = 'DATE OF LABORATORY TEST')
-   and creat_date.voided = 0   
+   and creat_date.voided = 0
+-- last collected Height, Weight
+LEFT OUTER JOIN obs height on height.obs_id =
+   (select obs_id from obs o2 where o2.person_id = p.patient_id 
+    and o2.concept_id =
+      (select concept_id from report_mapping rm_syst where rm_syst.source = 'PIH' and rm_syst.code = 'HEIGHT (CM)')
+    order by o2.obs_datetime desc limit 1  
+    ) and height.voided = 0
+LEFT OUTER JOIN obs weight on weight.obs_id =
+   (select obs_id from obs o2 where o2.person_id = p.patient_id 
+    and o2.concept_id =
+      (select concept_id from report_mapping rm_syst where rm_syst.source = 'PIH' and rm_syst.code = 'WEIGHT (KG)')
+    order by o2.obs_datetime desc limit 1  
+    ) and weight.voided = 0
 -- NYHA
 LEFT OUTER JOIN 
   (SELECT obs_nyha.encounter_id, GROUP_CONCAT(cn_nyha.name) "classes"
@@ -143,6 +156,7 @@ LEFT OUTER JOIN
  and obs_meds.voided = 0
  group by obs_meds.encounter_id
  ) meds on meds.encounter_id = last_ncd_enc.encounter_id
+-- 
 -- NCD category
 LEFT OUTER JOIN 
   (SELECT obs_cat.encounter_id,
@@ -190,4 +204,4 @@ left outer join obs diag3 on diag3.obs_id =
  left outer join concept_name diagname3 on diagname3.concept_id = diag3.value_coded and diagname3.locale = 'fr' and diagname3.voided = 0 and diagname3.locale_preferred=1
  left outer join obs d_nc on d_nc.concept_id = diag_nc.concept_id and d_nc.voided = 0 and d_nc.encounter_id = last_ncd_enc.encounter_id
  order by last_NCD_encounter desc
- ; 
+;
