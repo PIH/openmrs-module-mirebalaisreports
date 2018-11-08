@@ -163,6 +163,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VCT_REPORT_DEFINITION_UUID, "vctdataexport",
                         Arrays.asList("hivCounselingTest")));
             }
+            if (config.isComponentEnabled(Components.CHW_APP) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.MCH_PROVIDER_REPORT_DEFINITION_UUID, "mchproviderdataexport",
+                        Arrays.asList("mchProvider")));
+            }
 
 
         }
