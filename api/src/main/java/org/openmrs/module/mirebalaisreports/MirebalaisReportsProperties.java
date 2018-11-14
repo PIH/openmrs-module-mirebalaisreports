@@ -387,12 +387,12 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_ADULT_FOLLOWUP_CONSULT.uuid());
     }
 
-    public EncounterType getNCDAdultInitialEncounterType() {
-	    return getEncounterTypeByUuid(EncounterTypes.NCD_ADULT_INITIAL_CONSULT.uuid());
+    public EncounterType getNCDInitialEncounterType() {
+	    return getEncounterTypeByUuid(EncounterTypes.NCD_INITIAL_CONSULT.uuid());
     }
 
-    public EncounterType getNCDAdultFollowupEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.NCD_ADULT_FOLLOWUP_CONSULT.uuid());
+    public EncounterType getNCDFollowupEncounterType() {
+        return getEncounterTypeByUuid(EncounterTypes.NCD_FOLLOWUP_CONSULT.uuid());
     }
 
     public EncounterType getMedicationDispensedEncountertype() {
