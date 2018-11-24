@@ -35,7 +35,7 @@
         <openMRSwebVersion>2.2.0-SNAPSHOT</openMRSwebVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-        <emrapiVersion>1.25.0-SNAPSHOT</emrapiVersion>
+        <emrapiVersion>1.26.0</emrapiVersion>
         <paperrecordVersion>1.3.0</paperrecordVersion>
         <emrVersion>2.1.0</emrVersion>
         <uiframeworkVersion>3.13.0</uiframeworkVersion>
