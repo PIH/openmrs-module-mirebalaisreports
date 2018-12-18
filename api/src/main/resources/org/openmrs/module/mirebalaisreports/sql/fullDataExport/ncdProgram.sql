@@ -62,7 +62,7 @@ LEFT OUTER JOIN concept_name cn_out on cn_out.concept_id = pp.outcome_concept_id
 LEFT OUTER JOIN encounter last_ncd_enc on last_ncd_enc.encounter_id = 
     (select encounter_id from encounter e2
     where e2.patient_id = p.patient_id
-    and e2.encounter_type in (:AdultNCDInitEnc, :AdultNCDFollowEnc)
+    and e2.encounter_type in (:NCDInitEnc, :NCDFollowEnc)
     and e2.voided = 0
     order by e2.encounter_datetime desc
     limit 1)
