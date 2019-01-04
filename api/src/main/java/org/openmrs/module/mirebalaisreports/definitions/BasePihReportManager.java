@@ -113,6 +113,9 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sql = replace(sql, "NCDInitEnc", mrp.getNCDInitialEncounterType());
         sql = replace(sql, "NCDFollowEnc", mrp.getNCDFollowupEncounterType());
         sql = replace(sql, "vctEnc", mrp.getVCTEncounterType());
+        sql = replace(sql, "ANCInitEnc", mrp.getANCInitialEncounterType());
+        sql = replace(sql, "ANCFollowEnc", mrp.getANCFollowupEncounterType());
+        sql = replace(sql, "DeliveryEnc", mrp.getDeliveryEncounterType());
 
         sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
         sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());

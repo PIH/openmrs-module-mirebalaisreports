@@ -120,6 +120,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID = "bf1fbee4-0a35-4d7c-9054-6681f3c06463";
     public static final String VCT_REPORT_DEFINITION_UUID = "8189ccd0-cd86-11e8-a8d5-f2801f1b9fd1";
     public static final String MCH_PROVIDER_REPORT_DEFINITION_UUID = "6a35bb00-e2d2-11e8-9f32-f2801f1b9fd1";
+    public static final String MCH_REPORT_DEFINITION_UUID = "85656ac4-0faa-11e9-ab14-d663bd873d93";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
@@ -289,6 +290,9 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String CHEMOTHERAPY_ENCOUNTER_TYPE = "828964fa-17eb-446e-aba4-e940b0f4be5b";
     public static final String NCD_CONSULT_ENCOUNTER_TYPE_UUID = "ae06d311-1866-455b-8a64-126a9bd74171";
     public static final String VCT_ENCOUNTER_TYPE_UUID = "616b66fe-f189-11e7-8c3f-9a214cf093ae";
+    public static final String ANC_INTAKE_ENCOUNTER_TYPE_UUID = "00e5e810-90ec-11e8-9eb6-529269fb1459";
+    public static final String ANC_FOLLOWUP_ENCOUNTER_TYPE_UUID = "00e5e946-90ec-11e8-9eb6-529269fb1459";
+    public static final String MCH_DELIVERY_ENCOUNTER_TYPE_UUID = "00e5ebb2-90ec-11e8-9eb6-529269fb1459";
 
 	public EncounterType getRegistrationEncounterType() {
 		return getEncounterTypeByUuid(REGISTRATION_ENCOUNTER_TYPE_UUID);
@@ -328,6 +332,18 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     public EncounterType getVCTEncounterType() {
         return getEncounterTypeByUuid(VCT_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getANCInitialEncounterType() {
+        return getEncounterTypeByUuid(ANC_INTAKE_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getANCFollowupEncounterType() {
+        return getEncounterTypeByUuid(ANC_FOLLOWUP_ENCOUNTER_TYPE_UUID);
+    }
+
+    public EncounterType getDeliveryEncounterType() {
+        return getEncounterTypeByUuid(MCH_DELIVERY_ENCOUNTER_TYPE_UUID);
     }
 
     public EncounterType getAdmissionEncounterType() {

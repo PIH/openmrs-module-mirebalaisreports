@@ -167,7 +167,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MCH_PROVIDER_REPORT_DEFINITION_UUID, "mchproviderdataexport",
                         Arrays.asList("mchProvider")));
             }
-
+            if (config.isComponentEnabled(Components.MCH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.MCH_REPORT_DEFINITION_UUID, "mchdataexport",
+                        Arrays.asList("prenatalAndDelivery")));
+            }
 
         }
         return configurations;
