@@ -62,7 +62,9 @@ max(CASE when crs_answer.name = 'PIH' and crt_answer.code = 'DIPTHERIA TETANUS B
 max(CASE when crs_answer.name = 'PIH' and crt_answer.code = 'DIPTHERIA TETANUS BOOSTER'
          and obsseq.value_numeric = 12 then date(obsdate.value_datetime) end) 'DT Booster 2'
 from encounter e
-INNER JOIN obs o on o.encounter_id = e.encounter_id and o.voided = 0
+INNER JOIN obs o
+    on o.encounter_id = e.encounter_id
+   and o.voided = 0
 -- join in mapping of obs answer
 LEFT OUTER JOIN concept_reference_map crm_answer on crm_answer.concept_id = o.value_coded
 LEFT OUTER JOIN concept_reference_term crt_answer on crt_answer.concept_reference_term_id = crm_answer.concept_reference_term_id
@@ -77,6 +79,12 @@ WHERE p.voided = 0
 -- exclude test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt
                          AND voided = 0)
-AND date(e.encounter_datetime) >=:startDate
-AND date(e.encounter_datetime) <=:endDate
+-- only return patients in MCH program
+and p.patient_id IN
+    (select pp.patient_id from patient_program pp
+      where pp.voided = 0
+        and pp.program_id in
+            (select program_id from program
+              where name = 'MCH'))
+
 GROUP BY e.encounter_id;

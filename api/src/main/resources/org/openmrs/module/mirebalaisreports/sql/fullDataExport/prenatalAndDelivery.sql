@@ -90,7 +90,12 @@ INNER JOIN
     max(CASE when rm.source = 'PIH' and rm.code = '6644' then o.comments end) 'Other_Delivery_Finding'
 
 from encounter e, report_mapping rm, obs o
-LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
+    
+LEFT OUTER JOIN concept_name cn
+  on o.value_coded = cn.concept_id
+ and cn.locale = 'en'
+ and cn.locale_preferred = '1'
+ and cn.voided = 0
 where 1=1
     and e.encounter_type in (:ANCInitEnc, :ANCFollowEnc, :DeliveryEnc)
     and rm.concept_id = o.concept_id
@@ -108,21 +113,47 @@ inner join (select crm.concept_id from concept_reference_map crm, concept_refere
     and crt.code = 'DIAGNOSIS'
     ) diagcode
 
-left outer join obs obs_diag1 on obs_diag1.encounter_id = e.encounter_id and obs_diag1.voided = 0 and obs_diag1.concept_id = diagcode.concept_id
-left outer join concept_name diagname1 on diagname1.concept_id = obs_diag1.value_coded and diagname1.locale = 'fr' and diagname1.voided = 0 and diagname1.locale_preferred=1
-left outer join obs obs_diag2 on obs_diag2.encounter_id = e.encounter_id and obs_diag2.voided = 0 and obs_diag2.concept_id = diagcode.concept_id
-   and obs_diag2.obs_id != obs_diag1.obs_id
-left outer join concept_name diagname2 on diagname2.concept_id = obs_diag2.value_coded and diagname2.locale = 'fr' and diagname2.voided = 0 and diagname2.locale_preferred=1
-left outer join obs obs_diag3 on obs_diag3.encounter_id = e.encounter_id and obs_diag3.voided = 0 and obs_diag3.concept_id = diagcode.concept_id
-   and obs_diag3.obs_id not in (obs_diag1.obs_id, obs_diag2.obs_id)
-left outer join concept_name diagname3 on diagname3.concept_id = obs_diag3.value_coded and diagname3.locale = 'fr' and diagname3.voided = 0 and diagname3.locale_preferred=1
+left outer join obs obs_diag1
+        on obs_diag1.encounter_id = e.encounter_id
+       and obs_diag1.voided = 0
+       and obs_diag1.concept_id = diagcode.concept_id
+left outer join concept_name diagname1
+        on diagname1.concept_id = obs_diag1.value_coded
+       and diagname1.locale = 'fr'
+       and diagname1.voided = 0
+       and diagname1.locale_preferred=1
+left outer join obs obs_diag2
+        on obs_diag2.encounter_id = e.encounter_id
+       and obs_diag2.voided = 0
+       and obs_diag2.concept_id = diagcode.concept_id
+       and obs_diag2.obs_id != obs_diag1.obs_id
+left outer join concept_name diagname2
+        on diagname2.concept_id = obs_diag2.value_coded
+       and diagname2.locale = 'fr'
+       and diagname2.voided = 0
+       and diagname2.locale_preferred=1
+left outer join obs obs_diag3
+        on obs_diag3.encounter_id = e.encounter_id
+       and obs_diag3.voided = 0
+       and obs_diag3.concept_id = diagcode.concept_id
+       and obs_diag3.obs_id not in (obs_diag1.obs_id, obs_diag2.obs_id)
+left outer join concept_name diagname3
+        on diagname3.concept_id = obs_diag3.value_coded
+       and diagname3.locale = 'fr'
+       and diagname3.voided = 0
+       and diagname3.locale_preferred=1
+
 -- end columns joins
 
 -- DOSSIER ID (The UUID is for Hôpital Universitaire de Mirebalais - Prensipal)
 LEFT OUTER JOIN
-(SELECT patient_id, location_id, identifier_type, identifier from patient_identifier WHERE identifier_type = :dosId
-  AND location_id = (select location_id from location where uuid = '24bd1390-5959-11e4-8ed6-0800200c9a66') and voided = 0 ORDER BY date_created DESC) dos ON p.patient_id = dos.patient_id
+(SELECT patient_id, location_id, identifier_type, identifier
+   from patient_identifier WHERE identifier_type = :dosId
+    AND location_id = (select location_id from location where uuid = '24bd1390-5959-11e4-8ed6-0800200c9a66')
+    and voided = 0
+ ORDER BY date_created DESC) dos ON p.patient_id = dos.patient_id
 WHERE p.voided = 0
+
 
 -- exclude test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt
