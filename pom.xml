@@ -35,7 +35,7 @@
         <openMRSwebVersion>2.2.0-SNAPSHOT</openMRSwebVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-        <emrapiVersion>1.26.0</emrapiVersion>
+        <emrapiVersion>1.27.0</emrapiVersion>
         <paperrecordVersion>1.3.0</paperrecordVersion>
         <emrVersion>2.1.0</emrVersion>
         <uiframeworkVersion>3.14.0</uiframeworkVersion>
@@ -67,7 +67,7 @@
         <registrationcoreVersion>1.8.0</registrationcoreVersion>
         <registrationappVersion>1.12.0</registrationappVersion>
         <radiologyappVersion>1.4.0</radiologyappVersion>
-        <coreappsVersion>1.20.0-SNAPSHOT</coreappsVersion>
+        <coreappsVersion>1.20.0</coreappsVersion>
         <webservicesRestVersion>2.24.0</webservicesRestVersion>
         <appointmentschedulingVersion>1.10.0</appointmentschedulingVersion>
         <appointmentschedulinguiVersion>1.3</appointmentschedulinguiVersion>
