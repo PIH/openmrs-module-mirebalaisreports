@@ -238,7 +238,14 @@ INNER JOIN
                 AND rm.code = 'PATIENT PLAN COMMENTS'
         THEN
             o.value_text
-    END) 'Patient_Plan_Comments'
+    END) 'Patient_Plan_Comments',
+     MAX(CASE
+         WHEN
+             rm.source = 'PIH'
+             AND rm.code = 'RETURN VISIT DATE'
+             THEN
+                 o.value_datetime
+         END) 'Next_NCD_appointment'
 FROM encounter e, report_mapping rm, obs o
 LEFT OUTER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.locale_preferred = '1'  AND cn.voided = 0
 LEFT OUTER JOIN obs obs2 ON obs2.obs_id = o.obs_group_id
