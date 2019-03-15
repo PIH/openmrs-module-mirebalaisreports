@@ -4,6 +4,7 @@ select
        dos.identifier as Dossier,
        h.identifier as HIVEMR_V1,
        bio.date_created "Last_Fingerprint_Date",
+       bio.identifier "Fingerprint_Identifier",
        pa.state_province as Department,
        pa.city_village as Commune,
        pa.address3 as Section,
