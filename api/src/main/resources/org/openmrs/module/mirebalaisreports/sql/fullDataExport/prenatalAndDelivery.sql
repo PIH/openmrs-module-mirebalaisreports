@@ -31,7 +31,10 @@ SELECT p.patient_id, zl.identifier zlemr, dos.identifier dossier_id,
 
     diagname1.name "Diagnosis_1",
     diagname2.name "Diagnosis_2",
-    diagname3.name "Diagnosis_3"
+    diagname3.name "Diagnosis_3",
+    diagname4.name "Diagnosis_4" ,
+    diagname5.name "Diagnosis_5" ,
+    diagname6.name "Diagnosis_6"
 FROM patient p
 
 -- Most recent ZL EMR ID
@@ -142,7 +145,36 @@ left outer join concept_name diagname3
        and diagname3.locale = 'fr'
        and diagname3.voided = 0
        and diagname3.locale_preferred=1
-
+left outer join obs obs_diag4
+        on obs_diag4.encounter_id = e.encounter_id
+       and obs_diag4.voided = 0
+       and obs_diag4.concept_id = diagcode.concept_id
+       and obs_diag4.obs_id not in (obs_diag1.obs_id, obs_diag2.obs_id, obs_diag3.obs_id) 
+left outer join concept_name diagname4
+        on diagname4.concept_id = obs_diag4.value_coded
+       and diagname4.locale = 'fr'
+       and diagname4.voided = 0
+       and diagname4.locale_preferred=1
+left outer join obs obs_diag5
+        on obs_diag5.encounter_id = e.encounter_id
+       and obs_diag5.voided = 0
+       and obs_diag5.concept_id = diagcode.concept_id
+       and obs_diag5.obs_id not in (obs_diag1.obs_id, obs_diag2.obs_id, obs_diag3.obs_id, obs_diag4.obs_id)
+left outer join concept_name diagname5
+        on diagname5.concept_id = obs_diag5.value_coded
+       and diagname5.locale = 'fr'
+       and diagname5.voided = 0
+       and diagname5.locale_preferred=1 
+left outer join obs obs_diag6
+        on obs_diag6.encounter_id = e.encounter_id
+       and obs_diag6.voided = 0
+       and obs_diag6.concept_id = diagcode.concept_id
+       and obs_diag6.obs_id not in (obs_diag1.obs_id, obs_diag2.obs_id, obs_diag3.obs_id, obs_diag4.obs_id, obs_diag5.obs_id)
+left outer join concept_name diagname6
+        on diagname6.concept_id = obs_diag6.value_coded
+       and diagname6.locale = 'fr'
+       and diagname6.voided = 0
+       and diagname6.locale_preferred=1 
 -- end columns joins
 
 -- DOSSIER ID (The UUID is for Hôpital Universitaire de Mirebalais - Prensipal)
