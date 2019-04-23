@@ -49,7 +49,7 @@ public class DailyCheckInsReportManagerTest extends BaseReportTest {
         EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
 
         // never registered or seen
-        data.randomPatient().dateCreated("2013-10-01").save();
+        data.randomPatient().age(50).dateCreated("2013-10-01").save();
 
         // registered at Clinic Registration, checked in at Outpatient Clinic for a CLINICAL visit (and had a consult)
         p2 = data.randomPatient().save();
