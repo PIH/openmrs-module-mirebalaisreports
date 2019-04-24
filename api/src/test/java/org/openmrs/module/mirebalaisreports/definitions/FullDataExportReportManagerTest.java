@@ -282,6 +282,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         executeDataSet("org/openmrs/module/mirebalaisreports/dispensingExportTestData.xml");
 
         Patient patient = data.randomPatient()
+                .age(40)
                 .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
                 .save();
         Date date = new DateTime(2013, 8, 30, 10, 11, 12).toDate();
