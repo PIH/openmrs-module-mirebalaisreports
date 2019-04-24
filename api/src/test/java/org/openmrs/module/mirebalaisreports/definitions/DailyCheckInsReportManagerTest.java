@@ -52,7 +52,7 @@ public class DailyCheckInsReportManagerTest extends BaseReportTest {
         data.randomPatient().age(50).dateCreated("2013-10-01").save();
 
         // registered at Clinic Registration, checked in at Outpatient Clinic for a CLINICAL visit (and had a consult)
-        p2 = data.randomPatient().save();
+        p2 = data.randomPatient().age(50).save();
         Visit v1 = data.visit().patient(p2).visitType(atFacility).started("2013-10-01 09:30:00").stopped("2013-10-01 16:45:00").location(mirebalaisHospital).save();
         data.encounter().visit(v1).encounterType(registration).location(registrationDesk).encounterDatetime("2013-10-01 09:30:00").save();
         Encounter p2CheckIn = data.encounter().visit(v1).encounterType(checkIn).location(outpatient).encounterDatetime("2013-10-01 09:45:00").save();
@@ -60,14 +60,14 @@ public class DailyCheckInsReportManagerTest extends BaseReportTest {
         data.encounter().visit(v1).encounterType(consult).encounterDatetime("2013-10-01 10:45:00").location(outpatient).save();
 
         // checked in at Outpatient Clinic for a Pharmacy only visit
-        p3 = data.randomPatient().save();
+        p3 = data.randomPatient().age(50).save();
         data.encounter().patient(p3).encounterType(registration).location(registrationDesk).encounterDatetime("2013-01-01 09:30:00").save();
         Visit v2 = data.visit().patient(p3).visitType(atFacility).started("2013-10-01 10:30:00").stopped("2013-10-01 16:45:00").location(mirebalaisHospital).save();
         Encounter p3checkIn = data.encounter().visit(v2).encounterType(checkIn).location(outpatient).encounterDatetime("2013-10-01 10:45:00").save();
         data.obs().encounter(p3checkIn).concept("Type of HUM visit", "PIH").value("Pharmacy only", "PIH").save();
 
         // registered before and had a consult, then checked in again today for a CLINICAL visit (but no consult yet)
-        p4 = data.randomPatient().save();
+        p4 = data.randomPatient().age(50).save();
         data.encounter().patient(p4).encounterType(consult).encounterDatetime("2009-01-01").location(outpatient).save();
         Visit v3 = data.visit().patient(p4).visitType(atFacility).started("2013-10-01 14:30:00").location(mirebalaisHospital).save();
         Encounter p4CheckIn = data.encounter().visit(v3).encounterType(checkIn).location(outpatient).encounterDatetime("2013-10-01 14:30:00").save();
