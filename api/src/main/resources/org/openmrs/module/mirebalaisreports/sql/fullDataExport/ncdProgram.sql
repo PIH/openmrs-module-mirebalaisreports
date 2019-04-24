@@ -10,7 +10,7 @@ cn_disposition.name "Disposition",
 DATE(first_ncd_enc.encounter_datetime) "first_NCD_encounter",
 DATE(last_ncd_enc.encounter_datetime) "last_NCD_encounter",
 DATE(obs_next_appt.value_datetime) "next_NCD_appointment",
-IF(DATEDIFF(NOW(), last_ncd_enc.encounter_datetime) > 30, "Oui", NULL) "LTFU",
+IF(DATEDIFF(CURDATE(), obs_next_appt.value_datetime) > 30, "Oui", NULL) "30_days_past_app",
 IF(obs_disposition.value_coded = 
 (select concept_id from report_mapping rm_dispostion where rm_dispostion.source = 'PIH' and rm_dispostion.code = 'DEATH')
 OR pp.outcome_concept_id = (select concept_id from report_mapping rm_dispostion where rm_dispostion.source = 'PIH' and rm_dispostion.code = 'PATIENT DIED')
