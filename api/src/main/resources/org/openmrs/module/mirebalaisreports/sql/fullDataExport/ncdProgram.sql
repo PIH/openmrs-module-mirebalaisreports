@@ -6,8 +6,16 @@ d.given_name, d.family_name, d.birthdate, birthdate_estimated, d.gender, d.count
 DATE(pp.date_enrolled) "Enrolled_in_Program",
 cn_state.name "Program_State",
 cn_out.name "Program_Outcome",
+cn_disposition.name "Disposition",
+DATE(first_ncd_enc.encounter_datetime) "first_NCD_encounter",
 DATE(last_ncd_enc.encounter_datetime) "last_NCD_encounter",
 DATE(obs_next_appt.value_datetime) "next_NCD_appointment",
+IF(DATEDIFF(NOW(), last_ncd_enc.encounter_datetime) > 30, "Oui", NULL) "LTFU",
+IF(obs_disposition.value_coded = 
+(select concept_id from report_mapping rm_dispostion where rm_dispostion.source = 'PIH' and rm_dispostion.code = 'DEATH')
+OR pp.outcome_concept_id = (select concept_id from report_mapping rm_dispostion where rm_dispostion.source = 'PIH' and rm_dispostion.code = 'PATIENT DIED')
+, "Oui", NULL
+) Deceased,
 cats.Hypertension,
 cats.Diabetes,
 cats.Heart_Failure,
@@ -66,10 +74,23 @@ LEFT OUTER JOIN encounter last_ncd_enc on last_ncd_enc.encounter_id =
     and e2.voided = 0
     order by e2.encounter_datetime desc
     limit 1)
+-- first visit
+LEFT OUTER JOIN encounter first_ncd_enc on first_ncd_enc.encounter_id = 
+    (select encounter_id from encounter e3
+    where e3.patient_id = p.patient_id
+    and e3.encounter_type in (:NCDInitEnc, :NCDFollowEnc)
+    and e3.voided = 0
+    order by e3.encounter_datetime ASC
+    limit 1)
 -- next visit (obs)
 LEFT OUTER JOIN obs obs_next_appt on obs_next_appt.encounter_id = last_ncd_enc.encounter_id and obs_next_appt.concept_id =
      (select concept_id from report_mapping rm_next where rm_next.source = 'PIH' and rm_next.code = 'RETURN VISIT DATE')
      and obs_next_appt.voided = 0
+-- latest disposition     
+LEFT OUTER JOIN obs obs_disposition on obs_disposition.encounter_id = last_ncd_enc.encounter_id and obs_disposition.concept_id =
+     (select concept_id from report_mapping rm_dispostion where rm_dispostion.source = 'PIH' and rm_dispostion.code = '8620')
+     and obs_disposition.voided = 0
+LEFT OUTER JOIN concept_name cn_disposition on cn_disposition.concept_id = obs_disposition.value_coded and cn_disposition.locale = 'fr' and cn_disposition.voided = 0 and cn_disposition.locale_preferred=1
 -- last collected HbA1c test
 LEFT OUTER JOIN
     (SELECT person_id, value_numeric, HbA1c_test.encounter_id, DATE(obs_datetime), DATE(edate.encounter_datetime) HbA1c_coll_date from obs HbA1c_test JOIN encounter
