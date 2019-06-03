@@ -3,6 +3,9 @@ SELECT
     zl.identifier zlemr,
     zl_loc.name loc_registered,
     un.value unknown_patient,
+    DATE(pp.date_enrolled) enrolled_in_program,
+	cn_state.name program_state,
+	cn_out.name program_outcome,
     pr.gender,
     ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate) / 365.25,
             1) age_at_enc,
@@ -31,6 +34,15 @@ LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_cre
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created DESC) n ON p.patient_id = n.person_id
 INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
 INNER JOIN location el ON e.location_id = el.location_id
+-- UUID of NCD program
+INNER JOIN patient_program pp on pp.patient_id = p.patient_id and pp.voided = 0 and pp.program_id in
+      (select program_id from program where uuid = '515796ec-bf3a-11e7-abc4-cec278b6b50a') -- uuid of the NCD program
+-- patient state
+LEFT OUTER JOIN patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.end_date is null and ps.voided = 0
+LEFT OUTER JOIN program_workflow_state pws on pws.program_workflow_state_id = ps.state and pws.retired = 0
+LEFT OUTER JOIN concept_name cn_state on cn_state.concept_id = pws.concept_id  and cn_state.locale = 'en' and cn_state.locale_preferred = '1'  and cn_state.voided = 0
+-- outcome
+LEFT OUTER JOIN concept_name cn_out on cn_out.concept_id = pp.outcome_concept_id and cn_out.locale = 'en' and cn_out.locale_preferred = '1'  and cn_out.voided = 0
 --  Provider Name
 INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id AND ep.voided = 0
 INNER JOIN provider pv ON pv.provider_id = ep.provider_id
@@ -281,5 +293,4 @@ AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
  patient_id = person_id AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc) AND obs.voided = 0))
 AND date(e.encounter_datetime) >= date(:startDate )
 AND date(e.encounter_datetime) <= date(:endDate )
-GROUP BY e.encounter_id ORDER BY p.patient_id
-;
+GROUP BY e.encounter_id ORDER BY p.patient_id;
