@@ -35,7 +35,7 @@ INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voi
 INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
 INNER JOIN location el ON e.location_id = el.location_id
 -- UUID of NCD program
-INNER JOIN patient_program pp on pp.patient_id = p.patient_id and pp.voided = 0 and pp.program_id in
+LEFT JOIN patient_program pp on pp.patient_id = p.patient_id and pp.voided = 0 and pp.program_id in
       (select program_id from program where uuid = '515796ec-bf3a-11e7-abc4-cec278b6b50a') -- uuid of the NCD program
 -- patient state
 LEFT OUTER JOIN patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.end_date is null and ps.voided = 0
