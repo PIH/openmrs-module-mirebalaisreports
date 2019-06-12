@@ -11,7 +11,7 @@ There are several ways to define a report.
 
 1. **FullDataExport**: Allows defining, a CSV report. Requires some Java and some SQL.
 1. **DataReportManager with SQL**: Allows defining a CSV report, or can fill in an XML template. Requires Java and SQL.
-1. **DataReportManager straight Java**: Allows defining a CSV report, or can fill in an XML template. Requires Java, lots of it.
+1. **DataReportManager with only Java**: Allows defining a CSV report, or can fill in an XML template. Requires Java, lots of it.
 1. **SQL Only** *You can't do this yet. But someday, hopefully someday soon.* 
 
 ### 1. Using FullDataExport
@@ -56,11 +56,11 @@ and the associated files for an example of how to do this.
 
 But really, it would be better if you didn't use this method. Write some SQL. It'll be fine.
 
-### 4. SQL Only
+### 4. Using SQL Only
 
 As mentioned above, you can't do this yet. The code supporting this needs to be pulled in from
 [openmrs-module-pihmalawi](https://github.com/PIH/openmrs-module-pihmalawi).
 
 But take a quick look at
 [patientWeightChange.sql](https://github.com/PIH/openmrs-module-pihmalawi/blob/master/api/src/main/resources/org/openmrs/module/pihmalawi/reporting/reports/sql/patientWeightChange.sql)
-to whet your appetite for it. No Java had to be added to make this work.
+to whet your appetite for it. No Java had to be added to support this particular report.
