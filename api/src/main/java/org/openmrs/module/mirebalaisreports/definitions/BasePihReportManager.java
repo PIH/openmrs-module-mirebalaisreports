@@ -63,8 +63,10 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sqlDsd.setName(MessageUtil.translate(getMessageCodePrefix() + "name"));
         sqlDsd.setDescription(MessageUtil.translate(getMessageCodePrefix() + "description"));
 
-        String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + sqlFileName + ".sql");
-        sqlDsd.setSqlQuery(applyMetadataReplacements(sql));
+        String rawSql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + sqlFileName + ".sql");
+        String preparedSql = applyMetadataReplacements(rawSql);
+        log.warn("Updating report SQL query for " + sqlFileName + ". New query:\n" + preparedSql);
+        sqlDsd.setSqlQuery(preparedSql);
         sqlDsd.addParameters(getParameters());
 
         rd.addDataSetDefinition(sqlFileName, sqlDsd, mappings);
@@ -116,6 +118,7 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sql = replace(sql, "ANCInitEnc", mrp.getANCInitialEncounterType());
         sql = replace(sql, "ANCFollowEnc", mrp.getANCFollowupEncounterType());
         sql = replace(sql, "DeliveryEnc", mrp.getDeliveryEncounterType());
+        sql = replace(sql, "mexConsultEnc", mrp.getMexicoConsultEncounterType());
 
         sql = replace(sql, "consultingClinician", mrp.getConsultingClinicianEncounterRole());
         sql = replace(sql, "orderingProvider", mrp.getOrderingProviderEncounterRole());
@@ -141,6 +144,8 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sql = replace(sql, "diagnosisOrder", mrp.getDiagnosisOrderConcept());
         sql = replace(sql, "diagnosisCertainty", mrp.getDiagnosisCertaintyConcept());
         sql = replace(sql, "comment", mrp.getClinicalImpressionsConcept());
+        sql = replace(sql, "presentingHistory", mrp.getPresentingHistoryConcept());
+        sql = replace(sql, "clinicalManagementPlan", mrp.getClinicalManagementPlanConcept());
         sql = replace(sql, "notifiable", mrp.getSetOfWeeklyNotifiableDiseases());
         sql = replace(sql, "urgent", mrp.getSetOfUrgentDiseases());
         sql = replace(sql, "santeFamn", mrp.getSetOfWomensHealthDiagnoses());
