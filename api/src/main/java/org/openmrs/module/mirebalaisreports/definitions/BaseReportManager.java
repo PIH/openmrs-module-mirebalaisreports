@@ -62,7 +62,7 @@ public abstract class BaseReportManager implements ReportManager {
         MirebalaisReportsProperties.DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID,
         MirebalaisReportsProperties.DAILY_CHECK_INS_REPORT_DEFINITION_UUID,
         MirebalaisReportsProperties.DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID,
-         MirebalaisReportsProperties.INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID,
+        MirebalaisReportsProperties.INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID,
         MirebalaisReportsProperties.INPATIENT_STATS_MONTHLY_REPORT_DEFINITION_UUID);
 
     public static final List<String> REPORTING_DATA_EXPORT_REPORTS_ORDER = Arrays.asList(
@@ -72,7 +72,8 @@ public abstract class BaseReportManager implements ReportManager {
             MirebalaisReportsProperties.RELATIONSHIPS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.LQAS_DIAGNOSES_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID);
+            MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.MEXICO_VISITS_REPORT_DEFINITION_UUID);
 
     public static final List<String> REPORTING_MONITORING_REPORTS_ORDER = Arrays.asList(
             MirebalaisReportsProperties.WEEKLY_MONITORING_REPORT_DEFINITION_UUID,
@@ -80,8 +81,7 @@ public abstract class BaseReportManager implements ReportManager {
             MirebalaisReportsProperties.ACCOUNTING_REPORTING_DEFINITION_UUID,
             MirebalaisReportsProperties.VISIT_REGISTRY_REPORTING_DEFINITION_UUID,
             MirebalaisReportsProperties.MORBIDITY_REGISTRY_REPORTING_DEFINITION_UUID,
-            MirebalaisReportsProperties.CHRONIC_MALADIES_REPORTING_DEFINITION_UUID
-    );
+            MirebalaisReportsProperties.CHRONIC_MALADIES_REPORTING_DEFINITION_UUID);
 
 	/**
 	 * @return the message code prefix used for all translations for the report
@@ -183,8 +183,8 @@ public abstract class BaseReportManager implements ReportManager {
 
     protected ReportDesign xlsReportDesign(ReportDefinition reportDefinition, String templateName, String repeatingSections) throws IOException{
 
-        InputStream is = OpenmrsClassLoader.getInstance().getResourceAsStream("org/openmrs/module/mirebalaisreports/reportTemplates/" + templateName + ".xls");
-        byte[] excelTemplate = IOUtils.toByteArray(is);
+        String templatePath = "org/openmrs/module/mirebalaisreports/reportTemplates/" + templateName + ".xls";
+        InputStream is = OpenmrsClassLoader.getInstance().getResourceAsStream(templatePath);
 
         ReportDesign design = new ReportDesign();
         design.setName("mirebalaisreports.output.excel");
@@ -195,7 +195,13 @@ public abstract class BaseReportManager implements ReportManager {
         resource.setName("template");
         resource.setExtension("xls");
         resource.setContentType("application/vnd.ms-excel");
-        resource.setContents(excelTemplate);
+        try {
+            byte[] excelTemplate = IOUtils.toByteArray(is);
+            resource.setContents(excelTemplate);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load XLS template from " + templatePath
+                    + "\n\tVery likely the file doesn't exist.", e);
+        }
         resource.setReportDesign(design);
         design.addResource(resource);
 
