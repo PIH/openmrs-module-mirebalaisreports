@@ -43,7 +43,7 @@ and
 for reference.
 
 * Make your own versions of the above three files. You can skip the XLS file if you just want to create a CSV.
-* If not using a template, delete the `constructReportDesigns` function.
+* If not using a template, copy the `constructReportDesigns` function used in [NonCodedDiagnosesReportManager.java](https://github.com/PIH/openmrs-module-mirebalaisreports/blob/master/api/src/main/java/org/openmrs/module/mirebalaisreports/definitions/NonCodedDiagnosesReportManager.java)
 * The report will be included based on
     * whether your implementation's country is in the `getCountries` list
     * whether your PIH site config has the correct component enabled for the category returned by `getCategory`. For example, if your report's category is `DATA_EXPORT`, then you must have the `dataExports` component enabled for it to show up.
