@@ -199,22 +199,23 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO: This is really ugly. We need to get this into proper configuration--Liberia check-ins report uses a manager, but Haiti "falls through" to old sql report
-            else if ("checkins".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
+            else if ("checkins".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
                 dsd = checkInDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO: This is really ugly. We need to get this into proper configuration--Liberia consultation report uses a manager, but Haiti "falls through" to old sql report
-            else if ("consultations".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
+            else if ("consultations".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
                 dsd = consultationsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO turn this on to replace current SQL data query with vitals data set manager (which reorganizes fields and adds chief complaint)
-            else if ("vitals".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.HAITI) && !config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS) )) {
+            else if ("vitals".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE) ||
+                    (config.getCountry().equals(ConfigDescriptor.Country.HAITI) && !config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS) ))) {
                 dsd = vitalsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // TODO: This is really ugly. We need to get this into proper configuration--Liberia diagnoses report uses a manager, but Haiti "falls through" to old sql report
-            else if ("diagnoses".equals(key) && config.getCountry().equals(ConfigDescriptor.Country.LIBERIA)) {
+            else if ("diagnoses".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
                 dsd = diagnosesDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }

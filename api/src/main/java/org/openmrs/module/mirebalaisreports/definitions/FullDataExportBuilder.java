@@ -143,7 +143,8 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID, "edtriagedataexport",
                         Arrays.asList("edTriage")));
             }
-            if (config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            if ((config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) &&
+                    (!config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitnotedataexport",
                         Arrays.asList("chiefComplaint", "diagnoses", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
             }
