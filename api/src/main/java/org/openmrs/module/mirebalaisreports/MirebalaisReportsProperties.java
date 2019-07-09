@@ -17,7 +17,6 @@ package org.openmrs.module.mirebalaisreports;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
-import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -36,6 +35,7 @@ import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
 import org.openmrs.module.pihcore.metadata.core.program.ZikaProgram;
 import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.mexico.MexicoEncounterTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -395,7 +395,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     }
 
     public EncounterType getMexicoConsultEncounterType() {
-	    return getEncounterTypeByUuid(EncounterTypes.MEXICO_CONSULT.uuid());
+	    return getEncounterTypeByUuid(MexicoEncounterTypes.MEXICO_CONSULT.uuid());
     }
 
     /**
