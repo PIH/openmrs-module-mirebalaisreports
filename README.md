@@ -10,9 +10,9 @@ to define reports.
 There are several ways to define a report.
 
 1. **FullDataExport**: Allows defining, a CSV report. Requires some Java and some SQL.
-1. **DataReportManager with SQL**: Allows defining a CSV report, or can fill in an XML template. Requires Java and SQL.
-1. **DataReportManager with only Java**: Allows defining a CSV report, or can fill in an XML template. Requires Java, lots of it.
-1. **SQL Only** *You can't do this yet. But someday, hopefully someday soon.* 
+2. **DataReportManager with SQL**: Allows defining a CSV report, or can fill in an XML template. Requires Java and SQL.
+3. **DataReportManager with only Java**: Allows defining a CSV report, or can fill in an XML template. Requires Java, lots of it.
+4. **SQL Only** *You can't do this yet. But someday, hopefully someday soon.* 
 
 ### 1. Using FullDataExport
 
