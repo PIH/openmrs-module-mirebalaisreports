@@ -17,7 +17,6 @@ package org.openmrs.module.mirebalaisreports;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
-import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
@@ -36,6 +35,7 @@ import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
 import org.openmrs.module.pihcore.metadata.core.program.ZikaProgram;
 import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
+import org.openmrs.module.pihcore.metadata.mexico.MexicoEncounterTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -123,6 +123,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String MCH_PROVIDER_REPORT_DEFINITION_UUID = "6a35bb00-e2d2-11e8-9f32-f2801f1b9fd1";
     public static final String MCH_REPORT_DEFINITION_UUID = "85656ac4-0faa-11e9-ab14-d663bd873d93";
     public static final String MEXICO_VISITS_REPORT_DEFINITION_UUID = "b1d80ad0-f9a2-46c6-a89f-0050d7d724cb";
+    public static final String MEXICO_SUIVE_SIMPLE_REPORT_DEFINITION_UUID = "620b25e7-c1f4-43d4-ba8d-944973425597";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
@@ -395,7 +396,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     }
 
     public EncounterType getMexicoConsultEncounterType() {
-	    return getEncounterTypeByUuid(EncounterTypes.MEXICO_CONSULT.uuid());
+	    return getEncounterTypeByUuid(MexicoEncounterTypes.MEXICO_CONSULT.uuid());
     }
 
     /**
