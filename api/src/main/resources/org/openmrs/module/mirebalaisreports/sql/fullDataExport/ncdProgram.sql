@@ -3,6 +3,7 @@ p.patient_id,
 pid.identifier "ZL_EMR_ID", 
 dos.identifier "Dossier_ID", 
 d.given_name, d.family_name, d.birthdate, birthdate_estimated, d.gender, d.country, d.department, d.commune, d.section_communal, d.locality, d.street_landmark,
+pa.value as "Telephone_Number",
 DATE(pp.date_enrolled) "Enrolled_in_Program",
 cn_state.name "Program_State",
 cn_out.name "Program_Outcome",
@@ -60,6 +61,9 @@ LEFT OUTER JOIN patient_identifier dos on dos.patient_identifier_id =
      limit 1)                                                 
 -- Dossier ID
 INNER JOIN current_name_address d on d.person_id = p.patient_id
+-- Telephone number
+LEFT OUTER JOIN person_attribute pa on pa.person_id = p.patient_id and pa.voided = 0 and pa.person_attribute_type_id = (select person_attribute_type_id
+from person_attribute_type where uuid = "14d4f066-15f5-102d-96e4-000c29c2a5d7")
 -- patient state
 LEFT OUTER JOIN patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.end_date is null and ps.voided = 0
 LEFT OUTER JOIN program_workflow_state pws on pws.program_workflow_state_id = ps.state and pws.retired = 0
@@ -224,5 +228,4 @@ left outer join obs diag3 on diag3.obs_id =
   order by d3.obs_datetime asc limit 1)  
  left outer join concept_name diagname3 on diagname3.concept_id = diag3.value_coded and diagname3.locale = 'fr' and diagname3.voided = 0 and diagname3.locale_preferred=1
  left outer join obs d_nc on d_nc.concept_id = diag_nc.concept_id and d_nc.voided = 0 and d_nc.encounter_id = last_ncd_enc.encounter_id
- order by last_NCD_encounter desc
-;
+ order by last_NCD_encounter desc;
