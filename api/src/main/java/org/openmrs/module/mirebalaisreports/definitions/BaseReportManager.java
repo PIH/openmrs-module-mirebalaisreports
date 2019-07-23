@@ -74,7 +74,8 @@ public abstract class BaseReportManager implements ReportManager {
             MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.MEXICO_VISITS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MEXICO_SUIVE_SIMPLE_REPORT_DEFINITION_UUID);
+            MirebalaisReportsProperties.MEXICO_SUIVE_SIMPLE_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.MEXICO_SIS_SIMPLE_REPORT_DEFINITION_UUID);
 
     public static final List<String> REPORTING_MONITORING_REPORTS_ORDER = Arrays.asList(
             MirebalaisReportsProperties.WEEKLY_MONITORING_REPORT_DEFINITION_UUID,
