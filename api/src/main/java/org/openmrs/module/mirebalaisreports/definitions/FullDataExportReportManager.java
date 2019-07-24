@@ -55,6 +55,7 @@ import org.openmrs.module.reporting.dataset.definition.EncounterDataSetDefinitio
 import org.openmrs.module.reporting.dataset.definition.ObsDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.SqlFileDataSetDefinition;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -228,10 +229,16 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             else {
-                dsd = constructSqlDataSetDefinition(key);
-                // only add start and end date if they are specified in the defined SQL
-                if (((SqlDataSetDefinition) dsd).getSqlQuery().contains(":startDate")) {
+                if ("vaccinationsANC".equals(key)) {
+                    dsd = constructSqlFileDataSetDefinition(key);
                     addStartAndEndDateParameters(rd, dsd, mappings);
+                }
+                else {
+                    dsd = constructSqlDataSetDefinition(key);
+                    // only add start and end date if they are specified in the defined SQL
+                    if (((SqlDataSetDefinition) dsd).getSqlQuery().contains(":startDate")) {
+                        addStartAndEndDateParameters(rd, dsd, mappings);
+                    }
                 }
             }
 
@@ -428,6 +435,12 @@ public class FullDataExportReportManager extends BasePihReportManager {
         sql = applyMetadataReplacements(sql);
         sqlDsd.setSqlQuery(sql);
         return sqlDsd;
+    }
+
+    private SqlFileDataSetDefinition constructSqlFileDataSetDefinition(String key) {
+        SqlFileDataSetDefinition dsd = new SqlFileDataSetDefinition();
+        dsd.setSqlResource(SQL_DIR + key + ".sql");
+        return dsd;
     }
 
     private DataSetDefinition constructPatientsDataSetDefinition() {
