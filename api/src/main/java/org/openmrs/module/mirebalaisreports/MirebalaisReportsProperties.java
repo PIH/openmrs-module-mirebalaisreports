@@ -124,7 +124,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String MCH_REPORT_DEFINITION_UUID = "85656ac4-0faa-11e9-ab14-d663bd873d93";
     public static final String MEXICO_VISITS_REPORT_DEFINITION_UUID = "b1d80ad0-f9a2-46c6-a89f-0050d7d724cb";
     public static final String MEXICO_SUIVE_SIMPLE_REPORT_DEFINITION_UUID = "620b25e7-c1f4-43d4-ba8d-944973425597";
-    public static final String MEXICO_SIS_SIMPLE_REPORT_DEFINITION_UUID = "171fafba-e39e-4054-a1cc-a285683e68f8";
+    public static final String MEXICO_SIS_VISITS_REPORT_DEFINITION_UUID = "171fafba-e39e-4054-a1cc-a285683e68f8";
+    public static final String MEXICO_SIS_DIAGNOSES_REPORT_DEFINITION_UUID = "6d271d1c-26c5-4ee5-989d-2316dea1a561";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
