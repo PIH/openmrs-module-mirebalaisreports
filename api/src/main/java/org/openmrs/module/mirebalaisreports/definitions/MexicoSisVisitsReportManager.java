@@ -7,13 +7,18 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
 
 @Component
-public class MexicoSisSimpleReportManager extends BasePihReportManager {
+public class MexicoSisVisitsReportManager extends BasePihReportManager {
+
+    private static final String EXCEL_TEMPLATE_NAME = "MexicoSisVisitsTemplate";
+
+    private static final String REPEATING_SECTION = "sheet:1,row:2,dataset:mexicoSisVisits";
 
     @Override
     public Category getCategory() {
@@ -32,12 +37,12 @@ public class MexicoSisSimpleReportManager extends BasePihReportManager {
 
     @Override
     public String getName() {
-        return "mexicoSisSimple";
+        return "mexicoSisVisits";
     }
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.MEXICO_SIS_SIMPLE_REPORT_DEFINITION_UUID;
+        return MirebalaisReportsProperties.MEXICO_SIS_VISITS_REPORT_DEFINITION_UUID;
     }
 
     @Override
@@ -56,8 +61,8 @@ public class MexicoSisSimpleReportManager extends BasePihReportManager {
     }
 
     @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(csvReportDesign(reportDefinition));
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
+        return Arrays.asList(xlsReportDesign(reportDefinition, EXCEL_TEMPLATE_NAME, REPEATING_SECTION));
     }
 
 }
