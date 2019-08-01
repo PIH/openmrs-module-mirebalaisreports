@@ -1,13 +1,5 @@
 DROP TABLE IF EXISTS ncd_initial_referral;
-
-SELECT patient_identifier_type_id into @zlId from patient_identifier_type where name = "ZL EMR ID";
-SELECT person_attribute_type_id into @unknownPt from person_attribute_type where name = "Unknown patient";
-select person_attribute_type_id into @testPt from person_attribute_type where name = "Test Patient";
-select encounter_type_id into @NCDInitEnc from encounter_type where name = "NCD Initial Consult";
-select encounter_type_id into @NCDFollowEnc from encounter_type where name = "NCD Followup Consult";
-select encounter_type_id into @vitEnc from encounter_type where name = "Signes vitaux";
-select encounter_type_id into @labResultEnc from encounter_type where name = "Laboratory Results";
-
+-- NCD Initial form referral qn
 CREATE TEMPORARY TABLE IF NOT EXISTS ncd_initial_referral
 AS
 (
@@ -55,7 +47,7 @@ LEFT JOIN obs date_referral ON e.patient_id = date_referral.person_id and e.enco
 and date_referral.voided = 0 and date_referral.concept_id =
 (select concept_id from report_mapping where source = "CIEL" and code = "163181")
 -- Family history
-WHERE e.encounter_type = @NCDInitEnc and e.voided = 0 group by encounter_id
+WHERE e.encounter_type = :NCDInitEnc and e.voided = 0 group by encounter_id
 );
 
 
@@ -78,7 +70,7 @@ SELECT
     el.name encounter_location,
     CONCAT(pn.given_name, ' ', pn.family_name) provider,
     obsjoins.*,
-	history_of_present_illness,
+    history_of_present_illness,
     internal_refer_values internal_institution,
 	other_internal_institution,
 	external_institution,
@@ -87,19 +79,19 @@ SELECT
 FROM
     patient p
 -- Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type =  @zlId
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 -- ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
 -- Unknown patient
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = @unknownPt
+LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt
             AND un.voided = 0
 -- Gender
 INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
 --  Most recent address
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created DESC) n ON p.patient_id = n.person_id
-INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
+INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
 INNER JOIN location el ON e.location_id = el.location_id
 -- UUID of NCD program
 LEFT JOIN patient_program pp on pp.patient_id = p.patient_id and pp.voided = 0 and pp.program_id in
@@ -339,7 +331,7 @@ e.encounter_id IN
     (SELECT visit_id, encounter_type, MAX(encounter_datetime) AS enc_date
     FROM encounter
      WHERE 1=1
-     AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
+     AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
       GROUP BY visit_id,encounter_type) maxdate
      ON maxdate.visit_id = e3.visit_id AND e3.encounter_type= maxdate.encounter_type AND e3.encounter_datetime = maxdate.enc_date
 )
@@ -350,16 +342,16 @@ AND o.voided = 0
 GROUP BY e.visit_id
 ) obsjoins ON obsjoins.encounter_id = ep.encounter_id
 --  end columns joins
--- ncd_initital_referral
+-- NCD INITIAL form - referral
 LEFT JOIN ncd_initial_referral on ncd_initial_referral.encounter_id = e.encounter_id
 WHERE p.voided = 0
 -- exclude test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = @testPt
+AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt
                          AND voided = 0)
 -- Remove all the empty ncd forms.
-AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
+AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (:NCDInitEnc, :NCDFollowEnc)
 AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
- patient_id = person_id AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
+ patient_id = person_id AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc) AND obs.voided = 0))
 AND date(e.encounter_datetime) >= date(:startDate )
 AND date(e.encounter_datetime) <= date(:endDate )
 GROUP BY e.encounter_id ORDER BY p.patient_id;
