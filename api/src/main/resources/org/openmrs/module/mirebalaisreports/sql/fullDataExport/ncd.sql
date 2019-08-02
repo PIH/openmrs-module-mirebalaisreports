@@ -1,4 +1,6 @@
 DROP TABLE IF EXISTS ncd_initial_referral;
+DROP TABLE IF EXISTS ncd_initial_behavior;
+
 -- NCD Initial form referral qn
 CREATE TEMPORARY TABLE IF NOT EXISTS ncd_initial_referral
 AS
@@ -50,6 +52,57 @@ and date_referral.voided = 0 and date_referral.concept_id =
 WHERE e.encounter_type = :NCDInitEnc and e.voided = 0 group by encounter_id
 );
 
+-- NCD initial form behavior qn
+CREATE TEMPORARY TABLE IF NOT EXISTS ncd_initial_behavior
+AS
+(
+SELECT
+e.patient_id,
+e.encounter_id encounter_id,
+tob_smoke.conceptname smoker,
+tob_num.value_numeric packs_per_year,
+sec_smoke.conceptname second_hand_smoker,
+alc.conceptname alcohol_use,
+ill_drugs.conceptname illegal_drugs,
+current_drug_name.value_text current_drug_name
+from
+encounter e
+LEFT JOIN
+-- History of tobacco use
+(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded and o.voided = 0 and cn.voided = 0 and
+locale = "en" and o.concept_id =
+(select concept_id from report_mapping where source = "CIEL" and code = "163731")) tob_smoke on tob_smoke.encounter_id = e.encounter_id and tob_smoke.person_id = e.patient_id
+LEFT JOIN
+obs tob_num on tob_num.encounter_id = e.encounter_id and tob_num.person_id = e.patient_id and tob_num.voided = 0 and
+tob_num.concept_id = (select concept_id from report_mapping where source = "PIH" and code = 11949)
+LEFT JOIN
+-- Second hand smoke
+(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded
+and o.voided = 0 and cn.voided = 0 and locale="en" and concept_name_type="FULLY_SPECIFIED" and
+o.concept_id =
+(select concept_id from report_mapping where source = "CIEL" and code = "152721")) sec_smoke on
+sec_smoke.encounter_id = e.encounter_id and sec_smoke.person_id = e.patient_id
+LEFT JOIN
+-- Alcohol
+(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded
+and o.voided = 0 and cn.voided = 0 and locale="en" and concept_name_type="FULLY_SPECIFIED" and
+o.concept_id =
+(select concept_id from report_mapping where source = "CIEL" and code = "159449")) alc on alc.encounter_id = e.encounter_id and alc.person_id = e.patient_id
+LEFT JOIN
+-- History of illegal drugs
+(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded
+and o.voided = 0 and cn.voided = 0 and locale="en" and concept_name_type="FULLY_SPECIFIED" and
+o.concept_id = (select concept_id from report_mapping where source = "CIEL" and code = "162556"))
+ill_drugs on ill_drugs.encounter_id = e.encounter_id and ill_drugs.person_id = e.patient_id
+LEFT JOIN
+-- drug name
+obs current_drug_name on current_drug_name.encounter_id = e.encounter_id and current_drug_name.person_id = e.patient_id and
+current_drug_name.voided = 0 and current_drug_name.concept_id =
+(select concept_id from report_mapping where source = "PIH" and code = 6489)
+WHERE
+e.encounter_type = :NCDInitEnc and e.voided = 0 group by e.encounter_id
+);
+
 
 SELECT
     p.patient_id,
@@ -75,7 +128,13 @@ SELECT
 	other_internal_institution,
 	external_institution,
 	community,
-	date_of_referral
+	date_of_referral,
+	smoker,
+    packs_per_year,
+    second_hand_smoker,
+    alcohol_use,
+    illegal_drugs,
+    current_drug_name
 FROM
     patient p
 -- Most recent ZL EMR ID
@@ -344,6 +403,8 @@ GROUP BY e.visit_id
 --  end columns joins
 -- NCD INITIAL form - referral
 LEFT JOIN ncd_initial_referral on ncd_initial_referral.encounter_id = e.encounter_id
+-- NCD INITIAL form - behavior
+LEFT JOIN ncd_initial_behavior on ncd_initial_behavior.encounter_id = e.encounter_id
 WHERE p.voided = 0
 -- exclude test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt
@@ -352,6 +413,6 @@ AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 't
 AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (:NCDInitEnc, :NCDFollowEnc)
 AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
  patient_id = person_id AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc) AND obs.voided = 0))
-AND date(e.encounter_datetime) >= date(:startDate )
+AND date(e.encounter_datetime) >= date(:startDate)
 AND date(e.encounter_datetime) <= date(:endDate )
 GROUP BY e.encounter_id ORDER BY p.patient_id;
