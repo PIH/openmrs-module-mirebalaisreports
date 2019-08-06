@@ -43,10 +43,12 @@ FROM patient p
 -- Encounters
          INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0
          -- Include all types of encounters. This is important for checking if a previous visit exists.
--- Visit and Previous Visit
+-- Visit
         LEFT OUTER JOIN visit v ON v.visit_id = e.visit_id AND v.voided = 0
+-- Previous visit this year
         LEFT OUTER JOIN visit prev_visit ON prev_visit.patient_id = v.patient_id AND
-                                          prev_visit.date_stopped < v.date_started
+                                            prev_visit.date_stopped < v.date_started AND
+                                            YEAR(prev_visit.date_started) = YEAR(v.date_started)
 WHERE p.voided = 0
 -- Exclude test patients
   AND p.patient_id NOT IN (SELECT person_id
