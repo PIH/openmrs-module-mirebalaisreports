@@ -16,10 +16,6 @@ import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager
 @Component
 public class MexicoSisDiagnosesReportManager extends BasePihReportManager {
 
-    private static final String EXCEL_TEMPLATE_NAME = "MexicoSisDiagnosesTemplate";
-
-    private static final String REPEATING_SECTION = "sheet:1,row:2,dataset:mexicoSisDiagnoses";
-
     @Override
     public Category getCategory() {
         return DATA_EXPORT;
@@ -61,8 +57,8 @@ public class MexicoSisDiagnosesReportManager extends BasePihReportManager {
     }
 
     @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
-        return Arrays.asList(xlsReportDesign(reportDefinition, EXCEL_TEMPLATE_NAME, REPEATING_SECTION));
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+        return Arrays.asList(csvReportDesign(reportDefinition));
     }
 
 }

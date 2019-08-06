@@ -4,7 +4,7 @@ SELECT
     ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) "Edad",
     pr.gender "Genero",
     IF(ins.value_coded = seguro_popular.concept_id, '1', '') "SPSS",
-    '' "1a vez",  #TODO MEX-410
+    IF(certainty_name.name LIKE "Confirmado", '1', ' ') "Confirmado",
     MAX(cn.name) "Dx",
     MAX(crt.code) "ICD-10"
 FROM patient p
@@ -55,6 +55,23 @@ FROM patient p
                 crt.retired = 0 AND
                 crt.concept_source_id = (SELECT concept_source_id FROM concept_reference_source
                                          WHERE name LIKE "ICD-10-WHO")
+-- Confirmed
+         LEFT OUTER JOIN obs certainty
+                         ON certainty.obs_group_id = dx.obs_group_id AND
+                            certainty.concept_id = (
+                                SELECT concept_id
+                                FROM concept_reference_map
+                                WHERE concept_reference_term_id = (
+                                    SELECT concept_reference_term_id
+                                    FROM concept_reference_term
+                                    WHERE code LIKE "Diagnosis Certainty"
+                                )
+                            ) AND
+                            certainty.voided = 0
+         LEFT OUTER JOIN concept_name certainty_name
+                         ON certainty_name.concept_id = certainty.value_coded AND
+                            certainty_name.locale = "es" AND
+                            certainty_name.locale_preferred = 1
 -- Visit
         LEFT OUTER JOIN visit v ON v.visit_id = e.visit_id AND v.voided = 0
 WHERE p.voided = 0
