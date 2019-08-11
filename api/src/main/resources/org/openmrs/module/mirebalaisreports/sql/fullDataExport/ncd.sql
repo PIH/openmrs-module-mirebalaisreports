@@ -1,59 +1,75 @@
-DROP TABLE IF EXISTS ncd_initial_referral;
-DROP TABLE IF EXISTS ncd_initial_behavior;
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_initial_referral;
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_initial_behavior;
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_pregnacy;
+DROP TEMPORARY TABLE IF EXISTS temp_obs_join;
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_family_plan_oral;
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_family_plan_provera;
+DROP TABLE IF EXISTS temp_ncd_encounters;
+DROP TABLE IF EXISTS temp_ncd_family_plan;
+
+SELECT patient_identifier_type_id INTO @zlId FROM patient_identifier_type WHERE name = "ZL EMR ID";
+SELECT person_attribute_type_id INTO @unknownPt FROM person_attribute_type WHERE name = "Unknown patient";
+SELECT person_attribute_type_id INTO @testPt FROM person_attribute_type WHERE name = "Test Patient";
+SELECT encounter_type_id INTO @NCDInitEnc FROM encounter_type WHERE name = "NCD Initial Consult";
+SELECT encounter_type_id INTO @NCDFollowEnc FROM encounter_type WHERE name = "NCD Followup Consult";
+SELECT encounter_type_id INTO @vitEnc FROM encounter_type WHERE name = "Signes vitaux";
+SELECT encounter_type_id INTO @labResultEnc FROM encounter_type WHERE name = "Laboratory Results";
+select concept_id  INTO @family_plan_start_date  from report_mapping where source = "CIEL" and code = "163757";
+select concept_id  INTO @family_plan_end_date  from report_mapping where source = "CIEL" and code = "163758";
 
 -- NCD Initial form referral qn
-CREATE TEMPORARY TABLE IF NOT EXISTS ncd_initial_referral
+CREATE TEMPORARY TABLE IF NOT EXISTS temp_ncd_initial_referral
 AS
 (
 SELECT
-	e.encounter_id encounter_id,
+e.encounter_id encounter_id,
     e.patient_id patient_id,
     hist_ill.value_text history_of_present_illness,
-    group_concat(DISTINCT(internal_refer_value)) internal_refer_values,
+    GROUP_CONCAT(DISTINCT(internal_refer_value)) internal_refer_values,
     other_internal_institution.comments other_internal_institution,
-    concat(external_institution.comments, ", ", non_pih_institution.comments) external_institution,
-    group_concat(DISTINCT(community.comm_values)) community,
+    CONCAT(external_institution.comments, ", ", non_pih_institution.comments) external_institution,
+    GROUP_CONCAT(DISTINCT(community.comm_values)) community,
     DATE(date_referral.value_datetime) date_of_referral
 FROM
 encounter e
 -- REFERRAL
-LEFT JOIN obs hist_ill ON e.patient_id = hist_ill.person_id and e.encounter_id = hist_ill.encounter_id and hist_ill.voided = 0
-and hist_ill.concept_id =
-(select concept_id from report_mapping where source = "PIH" and code = "PRESENTING HISTORY")
-LEFT JOIN (select encounter_id, value_coded, cn.name internal_refer_value from obs o join concept_name cn on cn.concept_id = o.value_coded and cn.voided = 0
-and o.voided = 0 and locale="fr" and concept_name_type = "FULLY_SPECIFIED" and o.concept_id =
-(select concept_id from report_mapping where source = "PIH" and code = "Type of referring service") and value_coded in
-((select concept_id from report_mapping where source = "CIEL" and code = 165018),
-(select concept_id from report_mapping where source = "PIH"  and code = "ANTENATAL CLINIC"),
-(select concept_id from report_mapping where source = "PIH"  and code= "PRIMARY CARE CLINIC" ),
-(select concept_id from report_mapping where source = "CIEL" and code = "163558"),
-(select concept_id from report_mapping where source = "CIEL" and code = "160449"),
-(select concept_id from report_mapping where source = "CIEL" and code = "160448"),
-(select concept_id from report_mapping where source = "CIEL" and code = "165048"),
-(select concept_id from report_mapping where source = "CIEL" and code = "160473"),
-(select concept_id from report_mapping where source = "PIH" and code = "OTHER")
-)) internal_refer on e.encounter_id = internal_refer.encounter_id
-LEFT JOIN obs other_internal_institution on e.encounter_id = other_internal_institution.encounter_id and other_internal_institution.voided = 0
-and other_internal_institution.value_coded = (select concept_id from report_mapping where source = "PIH" and code = "OTHER")
-LEFT JOIN obs external_institution on e.encounter_id = external_institution.encounter_id and external_institution.voided = 0 and
-external_institution.value_coded = (select concept_id from report_mapping where source = "PIH" and code = "11956")
-LEFT JOIN obs non_pih_institution on e.encounter_id = non_pih_institution.encounter_id and non_pih_institution.voided = 0 and
-non_pih_institution.value_coded = (select concept_id from report_mapping where source = "PIH" and code = "Non-ZL supported site")
-LEFT JOIN (select o.encounter_id, o.value_coded, cn.name comm_values from obs o join concept_name cn on cn.concept_id = o.value_coded and
-o.voided = 0 and cn.locale= "fr" and cn.concept_name_type = "FULLY_SPECIFIED" and o.value_coded IN
+LEFT JOIN obs hist_ill ON e.patient_id = hist_ill.person_id AND e.encounter_id = hist_ill.encounter_id AND hist_ill.voided = 0
+AND hist_ill.concept_id =
+(SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "PRESENTING HISTORY")
+LEFT JOIN (SELECT encounter_id, value_coded, cn.name internal_refer_value FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded AND cn.voided = 0
+AND o.voided = 0 AND locale="fr" AND concept_name_type = "FULLY_SPECIFIED" AND o.concept_id =
+(SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "Type of referring service") AND value_coded IN
+((SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = 165018),
+(SELECT concept_id FROM report_mapping WHERE source = "PIH"  AND code = "ANTENATAL CLINIC"),
+(SELECT concept_id FROM report_mapping WHERE source = "PIH"  AND code= "PRIMARY CARE CLINIC" ),
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "163558"),
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "160449"),
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "160448"),
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "165048"),
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "160473"),
+(SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "OTHER")
+)) internal_refer ON e.encounter_id = internal_refer.encounter_id
+LEFT JOIN obs other_internal_institution ON e.encounter_id = other_internal_institution.encounter_id AND other_internal_institution.voided = 0
+AND other_internal_institution.value_coded = (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "OTHER")
+LEFT JOIN obs external_institution ON e.encounter_id = external_institution.encounter_id AND external_institution.voided = 0 AND
+external_institution.value_coded = (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "11956")
+LEFT JOIN obs non_pih_institution ON e.encounter_id = non_pih_institution.encounter_id AND non_pih_institution.voided = 0 AND
+non_pih_institution.value_coded = (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "Non-ZL supported site")
+LEFT JOIN (SELECT o.encounter_id, o.value_coded, cn.name comm_values FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded AND
+o.voided = 0 AND cn.locale= "fr" AND cn.concept_name_type = "FULLY_SPECIFIED" AND o.value_coded IN
 (
-(select concept_id from report_mapping where source = "CIEL" and code = "1555"),
-(select concept_id from report_mapping where source = "PIH" and code = "11965")
-)) community on e.encounter_id = community.encounter_id
-LEFT JOIN obs date_referral ON e.patient_id = date_referral.person_id and e.encounter_id = date_referral.encounter_id
-and date_referral.voided = 0 and date_referral.concept_id =
-(select concept_id from report_mapping where source = "CIEL" and code = "163181")
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "1555"),
+(SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "11965")
+)) community ON e.encounter_id = community.encounter_id
+LEFT JOIN obs date_referral ON e.patient_id = date_referral.person_id AND e.encounter_id = date_referral.encounter_id
+AND date_referral.voided = 0 AND date_referral.concept_id =
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "163181")
 -- Family history
-WHERE e.encounter_type = :NCDInitEnc and e.voided = 0 group by encounter_id
+WHERE e.encounter_type = @NCDInitEnc AND e.voided = 0 GROUP BY encounter_id
 );
 
 -- NCD initial form behavior qn
-CREATE TEMPORARY TABLE IF NOT EXISTS ncd_initial_behavior
+CREATE TEMPORARY TABLE IF NOT EXISTS temp_ncd_initial_behavior
 AS
 (
 SELECT
@@ -65,117 +81,224 @@ sec_smoke.conceptname second_hand_smoker,
 alc.conceptname alcohol_use,
 ill_drugs.conceptname illegal_drugs,
 current_drug_name.value_text current_drug_name
-from
+FROM
 encounter e
 LEFT JOIN
 -- History of tobacco use
-(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded and o.voided = 0 and cn.voided = 0 and
-locale = "en" and o.concept_id =
-(select concept_id from report_mapping where source = "CIEL" and code = "163731")) tob_smoke on tob_smoke.encounter_id = e.encounter_id and tob_smoke.person_id = e.patient_id
+(SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded AND o.voided = 0 AND cn.voided = 0 AND
+locale = "en" AND o.concept_id =
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "163731")) tob_smoke ON tob_smoke.encounter_id = e.encounter_id AND tob_smoke.person_id = e.patient_id
 LEFT JOIN
-obs tob_num on tob_num.encounter_id = e.encounter_id and tob_num.person_id = e.patient_id and tob_num.voided = 0 and
-tob_num.concept_id = (select concept_id from report_mapping where source = "PIH" and code = 11949)
+obs tob_num ON tob_num.encounter_id = e.encounter_id AND tob_num.person_id = e.patient_id AND tob_num.voided = 0 AND
+tob_num.concept_id = (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = 11949)
 LEFT JOIN
 -- Second hand smoke
-(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded
-and o.voided = 0 and cn.voided = 0 and locale="en" and concept_name_type="FULLY_SPECIFIED" and
+(SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded
+AND o.voided = 0 AND cn.voided = 0 AND locale="en" AND concept_name_type="FULLY_SPECIFIED" AND
 o.concept_id =
-(select concept_id from report_mapping where source = "CIEL" and code = "152721")) sec_smoke on
-sec_smoke.encounter_id = e.encounter_id and sec_smoke.person_id = e.patient_id
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "152721")) sec_smoke ON
+sec_smoke.encounter_id = e.encounter_id AND sec_smoke.person_id = e.patient_id
 LEFT JOIN
 -- Alcohol
-(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded
-and o.voided = 0 and cn.voided = 0 and locale="en" and concept_name_type="FULLY_SPECIFIED" and
+(SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded
+AND o.voided = 0 AND cn.voided = 0 AND locale="en" AND concept_name_type="FULLY_SPECIFIED" AND
 o.concept_id =
-(select concept_id from report_mapping where source = "CIEL" and code = "159449")) alc on alc.encounter_id = e.encounter_id and alc.person_id = e.patient_id
+(SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "159449")) alc ON alc.encounter_id = e.encounter_id AND alc.person_id = e.patient_id
 LEFT JOIN
 -- History of illegal drugs
-(select cn.name conceptname, value_coded, encounter_id, person_id from obs o join concept_name cn on cn.concept_id = o.value_coded
-and o.voided = 0 and cn.voided = 0 and locale="en" and concept_name_type="FULLY_SPECIFIED" and
-o.concept_id = (select concept_id from report_mapping where source = "CIEL" and code = "162556"))
-ill_drugs on ill_drugs.encounter_id = e.encounter_id and ill_drugs.person_id = e.patient_id
+(SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded
+AND o.voided = 0 AND cn.voided = 0 AND locale="en" AND concept_name_type="FULLY_SPECIFIED" AND
+o.concept_id = (SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "162556"))
+ill_drugs ON ill_drugs.encounter_id = e.encounter_id AND ill_drugs.person_id = e.patient_id
 LEFT JOIN
 -- drug name
-obs current_drug_name on current_drug_name.encounter_id = e.encounter_id and current_drug_name.person_id = e.patient_id and
-current_drug_name.voided = 0 and current_drug_name.concept_id =
-(select concept_id from report_mapping where source = "PIH" and code = 6489)
+obs current_drug_name ON current_drug_name.encounter_id = e.encounter_id AND current_drug_name.person_id = e.patient_id AND
+current_drug_name.voided = 0 AND current_drug_name.concept_id =
+(SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = 6489)
 WHERE
-e.encounter_type = :NCDInitEnc and e.voided = 0 group by e.encounter_id
+e.encounter_type = @NCDInitEnc AND e.voided = 0 GROUP BY e.encounter_id
 );
 
+CREATE TEMPORARY TABLE temp_ncd_pregnacy
+(
+person_id INT,
+encounter_id INT,
+pregnant VARCHAR(50),
+last_menstruation_date DATETIME,
+estimated_delivery_date DATETIME,
+currently_breast_feeding VARCHAR(50)
+);
+INSERT INTO temp_ncd_pregnacy (person_id, encounter_id, pregnant)
+SELECT preg.person_id, preg.encounter_id,  cn.name FROM
+obs preg,
+concept_name cn
+WHERE preg.value_coded = cn.concept_id
+AND cn.concept_name_type = "FULLY_SPECIFIED" AND cn.voided = 0 AND cn.locale="en"
+AND  preg.concept_id IN (SELECT concept_id FROM report_mapping rm WHERE rm.source = "PIH" AND rm.code = "PREGNANCY STATUS")
+AND encounter_id IN (SELECT encounter_id FROM encounter WHERE encounter_type= @NCDInitEnc);
 
-SELECT
-    p.patient_id,
-    zl.identifier zlemr,
-    zl_loc.name loc_registered,
-    un.value unknown_patient,
-    DATE(pp.date_enrolled) enrolled_in_program,
-	cn_state.name program_state,
-	cn_out.name program_outcome,
-    pr.gender,
-    ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate) / 365.25,
-            1) age_at_enc,
-    pa.state_province department,
-    pa.city_village commune,
-    pa.address3 section,
-    pa.address1 locality,
-    pa.address2 street_landmark,
-    el.name encounter_location,
-    CONCAT(pn.given_name, ' ', pn.family_name) provider,
-    obsjoins.*,
-    history_of_present_illness,
-    internal_refer_values internal_institution,
-	other_internal_institution,
-	external_institution,
-	community,
-	date_of_referral,
-	smoker,
-    packs_per_year,
-    second_hand_smoker,
-    alcohol_use,
-    illegal_drugs,
-    current_drug_name
-FROM
-    patient p
--- Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId
-            AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
--- ZL EMR ID location
-INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
--- Unknown patient
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt
-            AND un.voided = 0
--- Gender
-INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
---  Most recent address
-LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
-INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created DESC) n ON p.patient_id = n.person_id
-INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
-INNER JOIN location el ON e.location_id = el.location_id
--- UUID of NCD program
-LEFT JOIN patient_program pp on pp.patient_id = p.patient_id and pp.voided = 0 and pp.program_id in
-      (select program_id from program where uuid = '515796ec-bf3a-11e7-abc4-cec278b6b50a') -- uuid of the NCD program
--- patient state
-LEFT OUTER JOIN patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.end_date is null and ps.voided = 0
-LEFT OUTER JOIN program_workflow_state pws on pws.program_workflow_state_id = ps.state and pws.retired = 0
-LEFT OUTER JOIN concept_name cn_state on cn_state.concept_id = pws.concept_id  and cn_state.locale = 'en' and cn_state.locale_preferred = '1'  and cn_state.voided = 0
--- outcome
-LEFT OUTER JOIN concept_name cn_out on cn_out.concept_id = pp.outcome_concept_id and cn_out.locale = 'en' and cn_out.locale_preferred = '1'  and cn_out.voided = 0
---  Provider Name
-INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id AND ep.voided = 0
-INNER JOIN provider pv ON pv.provider_id = ep.provider_id
-INNER JOIN person_name pn ON pn.person_id = pv.person_id AND pn.voided = 0
--- Straight Obs Joins
+UPDATE temp_ncd_pregnacy tnp
+-- estimate_delievery_date
 INNER JOIN
-(SELECT
+(
+SELECT encounter_id, value_datetime FROM obs WHERE voided = 0 AND concept_id =
+(SELECT concept_id FROM report_mapping WHERE source="PIH" AND code="DATE OF LAST MENSTRUAL PERIOD")
+) lmd ON lmd.encounter_id = tnp.encounter_id
+SET tnp.last_menstruation_date = lmd.value_datetime;
+
+UPDATE temp_ncd_pregnacy tnp
+-- estimated_delivery_date
+INNER JOIN
+(
+SELECT encounter_id, value_datetime FROM obs WHERE voided = 0 AND concept_id =
+(SELECT concept_id FROM report_mapping WHERE source="CIEL" AND code="5596")
+) edt ON edt.encounter_id = tnp.encounter_id
+SET tnp.estimated_delivery_date = edt.value_datetime;
+
+UPDATE temp_ncd_pregnacy tnp
+-- breast feeding
+INNER JOIN
+(
+SELECT encounter_id, name FROM obs, concept_name cn WHERE cn.concept_id = obs.value_coded AND obs.voided = 0 AND obs.concept_id =
+(SELECT concept_id FROM report_mapping WHERE source="CIEL" AND code="5632")
+AND cn.concept_name_type = "FULLY_SPECIFIED" AND cn.voided = 0 AND cn.locale="en"
+) breast ON breast.encounter_id = tnp.encounter_id
+SET tnp.currently_breast_feeding = breast.name;
+
+CREATE TEMPORARY TABLE temp_ncd_encounters
+(
+encounter_id int,
+patient_id int,
+encounter_type int,
+encounter_datetime datetime,
+visit_id int
+);
+
+INSERT INTO temp_ncd_encounters (encounter_id, patient_id)
+SELECT encounter_id, patient_id
+from encounter
+where encounter_type = @NCDInitENC and voided = 0;
+
+create temporary table temp_ncd_family_plan
+(
+encounter_id int,
+patient_id int,
+concept_id int,
+oral_contraception varchar(50),
+oral_contraception_start_date datetime,
+oral_contraception_end_date datetime,
+depoprovera varchar(50),
+depoprovera_start_date datetime,
+depoprovera_end_date datetime,
+condom varchar(50),
+condom_start_date datetime,
+condom_end_date datetime,
+levonorgestrel varchar(50),
+levonorgestrel_start_date datetime,
+levonorgestrel_end_date datetime,
+intrauterine_device varchar(50),
+intrauterine_device_start_date datetime,
+intrauterine_device_end_date datetime,
+tubal_litigation varchar(50),
+tubal_litigation_start_date datetime,
+tubal_litigation_end_date datetime,
+vasectomy varchar(50),
+vasectomy_start_date datetime,
+vasectomy_end_date datetime,
+family_plan_other varchar(50),
+family_plan_other_name varchar(255),
+family_plan_other_start_date datetime,
+family_plan_other_end_date datetime
+);
+
+INSERT INTO temp_ncd_family_plan (encounter_id, patient_id)
+(select encounter_id, patient_id from temp_ncd_encounters );
+
+update temp_ncd_family_plan set concept_id = (select concept_id from report_mapping where source = "PIH" and code = "METHOD OF FAMILY PLANNING");
+
+update temp_ncd_family_plan tnmp
+left join
+     obs o
+ON o.value_coded = (select concept_id from report_mapping where source = "PIH" and code = "ORAL CONTRACEPTION")
+and tnmp.concept_id = o.concept_id
+and tnmp.encounter_id = o.encounter_id
+and o.voided = 0
+left join obs o1
+ON o1.value_coded = (select concept_id from report_mapping where source = "CIEL" and code = "907")
+and o1.concept_id = tnmp.concept_id
+and tnmp.encounter_id = o1.encounter_id
+and o1.voided = 0
+left join obs o2
+ON o2.value_coded = (select concept_id from report_mapping where source = "CIEL" and code = "190")
+and o2.concept_id = tnmp.concept_id
+and tnmp.encounter_id = o2.encounter_id
+and o2.voided = 0
+left join obs o3
+ON o3.value_coded = (select concept_id from report_mapping where source = "CIEL" and code = "78796")
+and o3.concept_id = tnmp.concept_id
+and tnmp.encounter_id = o3.encounter_id
+and o3.voided = 0
+left join obs o4
+ON o4.value_coded = (select concept_id from report_mapping where source = "CIEL" and code = "5275")
+and o4.concept_id = tnmp.concept_id
+and tnmp.encounter_id = o4.encounter_id
+and o4.voided = 0
+left join obs o5
+ON o5.value_coded = (select concept_id from report_mapping where source = "CIEL" and code = "1472")
+and o5.concept_id = tnmp.concept_id
+and tnmp.encounter_id = o5.encounter_id
+and o5.voided = 0
+left join obs o6
+ON o6.value_coded = (select concept_id from report_mapping where source = "CIEL" and code = "1489")
+and o6.concept_id = tnmp.concept_id
+and tnmp.encounter_id = o6.encounter_id
+and o6.voided = 0
+left join obs o7
+ON o7.value_coded = (select concept_id from report_mapping where source = "PIH" and code = "OTHER")
+and o7.concept_id = tnmp.concept_id
+and tnmp.encounter_id = o7.encounter_id
+and o7.voided = 0
+SET tnmp.oral_contraception = IF(o.value_coded is not null, "Yes", "No"),
+    tnmp.oral_contraception_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o.obs_group_id = obs_group_id),
+	tnmp.oral_contraception_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date  and tnmp.encounter_id = encounter_id and o.obs_group_id = obs_group_id),
+    tnmp.depoprovera = IF(o1.value_coded is not null, "Yes", "No"),
+    tnmp.depoprovera_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o1.obs_group_id = obs_group_id),
+	tnmp.depoprovera_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o1.obs_group_id = obs_group_id),
+	tnmp.condom = IF(o2.value_coded is not null, "Yes", "No"),
+	tnmp.condom_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o2.obs_group_id = obs_group_id),
+    tnmp.condom_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o2.obs_group_id = obs_group_id),
+    tnmp.levonorgestrel = IF(o3.value_coded is not null, "Yes", "No"),
+	tnmp.levonorgestrel_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o3.obs_group_id = obs_group_id),
+    tnmp.levonorgestrel_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o3.obs_group_id = obs_group_id),
+    tnmp.intrauterine_device = IF(o4.value_coded is not null, "Yes", "No"),
+	tnmp.intrauterine_device_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o4.obs_group_id = obs_group_id),
+    tnmp.intrauterine_device_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o4.obs_group_id = obs_group_id),
+    tnmp.tubal_litigation = IF(o5.value_coded is not null, "Yes", "No"),
+	tnmp.tubal_litigation_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o5.obs_group_id = obs_group_id),
+    tnmp.tubal_litigation_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o5.obs_group_id = obs_group_id),
+    tnmp.vasectomy = IF(o6.value_coded is not null, "Yes", "No"),
+	tnmp.vasectomy_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o6.obs_group_id = obs_group_id),
+    tnmp.vasectomy_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o6.obs_group_id = obs_group_id),
+    tnmp.family_plan_other = IF(o7.value_coded is not null, "Yes", "No"),
+    tnmp.family_plan_other_name = (select value_text from obs where voided = 0 and concept_id = (select concept_id from report_mapping where source = "PIH" and code = "OTHER FAMILY PLANNING METHOD, NON-CODED") and encounter_id = o7.encounter_id),
+	tnmp.family_plan_other_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o7.obs_group_id = obs_group_id),
+    tnmp.family_plan_other_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o7.obs_group_id = obs_group_id)
+	;
+
+
+-- obs join
+CREATE TEMPORARY table temp_obs_join
+AS
+(
+SELECT
      o.encounter_id,
-    (select date_started from visit where visit_id = e.visit_id) visit_date,
+    (SELECT date_started FROM visit WHERE visit_id = e.visit_id) visit_date,
     visit_id,
     MAX(DATE(CASE
             WHEN e.encounter_id = o.encounter_id THEN e.encounter_datetime
         END)) 'encounter_date',
 -- Encounter Type
-	GROUP_CONCAT(DISTINCT(CASE WHEN e.encounter_id = o.encounter_id THEN (SELECT name FROM encounter_type WHERE encounter_type_id = e.encounter_type) END)
+GROUP_CONCAT(DISTINCT(CASE WHEN e.encounter_id = o.encounter_id THEN (SELECT name FROM encounter_type WHERE encounter_type_id = e.encounter_type) END)
     SEPARATOR ', ') visit_type,
     MAX(CASE
         WHEN
@@ -390,7 +513,7 @@ e.encounter_id IN
     (SELECT visit_id, encounter_type, MAX(encounter_datetime) AS enc_date
     FROM encounter
      WHERE 1=1
-     AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
+     AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
       GROUP BY visit_id,encounter_type) maxdate
      ON maxdate.visit_id = e3.visit_id AND e3.encounter_type= maxdate.encounter_type AND e3.encounter_datetime = maxdate.enc_date
 )
@@ -399,20 +522,117 @@ AND o.encounter_id = e.encounter_id
 AND e.voided = 0
 AND o.voided = 0
 GROUP BY e.visit_id
-) obsjoins ON obsjoins.encounter_id = ep.encounter_id
---  end columns joins
+);
+
+SELECT
+    p.patient_id,
+    zl.identifier zlemr,
+    zl_loc.name loc_registered,
+    un.value unknown_patient,
+    DATE(pp.date_enrolled) enrolled_in_program,
+	cn_state.name program_state,
+	cn_out.name program_outcome,
+    pr.gender,
+    ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate) / 365.25,
+            1) age_at_enc,
+    pa.state_province department,
+    pa.city_village commune,
+    pa.address3 section,
+    pa.address1 locality,
+    pa.address2 street_landmark,
+    el.name encounter_location,
+    CONCAT(pn.given_name, ' ', pn.family_name) provider,
+    temp_obs_join.*,
+    history_of_present_illness,
+    internal_refer_values internal_institution,
+    other_internal_institution,
+	external_institution,
+	community,
+	date_of_referral,
+	smoker,
+    packs_per_year,
+    second_hand_smoker,
+    alcohol_use,
+    illegal_drugs,
+    current_drug_name,
+    pregnant,
+    last_menstruation_date,
+    estimated_delivery_date,
+    currently_breast_feeding,
+    oral_contraception,
+	oral_contraception_start_date,
+	oral_contraception_end_date,
+	depoprovera,
+	depoprovera_start_date,
+	depoprovera_end_date,
+	condom,
+	condom_start_date,
+	condom_end_date,
+	levonorgestrel,
+	levonorgestrel_start_date,
+	levonorgestrel_end_date,
+	intrauterine_device,
+	intrauterine_device_start_date,
+	intrauterine_device_end_date,
+	tubal_litigation,
+	tubal_litigation_start_date,
+	tubal_litigation_end_date,
+	vasectomy,
+	vasectomy_start_date,
+	vasectomy_end_date,
+	family_plan_other,
+	family_plan_other_name,
+	family_plan_other_start_date,
+	family_plan_other_end_date
+FROM
+    patient p
+-- Most recent ZL EMR ID
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = @zlId
+            AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
+-- ZL EMR ID location
+INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
+-- Unknown patient
+LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = @unknownPt
+            AND un.voided = 0
+-- Gender
+INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
+--  Most recent address
+LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
+INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created DESC) n ON p.patient_id = n.person_id
+INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
+INNER JOIN location el ON e.location_id = el.location_id
+-- UUID of NCD program
+LEFT JOIN patient_program pp ON pp.patient_id = p.patient_id AND pp.voided = 0 AND pp.program_id IN
+      (SELECT program_id FROM program WHERE uuid = '515796ec-bf3a-11e7-abc4-cec278b6b50a') -- uuid of the NCD program
+-- patient state
+LEFT OUTER JOIN patient_state ps ON ps.patient_program_id = pp.patient_program_id AND ps.end_date IS NULL AND ps.voided = 0
+LEFT OUTER JOIN program_workflow_state pws ON pws.program_workflow_state_id = ps.state AND pws.retired = 0
+LEFT OUTER JOIN concept_name cn_state ON cn_state.concept_id = pws.concept_id  AND cn_state.locale = 'en' AND cn_state.locale_preferred = '1'  AND cn_state.voided = 0
+-- outcome
+LEFT OUTER JOIN concept_name cn_out ON cn_out.concept_id = pp.outcome_concept_id AND cn_out.locale = 'en' AND cn_out.locale_preferred = '1'  AND cn_out.voided = 0
+--  Provider Name
+INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id AND ep.voided = 0
+INNER JOIN provider pv ON pv.provider_id = ep.provider_id
+INNER JOIN person_name pn ON pn.person_id = pv.person_id AND pn.voided = 0
+-- Straight Obs Joins
+INNER JOIN
+temp_obs_join ON temp_obs_join.encounter_id = ep.encounter_id
 -- NCD INITIAL form - referral
-LEFT JOIN ncd_initial_referral on ncd_initial_referral.encounter_id = e.encounter_id
+LEFT JOIN temp_ncd_initial_referral ON temp_ncd_initial_referral.encounter_id = e.encounter_id
 -- NCD INITIAL form - behavior
-LEFT JOIN ncd_initial_behavior on ncd_initial_behavior.encounter_id = e.encounter_id
+LEFT JOIN temp_ncd_initial_behavior ON temp_ncd_initial_behavior.encounter_id = e.encounter_id
+-- NCD INITIAL FORM -- pregnacy
+LEFT JOIN temp_ncd_pregnacy ON temp_ncd_pregnacy.encounter_id = e.encounter_id
+-- NCD INITAL FORM Family planning
+LEFT JOIN temp_ncd_family_plan ON temp_ncd_family_plan.encounter_id = e.encounter_id
 WHERE p.voided = 0
 -- exclude test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt
+AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = @testPt
                          AND voided = 0)
 -- Remove all the empty ncd forms.
-AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (:NCDInitEnc, :NCDFollowEnc)
+AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
 AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
- patient_id = person_id AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc) AND obs.voided = 0))
-AND date(e.encounter_datetime) >= date(:startDate)
-AND date(e.encounter_datetime) <= date(:endDate )
+ patient_id = person_id AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
+AND DATE(e.encounter_datetime) >=  date(:startDate)
+AND DATE(e.encounter_datetime) <=  date(:endDate )
 GROUP BY e.encounter_id ORDER BY p.patient_id;
