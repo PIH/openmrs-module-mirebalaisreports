@@ -6,6 +6,7 @@ DROP TEMPORARY TABLE IF EXISTS temp_ncd_family_plan_oral;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_family_plan_provera;
 DROP TABLE IF EXISTS temp_ncd_encounters;
 DROP TABLE IF EXISTS temp_ncd_family_plan;
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_section;
 
 SELECT patient_identifier_type_id INTO @zlId FROM patient_identifier_type WHERE name = "ZL EMR ID";
 SELECT person_attribute_type_id INTO @unknownPt FROM person_attribute_type WHERE name = "Unknown patient";
@@ -285,6 +286,52 @@ SET tnmp.oral_contraception = IF(o.value_coded is not null, "Yes", "No"),
     tnmp.family_plan_other_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o7.obs_group_id = obs_group_id)
 	;
 
+-- NCD section
+create TEMPORARY table temp_ncd_section
+(
+obs_id int, encounter_id int, person_id int, disease_category text, comments text, waist_circumference double, hip_size double, hypertension_stage text, diabetes_mellitus text,
+serum_glucose double, fasting_blood_glucose_test varchar (50), fasting_blood_glucose double, managing_diabetic_foot_care text, 	diabetes_comment text
+);
+
+INSERT INTO temp_ncd_section (obs_id, encounter_id, person_id, disease_category, comments)
+select obs_id, encounter_id, person_id, group_concat(name), comments from obs o, concept_name cn
+where
+value_coded = cn.concept_id  and locale="en" and concept_name_type="FULLY_SPECIFIED" and cn.voided = 0 and
+o.concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") and o.voided = 0
+and encounter_id in (select encounter_id from encounter where voided = 0 and encounter_type = @NCDInitEnc) group by encounter_id;
+
+update temp_ncd_section tns
+left join obs o on o.encounter_id = tns.encounter_id and o.voided = 0 and o.concept_id = (select concept_id from report_mapping where source = "CIEL" and code = 163080)
+left join obs o1 on o1.encounter_id = tns.encounter_id and o1.voided = 0 and o1.concept_id = (select concept_id from report_mapping where source = "CIEL" and code = 163081)
+left join (select group_concat(name) names, encounter_id
+from concept_name cn join obs o on o.value_coded = cn.concept_id and concept_name_type="FULLY_SPECIFIED" and locale="en" and cn.voided = 0
+and o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "Type of hypertension diagnosis") group by encounter_id) o2 on
+o2.encounter_id = tns.encounter_id
+set tns.waist_circumference = o.value_numeric,
+    tns.hip_size =  o1.value_numeric,
+    tns.hypertension_stage = o2.names;
+
+update temp_ncd_section tns
+left join (select encounter_id, group_concat(name) names from concept_name cn join obs o on
+cn.concept_id = value_coded and locale = "en" and concept_name_type = "FULLY_SPECIFIED"
+and (select group_concat(concept_id) from report_mapping where source = "CIEL" and code IN (142474,142473,165207,165208,1449,138291))
+and o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS")
+and cn.voided = 0 and o.voided = 0 group by encounter_id) o3 on o3.encounter_id = tns.encounter_id
+left join obs o4 on o4.encounter_id = tns.encounter_id and o4.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "SERUM GLUCOSE") and o4.voided = 0
+left join obs o5 on o5.encounter_id = tns.encounter_id and o5.concept_id = (select concept_id from report_mapping where source = "CIEL" and code = "160912") and o5.voided = 0
+left join (select group_concat(name) names, encounter_id
+from concept_name cn join obs o on o.value_coded = cn.concept_id and concept_name_type="FULLY_SPECIFIED" and locale="en" and cn.voided = 0
+and o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "Foot care classification") group by encounter_id)
+o6 on o6.encounter_id = tns.encounter_id
+left join obs o7 on o7.encounter_id = tns.encounter_id and o7.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "Fasting for blood glucose test") and o7.voided = 0
+left join obs o8 on o8.encounter_id = tns.encounter_id and o8.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "11974") and o8.voided = 0
+set tns.diabetes_mellitus = o3.names,
+    tns.serum_glucose = o4.value_numeric,
+    tns.fasting_blood_glucose_test = IF(o7.value_coded = 1, "Yes", "No"),
+    tns.fasting_blood_glucose = o5.value_numeric,
+    tns.managing_diabetic_foot_care = o6.names,
+    tns.diabetes_comment = o8.value_text
+;
 
 -- obs join
 CREATE TEMPORARY table temp_obs_join
@@ -583,7 +630,18 @@ SELECT
 	family_plan_other,
 	family_plan_other_name,
 	family_plan_other_start_date,
-	family_plan_other_end_date
+	family_plan_other_end_date,
+	disease_category,
+	comments,
+	waist_circumference,
+	hip_size,
+	hypertension_stage,
+	diabetes_mellitus,
+    serum_glucose,
+    fasting_blood_glucose_test,
+    fasting_blood_glucose,
+    managing_diabetic_foot_care,
+    diabetes_comment
 FROM
     patient p
 -- Most recent ZL EMR ID
@@ -625,6 +683,8 @@ LEFT JOIN temp_ncd_initial_behavior ON temp_ncd_initial_behavior.encounter_id = 
 LEFT JOIN temp_ncd_pregnacy ON temp_ncd_pregnacy.encounter_id = e.encounter_id
 -- NCD INITAL FORM Family planning
 LEFT JOIN temp_ncd_family_plan ON temp_ncd_family_plan.encounter_id = e.encounter_id
+-- NCD section
+LEFT JOIN temp_ncd_section on temp_ncd_section.encounter_id = e.encounter_id
 WHERE p.voided = 0
 -- exclude test patients
 AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = @testPt
@@ -633,6 +693,6 @@ AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 't
 AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
 AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
  patient_id = person_id AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
-AND DATE(e.encounter_datetime) >=  date(:startDate)
-AND DATE(e.encounter_datetime) <=  date(:endDate )
+AND DATE(e.encounter_datetime) >= date(:startDate)
+AND DATE(e.encounter_datetime) <= date(:endDate )
 GROUP BY e.encounter_id ORDER BY p.patient_id;
