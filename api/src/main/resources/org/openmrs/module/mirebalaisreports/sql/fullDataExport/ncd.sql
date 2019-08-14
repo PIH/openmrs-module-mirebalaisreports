@@ -290,7 +290,8 @@ SET tnmp.oral_contraception = IF(o.value_coded is not null, "Yes", "No"),
 create TEMPORARY table temp_ncd_section
 (
 obs_id int, encounter_id int, person_id int, disease_category text, comments text, waist_circumference double, hip_size double, hypertension_stage text, diabetes_mellitus text,
-serum_glucose double, fasting_blood_glucose_test varchar (50), fasting_blood_glucose double, managing_diabetic_foot_care text, 	diabetes_comment text
+serum_glucose double, fasting_blood_glucose_test varchar (50), fasting_blood_glucose double, managing_diabetic_foot_care text, 	diabetes_comment text,
+ probably_asthma varchar(50), respiratory_diagnosis text, bronchiectasis varchar(50), copd varchar(50), copd_grade varchar(255)
 );
 
 INSERT INTO temp_ncd_section (obs_id, encounter_id, person_id, disease_category, comments)
@@ -330,8 +331,35 @@ set tns.diabetes_mellitus = o3.names,
     tns.fasting_blood_glucose_test = IF(o7.value_coded = 1, "Yes", "No"),
     tns.fasting_blood_glucose = o5.value_numeric,
     tns.managing_diabetic_foot_care = o6.names,
-    tns.diabetes_comment = o8.value_text
-;
+    tns.diabetes_comment = o8.value_text;
+
+update temp_ncd_section tns
+left join (select encounter_id, group_concat(name) name from concept_name cn join obs o on cn.concept_id = value_coded
+and concept_name_type = "FULLY_SPECIFIED" and locale = "en"
+and o.voided = 0 and o.concept_id = (select concept_id from report_mapping where
+source = "PIH" and code = "Asthma classification") group by encounter_id) o on tns.encounter_id = o.encounter_id
+left join obs o1 on tns.encounter_id = o1.encounter_id and value_coded =
+(select concept_id from report_mapping where source = "CIEL" and code = 121375)
+and concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS")
+and o1.voided = 0
+left join obs o2 on
+tns.encounter_id = o2.encounter_id and o2.value_coded =
+(select concept_id from report_mapping where source = "CIEL" and code = "121011")
+and o2.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS")
+and o2.voided = 0
+left join obs o3 on
+tns.encounter_id = o3.encounter_id and o3.value_coded =
+(select concept_id from report_mapping where source = "CIEL" and code = "1295")
+and o3.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS")
+and o3.voided = 0
+left join obs o4 on tns.encounter_id = o4.encounter_id and o4.voided = 0 and
+o4.concept_id = (select concept_id from report_mapping where source = "PIH" and code="COPD group classification")
+set tns.respiratory_diagnosis  = o.name,
+     tns.probably_asthma = IF(o1.value_coded is not null, "Yes", "No"),
+     tns.bronchiectasis = IF(o2.value_coded is not null, "Yes", "No"),
+     tns.copd = IF(o3.value_coded is not null, "Yes", "No"),
+     tns.copd_grade = (select name from concept_name where concept_id = o4.value_coded and locale = "en" and voided = 0 and concept_name_type
+     = "FULLY_SPECIFIED");
 
 -- obs join
 CREATE TEMPORARY table temp_obs_join
@@ -641,7 +669,12 @@ SELECT
     fasting_blood_glucose_test,
     fasting_blood_glucose,
     managing_diabetic_foot_care,
-    diabetes_comment
+    diabetes_comment,
+     probably_asthma,
+     respiratory_diagnosis,
+     bronchiectasis,
+     copd,
+     copd_grade
 FROM
     patient p
 -- Most recent ZL EMR ID
