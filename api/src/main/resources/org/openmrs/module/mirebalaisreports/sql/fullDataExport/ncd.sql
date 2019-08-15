@@ -7,7 +7,10 @@ DROP TEMPORARY TABLE IF EXISTS temp_ncd_family_plan_provera;
 DROP TABLE IF EXISTS temp_ncd_encounters;
 DROP TABLE IF EXISTS temp_ncd_family_plan;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_section;
+DROP TEMPORARY TABLE IF EXISTS temp_trim_ncd_family_plan;
 
+SET @startDate="2019-08-14"-;
+SET @endDate="1900-01-01";
 SELECT patient_identifier_type_id INTO @zlId FROM patient_identifier_type WHERE name = "ZL EMR ID";
 SELECT person_attribute_type_id INTO @unknownPt FROM person_attribute_type WHERE name = "Unknown patient";
 SELECT person_attribute_type_id INTO @testPt FROM person_attribute_type WHERE name = "Test Patient";
@@ -285,13 +288,35 @@ SET tnmp.oral_contraception = IF(o.value_coded is not null, "Yes", "No"),
 	tnmp.family_plan_other_start_date = (select value_datetime from obs where concept_id = @family_plan_start_date and tnmp.encounter_id = encounter_id and o7.obs_group_id = obs_group_id),
     tnmp.family_plan_other_end_date = (select value_datetime from obs where concept_id = @family_plan_end_date and tnmp.encounter_id = encounter_id and o7.obs_group_id = obs_group_id)
 	;
+CREATE TEMPORARY TABLE temp_trim_ncd_family_plan (
+select * from temp_ncd_family_plan where
+ oral_contraception = "Yes"
+	OR
+	depoprovera = "Yes"
+	OR
+	condom = "Yes"
+	OR
+	levonorgestrel = "Yes"
+	OR
+	intrauterine_device = "Yes"
+	OR
+	tubal_litigation = "Yes"
+    OR
+	vasectomy
+	OR
+	family_plan_other = "Yes"
+);
+
+
 
 -- NCD section
 create TEMPORARY table temp_ncd_section
 (
 obs_id int, encounter_id int, person_id int, disease_category text, comments text, waist_circumference double, hip_size double, hypertension_stage text, diabetes_mellitus text,
 serum_glucose double, fasting_blood_glucose_test varchar (50), fasting_blood_glucose double, managing_diabetic_foot_care text, 	diabetes_comment text,
- probably_asthma varchar(50), respiratory_diagnosis text, bronchiectasis varchar(50), copd varchar(50), copd_grade varchar(255)
+ probably_asthma varchar(50), respiratory_diagnosis text, bronchiectasis varchar(50),
+ copd varchar(50), copd_grade varchar(255), commorbidities text,
+ inhaler_training varchar (50), pulmonary_comment text
 );
 
 INSERT INTO temp_ncd_section (obs_id, encounter_id, person_id, disease_category, comments)
@@ -360,6 +385,24 @@ set tns.respiratory_diagnosis  = o.name,
      tns.copd = IF(o3.value_coded is not null, "Yes", "No"),
      tns.copd_grade = (select name from concept_name where concept_id = o4.value_coded and locale = "en" and voided = 0 and concept_name_type
      = "FULLY_SPECIFIED");
+
+ update temp_ncd_section tns
+left join
+(select group_concat(distinct(name)) names, encounter_id from concept_name cn join obs o on
+cn.concept_id = value_coded and o.voided = 0 and concept_name_type = "FULLY_SPECIFIED" and locale = "en" and
+o.value_coded in (select concept_id from report_mapping
+where source = "CIEL" and code IN (121692, 1293, 119051)) group by encounter_id) o
+on tns.encounter_id = o.encounter_id
+left join obs o1 on o1.voided = 0 and o1.encounter_id = tns.encounter_id and
+o1.concept_id =  (select concept_id from report_mapping
+where source = "PIH" and code = 7399)
+left join obs o2 on o2.encounter_id = tns.encounter_id and
+o2.voided = 0 and o2.concept_id = (select concept_id from report_mapping
+where source = "PIH" and code = 11972)
+set tns.commorbidities = o.names,
+    tns.inhaler_training = IF(o1.value_coded = 1, "Yes", "No"),
+    tns.pulmonary_comment = o2.value_text
+;
 
 -- obs join
 CREATE TEMPORARY table temp_obs_join
@@ -674,7 +717,10 @@ SELECT
      respiratory_diagnosis,
      bronchiectasis,
      copd,
-     copd_grade
+     copd_grade,
+     commorbidities,
+     inhaler_training,
+     pulmonary_comment
 FROM
     patient p
 -- Most recent ZL EMR ID
@@ -715,7 +761,7 @@ LEFT JOIN temp_ncd_initial_behavior ON temp_ncd_initial_behavior.encounter_id = 
 -- NCD INITIAL FORM -- pregnacy
 LEFT JOIN temp_ncd_pregnacy ON temp_ncd_pregnacy.encounter_id = e.encounter_id
 -- NCD INITAL FORM Family planning
-LEFT JOIN temp_ncd_family_plan ON temp_ncd_family_plan.encounter_id = e.encounter_id
+ LEFT JOIN temp_trim_ncd_family_plan ON temp_trim_ncd_family_plan.encounter_id = e.encounter_id
 -- NCD section
 LEFT JOIN temp_ncd_section on temp_ncd_section.encounter_id = e.encounter_id
 WHERE p.voided = 0
@@ -726,6 +772,6 @@ AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 't
 AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
 AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
  patient_id = person_id AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
-AND DATE(e.encounter_datetime) >= date(:startDate)
-AND DATE(e.encounter_datetime) <= date(:endDate )
+AND DATE(e.encounter_datetime) >=  date(@startDate)
+AND DATE(e.encounter_datetime) <=  date(@endDate )
 GROUP BY e.encounter_id ORDER BY p.patient_id;
