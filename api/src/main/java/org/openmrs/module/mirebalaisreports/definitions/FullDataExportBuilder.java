@@ -125,6 +125,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.LAB_RESULTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "labresultsdataexport",
                         Arrays.asList("labReports")));
             }
+            if (config.isComponentEnabled(Components.LAB_RESULTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.LAB_ORDERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "labordersdataexport",
+                        Arrays.asList("labOrdersReport")));
+            }
             if (config.isComponentEnabled(Components.ONCOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "oncologydataexport",
                         Arrays.asList("oncology")));
