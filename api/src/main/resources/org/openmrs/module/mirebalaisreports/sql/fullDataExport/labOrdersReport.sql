@@ -4,8 +4,8 @@ select o.patient_id, zl.identifier Patient_ZL_ID, zl_loc.name loc_registered,
        o.order_number 'order_number',
        ocn.name 'orderable',
        CASE
-       WHEN o.date_stopped is not null THEN 'Cancelled'
-       WHEN o.auto_expire_date is not null THEN 'Expired'
+       WHEN o.date_stopped is not null and sc.obs_id is null THEN 'Cancelled'
+       WHEN o.auto_expire_date < CURDATE() and sc.obs_id is null THEN 'Expired'
        WHEN rep.obs_id is not null THEN 'Reported'
        WHEN sc.obs_id is not null and rep.obs_id is null THEN 'Taken'
        ELSE 'Ordered'
