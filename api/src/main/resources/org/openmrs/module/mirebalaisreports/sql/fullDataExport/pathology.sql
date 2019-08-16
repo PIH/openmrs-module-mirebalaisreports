@@ -32,7 +32,7 @@ obsjoins.Results_date,
 obsjoins.Results_note,
 obsjoins.File_uploaded
 FROM patient p
-INNER JOIN orders o on o.patient_id = p.patient_id and o.order_type_id = :testOrder
+INNER JOIN orders o on o.patient_id = p.patient_id and o.order_type_id = :pathologyTestOrder
 INNER JOIN encounter eo on eo.encounter_id = o.encounter_id
 -- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId

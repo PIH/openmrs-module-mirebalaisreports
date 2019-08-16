@@ -166,6 +166,7 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sql = replace(sql, "typeOfPatient", mrp.getTypeOfPatientConcept());
 
         sql = replace(sql, "testOrder", mrp.getTestOrderType());
+        sql = replace(sql, "pathologyTestOrder", mrp.getPathologyTestOrderType());
 
         try {
             sql = replace(sql, "dispo", dispositionService.getDispositionDescriptor().getDispositionConcept());

@@ -880,6 +880,10 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return orderService.getOrderTypeByUuid(OrderTypes.TEST_ORDER.uuid());
     }
 
+    public OrderType getPathologyTestOrderType() {
+        return orderService.getOrderTypeByUuid(OrderTypes.PATHOLOGY_TEST_ORDER.uuid());
+    }
+
     // ****** PROGRAMS ************
     public Program getZikaProgram() {
         return programWorkflowService.getProgramByUuid(ZikaProgram.ZIKA.uuid());
