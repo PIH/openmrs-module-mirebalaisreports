@@ -1,3 +1,9 @@
+## set @startDate='2019-01-01';
+## set @endDate='2019-06-30';
+
+SELECT patient_identifier_type_id into @zlId from patient_identifier_type where uuid='a541af1e-105c-40bf-b345-ba1fd6a59b85';
+SELECT person_attribute_type_id into @unknownPt FROM person_attribute_type where uuid='8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47';
+
 drop temporary table if exists temp_laborders_spec;
 create temporary table temp_laborders_spec
 (
@@ -21,8 +27,8 @@ insert into temp_laborders_spec (order_number,concept_id,encounter_id,encounter_
   where o.order_type_id =
         (select ot.order_type_id from order_type ot where ot.uuid = '52a447d3-a64a-11e3-9aeb-50e549534c5e') -- Test Order
         and order_action = 'NEW'
-        and date(e.encounter_datetime) >= date(:startDate)
-        and date(e.encounter_datetime) <= date(:endDate)
+        and date(e.encounter_datetime) >= date(@startDate)
+        and date(e.encounter_datetime) <= date(@endDate)
   group by o.order_number;
 
 SELECT t.patient_id,
@@ -49,12 +55,12 @@ SELECT t.patient_id,
 from temp_laborders_spec t
   -- ZL EMR ID
   LEFT OUTER JOIN patient_identifier zl on zl.patient_identifier_id =
-                                           (select pid2.patient_identifier_id pid2 from patient_identifier pid2 where pid2.patient_id = t.patient_id and pid2.voided = 0 and pid2.identifier_type = :zlId
+                                           (select pid2.patient_identifier_id pid2 from patient_identifier pid2 where pid2.patient_id = t.patient_id and pid2.voided = 0 and pid2.identifier_type = @zlId
                                             order by pid2.preferred desc limit 1)
   -- ZL EMR ID location
   INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
   -- Unknown patient
-  LEFT OUTER JOIN person_attribute un ON t.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt
+  LEFT OUTER JOIN person_attribute un ON t.patient_id = un.person_id AND un.person_attribute_type_id = @unknownPt
                                          AND un.voided = 0
   -- Gender
   INNER JOIN person pr ON t.patient_id = pr.person_id AND pr.voided = 0
