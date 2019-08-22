@@ -31,8 +31,8 @@ obsjoins.Urgent_review,
 obsjoins.Results_date,
 obsjoins.Results_note,
 obsjoins.File_uploaded
-FROM patient p
-INNER JOIN orders o on o.patient_id = p.patient_id and o.order_type_id = :pathologyTestOrder
+FROM orders o
+INNER JOIN patient p on o.patient_id = p.patient_id 
 INNER JOIN encounter eo on eo.encounter_id = o.encounter_id
 -- Most recent ZL EMR ID
 INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId
@@ -131,9 +131,9 @@ LEFT OUTER JOIN (
   and e.voided = 0
   and ot.voided = 0
   group by ot.encounter_id) obsjoins ON obsjoins.encounter_id = se.encounter_id
--- where o.encounter_id = 57441
-AND date(eo.encounter_datetime) >= :startDate
-AND date(eo.encounter_datetime) <= :endDate
+where  o.order_type_id = :pathologyTestOrder
+AND date(o.date_activated) >= :startDate
+AND date(o.date_activated) <= :endDate
 group by o.order_id
 order by eo.encounter_datetime
 ;
