@@ -84,7 +84,6 @@ concept_name_type="FULLY_SPECIFIED" and cn.voided=0 and o.voided = 0 and
 cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "Chronic disease controlled during initial visit"))
 controlled on tns.encounter_id = controlled.encounter_id
-
 set tns.known_chronic_disease_before_referral = before_referral.known_chronic,
      tns.prior_treatment_for_chronic_disease = prior_treatment.prior_chronic,
      tns.chronic_disease_controlled_during_initial_visit = controlled.chronic_disease;
@@ -103,7 +102,7 @@ set tns.waist_circumference = o.value_numeric,
 update temp_ncd_section tns
 left join (select encounter_id, group_concat(name) diag from concept_name cn join obs o on
 cn.concept_id = value_coded and locale = "en" and concept_name_type = "FULLY_SPECIFIED"
-and (select group_concat(concept_id) from report_mapping where source = "CIEL" and code IN (142474,142473,165207,165208,1449,138291))
+and (select group_concat(concept_id) from report_mapping where source = "CIEL" and code IN ('142474', '142473' , '165207', '165208' , '1449', '138291'))
 and o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS")
 and cn.voided = 0 and o.voided = 0 group by encounter_id) o3 on o3.encounter_id = tns.encounter_id
 left join obs o4 on o4.encounter_id = tns.encounter_id and o4.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "SERUM GLUCOSE") and o4.voided = 0
@@ -149,23 +148,24 @@ set tns.respiratory_diagnosis  = o.asthma_class,
      tns.copd_grade = (select name from concept_name where concept_id = o4.value_coded and locale = "en" and voided = 0 and concept_name_type
      = "FULLY_SPECIFIED");
 
- update temp_ncd_section tns
+update temp_ncd_section tns
 left join
 (select group_concat(distinct(name)) commob, encounter_id from concept_name cn join obs o on
 cn.concept_id = value_coded and o.voided = 0 and concept_name_type = "FULLY_SPECIFIED" and locale = "en" and
 o.value_coded in (select concept_id from report_mapping
-where source = "CIEL" and code IN (121692, 1293, 119051)) group by encounter_id) o
+where source = "CIEL" and code IN ('121692', '1293', '119051')) group by encounter_id) o
 on tns.encounter_id = o.encounter_id
 left join obs o1 on o1.voided = 0 and o1.encounter_id = tns.encounter_id and
 o1.concept_id =  (select concept_id from report_mapping
-where source = "PIH" and code = 7399)
+where source = "PIH" and code = '7399')
 left join obs o2 on o2.encounter_id = tns.encounter_id and
 o2.voided = 0 and o2.concept_id = (select concept_id from report_mapping
-where source = "PIH" and code = 11972)
+where source = "PIH" and code = '11972')
 set tns.commorbidities = o.commob,
     tns.inhaler_training = IF(o1.value_coded = 1, "Yes", "No"),
     tns.pulmonary_comment = o2.value_text
 ;
+-- 2
 update temp_ncd_section tns
 left join
 (
@@ -174,8 +174,8 @@ concept_name_type="FULLY_SPECIFIED" and cn.voided=0 and o.voided = 0 and
 cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS") and
 value_coded in
-(select concept_id from report_mapping where (source = "CIEL" and code in (5016, 134082, 130562, 5622)) OR (source = "PIH" and
-code in (3071, 12231, 4000)))  group by encounter_id
+(select concept_id from report_mapping where (source = "CIEL" and code in ('5016', '134082', '130562', '5622')) OR (source = "PIH" and
+code in ('3071', '12231', '4000')))  group by encounter_id
 ) category_of_heart_failure on category_of_heart_failure.encounter_id = tns.encounter_id
 left join
 (
@@ -198,14 +198,14 @@ concept_name_type="FULLY_SPECIFIED" and cn.voided=0 and o.voided = 0 and
 cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS")
 and o.value_coded in
-(select concept_id from report_mapping where source = "CIEL" and code in (113918,163712,142317,139529,5016))
+(select concept_id from report_mapping where source = "CIEL" and code in ('113918', '163712', '142317', '139529', '5016'))
 group by encounter_id) cardiomy on cardiomy.encounter_id = tns.encounter_id
 left join
 obs o on tns.encounter_id = o.encounter_id and o.voided = 0 and o.concept_id =
-(select concept_id from report_mapping where source = "PIH" and code = 11926)
+(select concept_id from report_mapping where source = "PIH" and code = '11926')
 left join
 obs o1 on tns.encounter_id = o1.encounter_id and o1.voided = 0 and o1.concept_id =
-(select concept_id from report_mapping where source = "PIH" and code = 11973)
+(select concept_id from report_mapping where source = "PIH" and code = '11973')
 
 set tns.categories_of_heart_failure = category_of_heart_failure.heart_failure_category,
      tns.nyha_class = nyha_classes.nyha_class,
@@ -260,7 +260,7 @@ o.concept_id = (select concept_id from report_mapping where source = "CIEL" and 
 group by encounter_id) quality_findings on quality_findings.encounter_id = tns.encounter_id
 left join
 obs o on tns.encounter_id = o.encounter_id and o.voided = 0 and o.concept_id =
-(select concept_id from report_mapping where source = "PIH" and code = 3407)
+(select concept_id from report_mapping where source = "PIH" and code = '3407')
 set tns.left_ventricle_systolic_function = left_systolic.systolic_fxn,
 	tns.right_ventricle_dimension = right_ventricle.ventricle_dim,
 	tns.mitral_valve_finding =  valve_finds.valve_findings,
@@ -278,8 +278,8 @@ concept_name_type="FULLY_SPECIFIED" and cn.voided=0 and o.voided = 0 and
 cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "DIAGNOSIS")
 and o.value_coded in
-(select concept_id from report_mapping where (source = "CIEL" and code in (119624, 5622, 113504, 148203, 117441, 115115))
-or (source = "PIH" and code = 3181))
+(select concept_id from report_mapping where (source = "CIEL" and code in ('119624', '5622', '113504', '148203', '117441', '115115'))
+or (source = "PIH" and code = '3181'))
 group by encounter_id) other_category on other_category.encounter_id = tns.encounter_id
 left join obs o on o.encounter_id = tns.encounter_id and o.voided = 0 and o.concept_id
 = (select concept_id from report_mapping where source = "PIH" and code = "Diagnosis or problem, non-coded")
@@ -305,8 +305,8 @@ cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "MEDICATION ORDERS")
 and o.value_coded in
 (select concept_id from report_mapping where (source = "CIEL" and code in
-(71617, 71138, 73602, 75634, 77676, 79766, 82734, 83936))
-or (source = "PIH" and code in (3186, 3185, 3182, 99, 1243, 3428, 3183, 251, 250, 4061, 3190)))
+('71617', '71138', '73602', '75634', '77676', '79766', '82734', '83936'))
+or (source = "PIH" and code in ('3186', '3185', '3182', '99', '1243', '3428', '3183', '251', '250', '4061', '3190')))
 group by encounter_id)cardiovascular on cardiovascular.encounter_id = tns.encounter_id
 left join
 (
@@ -316,8 +316,8 @@ cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "MEDICATION ORDERS")
 and o.value_coded in
 (select concept_id from report_mapping where (source = "CIEL" and code in
-(78200, 80092))
-or (source = "PIH" and code in (1240, 798)))
+('78200', '80092'))
+or (source = "PIH" and code in ('1240', '798')))
 group by encounter_id) respiratory on respiratory.encounter_id = tns.encounter_id
 left join
 (
@@ -327,8 +327,8 @@ cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "MEDICATION ORDERS")
 and o.value_coded in
 (select concept_id from report_mapping where (source = "CIEL" and code in
-(78082, 78068, 79652))
-or (source = "PIH" and code in (4046, 6746, 765)))
+('78082', '78068', '79652'))
+or (source = "PIH" and code in ('4046', '6746', '765')))
 group by encounter_id) endocrine on endocrine.encounter_id = tns.encounter_id
 left join
 (
@@ -338,8 +338,8 @@ cn.concept_id = o.value_coded and
 o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "MEDICATION ORDERS")
 and o.value_coded in
 (select concept_id from report_mapping where (source = "CIEL" and code in
-(75018, 81730))
-or (source = "PIH" and code in (4034, 2293, 960, 95, 1244, 4057, 923)))
+('75018', '81730'))
+or (source = "PIH" and code in ('4034', '2293', '960', '95', '1244', '4057', '923')))
 group by encounter_id) other_meds on other_meds.encounter_id = tns.encounter_id
 
 set tns.other_disease_category = other_category.other_disease,
@@ -350,6 +350,7 @@ set tns.other_disease_category = other_category.other_disease,
     tns.respiratory_medication = respiratory.medicine,
     tns.endocrine_medication = endocrine.medicine,
     tns.other_medication = other_meds.medicine;
+
 
 -- obs join
 CREATE TEMPORARY table temp_obs_join
@@ -600,9 +601,6 @@ SELECT
     pa.address2 street_landmark,
     el.name encounter_location,
     CONCAT(pn.given_name, ' ', pn.family_name) provider,
-    known_chronic_disease_before_referral,
-    prior_treatment_for_chronic_disease,
-    chronic_disease_controlled_during_initial_visit,
     temp_obs_join.*,
     disease_category,
     comments,
@@ -687,6 +685,6 @@ AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 't
 AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
 AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
  patient_id = person_id AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
-AND DATE(e.encounter_datetime) >= @startDate
-AND DATE(e.encounter_datetime) <= @endDate
+AND DATE(e.encounter_datetime) >= date(@startDate)
+AND DATE(e.encounter_datetime) <= date(@endDate)
 GROUP BY e.encounter_id ORDER BY p.patient_id;

@@ -229,11 +229,10 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             else {
-                if ("vaccinationsANC".equals(key) || "labResultsExport".equals(key) || "ncd".equals(key)) {
+                if ("vaccinationsANC".equals(key) || "labResultsExport".equals(key) || "ncd".equals(key) || "history".equals(key)) {
                     dsd = constructSqlFileDataSetDefinition(key);
                     addStartAndEndDateParameters(rd, dsd, mappings);
                 }
-
                 else {
                     dsd = constructSqlDataSetDefinition(key);
                     // only add start and end date if they are specified in the defined SQL
