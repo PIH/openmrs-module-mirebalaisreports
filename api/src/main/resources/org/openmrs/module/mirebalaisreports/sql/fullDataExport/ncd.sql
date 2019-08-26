@@ -1,6 +1,14 @@
 DROP TEMPORARY TABLE IF EXISTS temp_obs_join;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_section;
 
+SELECT patient_identifier_type_id INTO @zlId FROM patient_identifier_type WHERE name = "ZL EMR ID";
+SELECT person_attribute_type_id INTO @unknownPt FROM person_attribute_type WHERE name = "Unknown patient";
+SELECT person_attribute_type_id INTO @testPt FROM person_attribute_type WHERE name = "Test Patient";
+SELECT encounter_type_id INTO @NCDInitEnc FROM encounter_type WHERE name = "NCD Initial Consult";
+SELECT encounter_type_id INTO @NCDFollowEnc FROM encounter_type WHERE name = "NCD Followup Consult";
+SELECT encounter_type_id INTO @vitEnc FROM encounter_type WHERE name = "Signes vitaux";
+SELECT encounter_type_id INTO @labResultEnc FROM encounter_type WHERE name = "Laboratory Results";
+
 -- NCD section
 create TEMPORARY table temp_ncd_section
 (
@@ -57,7 +65,7 @@ select obs_id, encounter_id, person_id, group_concat(name), comments from obs o,
 where
 value_coded = cn.concept_id  and locale="en" and concept_name_type="FULLY_SPECIFIED" and cn.voided = 0 and
 o.concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") and o.voided = 0
-and encounter_id in (select encounter_id from encounter where voided = 0 and encounter_type = :NCDInitEnc) group by encounter_id;
+and encounter_id in (select encounter_id from encounter where voided = 0 and encounter_type = @NCDInitEnc) group by encounter_id;
 
 update temp_ncd_section tns
 left join
@@ -563,7 +571,7 @@ e.encounter_id IN
     (SELECT visit_id, encounter_type, MAX(encounter_datetime) AS enc_date
     FROM encounter
      WHERE 1=1
-     AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
+     AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
       GROUP BY visit_id,encounter_type) maxdate
      ON maxdate.visit_id = e3.visit_id AND e3.encounter_type= maxdate.encounter_type AND e3.encounter_datetime = maxdate.enc_date
 )
@@ -639,19 +647,19 @@ SELECT
 FROM
     patient p
 -- Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = :zlId
+INNER JOIN (SELECT patient_id, identifier, location_id FROM patient_identifier WHERE identifier_type = @zlId
             AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON p.patient_id = zl.patient_id
 -- ZL EMR ID location
 INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
 -- Unknown patient
-LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = :unknownPt
+LEFT OUTER JOIN person_attribute un ON p.patient_id = un.person_id AND un.person_attribute_type_id = @unknownPt
             AND un.voided = 0
 -- Gender
 INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
 --  Most recent address
 LEFT OUTER JOIN (SELECT * FROM person_address WHERE voided = 0 ORDER BY date_created DESC) pa ON p.patient_id = pa.person_id
 INNER JOIN (SELECT person_id, given_name, family_name FROM person_name WHERE voided = 0 ORDER BY date_created DESC) n ON p.patient_id = n.person_id
-INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
+INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0 AND e.encounter_type IN (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
 INNER JOIN location el ON e.location_id = el.location_id
 -- UUID of NCD program
 LEFT JOIN patient_program pp ON pp.patient_id = p.patient_id AND pp.voided = 0 AND pp.program_id IN
@@ -673,12 +681,12 @@ temp_obs_join ON temp_obs_join.encounter_id = ep.encounter_id
 LEFT JOIN temp_ncd_section on temp_ncd_section.encounter_id = e.encounter_id
 WHERE p.voided = 0
 -- exclude test patients
-AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = :testPt
+AND p.patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = @testPt
                          AND voided = 0)
 -- Remove all the empty ncd forms.
-AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (:NCDInitEnc, :NCDFollowEnc)
+AND e.visit_id IN (SELECT enc.visit_id FROM encounter enc WHERE encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
 AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
- patient_id = person_id AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc) AND obs.voided = 0))
-AND DATE(e.encounter_datetime) >= :startDate
-AND DATE(e.encounter_datetime) <= :endDate
+ patient_id = person_id AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
+AND DATE(e.encounter_datetime) >= @startDate
+AND DATE(e.encounter_datetime) <= @endDate
 GROUP BY e.encounter_id ORDER BY p.patient_id;
