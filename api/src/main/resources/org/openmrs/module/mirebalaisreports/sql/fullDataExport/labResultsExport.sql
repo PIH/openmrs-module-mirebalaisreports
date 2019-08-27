@@ -43,9 +43,10 @@ SELECT t.patient_id,
        pa.address1 as 'locality',
        pa.address2 as 'street_landmark',
        t.order_number,
-       res.concept_id,
        ocn.name as 'orderable',
        cnq.name as 'test',
+       t.encounter_datetime as 'specimen_collection_date',
+       res_date.value_datetime as 'results_date',
        CASE when res.value_numeric is not null then res.value_numeric
        when res.value_text is not null then res.value_text
        when cna.name is not null then cna.name
@@ -87,6 +88,9 @@ from temp_laborders_spec t
   LEFT OUTER JOIN concept_name cna on cna.concept_name_id = (select concept_name_id from concept_name cn where cn.concept_id = res.value_coded and cn.voided = 0 and cn.locale in ('fr','en','ht') order by field(cn.locale,'fr','en','ht'), cn.locale_preferred desc limit 1)
   -- units
   LEFT OUTER JOIN concept_numeric cu on cu.concept_id = res.concept_id
+  -- results date
+  LEFT OUTER JOIN obs res_date on res_date.voided = 0 and res_date.encounter_id = t.encounter_id and res_date.concept_id =    
+      (select concept_id from concept where UUID = '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0')  
 -- the following will filter out the rare case that an empty obs was left in the specimen collection encounter
 WHERE (res.value_numeric is not null or res.value_text is not null or cna.name is not null)
 ;
