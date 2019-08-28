@@ -687,4 +687,5 @@ AND enc.encounter_id IN (SELECT obs.encounter_id FROM obs JOIN encounter ON
  patient_id = person_id AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
 AND DATE(e.encounter_datetime) >= date(@startDate)
 AND DATE(e.encounter_datetime) <= date(@endDate)
-GROUP BY e.encounter_id ORDER BY p.patient_id;
+GROUP BY e.encounter_id ORDER BY p.patient_id
+;
