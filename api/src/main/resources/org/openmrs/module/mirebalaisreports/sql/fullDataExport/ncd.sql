@@ -576,7 +576,7 @@ select
     commorbidities,
     inhaler_training,
     pulmonary_comment,
-    temp_obs_join.Number_seizures_since_last_visit
+    temp_obs_join.Number_seizures_since_last_visit,
     categories_of_heart_failure,
     nyha_class,
     fluid_status,
