@@ -1,5 +1,6 @@
 drop TEMPORARY TABLE IF EXISTS temp_obs_join;
 drop TEMPORARY TABLE IF EXISTS temp_ncd_section;
+drop TEMPORARY TABLE IF EXISTS ncd_patient_attributes;
 
 select patient_identifier_type_id INTO @zlId FROM patient_identifier_type where name = "ZL EMR ID";
 select person_attribute_type_id INTO @unknownPt FROM person_attribute_type where name = "Unknown patient";
@@ -9,11 +10,36 @@ select encounter_type_id INTO @NCDFollowEnc FROM encounter_type where name = "NC
 select encounter_type_id INTO @vitEnc FROM encounter_type where name = "Signes vitaux";
 select encounter_type_id INTO @labResultEnc FROM encounter_type where name = "Laboratory Results";
 
--- NCD section
-create TEMPORARY table temp_ncd_section
+create temporary table temp_ncd_section
 (
-obs_id int,
+patient_id int,
 encounter_id int,
+visit_id int,
+encounter_location_id int,
+encounter_type int,
+encounter_datetime datetime,
+emr_id varchar(50),
+loc_registered varchar(255),
+location_id int,
+unknown_patient varchar(50),
+gender varchar(50),
+age_at_enc double,
+department varchar(255),
+commune varchar(255),
+section varchar(255),
+locality varchar(255),
+street_landmark varchar(255),
+provider varchar(255),
+encounter_provider int,
+provider_person_id int,
+patient_program_id int,
+enrolled_in_program datetime,
+patient_outcome_concept_id int,
+patient_state varchar(50),
+pws_concept_id int,
+program_state varchar(255),
+program_outcome varchar(255),
+encounter_location varchar(255),
 person_id int,
 known_chronic_disease_before_referral varchar(50),
 prior_treatment_for_chronic_disease varchar(50),
@@ -23,7 +49,7 @@ comments text,
 waist_circumference double,
 hip_size double,
 hypertension_stage text,
-hypertenstion_comments text,
+hypertension_comments text,
 diabetes_mellitus text,
 serum_glucose double,
 fasting_blood_glucose_test varchar (50),
@@ -60,13 +86,104 @@ respiratory_medication text,
 endocrine_medication text,
 other_medication text
 );
+
+insert into temp_ncd_section (patient_id, encounter_id, visit_id, encounter_location_id, encounter_type, encounter_datetime)
+select patient_id, encounter_id, visit_id, location_id, group_concat(encounter_type), encounter_datetime from encounter where voided = 0 and encounter_type in
+(@NCDInitEnc, @NCDFollowEnc)
+AND patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = @testPt
+                         AND voided = 0)
+AND visit_id IS NOT NULL
+AND DATE(encounter_datetime) >=  date(@startDate)
+AND DATE(encounter_datetime) <=  date(@endDate)
+GROUP BY visit_id;
+
+update temp_ncd_section tns
+-- Most recent ZL EMR ID
+inner join (select patient_id, identifier, location_id from patient_identifier where identifier_type = @zlId
+            and voided = 0 and preferred = 1 order by date_created desc) zl on tns.patient_id = zl.patient_id
+set tns.emr_id = zl.identifier,
+	tns.location_id = zl.location_id;
+
+update temp_ncd_section tns
+-- ZL EMR ID location
+inner join location zl_loc on tns.location_id = zl_loc.location_id
+-- Unknown patient
+left outer join person_attribute un on tns.patient_id = un.person_id and un.person_attribute_type_id = @unknownPt and un.voided = 0
+-- Gender
+inner join person pr on tns.patient_id = pr.person_id and pr.voided = 0
+set tns.loc_registered = zl_loc.name,
+	tns.unknown_patient =  un.value,
+    tns.gender = pr.gender,
+    tns.age_at_enc = round(DATEDIFF(tns.encounter_datetime, pr.birthdate) / 365.25,
+            1);
+
+ update temp_ncd_section tns
+--  Most recent address
+left outer join (select person_id, state_province, city_village, address3, address1, address2 from person_address where voided = 0 order by date_created desc) pa on tns.patient_id = pa.person_id
+set tns.department = pa.state_province,
+	tns.commune = pa.city_village,
+	tns.section = pa.address3,
+	tns.locality = pa.address1,
+	tns.street_landmark = pa.address2;
+
+update temp_ncd_section tns
+--  Provider Name
+INNER JOIN encounter_provider ep ON ep.encounter_id = tns.encounter_id AND ep.voided = 0
+set tns.encounter_provider = ep.provider_id;
+
+update temp_ncd_section tns
+--  Provider Person ID
+INNER JOIN provider pv ON pv.provider_id = tns.encounter_provider
+set tns.provider_person_id = pv.person_id;
+
+update temp_ncd_section tns
+-- Provider
+inner join (select person_id, given_name, family_name from person_name where voided = 0 order by date_created desc) pn on tns.provider_person_id = pn.person_id
+set tns.provider = concat(pn.given_name, ' ', pn.family_name);
+
+update temp_ncd_section tns
+-- UUID of NCD program and date enrolled
+LEFT JOIN patient_program pp ON pp.patient_id = tns.patient_id AND pp.voided = 0 AND pp.program_id IN
+      (select program_id from program where uuid = '515796ec-bf3a-11e7-abc4-cec278b6b50a')
+set tns.patient_program_id = pp.patient_program_id,
+    tns.patient_outcome_concept_id = pp.outcome_concept_id,
+	tns.enrolled_in_program = date(pp.date_enrolled) ;
+
+update temp_ncd_section tns
+-- patient state
+LEFT OUTER JOIN patient_state ps ON ps.patient_program_id = tns.patient_program_id AND ps.end_date IS NULL AND ps.voided = 0
+set tns.patient_state = ps.state;
+
+update temp_ncd_section tns
+LEFT OUTER JOIN program_workflow_state pws ON pws.program_workflow_state_id = tns.patient_state AND pws.retired = 0
+set tns.pws_concept_id = pws.concept_id;
+
+update temp_ncd_section tns
+LEFT OUTER JOIN concept_name cn_state ON cn_state.concept_id = tns.pws_concept_id  AND cn_state.locale = 'en' AND cn_state.locale_preferred = '1'  AND cn_state.voided = 0
+set tns.program_state = cn_state.name;
+
+-- outcome
+update temp_ncd_section tns
+LEFT OUTER JOIN concept_name cn_out ON cn_out.concept_id = tns.patient_outcome_concept_id AND cn_out.locale = 'en' AND cn_out.locale_preferred = '1'  AND cn_out.voided = 0
+set tns.program_outcome = cn_out.name;
+
+update temp_ncd_section tns
+-- encounter_location
+INNER JOIN location el ON el.location_id = tns.encounter_location_id
+set tns.encounter_location = el.name;
+
 -- The data here comes from the NCD INFORMATION section
-insert into temp_ncd_section (obs_id, encounter_id, person_id, disease_category, comments)
-select obs_id, encounter_id, person_id, group_concat(name), comments from obs o, concept_name cn
+-- re-introducing person_id so as not to re-rwite query
+update temp_ncd_section tns
+left join
+(select encounter_id, person_id, group_concat(name) names, comments from obs o, concept_name cn
 where
 value_coded = cn.concept_id  and locale="en" and concept_name_type="FULLY_SPECIFIED" and cn.voided = 0 and
-o.concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") and o.voided = 0
-and encounter_id in (select encounter_id from encounter where voided = 0 and encounter_type = @NCDInitEnc) group by encounter_id;
+o.concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") and o.voided = 0 ) ncd_information
+on tns.encounter_id = ncd_information.encounter_id
+set tns.person_id = ncd_information.person_id,
+    tns.disease_category = ncd_information.names,
+    tns.comments = ncd_information.comments;
 
 update temp_ncd_section tns
 left join
@@ -104,7 +221,7 @@ left join obs o3 on o3.encounter_id = tns.encounter_id and o3.voided = 0 and o3.
 set tns.waist_circumference = o.value_numeric,
     tns.hip_size =  o1.value_numeric,
     tns.hypertension_stage = o2.hypertension,
-    tns.hypertenstion_comments = o3.value_text;
+    tns.hypertension_comments = o3.value_text;
 
 -- DIABETES
 update temp_ncd_section tns
@@ -373,6 +490,9 @@ select
      o.encounter_id,
     (select date_started from visit where visit_id = e.visit_id) visit_date,
     visit_id,
+    -- Encounter Type
+	GROUP_CONCAT(DISTINCT(CASE WHEN e.encounter_id = o.encounter_id THEN (SELECT name FROM encounter_type WHERE encounter_type_id = e.encounter_type) END)
+    SEPARATOR ', ') visit_type,
     max(date(CASE
             WHEN e.encounter_id = o.encounter_id THEN e.encounter_datetime
         END)) 'encounter_date',
@@ -529,45 +649,46 @@ GROUP BY e.visit_id
 );
 
 select
-    p.patient_id,
-    zl.identifier zlemr,
-    zl_loc.name loc_registered,
-    un.value unknown_patient,
-    date(pp.date_enrolled) enrolled_in_program,
-	cn_state.name program_state,
-	cn_out.name program_outcome,
-    pr.gender,
-    round(DATEDIFF(e.encounter_datetime, pr.birthdate) / 365.25,
-            1) age_at_enc,
-    pa.state_province department,
-    pa.city_village commune,
-    pa.address3 section,
-    pa.address1 locality,
-    pa.address2 street_landmark,
-    el.name encounter_location,
-    concat(pn.given_name, ' ', pn.family_name) provider,
-    temp_obs_join.encounter_date,
-    temp_obs_join.Weight_kg,
-	temp_obs_join.Height_cm,
-	temp_obs_join.BMI,
-	temp_obs_join.Systolic_BP,
-	temp_obs_join.Diastolic_BP,
-	temp_obs_join.Waist_cm,
-	temp_obs_join.hip_cm,
-	temp_obs_join.Waist_Hip_Ratio,
+    patient_id,
+    emr_id zlemr,
+    loc_registered,
+    unknown_patient,
+    encounter_date,
+    visit_date,
+    visit_type,
+    enrolled_in_program,
+	program_state,
+	program_outcome,
+    gender,
+	age_at_enc,
+    department,
+    commune,
+    section,
+    locality,
+	street_landmark,
+    encounter_location,
+    provider,
+    Weight_kg,
+	Height_cm,
+	BMI,
+	Systolic_BP,
+	Diastolic_BP,
+	Waist_cm,
+	hip_cm,
+	Waist_Hip_Ratio,
     disease_category,
     comments,
     waist_circumference,
     hip_size,
     hypertension_stage,
-    hypertenstion_comments,
+    hypertension_comments,
     diabetes_mellitus,
     serum_glucose,
     fasting_blood_glucose_test,
     fasting_blood_glucose,
     managing_diabetic_foot_care,
     diabetes_comment,
-    temp_obs_join.puffs_week_salbutamol,
+    puffs_week_salbutamol,
     probably_asthma,
     respiratory_diagnosis,
     bronchiectasis,
@@ -576,7 +697,7 @@ select
     commorbidities,
     inhaler_training,
     pulmonary_comment,
-    temp_obs_join.Number_seizures_since_last_visit
+    Number_seizures_since_last_visit,
     categories_of_heart_failure,
     nyha_class,
     fluid_status,
@@ -598,51 +719,7 @@ select
     respiratory_medication,
     endocrine_medication,
     other_medication,
-    temp_obs_join.Next_NCD_appointment
-from
-    patient p
--- Most recent ZL EMR ID
-inner join (select patient_id, identifier, location_id from patient_identifier where identifier_type = @zlId
-            and voided = 0 and preferred = 1 order by date_created desc) zl on p.patient_id = zl.patient_id
--- ZL EMR ID location
-inner join location zl_loc on zl.location_id = zl_loc.location_id
--- Unknown patient
-left outer join person_attribute un on p.patient_id = un.person_id and un.person_attribute_type_id = @unknownPt
-            and un.voided = 0
--- Gender
-inner join person pr on p.patient_id = pr.person_id and pr.voided = 0
---  Most recent address
-left outer join (select * from person_address where voided = 0 order by date_created desc) pa on p.patient_id = pa.person_id
-inner join (select person_id, given_name, family_name from person_name where voided = 0 order by date_created desc) n on p.patient_id = n.person_id
-inner join encounter e on p.patient_id = e.patient_id and e.voided = 0 and e.encounter_type in (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
-INNER JOIN location el ON e.location_id = el.location_id
--- UUID of NCD program
-LEFT JOIN patient_program pp ON pp.patient_id = p.patient_id AND pp.voided = 0 AND pp.program_id IN
-      (select program_id from program where uuid = '515796ec-bf3a-11e7-abc4-cec278b6b50a') -- uuid of the NCD program
--- patient state
-LEFT OUTER JOIN patient_state ps ON ps.patient_program_id = pp.patient_program_id AND ps.end_date IS NULL AND ps.voided = 0
-LEFT OUTER JOIN program_workflow_state pws ON pws.program_workflow_state_id = ps.state AND pws.retired = 0
-LEFT OUTER JOIN concept_name cn_state ON cn_state.concept_id = pws.concept_id  AND cn_state.locale = 'en' AND cn_state.locale_preferred = '1'  AND cn_state.voided = 0
--- outcome
-LEFT OUTER JOIN concept_name cn_out ON cn_out.concept_id = pp.outcome_concept_id AND cn_out.locale = 'en' AND cn_out.locale_preferred = '1'  AND cn_out.voided = 0
---  Provider Name
-INNER JOIN encounter_provider ep ON ep.encounter_id = e.encounter_id AND ep.voided = 0
-INNER JOIN provider pv ON pv.provider_id = ep.provider_id
-INNER JOIN person_name pn ON pn.person_id = pv.person_id AND pn.voided = 0
--- Straight Obs Joins
-INNER JOIN
-temp_obs_join ON temp_obs_join.encounter_id = ep.encounter_id
--- NCD section
-LEFT JOIN temp_ncd_section on temp_ncd_section.encounter_id = e.encounter_id
-WHERE p.voided = 0
--- exclude test patients
-AND p.patient_id NOT IN (select person_id from person_attribute where value = 'true' and person_attribute_type_id = @testPt
-                         and voided = 0)
--- Remove all the empty ncd forms.
-AND e.visit_id IN (select enc.visit_id from encounter enc where encounter_type in (@NCDInitEnc, @NCDFollowEnc)
-AND enc.encounter_id IN (select obs.encounter_id from obs join encounter on
- patient_id = person_id and encounter_type in (@NCDInitEnc, @NCDFollowEnc) AND obs.voided = 0))
-AND DATE(e.encounter_datetime) >=  date(@startDate)
-AND DATE(e.encounter_datetime) <=  date(@endDate)
-GROUP BY e.encounter_id ORDER BY p.patient_id
-;
+    Next_NCD_appointment
+from temp_ncd_section tns
+inner join temp_obs_join toj on
+toj.visit_id = tns.visit_id order by tns.patient_id;
