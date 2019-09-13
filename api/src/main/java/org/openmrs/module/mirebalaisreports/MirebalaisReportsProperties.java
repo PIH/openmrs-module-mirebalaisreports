@@ -615,10 +615,40 @@ public class MirebalaisReportsProperties extends EmrProperties {
         return getConceptByUuid(PRESENTING_HISTORY_CONCEPT_UUID);
     }
 
+    public static final String PHYSICAL_EXAM_CONCEPT_UUID = "3cd9ae0e-26fe-102b-80cb-0017a47871b2";
+
+    public Concept getPhysicalExamConcept() {
+        return getConceptByUuid(PHYSICAL_EXAM_CONCEPT_UUID);
+    }
+
+    public static final String CLINICAL_IMPRESSIONS_COMMENTS_CONCEPT_UUID = "3cd9d956-26fe-102b-80cb-0017a47871b2";
+
+    public Concept getClinicalImpressionCommentsConcept() {
+        return getConceptByUuid(CLINICAL_IMPRESSIONS_COMMENTS_CONCEPT_UUID);
+    }
+
     public static final String CLINICAL_MANAGEMENT_PLAN_CONCEPT_UUID = "162749AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
     public Concept getClinicalManagementPlanConcept() {
         return getConceptByUuid(CLINICAL_MANAGEMENT_PLAN_CONCEPT_UUID);
+    }
+
+    public static final String DISPENSING_CONSTRUCT_UUID = "cef4a703-8521-4c2d-9932-d1429a57e684";
+
+    public Concept getDispensingConstruct() {
+        return getConceptByUuid(DISPENSING_CONSTRUCT_UUID);
+    }
+
+    public static final String MEDICATION_NAME_CONCEPT_UUID = "3cd9491e-26fe-102b-80cb-0017a47871b2";
+
+    public Concept getMedicationNameConcept() {
+        return getConceptByUuid(MEDICATION_NAME_CONCEPT_UUID);
+    }
+
+    public static final String MEDICATION_INSTRUCTIONS_CONCEPT_UUID = "ef7f742b-76e6-4a83-84ca-534ad6705494";
+
+    public Concept getMedicationInstructionsConcept() {
+        return getConceptByUuid(MEDICATION_INSTRUCTIONS_CONCEPT_UUID);
     }
 
 	public static final String SET_OF_WEEKLY_NOTIFIABLE_DISEASES_CONCEPT_UUID = "ddb35fb6-e69b-49cb-9540-ba11cf40ffd7";

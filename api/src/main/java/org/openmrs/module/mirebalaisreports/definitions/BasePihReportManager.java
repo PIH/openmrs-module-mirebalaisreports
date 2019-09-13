@@ -145,7 +145,12 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sql = replace(sql, "diagnosisCertainty", mrp.getDiagnosisCertaintyConcept());
         sql = replace(sql, "comment", mrp.getClinicalImpressionsConcept());
         sql = replace(sql, "presentingHistory", mrp.getPresentingHistoryConcept());
+        sql = replace(sql, "physicalExam", mrp.getPhysicalExamConcept());
+        sql = replace(sql, "clinicalImpressionComments", mrp.getClinicalImpressionCommentsConcept());
         sql = replace(sql, "clinicalManagementPlan", mrp.getClinicalManagementPlanConcept());
+        sql = replace(sql, "dispensingConstruct", mrp.getDispensingConstruct());
+        sql = replace(sql, "medName", mrp.getMedicationNameConcept());
+        sql = replace(sql, "medInstructions", mrp.getMedicationInstructionsConcept());
         sql = replace(sql, "notifiable", mrp.getSetOfWeeklyNotifiableDiseases());
         sql = replace(sql, "urgent", mrp.getSetOfUrgentDiseases());
         sql = replace(sql, "santeFamn", mrp.getSetOfWomensHealthDiagnoses());

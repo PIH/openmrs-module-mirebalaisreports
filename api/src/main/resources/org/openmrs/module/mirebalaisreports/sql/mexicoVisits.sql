@@ -2,6 +2,7 @@ SELECT CONCAT(DATE(e.encounter_datetime), " ", TIME(e.encounter_datetime)) "date
        e.visit_id       "visit id",
        given_name        "name",
        family_name       "last name",
+       FLOOR(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25) "age",
        pr.gender            "gender",
        pa.city_village      "loc",
        MAX(wt.value_numeric)     "weight",
@@ -12,9 +13,15 @@ SELECT CONCAT(DATE(e.encounter_datetime), " ", TIME(e.encounter_datetime)) "date
        MAX(rr.value_numeric)     "rr",
        MAX(sbp.value_numeric)    "sbp",
        MAX(dbp.value_numeric)    "dbp",
-       MAX(note.value_text)      "note",
-       MAX(dx.value_text)        "dx",
-       MAX(plan.value_text)      "plan"
+       MAX(subj.value_text)      "subj",
+       MAX(obj.value_text)      "obj",
+       MAX(analysis.value_text)      "analysis",
+       GROUP_CONCAT(DISTINCT dx_name.name SEPARATOR ', ') "dx",
+       MAX(plan.value_text)      "plan",
+       GROUP_CONCAT(DISTINCT
+           drug.name, ' - ', med_instructions.value_text
+           SEPARATOR '\n'
+       )                          "meds"
 FROM patient p
 -- Person
          INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
@@ -38,9 +45,28 @@ FROM patient p
          LEFT OUTER JOIN obs rr ON e.encounter_id = rr.encounter_id AND rr.voided = 0 AND rr.concept_id = :rr
          LEFT OUTER JOIN obs sbp ON e.encounter_id = sbp.encounter_id AND sbp.voided = 0 AND sbp.concept_id = :sbp
          LEFT OUTER JOIN obs dbp ON e.encounter_id = dbp.encounter_id AND dbp.voided = 0 AND dbp.concept_id = :dbp
-         LEFT OUTER JOIN obs note ON e.encounter_id = note.encounter_id AND note.voided = 0 AND note.concept_id = :presentingHistory
+         LEFT OUTER JOIN obs subj ON e.encounter_id = subj.encounter_id AND subj.voided = 0 AND subj.concept_id = :presentingHistory
+         LEFT OUTER JOIN obs obj ON e.encounter_id = obj.encounter_id AND obj.voided = 0 AND obj.concept_id = :physicalExam
+         LEFT OUTER JOIN obs analysis ON e.encounter_id = analysis.encounter_id AND analysis.voided = 0 AND analysis.concept_id = :clinicalImpressionComments
          LEFT OUTER JOIN obs dx ON e.encounter_id = dx.encounter_id AND dx.voided = 0 AND dx.concept_id = :coded
          LEFT OUTER JOIN obs plan ON e.encounter_id = plan.encounter_id AND plan.voided = 0 AND plan.concept_id = :clinicalManagementPlan
+-- Diagnoses
+         LEFT OUTER JOIN concept_name dx_name
+             ON dx.value_coded = dx_name.concept_id
+                    AND dx_name.locale = 'es'
+                    AND dx_name.locale_preferred = 1
+                    AND dx_name.voided = 0
+-- Medications
+         LEFT OUTER JOIN obs med_group
+             ON e.encounter_id = med_group.encounter_id AND med_group.voided = 0
+                    AND med_group.concept_id = :dispensingConstruct
+         LEFT OUTER JOIN obs med_obs
+             ON e.encounter_id = med_obs.encounter_id AND med_obs.voided = 0
+                    AND med_obs.concept_id = :medName AND med_obs.obs_group_id = med_group.obs_id
+         LEFT OUTER JOIN drug ON med_obs.value_drug = drug.drug_id
+         LEFT OUTER JOIN obs med_instructions
+             ON e.encounter_id = med_instructions.encounter_id AND med_instructions.voided = 0
+                    AND med_instructions.concept_id = :medInstructions AND med_instructions.obs_group_id = med_group.obs_id
 WHERE p.voided = 0
 -- Exclude test patients
   AND p.patient_id NOT IN (SELECT person_id
