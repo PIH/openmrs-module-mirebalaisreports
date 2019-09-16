@@ -1,6 +1,5 @@
 drop TEMPORARY TABLE IF EXISTS temp_obs_join;
 drop TEMPORARY TABLE IF EXISTS temp_ncd_section;
-drop TEMPORARY TABLE IF EXISTS ncd_patient_attributes;
 
 select patient_identifier_type_id INTO @zlId FROM patient_identifier_type where name = "ZL EMR ID";
 select person_attribute_type_id INTO @unknownPt FROM person_attribute_type where name = "Unknown patient";
@@ -88,8 +87,8 @@ other_medication text
 );
 
 insert into temp_ncd_section (patient_id, encounter_id, visit_id, encounter_location_id, encounter_type, encounter_datetime)
-select patient_id, encounter_id, visit_id, location_id, group_concat(encounter_type), encounter_datetime from encounter where voided = 0 and encounter_type in
-(@NCDInitEnc, @NCDFollowEnc)
+select patient_id, encounter_id, visit_id, location_id, group_concat(encounter_type), encounter_datetime from encounter where voided = 0
+and encounter_type IN (:NCDInitEnc, :NCDFollowEnc)
 AND patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = @testPt
                          AND voided = 0)
 AND visit_id IS NOT NULL
