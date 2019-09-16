@@ -15,7 +15,7 @@ patient_id int,
 encounter_id int,
 visit_id int,
 encounter_location_id int,
-encounter_type int,
+encounter_type varchar(255),
 encounter_datetime datetime,
 emr_id varchar(50),
 loc_registered varchar(255),
@@ -87,9 +87,9 @@ other_medication text
 );
 
 insert into temp_ncd_section (patient_id, encounter_id, visit_id, encounter_location_id, encounter_type, encounter_datetime)
-select patient_id, encounter_id, visit_id, location_id, group_concat(encounter_type), encounter_datetime from encounter where voided = 0
-and encounter_type IN (:NCDInitEnc, :NCDFollowEnc)
-AND patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = @testPt
+select patient_id, encounter_id, visit_id, location_id, group_concat(encounter_type), encounter_datetime from encounter where voided = 0 and encounter_type
+in (@NCDInitEnc, @NCDFollowEnc)
+AND patient_id NOT IN (SELECT person_id FROM person_attribute WHERE value = "true" AND person_attribute_type_id = @testPt
                          AND voided = 0)
 AND visit_id IS NOT NULL
 AND DATE(encounter_datetime) >=  date(@startDate)
@@ -178,7 +178,7 @@ left join
 (select encounter_id, person_id, group_concat(name) names, comments from obs o, concept_name cn
 where
 value_coded = cn.concept_id  and locale="en" and concept_name_type="FULLY_SPECIFIED" and cn.voided = 0 and
-o.concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") and o.voided = 0 ) ncd_information
+o.concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") and o.voided = 0 group by encounter_id) ncd_information
 on tns.encounter_id = ncd_information.encounter_id
 set tns.person_id = ncd_information.person_id,
     tns.disease_category = ncd_information.names,
@@ -644,6 +644,8 @@ AND rm.concept_id = o.concept_id
 AND o.encounter_id = e.encounter_id
 AND e.voided = 0
 AND o.voided = 0
+AND DATE(e.encounter_datetime) >=  date(@startDate)
+AND DATE(e.encounter_datetime) <=  date(@endDate)
 GROUP BY e.visit_id
 );
 
@@ -720,5 +722,5 @@ select
     other_medication,
     Next_NCD_appointment
 from temp_ncd_section tns
-inner join temp_obs_join toj on
+left join temp_obs_join toj on
 toj.visit_id = tns.visit_id order by tns.patient_id;
