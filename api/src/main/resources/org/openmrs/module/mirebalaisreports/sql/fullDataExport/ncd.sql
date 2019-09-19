@@ -495,9 +495,55 @@ select
     max(date(CASE
             WHEN e.encounter_id = o.encounter_id THEN e.encounter_datetime
         END)) 'encounter_date',
-    max(case
-        when rm.source = 'CIEL' and rm.code = '5089' then o.value_numeric
-    end) 'Weight_kg',
+-- Encounter Type
+	GROUP_CONCAT(DISTINCT(CASE WHEN e.encounter_id = o.encounter_id THEN (SELECT name FROM encounter_type WHERE encounter_type_id = e.encounter_type) END)
+    SEPARATOR ', ') visit_type,
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'Type of referring service'
+        THEN
+            cn.name
+    END) 'Type_of_referring_service',
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'Known chronic disease before referral'
+        THEN
+            cn.name
+    END) 'Known_disease_before_referral',
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'Prior treatment for chronic disease'
+        THEN
+            cn.name
+    END) 'Prior_treatment',
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'Chronic disease controlled during initial visit'
+        THEN
+            cn.name
+    END) 'Disease_controlled_initial_visit',
+    GROUP_CONCAT(CASE
+            WHEN
+                rm.source = 'PIH'
+                    AND rm.code = 'NCD category'
+            THEN
+                cn.name
+        END
+        SEPARATOR ', ') 'NCD_category',
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'NCD category'
+        THEN
+            o.comments
+    END) 'Other_NCD_category',
+    MAX(CASE
+        WHEN rm.source = 'CIEL' AND rm.code = '5089' THEN o.value_numeric
+    END) 'Weight_kg',
     MAX(CASE
         WHEN rm.source = 'CIEL' AND rm.code = '5090' THEN o.value_numeric
     END) 'Height_cm',
@@ -542,7 +588,22 @@ select
                 THEN
                     o.value_numeric
             END),
-            2) 'Waist_Hip_Ratio',
+            2) 'Waist/Hip Ratio',
+    GROUP_CONCAT(CASE
+            WHEN
+                rm.source = 'PIH'
+                    AND rm.code = 'NYHA CLASS'
+            THEN
+                cn.name
+        END
+        SEPARATOR ',') 'NYHA_CLASS',
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'PATIENTS FLUID MANAGEMENT'
+        THEN
+            cn.name
+    END) 'Patients_Fluid_Management',
     GROUP_CONCAT(CASE
             WHEN
                 rm.source = 'PIH'
@@ -561,17 +622,24 @@ select
     MAX(CASE
         WHEN
             rm.source = 'PIH'
-                AND rm.code = 'Puffs per week of relief inhaler (coded)'
+                AND rm.code = 'Puffs per week of salbutamol'
+        THEN
+            o.value_numeric
+    END) 'Puffs_week_salbutamol',
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'Asthma classification'
         THEN
             cn.name
-    END) 'puffs_week_salbutamol',
+    END) 'Asthma_classification',
     MAX(CASE
         WHEN
             rm.source = 'PIH'
                 AND rm.code = 'Number of seizures since last visit'
         THEN
             o.value_numeric
-    END) 'Number_seizures_since_last_visit', -- Epilepsy
+    END) 'Number_seizures_since_last_visit',
     MAX(CASE
         WHEN
             rm.source = 'PIH'
@@ -579,6 +647,13 @@ select
         THEN
             cn.name
     END) 'Adherance_to_appointment',
+    MAX(CASE
+        WHEN
+            rm.source = 'PIH'
+                AND rm.code = 'Lack of meds in last 2 days'
+        THEN
+            cn.name
+    END) 'Lack_of_meds_2_days',
     MAX(CASE
         WHEN
             rm.source = 'PIH'
@@ -630,13 +705,13 @@ WHERE 1=1
 AND
 e.encounter_id IN
 (
-   select e3.encounter_id
-   from encounter e3
-     inner join
-    (select visit_id, encounter_type, max(encounter_datetime) as enc_date
-    from encounter
-     where 1=1
-     and encounter_type in (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
+   SELECT e3.encounter_id
+   FROM encounter e3
+     INNER JOIN
+    (SELECT visit_id, encounter_type, MAX(encounter_datetime) AS enc_date
+    FROM encounter
+     WHERE 1=1
+     AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
       GROUP BY visit_id,encounter_type) maxdate
      ON maxdate.visit_id = e3.visit_id AND e3.encounter_type= maxdate.encounter_type AND e3.encounter_datetime = maxdate.enc_date
 )
@@ -724,3 +799,4 @@ select
 from temp_ncd_section tns
 left join temp_obs_join toj on
 toj.visit_id = tns.visit_id order by tns.patient_id;
+
