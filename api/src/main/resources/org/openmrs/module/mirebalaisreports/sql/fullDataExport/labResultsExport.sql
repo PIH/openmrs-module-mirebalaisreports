@@ -34,6 +34,9 @@ insert into temp_laborders_spec (order_number,concept_id,encounter_id,encounter_
         and date(e.encounter_datetime) <= date(@endDate)
   group by o.order_number;
 
+-- The following query takes the list of orders/specimen collection encounters from above and pulls lab results for each them where they exist   
+-- The first select statement handles all of the results entered in for which there were orders (using the above list)
+-- This is UNION'ed with a select statement handling the results entered in the standalone lab results encounter
 SELECT t.patient_id,
        zl.identifier as 'Patient_ZL_ID',
        zl_loc.name as 'loc_registered',
@@ -47,15 +50,18 @@ SELECT t.patient_id,
        pa.address2 as 'street_landmark',
        t.order_number,
        ocn.name as 'orderable',
-       cnq.name as 'test',
+       -- only return test name is test was performed:
+       CASE when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' then cnq.name END as 'test',
        t.encounter_datetime as 'specimen_collection_date',
        res_date.value_datetime as 'results_date',
-       CASE when res.value_numeric is not null then res.value_numeric
-       when res.value_text is not null then res.value_text
-       when cna.name is not null then cna.name
+       res.date_created "results_entry_date",
+       CASE 
+         when res.value_numeric is not null then res.value_numeric
+         when res.value_text is not null then res.value_text
+         when cna.name is not null then cna.name
        END as 'result',
        cu.units,
-       t.encounter_id
+       CASE when c.UUID = '5dc35a2a-228c-41d0-ae19-5b1e23618eda' then cna.name else null END as 'reason_not_performed'  
 from temp_laborders_spec t
   -- ZL EMR ID
   LEFT OUTER JOIN patient_identifier zl on zl.patient_identifier_id =
@@ -74,28 +80,26 @@ from temp_laborders_spec t
   -- Orderable
   LEFT OUTER JOIN concept_name ocn on ocn.concept_name_id = (select concept_name_id from concept_name ocn2 where ocn2.concept_id = t.concept_id and ocn2.locale in ('fr','en','ht') order by field(ocn2.locale,'fr','en','ht'), ocn2.locale_preferred desc
                                                              limit 1)
-  -- bring in actual results obs below. Note that we're excluding obs that are not lab results
+  -- bring in actual results obs below. Note that we're excluding obs that are not lab results, but are including reason lab was not performed
   INNER JOIN obs res on res.encounter_id = t.encounter_id
                         and res.voided = 0
                         and res.concept_id not in
                             (select concept_id from concept where UUID in
                                                                   ('393dec41-2fb5-428f-acfa-36ea85da6666',  -- test order number
                                                                    '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0', -- date of test results
-                                                                   '5dc35a2a-228c-41d0-ae19-5b1e23618eda', -- reason lab not performed
                                                                    'e9732df4-971d-4a9a-9129-e2e610552468', -- test location
-                                                                   '7e0cf626-dbe8-42aa-9b25-483b51350bf8', -- test staus
+                                                                   '7e0cf626-dbe8-42aa-9b25-483b51350bf8', -- test status
                                                                    '87f506e3-4433-40ec-b16c-b3c65e402989') -- estimated collection date
                             )
                         and (res.value_numeric is not null or res.value_text is not null or res.value_coded is not null)
   LEFT OUTER JOIN concept_name cnq on cnq.concept_name_id = (select concept_name_id from concept_name cn where cn.concept_id = res.concept_id and cn.voided = 0 and cn.locale in ('fr','en','ht') order by field(cn.locale,'fr','en','ht'), cn.locale_preferred desc limit 1)
   LEFT OUTER JOIN concept_name cna on cna.concept_name_id = (select concept_name_id from concept_name cn where cn.concept_id = res.value_coded and cn.voided = 0 and cn.locale in ('fr','en','ht') order by field(cn.locale,'fr','en','ht'), cn.locale_preferred desc limit 1)
+  LEFT OUTER JOIN concept c on c.concept_id = res.concept_id and c.retired = 0
   -- units
   LEFT OUTER JOIN concept_numeric cu on cu.concept_id = res.concept_id
   -- results date
   LEFT OUTER JOIN obs res_date on res_date.voided = 0 and res_date.encounter_id = t.encounter_id and res_date.concept_id =    
       (select concept_id from concept where UUID = '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0')  
--- the following will filter out the rare case that an empty obs was left in the specimen collection encounter
-WHERE (res.value_numeric is not null or res.value_text is not null or cna.name is not null)
 UNION
 -- the following select statement brings in the standalone lab results entered in on the lab results encounter
 SELECT e.patient_id,
@@ -114,12 +118,14 @@ SELECT e.patient_id,
        cnq.name as 'test',
        e.encounter_datetime as 'specimen_collection_date',
        res_date.value_datetime as 'results_date',
-       CASE when res.value_numeric is not null then res.value_numeric
-       when res.value_text is not null then res.value_text
-       when cna.name is not null then cna.name
+       res.date_created "results_entry_date",
+       CASE 
+         when res.value_numeric is not null then res.value_numeric
+         when res.value_text is not null then res.value_text
+         when cna.name is not null then cna.name
        END as 'result',
        cu.units,
-       e.encounter_id
+      null
 from encounter e
   -- ZL EMR ID
   LEFT OUTER JOIN patient_identifier zl on zl.patient_identifier_id =
