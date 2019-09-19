@@ -495,9 +495,6 @@ select
     max(date(CASE
             WHEN e.encounter_id = o.encounter_id THEN e.encounter_datetime
         END)) 'encounter_date',
--- Encounter Type
-	GROUP_CONCAT(DISTINCT(CASE WHEN e.encounter_id = o.encounter_id THEN (SELECT name FROM encounter_type WHERE encounter_type_id = e.encounter_type) END)
-    SEPARATOR ', ') visit_type,
     MAX(CASE
         WHEN
             rm.source = 'PIH'
@@ -588,15 +585,7 @@ select
                 THEN
                     o.value_numeric
             END),
-            2) 'Waist/Hip Ratio',
-    GROUP_CONCAT(CASE
-            WHEN
-                rm.source = 'PIH'
-                    AND rm.code = 'NYHA CLASS'
-            THEN
-                cn.name
-        END
-        SEPARATOR ',') 'NYHA_CLASS',
+            2) 'Waist_Hip_Ratio',
     MAX(CASE
         WHEN
             rm.source = 'PIH'
@@ -711,7 +700,7 @@ e.encounter_id IN
     (SELECT visit_id, encounter_type, MAX(encounter_datetime) AS enc_date
     FROM encounter
      WHERE 1=1
-     AND encounter_type IN (:NCDInitEnc, :NCDFollowEnc, :vitEnc, :labResultEnc)
+     AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc, @vitEnc, @labResultEnc)
       GROUP BY visit_id,encounter_type) maxdate
      ON maxdate.visit_id = e3.visit_id AND e3.encounter_type= maxdate.encounter_type AND e3.encounter_datetime = maxdate.enc_date
 )
