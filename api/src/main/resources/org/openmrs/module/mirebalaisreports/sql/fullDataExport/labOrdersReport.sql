@@ -12,7 +12,8 @@ select o.patient_id, zl.identifier Patient_ZL_ID, zl_loc.name loc_registered,
        END 'status',
        CONCAT(pn.given_name, ' ',pn.family_name) 'orderer',
        o.date_activated 'order_datetime',
-  o.urgency,
+       ol.name 'ordering_location',       
+       o.urgency,
        date(sce.encounter_datetime) 'specimen_collection_datetime',
        MAX(CASE WHEN rmq.source = 'PIH' and rmq.code = 11781 THEN 'yes/oui' END) 'collection_date_estimated',
        MAX(CASE WHEN rmq.source = 'PIH' and rmq.code = 11791 THEN  cna.name END) 'test_location',
@@ -38,7 +39,9 @@ from orders o
   -- Orderer
   INNER JOIN provider pv ON pv.provider_id = o.orderer
   INNER JOIN person_name pn ON pn.person_id = pv.person_id and pn.voided = 0
-  -- Specimen collection encounter
+  -- Ordering Location
+  INNER JOIN  location ol on ol.location_id = e.location_id
+-- Specimen collection encounter
   LEFT OUTER JOIN obs sc on sc.value_text = o.order_number and sc.voided = 0
   LEFT OUTER JOIN encounter sce on sce.encounter_id = sc.encounter_id and sce.voided = 0
   -- The following brings back any obs in the specimen collection encounter that are NOT in the list of concepts below.  This is used to determine status.
