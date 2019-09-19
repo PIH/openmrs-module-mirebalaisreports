@@ -77,6 +77,9 @@ public class FullDataExportBuilder {
             if (config.getCountry().equals(ConfigDescriptor.Country.HAITI)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
                         Arrays.asList("encounters")));
+                configurations.add(new Configuration(MirebalaisReportsProperties.SOCIAL_ECONOMICS_DATA_EXPORT_REPORT_DEFINITION_UUID, "socialeconomicsdataexport",
+                        Arrays.asList("socialEconomics")));
+
             }
 
             // others that depend on enabled components
@@ -147,6 +150,7 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID, "edtriagedataexport",
                         Arrays.asList("edTriage")));
             }
+
             if ((config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) &&
                     (!config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitnotedataexport",
