@@ -7,12 +7,12 @@ select o.patient_id, zl.identifier Patient_ZL_ID, zl_loc.name loc_registered,
        WHEN o.date_stopped is not null and sc.obs_id is null THEN 'Cancelled'
        WHEN o.auto_expire_date < CURDATE() and sc.obs_id is null THEN 'Expired'
        WHEN rep.obs_id is not null THEN 'Reported'
-       WHEN sc.obs_id is not null and rep.obs_id is null THEN 'Taken'
+       WHEN sc.obs_id is not null and rep.obs_id is null THEN 'Collected'
        ELSE 'Ordered'
        END 'status',
        CONCAT(pn.given_name, ' ',pn.family_name) 'orderer',
        o.date_activated 'order_datetime',
-       ol.name 'ordering_location',       
+       ol.name 'ordering_location',
        o.urgency,
        date(sce.encounter_datetime) 'specimen_collection_datetime',
        MAX(CASE WHEN rmq.source = 'PIH' and rmq.code = 11781 THEN 'yes/oui' END) 'collection_date_estimated',
