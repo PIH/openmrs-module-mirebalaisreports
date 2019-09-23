@@ -1,7 +1,3 @@
-set sql_safe_updates = 0;
-set @startDate = "1900-01-01";
-set @endDate = "2019-09-23";
-
 drop TEMPORARY TABLE IF EXISTS temp_obs_join;
 drop TEMPORARY TABLE IF EXISTS temp_ncd_section;
 
