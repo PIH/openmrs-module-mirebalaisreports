@@ -55,10 +55,11 @@ SELECT t.patient_id,
        t.encounter_datetime as 'specimen_collection_date',
        res_date.value_datetime as 'results_date',
        res.date_created "results_entry_date",
+       -- only return the result if the test was performed:     
        CASE 
-         when res.value_numeric is not null then res.value_numeric
-         when res.value_text is not null then res.value_text
-         when cna.name is not null then cna.name
+         when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' and res.value_numeric is not null then res.value_numeric
+         when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' and res.value_text is not null then res.value_text
+         when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' and cna.name is not null then cna.name
        END as 'result',
        cu.units,
        CASE when c.UUID = '5dc35a2a-228c-41d0-ae19-5b1e23618eda' then cna.name else null END as 'reason_not_performed'  
@@ -156,8 +157,9 @@ from encounter e
   -- units
   LEFT OUTER JOIN concept_numeric cu on cu.concept_id = res.concept_id
   -- result date
+  -- note that the Add Lab Results form uses "Date of Laboratory Test" for results date.  That will need to change at some point, and then the UUID below will need to change 
   LEFT OUTER JOIN obs res_date on res_date.voided = 0 and res_date.encounter_id = e.encounter_id and res_date.concept_id =    
-      (select concept_id from concept where UUID = '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0')
+      (select concept_id from concept where UUID = 'bbeb58d7-63ba-4d7b-ac5b-4f72d3985888')
 WHERE e.voided = 0
 and e.encounter_type = @labResultEnc
 and date(e.encounter_datetime) >= date(@startDate)
