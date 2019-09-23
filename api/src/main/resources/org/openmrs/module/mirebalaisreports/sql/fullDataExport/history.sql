@@ -1,3 +1,7 @@
+set sql_safe_updates = 0;
+set @startDate = "1900-01-01";
+set @endDate = "2019-09-23";
+
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_initial_referral;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_initial_behavior;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_pregnacy;
@@ -47,6 +51,7 @@ AND o.voided = 0 AND locale="fr" AND concept_name_type = "FULLY_SPECIFIED" AND o
 )) internal_refer ON e.encounter_id = internal_refer.encounter_id
 LEFT JOIN obs other_internal_institution ON e.encounter_id = other_internal_institution.encounter_id AND other_internal_institution.voided = 0
 AND other_internal_institution.value_coded = (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "OTHER")
+and  other_internal_institution.concept_id = (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "Type of referring service")
 LEFT JOIN obs external_institution ON e.encounter_id = external_institution.encounter_id AND external_institution.voided = 0 AND
 external_institution.value_coded = (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = "11956")
 LEFT JOIN obs non_pih_institution ON e.encounter_id = non_pih_institution.encounter_id AND non_pih_institution.voided = 0 AND
