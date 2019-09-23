@@ -20,9 +20,6 @@ SELECT p.patient_id, zl.identifier zlemr, dos.identifier dossier_id,
     Due_Date "Due_Date",
     Last_Menstrual_Period "Last_Menstrual_Period",
     Return_Visit_Date "Return_Visit_Date",
-
-    Danger_Signs "Danger_Signs",
-
     Delivery_Date "Delivery_Date",
     Delivery_Type "Delivery_Type",
     Apgar_Score "Apgar_Score",
@@ -84,9 +81,6 @@ INNER JOIN
     max(CASE when rm.source = 'CIEL' and rm.code = '5596' then o.value_datetime end) 'Due_Date',
     max(CASE when rm.source = 'CIEL' and rm.code = '1427' then o.value_datetime end) 'Last_Menstrual_Period',
     max(CASE when rm.source = 'PIH' and rm.code = 'RETURN VISIT DATE' then o.value_datetime end) 'Return_Visit_Date',
-
-    -- Followup
-    group_concat(CASE when rm.source = 'CIEL' and rm.code = '1728' then cn.name end separator ',') 'Danger_Signs',
 
     -- Delivery
     max(CASE when rm.source = 'CIEL' and rm.code = '5596' then o.value_datetime end) 'Delivery_Date',

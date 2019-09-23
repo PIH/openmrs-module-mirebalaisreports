@@ -181,8 +181,13 @@ value_coded = cn.concept_id  and locale="en" and concept_name_type="FULLY_SPECIF
 o.concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") and o.voided = 0 group by encounter_id) ncd_information
 on tns.encounter_id = ncd_information.encounter_id
 set tns.person_id = ncd_information.person_id,
-    tns.disease_category = ncd_information.names,
-    tns.comments = ncd_information.comments;
+    tns.disease_category = ncd_information.names;
+    
+-- other disease categories
+update temp_ncd_section tns
+left join obs o on tns.encounter_id = o.encounter_id and voided = 0 and value_coded = (select concept_id from report_mapping where source="PIH" and code = "OTHER")
+and concept_id = (select concept_id from report_mapping where source="PIH" and code = "NCD category") 
+set tns.comments = o.comments;
 
 update temp_ncd_section tns
 left join
@@ -611,10 +616,10 @@ select
     MAX(CASE
         WHEN
             rm.source = 'PIH'
-                AND rm.code = 'Puffs per week of salbutamol'
+                AND rm.code = 'Puffs per week of relief inhaler (coded)'
         THEN
-            o.value_numeric
-    END) 'Puffs_week_salbutamol',
+            cn.name
+    END) 'puffs_week_salbutamol',
     MAX(CASE
         WHEN
             rm.source = 'PIH'
@@ -742,9 +747,7 @@ select
 	hip_cm,
 	Waist_Hip_Ratio,
     disease_category,
-    comments,
-    waist_circumference,
-    hip_size,
+    comments other_disease_category,
     hypertension_stage,
     hypertension_comments,
     diabetes_mellitus,
@@ -776,8 +779,8 @@ select
     inferior_vena_cava_findings,
     quality,
     additional_echocardiogram_comments,
-    other_disease_category,
-    other_non_coded_diagnosis,
+    other_disease_category ncd_other_section,
+    other_non_coded_diagnosis ncd_other_section_other,
     medicine_past_two_days,
     reason_poor_compliance,
     cardiovascular_medication,
