@@ -62,7 +62,10 @@ LEFT JOIN obs date_referral ON e.patient_id = date_referral.person_id AND e.enco
 AND date_referral.voided = 0 AND date_referral.concept_id =
 (SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "163181")
 -- Family history
-WHERE e.encounter_type IN (@AdultInitEnc, @AdultFollowEnc, @PedInitEnc, @PedFollowEnc, @NCDInitEnc) AND e.voided = 0 GROUP BY encounter_id
+WHERE e.encounter_type IN (@AdultInitEnc, @AdultFollowEnc, @PedInitEnc, @PedFollowEnc, @NCDInitEnc) AND e.voided = 0
+AND date(e.encounter_datetime) >= @startDate
+AND date(e.encounter_datetime) <= @endDate
+GROUP BY encounter_id
 );
 
 -- NCD initial form behavior qn
@@ -83,7 +86,7 @@ encounter e
 LEFT JOIN
 -- History of tobacco use
 (SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded AND o.voided = 0 AND cn.voided = 0 AND
-locale = "en" AND o.concept_id =
+locale = "fr" AND o.concept_id =
 (SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "163731")) tob_smoke ON tob_smoke.encounter_id = e.encounter_id AND tob_smoke.person_id = e.patient_id
 LEFT JOIN
 obs tob_num ON tob_num.encounter_id = e.encounter_id AND tob_num.person_id = e.patient_id AND tob_num.voided = 0 AND
@@ -91,20 +94,20 @@ tob_num.concept_id = (SELECT concept_id FROM report_mapping WHERE source = "PIH"
 LEFT JOIN
 -- Second hand smoke
 (SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded
-AND o.voided = 0 AND cn.voided = 0 AND locale="en" AND concept_name_type="FULLY_SPECIFIED" AND
+AND o.voided = 0 AND cn.voided = 0 AND locale="fr" AND concept_name_type="FULLY_SPECIFIED" AND
 o.concept_id =
 (SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "152721")) sec_smoke ON
 sec_smoke.encounter_id = e.encounter_id AND sec_smoke.person_id = e.patient_id
 LEFT JOIN
 -- Alcohol
 (SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded
-AND o.voided = 0 AND cn.voided = 0 AND locale="en" AND concept_name_type="FULLY_SPECIFIED" AND
+AND o.voided = 0 AND cn.voided = 0 AND locale="fr" AND concept_name_type="FULLY_SPECIFIED" AND
 o.concept_id =
 (SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "159449")) alc ON alc.encounter_id = e.encounter_id AND alc.person_id = e.patient_id
 LEFT JOIN
 -- History of illegal drugs
 (SELECT cn.name conceptname, value_coded, encounter_id, person_id FROM obs o JOIN concept_name cn ON cn.concept_id = o.value_coded
-AND o.voided = 0 AND cn.voided = 0 AND locale="en" AND concept_name_type="FULLY_SPECIFIED" AND
+AND o.voided = 0 AND cn.voided = 0 AND locale="fr" AND concept_name_type="FULLY_SPECIFIED" AND
 o.concept_id = (SELECT concept_id FROM report_mapping WHERE source = "CIEL" AND code = "162556"))
 ill_drugs ON ill_drugs.encounter_id = e.encounter_id AND ill_drugs.person_id = e.patient_id
 LEFT JOIN
@@ -113,7 +116,10 @@ obs current_drug_name ON current_drug_name.encounter_id = e.encounter_id AND cur
 current_drug_name.voided = 0 AND current_drug_name.concept_id =
 (SELECT concept_id FROM report_mapping WHERE source = "PIH" AND code = 6489)
 WHERE
-e.encounter_type IN (@AdultInitEnc, @AdultFollowEnc, @PedInitEnc, @PedFollowEnc, @NCDInitEnc) AND e.voided = 0 GROUP BY e.encounter_id
+e.encounter_type IN (@AdultInitEnc, @AdultFollowEnc, @PedInitEnc, @PedFollowEnc, @NCDInitEnc) AND e.voided = 0
+AND date(e.encounter_datetime) >= @startDate
+AND date(e.encounter_datetime) <= @endDate
+GROUP BY e.encounter_id
 );
 
 
@@ -131,7 +137,7 @@ SELECT preg.person_id, preg.encounter_id,  cn.name FROM
 obs preg,
 concept_name cn
 WHERE preg.value_coded = cn.concept_id
-AND cn.concept_name_type = "FULLY_SPECIFIED" AND cn.voided = 0 AND cn.locale="en"
+AND cn.concept_name_type = "FULLY_SPECIFIED" AND cn.voided = 0 AND cn.locale="fr"
 AND  preg.concept_id IN (SELECT concept_id FROM report_mapping rm WHERE rm.source = "PIH" AND rm.code = "PREGNANCY STATUS")
 AND encounter_id IN (SELECT encounter_id FROM encounter WHERE encounter_type IN (@AdultInitEnc, @AdultFollowEnc, @PedInitEnc, @PedFollowEnc, @NCDInitEnc));
 
@@ -159,12 +165,12 @@ INNER JOIN
 (
 SELECT encounter_id, name FROM obs, concept_name cn WHERE cn.concept_id = obs.value_coded AND obs.voided = 0 AND obs.concept_id =
 (SELECT concept_id FROM report_mapping WHERE source="CIEL" AND code="5632")
-AND cn.concept_name_type = "FULLY_SPECIFIED" AND cn.voided = 0 AND cn.locale="en"
+AND cn.concept_name_type = "FULLY_SPECIFIED" AND cn.voided = 0 AND cn.locale="fr"
 ) breast ON breast.encounter_id = tnp.encounter_id
 SET tnp.currently_breast_feeding = breast.name;
 
 
--- Hisotry family planning
+-- History family planning
 CREATE TEMPORARY TABLE temp_hist_family_plan_encounters
 (
 encounter_id int,
@@ -436,7 +442,7 @@ INNER JOIN obs o on o.encounter_id = e.encounter_id and o.voided = 0
 INNER JOIN concept_reference_map crm on crm.concept_id = o.concept_id
 INNER JOIN concept_reference_term crt on crt.concept_reference_term_id = crm.concept_reference_term_id
 INNER JOIN concept_reference_source crs on crs.concept_source_id = crt.concept_source_id
-LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'en' and cn.locale_preferred = '1'  and cn.voided = 0
+LEFT OUTER JOIN concept_name cn on o.value_coded = cn.concept_id and cn.locale = 'fr' and cn.locale_preferred = '1'  and cn.voided = 0
 -- join in mapping of obs answer
 LEFT OUTER JOIN concept_reference_map crm_answer on crm_answer.concept_id = o.value_coded
 LEFT OUTER JOIN concept_reference_term crt_answer on crt_answer.concept_reference_term_id = crm_answer.concept_reference_term_id
@@ -448,7 +454,7 @@ LEFT OUTER JOIN
    INNER JOIN concept_reference_map crm on crm.concept_id = obspar.value_coded
 	INNER JOIN concept_reference_term crt on crt.concept_reference_term_id = crm.concept_reference_term_id and crt.code in ('MOTHER','FATHER')
 	INNER JOIN concept_reference_source crs on crs.concept_source_id = crt.concept_source_id and crs.name = 'PIH'
-	INNER JOIN concept_name cn on cn.concept_id = obspar.value_coded and cn.voided = 0 and cn.locale = 'en' and cn.locale_preferred = '1'
+	INNER JOIN concept_name cn on cn.concept_id = obspar.value_coded and cn.voided = 0 and cn.locale = 'fr' and cn.locale_preferred = '1'
 	where obspar.voided = 0) par
 	on par.encounter_id = o.encounter_id and par.obs_group_id = o.obs_group_id
 -- include Familiy History comment joined by obsgroupid
@@ -467,7 +473,7 @@ LEFT OUTER JOIN
    INNER JOIN concept_reference_map crm on crm.concept_id = obspres.concept_id
 	INNER JOIN concept_reference_term crt on crt.concept_reference_term_id = crm.concept_reference_term_id and crt.code = '1729'
 	INNER JOIN concept_reference_source crs on crs.concept_source_id = crt.concept_source_id and crs.name = 'CIEL'
-	INNER JOIN concept_name cn on cn.concept_id = obspres.value_coded and cn.voided = 0 and cn.locale = 'en' and cn.locale_preferred = '1'
+	INNER JOIN concept_name cn on cn.concept_id = obspres.value_coded and cn.voided = 0 and cn.locale = 'fr' and cn.locale_preferred = '1'
 	where obspres.voided = 0) pres
 	on pres.encounter_id = o.encounter_id and pres.obs_group_id = o.obs_group_id
 -- include patient history comment, joined by obsgroupid
