@@ -7,7 +7,8 @@ SELECT
     IF(certainty_name.name LIKE "Confirmado", '1', ' ') "Confirmado",
     ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) "Edad",
     pr.gender "Genero",
-    pa.city_village "Loc"
+    pa.city_village "De donde es",
+    l.name "Clinica"
 FROM patient p
 -- Person
          INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
@@ -57,6 +58,9 @@ FROM patient p
                          ON certainty_name.concept_id = certainty.value_coded AND
                             certainty_name.locale = "es" AND
                             certainty_name.locale_preferred = 1
+-- Location
+         LEFT JOIN location l
+                   ON l.location_id = e.location_id
 WHERE p.voided = 0
 
 -- Exclude test patients
