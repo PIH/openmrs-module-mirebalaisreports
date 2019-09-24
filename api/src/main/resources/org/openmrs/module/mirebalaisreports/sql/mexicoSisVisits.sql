@@ -4,7 +4,8 @@ SELECT
     ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) "Edad",
     pr.gender "Genero",
     IF(ins.value_coded = seguro_popular.concept_id, '1', '') "SPSS",
-    IF(IFNULL(prev_visit.visit_id, 'null') = 'null', '1', '') "1a visita"
+    IF(IFNULL(prev_visit.visit_id, 'null') = 'null', '1', '') "1a visita",
+    l.name "Clinica"
 FROM patient p
 -- Person
          INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
@@ -39,16 +40,19 @@ FROM patient p
             WHERE concept_reference_term_id = (
                 SELECT concept_reference_term_id FROM concept_reference_term WHERE code LIKE "seguro popular"
             )
-        )
+         )
 -- Encounters
          INNER JOIN encounter e ON p.patient_id = e.patient_id AND e.voided = 0
          -- Include all types of encounters. This is important for checking if a previous visit exists.
 -- Visit
-        LEFT OUTER JOIN visit v ON v.visit_id = e.visit_id AND v.voided = 0
+         LEFT OUTER JOIN visit v ON v.visit_id = e.visit_id AND v.voided = 0
 -- Previous visit this year
-        LEFT OUTER JOIN visit prev_visit ON prev_visit.patient_id = v.patient_id AND
+         LEFT OUTER JOIN visit prev_visit ON prev_visit.patient_id = v.patient_id AND
                                             prev_visit.date_stopped < v.date_started AND
                                             YEAR(prev_visit.date_started) = YEAR(v.date_started)
+-- Location
+         LEFT JOIN location l
+                   ON l.location_id = e.location_id
 WHERE p.voided = 0
 -- Exclude test patients
   AND p.patient_id NOT IN (SELECT person_id
