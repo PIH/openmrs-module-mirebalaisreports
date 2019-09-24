@@ -1,7 +1,3 @@
-set sql_safe_updates = 0;
-set @startDate = "1900-01-01";
-set @endDate = "2019-09-23";
-
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_initial_referral;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_initial_behavior;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_pregnacy;
