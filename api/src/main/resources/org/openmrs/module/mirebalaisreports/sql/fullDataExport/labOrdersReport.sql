@@ -6,8 +6,9 @@ select o.patient_id, zl.identifier Patient_ZL_ID, zl_loc.name loc_registered,
        CASE
        WHEN o.date_stopped is not null and sc.obs_id is null THEN 'Cancelled'
        WHEN o.auto_expire_date < CURDATE() and sc.obs_id is null THEN 'Expired'
-       WHEN rep.obs_id is not null THEN 'Reported'
-       WHEN sc.obs_id is not null and rep.obs_id is null THEN 'Collected'
+       WHEN o.fulfiller_status = 'COMPLETED' THEN 'Reported'
+       WHEN  o.fulfiller_status = 'IN_PROGRESS' THEN 'Collected'
+       WHEN o.fulfiller_status = 'EXCEPTION' THEN 'Not Performed'
        ELSE 'Ordered'
        END 'status',
        CONCAT(pn.given_name, ' ',pn.family_name) 'orderer',
