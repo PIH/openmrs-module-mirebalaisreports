@@ -1,7 +1,5 @@
 DROP TEMPORARY TABLE IF EXISTS temp_mentalhealth_program;
 
-set sql_safe_updates = 0;
-
 set @program_id = program('Mental Health');
 set @latest_diagnosis = concept_from_mapping('PIH', 'Mental health diagnosis');
 set @encounter_type = encounter_type('Mental Health Consult');
