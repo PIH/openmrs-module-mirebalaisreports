@@ -15,9 +15,11 @@ create temporary table temp_mentalhealth_program
 (
 patient_id int,
 patient_program_id int,
+prog_location_id int,
 zlemr varchar(255),
 gender varchar(50),
-person_address text,
+assigned_chw text,
+location_when_registered_in_program varchar(255),
 date_enrolled date, 
 date_completed date,
 number_of_days_in_care double,
@@ -56,13 +58,13 @@ three_months_since_latest_return_date varchar(50),
 six_months_since_latest_return_date varchar(50)
 );
 
-insert into temp_mentalhealth_program (patient_id, patient_program_id, zlemr, gender, person_address, date_enrolled, date_completed, number_of_days_in_care, program_status_outcome
+insert into temp_mentalhealth_program (patient_id, patient_program_id, prog_location_id, zlemr, gender, date_enrolled, date_completed, number_of_days_in_care, program_status_outcome
                                         )
 select patient_id,
 	   patient_program_id,
+       location_id,
 	   zlemr(patient_id),
        gender(patient_id),
-       person_address(patient_id),
 	   date(date_enrolled), 
        date(date_completed), 
        If(date_completed is null, datediff(now(), date_enrolled), datediff(date_completed, date_enrolled)),
@@ -79,6 +81,18 @@ person_attribute_type_id from person_attribute_type where name = "Test Patient")
 -- unknown patient
 update temp_mentalhealth_program tmhp
 set tmhp.unknown_patient = IF(tmhp.patient_id = unknown_patient(tmhp.patient_id), 'true', NULL);
+
+-- relationship
+update temp_mentalhealth_program tmhp
+inner join (select patient_program_id, patient_id, person_a, GROUP_CONCAT(' ',CONCAT(pn.given_name,' ',pn.family_name)) chw  from patient_program join relationship r on person_b = patient_id and program_id = @program_id
+and r.voided = 0 and relationship = relation_type('Community Health Worker') join person_name pn on person_a = pn.person_id and pn.voided = 0 group by patient_program_id) relationship 
+on relationship.patient_id = tmhp.patient_id and tmhp.patient_program_id = relationship.patient_program_id
+set tmhp.assigned_chw = relationship.chw;
+
+-- location registered in Program
+update temp_mentalhealth_program tmhp
+left join location l on location_id = tmhp.prog_location_id and l.retired = 0
+set tmhp.location_when_registered_in_program = l.name;
 
 -- latest dignoses
 update temp_mentalhealth_program tmh
@@ -391,7 +405,14 @@ select
 patient_id,
 zlemr,
 gender,
-person_address,
+assigned_chw,
+person_address_state_province(patient_id) 'province',
+person_address_city_village(patient_id) 'city_village',
+person_address_three(patient_id) 'address3',
+person_address_one(patient_id) 'address1',
+person_address_two(patient_id) 'address2',
+loc_registered(patient_id) 'loc_registered',
+location_when_registered_in_program,
 date_enrolled, 
 date_completed,
 number_of_days_in_care,
@@ -427,5 +448,4 @@ patient_came_within_14_days_appt,
 three_months_since_latest_return_date,
 six_months_since_latest_return_date
 from temp_mentalhealth_program;
-    
     
