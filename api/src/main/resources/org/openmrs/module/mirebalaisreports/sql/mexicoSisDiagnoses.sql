@@ -6,7 +6,8 @@ SELECT
     IF(ins.value_coded = seguro_popular.concept_id, '1', '') "SPSS",
     IF(certainty_name.name LIKE "Confirmado", '1', ' ') "Confirmado",
     MAX(cn.name) "Dx",
-    MAX(crt.code) "ICD-10"
+    MAX(crt.code) "ICD-10",
+    l.name "Clinica"
 FROM patient p
 -- Person
          INNER JOIN person pr ON p.patient_id = pr.person_id AND pr.voided = 0
@@ -74,6 +75,9 @@ FROM patient p
                             certainty_name.locale_preferred = 1
 -- Visit
         LEFT OUTER JOIN visit v ON v.visit_id = e.visit_id AND v.voided = 0
+-- Location
+        LEFT JOIN location l
+                  ON l.location_id = e.location_id
 WHERE p.voided = 0
 -- Exclude test patients
   AND p.patient_id NOT IN (SELECT person_id
