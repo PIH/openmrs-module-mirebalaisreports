@@ -391,16 +391,20 @@ SET
     
 -- Last Visit Date
 UPDATE temp_mentalhealth_program tmh
-set tmh.last_visit_date = recent_date_whodas_score; 
+LEFT JOIN encounter e on e.encounter_id=tmh.encounter_id
+set tmh.last_visit_date = date(e.encounter_datetime); 
 
 -- Next Scheduled Visit Date
 UPDATE temp_mentalhealth_program tmh
-set tmh.next_scheduled_visit_date = (select date(value_datetime) from obs where voided = 0 and concept_id = @return_visit_date and encounter_id = (select 
-encounter_id from encounter where date(encounter_datetime) = tmh.recent_date_whodas_score and voided = 0 group by patient_id)),
+LEFT JOIN
+(select patient_id, e.encounter_id, encounter_datetime, date(value_datetime) next_vist from obs o join encounter e on encounter_type = @encounter_type and o.encounter_id = e.encounter_id and o.voided = 0 
+and e.voided = 0 and concept_id = @return_visit_date group by patient_id order by e.encounter_datetime desc limit 1) next_v_date on
+tmh.encounter_id = next_v_date.encounter_id
+set tmh.next_scheduled_visit_date = next_v_date.next_vist,
     tmh.patient_came_within_14_days_appt = IF(datediff(now(), tmh.last_visit_date) <= 14, 'Oui', 'No'),
     tmh.three_months_since_latest_return_date = IF(datediff(now(), tmh.last_visit_date) <= 91.2501, 'No', 'Oui'),
 	tmh.six_months_since_latest_return_date = IF(datediff(now(), tmh.last_visit_date) <= 182.5, 'No', 'Oui');
-    
+       
 select
 patient_id,
 zlemr,
@@ -411,7 +415,7 @@ person_address_city_village(patient_id) 'city_village',
 person_address_three(patient_id) 'address3',
 person_address_one(patient_id) 'address1',
 person_address_two(patient_id) 'address2',
-loc_registered(patient_id) 'loc_registered',
+-- loc_registered(patient_id) 'loc_registered',
 location_when_registered_in_program,
 date_enrolled, 
 date_completed,
@@ -448,4 +452,3 @@ patient_came_within_14_days_appt,
 three_months_since_latest_return_date,
 six_months_since_latest_return_date
 from temp_mentalhealth_program;
-    
