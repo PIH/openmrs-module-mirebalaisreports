@@ -18,6 +18,7 @@ patient_program_id int,
 prog_location_id int,
 zlemr varchar(255),
 gender varchar(50),
+age double,
 assigned_chw text,
 location_when_registered_in_program varchar(255),
 date_enrolled date,
@@ -81,6 +82,10 @@ person_attribute_type_id from person_attribute_type where name = "Test Patient")
 -- unknown patient
 update temp_mentalhealth_program tmhp
 set tmhp.unknown_patient = IF(tmhp.patient_id = unknown_patient(tmhp.patient_id), 'true', NULL);
+
+update temp_mentalhealth_program tmhp
+left join person p on person_id = patient_id and p.voided = 0 
+set tmhp.age = CAST(CONCAT(timestampdiff(YEAR, p.birthdate, NOW()), '.', MOD(timestampdiff(MONTH, p.birthdate, NOW()), 12) ) as CHAR);
 
 -- relationship
 update temp_mentalhealth_program tmhp
@@ -407,6 +412,7 @@ select
 patient_id,
 zlemr,
 gender,
+age,
 assigned_chw,
 person_address_state_province(patient_id) 'province',
 person_address_city_village(patient_id) 'city_village',
