@@ -84,7 +84,7 @@ update temp_mentalhealth_program tmhp
 set tmhp.unknown_patient = IF(tmhp.patient_id = unknown_patient(tmhp.patient_id), 'true', NULL);
 
 update temp_mentalhealth_program tmhp
-left join person p on person_id = patient_id and p.voided = 0 
+left join person p on person_id = patient_id and p.voided = 0
 set tmhp.age = CAST(CONCAT(timestampdiff(YEAR, p.birthdate, NOW()), '.', MOD(timestampdiff(MONTH, p.birthdate, NOW()), 12) ) as CHAR);
 
 -- relationship
@@ -413,19 +413,18 @@ patient_id,
 zlemr,
 gender,
 age,
+unknown_patient,
 assigned_chw,
 person_address_state_province(patient_id) 'province',
 person_address_city_village(patient_id) 'city_village',
 person_address_three(patient_id) 'address3',
 person_address_one(patient_id) 'address1',
 person_address_two(patient_id) 'address2',
--- loc_registered(patient_id) 'loc_registered',
 location_when_registered_in_program,
 date_enrolled,
 date_completed,
 number_of_days_in_care,
 program_status_outcome,
-unknown_patient,
 latest_diagnosis,
 latest_zlds_score,
 recent_date_zlds_score,
@@ -452,7 +451,6 @@ other_intervention,
 last_intervention_date,
 last_visit_date,
 next_scheduled_visit_date,
-patient_came_within_14_days_appt,
 three_months_since_latest_return_date,
 six_months_since_latest_return_date
 from temp_mentalhealth_program;
