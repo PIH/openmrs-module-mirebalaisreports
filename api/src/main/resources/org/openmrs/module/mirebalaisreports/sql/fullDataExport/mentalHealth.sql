@@ -1,5 +1,8 @@
 DROP TEMPORARY TABLE IF EXISTS temp_mentalhealth_visit;
 
+SET sql_safe_updates = 0;
+SET SESSION group_concat_max_len = 100000;
+
 set @encounter_type = encounter_type('Mental Health Consult');
 set @role_of_referring_person = concept_from_mapping('PIH','Role of referring person');
 set @other_referring_person = concept_from_mapping('PIH','OTHER');
@@ -158,7 +161,7 @@ set tmhv.enc_location = l.name;
 update temp_mentalhealth_visit tmhv
 left join
 (
-select encounter_id,  group_concat(name) names  from obs o join concept_name cn on cn.concept_id = o.value_coded and cn.voided = 0
+select encounter_id,  group_concat(name separator ' | ') names  from obs o join concept_name cn on cn.concept_id = o.value_coded and cn.voided = 0
 and o.voided = 0 and o.concept_id = @role_of_referring_person and cn.locale = "fr" and concept_name_type = "FULLY_SPECIFIED"
 group by encounter_id
 ) o on o.encounter_id = tmhv.encounter_id
@@ -171,7 +174,7 @@ and concept_id = @role_of_referring_person);
 update temp_mentalhealth_visit tmhv
 left join
 (
-select encounter_id, group_concat(name) names from obs o join concept_name cn on cn.concept_id = o.value_coded and cn.voided = 0
+select encounter_id, group_concat(name separator ' | ') names from obs o join concept_name cn on cn.concept_id = o.value_coded and cn.voided = 0
 and o.voided = 0 and o.concept_id = @type_of_referral_role and cn.locale = "fr" and concept_name_type = "FULLY_SPECIFIED"
 group by encounter_id
 ) o on o.encounter_id = tmhv.encounter_id
@@ -207,7 +210,7 @@ and tmhv.encounter_id = encounter_id);
 
 update temp_mentalhealth_visit tmhv
 left join
-(select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+(select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='en' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @depression_screening group by encounter_id) o on tmhv.encounter_id = o.encounter_id
 set tmhv.depression_screening = o.names;
 
@@ -254,7 +257,7 @@ set tmhv.seizure_frequency = (select value_numeric from obs where voided = 0 and
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='en' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @past_suicidal_evaluation group by encounter_id) o
 on tmhv.encounter_id = o.encounter_id
 set tmhv.past_suicidal_evaluation  = o.names;
@@ -262,7 +265,7 @@ set tmhv.past_suicidal_evaluation  = o.names;
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='en' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @current_suicidal_evaluation group by encounter_id) o
 on tmhv.encounter_id = o.encounter_id
 set tmhv.current_suicidal_evaluation  = o.names;
@@ -279,7 +282,7 @@ set tmhv.suicidal_screening_result = (select concept_name(value_coded, 'fr') fro
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='en' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @current_suicidal_evaluation group by encounter_id) o
 on tmhv.encounter_id = o.encounter_id
 set tmhv.current_suicidal_evaluation  = o.names;
@@ -287,7 +290,7 @@ set tmhv.current_suicidal_evaluation  = o.names;
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='fr' and concept_name_type = "FULLY_SPECIFIED" and o.value_coded in (@security_plan, @discuss_patient_with_supervisor, @hospitalize_due_to_suicide_risk) group by encounter_id
 ) o on tmhv.encounter_id = o.encounter_id
 set tmhv.high_result_for_suicidal_screening = o.names;
@@ -295,7 +298,7 @@ set tmhv.high_result_for_suicidal_screening = o.names;
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='en' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @mh_diagnosis
 -- and value_coded in (select concept_id from concept_set where concept_set = @hum_diagnoses)
 group by encounter_id
@@ -305,7 +308,7 @@ set tmhv.diagnosis = o.names;
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='en' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @mental_health_intervention
 group by encounter_id
 ) o on tmhv.encounter_id = o.encounter_id
@@ -315,7 +318,7 @@ set tmhv.psychological_intervention = o.names,
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(d.name) names, encounter_id from obs o join drug d on d.concept_id = o.value_coded and o.voided = 0 and o.concept_id = @medication
+select group_concat(d.name separator ' | ') names, encounter_id from obs o join drug d on d.concept_id = o.value_coded and o.voided = 0 and o.concept_id = @medication
 group by encounter_id
 ) o on tmhv.encounter_id = o.encounter_id
 set tmhv.medication = o.names,
@@ -330,7 +333,7 @@ and tmhv.encounter_id = encounter_id), 'Oui', Null),
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='fr' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @type_of_provider group by encounter_id
 ) o on tmhv.encounter_id = o.encounter_id
 set tmhv.type_of_provider = o.names;
@@ -338,7 +341,7 @@ set tmhv.type_of_provider = o.names;
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(cn.name) names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
+select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
 value_coded = cn.concept_id and locale='fr' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @type_of_referral_role group by encounter_id
 ) o on tmhv.encounter_id = o.encounter_id
 set tmhv.type_of_referral_roles = o.names;
@@ -354,7 +357,11 @@ patient_id,
 zl_emr_id,
 gender,
 unknown_patient,
-patient_address,
+person_address_state_province(patient_id) 'province',
+person_address_city_village(patient_id) 'city_village',
+person_address_three(patient_id) 'address3',
+person_address_one(patient_id) 'address1',
+person_address_two(patient_id) 'address2',
 provider,
 loc_registered,
 location_id,
