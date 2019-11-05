@@ -1,5 +1,8 @@
 DROP TEMPORARY TABLE IF EXISTS temp_mentalhealth_program;
 
+set sql_safe_updates = 0;
+SET SESSION group_concat_max_len = 100000;
+
 set @program_id = program('Mental Health');
 set @latest_diagnosis = concept_from_mapping('PIH', 'Mental health diagnosis');
 set @encounter_type = encounter_type('Mental Health Consult');
@@ -102,7 +105,7 @@ set tmhp.location_when_registered_in_program = l.name;
 -- latest dignoses
 update temp_mentalhealth_program tmh
 LEFT JOIN (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name) "diagnoses", date_enrolled, date_completed from patient_program pp
+select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator '|') "diagnoses", date_enrolled, date_completed from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
@@ -319,8 +322,8 @@ set tmh.baseline_seizure_number = seizure_baseline.value_numeric,
 update temp_mentalhealth_program tmh
 LEFT JOIN
 (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name) "medication_names", date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
-INNER JOIN
+select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator '|') "medication_names", date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+INNER JOIN 
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
      e2.voided =0
@@ -344,7 +347,7 @@ UPDATE temp_mentalhealth_program tmh
     (SELECT
         pp.patient_id,
             patient_program_id,
-            GROUP_CONCAT(cnd.name) 'intervention',
+            GROUP_CONCAT(cnd.name separator '|') 'intervention',
             date_enrolled,
             date_completed,
             e.encounter_id enc_id,
@@ -407,7 +410,7 @@ set tmh.next_scheduled_visit_date = date(o.value_datetime),
     tmh.patient_came_within_14_days_appt = IF(datediff(now(), tmh.last_visit_date) <= 14, 'Oui', 'No'),
     tmh.three_months_since_latest_return_date = IF(datediff(now(), tmh.last_visit_date) <= 91.2501, 'No', 'Oui'),
 	tmh.six_months_since_latest_return_date = IF(datediff(now(), tmh.last_visit_date) <= 182.5, 'No', 'Oui');
-
+                                                                          
 select
 patient_id,
 zlemr,
