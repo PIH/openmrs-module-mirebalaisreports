@@ -230,7 +230,7 @@ public class FullDataExportReportManager extends BasePihReportManager {
             }
             else {
                 if ("vaccinationsANC".equals(key) || "labResultsExport".equals(key) || "ncd".equals(key) || "socialEconomics".equals(key)
-                        || "history".equals(key) || "mentalHealthProgram".equals(key)) {
+                        || "history".equals(key) || "mentalHealth".equals(key) || "mentalHealthProgram".equals(key)) {
                     dsd = constructSqlFileDataSetDefinition(key);
                     addStartAndEndDateParameters(rd, dsd, mappings);
                 }
