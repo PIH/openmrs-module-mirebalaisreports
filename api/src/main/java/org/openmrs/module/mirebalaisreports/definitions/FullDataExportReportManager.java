@@ -232,7 +232,11 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 if ("vaccinationsANC".equals(key) || "labResultsExport".equals(key) || "ncd".equals(key) || "socialEconomics".equals(key)
                         || "history".equals(key) || "mentalHealth".equals(key) || "mentalHealthProgram".equals(key)) {
                     dsd = constructSqlFileDataSetDefinition(key);
-                    addStartAndEndDateParameters(rd, dsd, mappings);
+
+                    // mental health program does not have start and end date, but the rest do
+                    if (!"mentalHealthProgram".equals(key)) {
+                        addStartAndEndDateParameters(rd, dsd, mappings);
+                    }
                 }
                 else {
                     dsd = constructSqlDataSetDefinition(key);
@@ -421,7 +425,7 @@ public class FullDataExportReportManager extends BasePihReportManager {
 
         return dsd;
     }*/
-    
+
     private PatientIdentifierDataDefinition constructPatientIdentifierDataDefinition(PatientIdentifierType type) {
         PatientIdentifierDataDefinition patientIdentifierDataDefinition = new PatientIdentifierDataDefinition();
         patientIdentifierDataDefinition.addType(type);
