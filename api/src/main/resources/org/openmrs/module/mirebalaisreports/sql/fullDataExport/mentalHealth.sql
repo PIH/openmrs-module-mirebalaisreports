@@ -311,7 +311,6 @@ group by encounter_id
 ) o on tmhv.encounter_id = o.encounter_id
 set tmhv.psychological_intervention = o.names,
 	tmhv.other_psychological_intervention = (select comments from obs where voided = 0 and concept_id = @mental_health_intervention and value_coded = @other and tmhv.encounter_id = obs.encounter_id);
-;
 
 update temp_mentalhealth_visit tmhv
 left join
