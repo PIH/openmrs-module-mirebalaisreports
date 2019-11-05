@@ -1,6 +1,7 @@
 DROP TEMPORARY TABLE IF EXISTS temp_mentalhealth_program;
 
 set sql_safe_updates = 0;
+SET SESSION group_concat_max_len = 100000;
 
 set @program_id = program('Mental Health');
 set @latest_diagnosis = concept_from_mapping('PIH', 'Mental health diagnosis');
@@ -99,7 +100,7 @@ set tmhp.location_when_registered_in_program = l.name;
 -- latest dignoses
 update temp_mentalhealth_program tmh
 LEFT JOIN (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name) "diagnoses", date_enrolled, date_completed from patient_program pp
+select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator '|') "diagnoses", date_enrolled, date_completed from patient_program pp
 INNER JOIN 
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where 
@@ -315,7 +316,7 @@ set tmh.baseline_seizure_number = seizure_baseline.value_numeric,
 update temp_mentalhealth_program tmh
 LEFT JOIN 
 (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name) "medication_names", date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator '|') "medication_names", date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
 INNER JOIN 
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where 
@@ -340,7 +341,7 @@ UPDATE temp_mentalhealth_program tmh
     (SELECT 
         pp.patient_id,
             patient_program_id,
-            GROUP_CONCAT(cnd.name) 'intervention',
+            GROUP_CONCAT(cnd.name separator '|') 'intervention',
             date_enrolled,
             date_completed,
             e.encounter_id enc_id,
