@@ -105,7 +105,7 @@ set tmhp.location_when_registered_in_program = l.name;
 -- latest dignoses
 update temp_mentalhealth_program tmh
 LEFT JOIN (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator '|') "diagnoses", date_enrolled, date_completed from patient_program pp
+select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator ' | ') "diagnoses", date_enrolled, date_completed from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
@@ -117,12 +117,7 @@ encounter e on e.encounter_id =
      order by e2.encounter_datetime desc
      limit 1)
 INNER JOIN obs o on o.voided =0 and o.concept_id = @latest_diagnosis  and o.encounter_id = e.encounter_id
-INNER JOIN concept_name cnd on cnd.concept_name_id  =
-   (select cnd2.concept_name_id from concept_name cnd2
-    where o.value_coded = cnd2.concept_id
-    and cnd2.voided = 0
-    order by field(cnd2.locale,'fr','en','ht'), cnd2.locale_preferred desc
-    limit 1)
+INNER JOIN concept_name cnd on cnd.concept_name_id  = o.value_coded and cnd.voided = 0 and cnd.locale = 'fr'
 group by pp.patient_id
 ) tld
 on tld.patient_program_id = tmh.patient_program_id
@@ -322,7 +317,7 @@ set tmh.baseline_seizure_number = seizure_baseline.value_numeric,
 update temp_mentalhealth_program tmh
 LEFT JOIN
 (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator '|') "medication_names", date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator ' | ') "medication_names", date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
 INNER JOIN 
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
@@ -347,7 +342,7 @@ UPDATE temp_mentalhealth_program tmh
     (SELECT
         pp.patient_id,
             patient_program_id,
-            GROUP_CONCAT(cnd.name separator '|') 'intervention',
+            GROUP_CONCAT(cnd.name separator ' | ') 'intervention',
             date_enrolled,
             date_completed,
             e.encounter_id enc_id,
@@ -375,15 +370,7 @@ UPDATE temp_mentalhealth_program tmh
     INNER JOIN obs o ON o.voided = 0
         AND o.concept_id = @mh_intervention
         AND o.encounter_id = e.encounter_id
-    INNER JOIN concept_name cnd ON cnd.concept_name_id = (SELECT
-            cnd2.concept_name_id
-        FROM
-            concept_name cnd2
-        WHERE
-            o.value_coded = cnd2.concept_id
-                AND cnd2.voided = 0
-        ORDER BY FIELD(cnd2.locale, 'fr', 'en', 'ht') , cnd2.locale_preferred DESC
-        LIMIT 1)
+    INNER JOIN concept_name cnd ON cnd.concept_name_id  = o.value_coded and cnd.voided = 0 and cnd.locale = 'fr'
     GROUP BY pp.patient_id) tli ON tli.patient_program_id = tmh.patient_program_id
 SET
     tmh.latest_intervention = tli.intervention,
