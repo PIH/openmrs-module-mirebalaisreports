@@ -3,9 +3,6 @@ DROP TEMPORARY TABLE IF EXISTS temp_mentalhealth_visit;
 SET sql_safe_updates = 0;
 SET SESSION group_concat_max_len = 100000;
 
-set @startDate = "1900-01-01";
-set @endDate = "2019-11-07";
-
 set @encounter_type = encounter_type('Mental Health Consult');
 set @role_of_referring_person = concept_from_mapping('PIH','Role of referring person');
 set @other_referring_person = concept_from_mapping('PIH','OTHER');
