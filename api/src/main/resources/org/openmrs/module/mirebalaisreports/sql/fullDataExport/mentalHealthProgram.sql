@@ -112,7 +112,7 @@ encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
      e2.voided = 0
      and e2.patient_id = pp.patient_id
-     and e2.encounter_type = 19
+     and e2.encounter_type = @encounter_type
      and date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed) or date_completed is null)
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @latest_diagnosis  and voided = 0)
      order by e2.encounter_datetime desc
@@ -354,7 +354,7 @@ encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
      e2.voided = 0
      and e2.patient_id = pp.patient_id
-     and e2.encounter_type = 19
+     and e2.encounter_type = @encounter_type
      and date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed) or date_completed is null)
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @mh_intervention and voided = 0)
      order by e2.encounter_datetime desc
