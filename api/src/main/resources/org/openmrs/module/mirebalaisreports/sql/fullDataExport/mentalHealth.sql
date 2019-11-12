@@ -6,7 +6,7 @@ SET SESSION group_concat_max_len = 100000;
 set @encounter_type = encounter_type('Mental Health Consult');
 set @role_of_referring_person = concept_from_mapping('PIH','Role of referring person');
 set @other_referring_person = concept_from_mapping('PIH','OTHER');
-set @type_of_referral_role = concept_from_mapping('PIH','Role of referral out provider');
+set @type_of_referral_role = concept_from_mapping('PIH','Type of referral role');
 set @other_referring_role_type = concept_from_mapping('PIH','OTHER');
 set @hospitalization = concept_from_mapping('CIEL','976');
 set @hospitalization_reason = concept_from_mapping('CIEL','162879');
@@ -46,6 +46,7 @@ set @medication_comments = concept_from_mapping('PIH', 'Medication comments (tex
 set @pregnant = concept_from_mapping('CIEL', '5272');
 set @last_menstruation_date = concept_from_mapping('PIH','DATE OF LAST MENSTRUAL PERIOD');
 set @estimated_delivery_date = concept_from_mapping('PIH','ESTIMATED DATE OF CONFINEMENT');
+set @type_of_referral_roles = concept_from_mapping('PIH','Role of referral out provider');
 set @type_of_provider = concept_from_mapping('PIH','Type of provider');
 set @disposition = concept_from_mapping('PIH','HUM Disposition categories');
 set @disposition_comment = concept_from_mapping('PIH','PATIENT PLAN COMMENTS');
@@ -343,7 +344,7 @@ update temp_mentalhealth_visit tmhv
 left join
 (
 select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
-value_coded = cn.concept_id and locale='fr' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @type_of_referral_role group by encounter_id
+value_coded = cn.concept_id and locale='fr' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @type_of_referral_roles group by encounter_id
 ) o on tmhv.encounter_id = o.encounter_id
 set tmhv.type_of_referral_roles = o.names;
 
@@ -370,7 +371,7 @@ encounter_date,
 age_at_enc,
 referred_from_community_by,
 other_referring_person,
-type_of_referral_role,
+type_of_referral_role 'referral_role_from_within_facility',
 other_referring_role_type,
 hospitalized_since_last_visit,
 hospitalization_reason,
@@ -402,7 +403,7 @@ other_psychological_intervention,
 medication,
 medication_comments,
 type_of_provider,
-type_of_referral_roles,
+type_of_referral_roles "referred_to",
 disposition,
 disposition_comment,
 return_date
