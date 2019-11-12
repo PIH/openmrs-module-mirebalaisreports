@@ -104,23 +104,31 @@ set tmhp.location_when_registered_in_program = l.name;
 
 -- latest dignoses
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator ' | ') "diagnoses", date_enrolled, date_completed from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id, group_concat(distinct(cn.name) separator ' | ') diagnoses from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
      e2.voided = 0
      and e2.patient_id = pp.patient_id
-     and e2.encounter_type = @encounter_type
-     and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
-     and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @latest_diagnosis and voided = 0)
+     and e2.encounter_type = 19
+     and date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed) or date_completed is null)
+     and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @latest_diagnosis  and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @latest_diagnosis  and o.encounter_id = e.encounter_id
-INNER JOIN concept_name cnd on cnd.concept_name_id  = o.value_coded and cnd.voided = 0 and cnd.locale = 'fr'
-group by pp.patient_id
-) tld
-on tld.patient_program_id = tmh.patient_program_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @latest_diagnosis and o.voided = 0
+     left outer join concept_name cn on concept_name_id = 
+        (select concept_name_id from concept_name cn2
+         where cn2.concept_id = o.value_coded
+         and cn2.voided = 0
+         and cn2.locale in ('en','fr')
+         order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
+         limit 1)
+     where pp.program_id = 5 and pp.voided = 0
+     group by patient_program_id
+) tld on tld.patient_program_id = tmh.patient_program_id
 set tmh.latest_diagnosis = tld.diagnoses;
 
 -- latest zlds non null score
@@ -339,39 +347,30 @@ set tmh.latest_medication_given = medication.medication_names,
 -- latest intervention
 UPDATE temp_mentalhealth_program tmh
         LEFT JOIN
-    (SELECT
-        pp.patient_id,
-            patient_program_id,
-            GROUP_CONCAT(cnd.name separator ' | ') 'intervention',
-            date_enrolled,
-            date_completed,
-            e.encounter_id enc_id,
-            DATE(encounter_datetime) enc_date
-    FROM
-        patient_program pp
-    INNER JOIN encounter e ON e.encounter_id = (SELECT
-            encounter_id
-        FROM
-            encounter e2
-        WHERE
-            e2.voided = 0
-                AND e2.patient_id = pp.patient_id
-                AND e2.encounter_type = @encounter_type
-                AND EXISTS( SELECT
-                    1
-                FROM
-                    obs
-                WHERE
-                    encounter_id = e2.encounter_id
-                        AND concept_id = @mh_intervention
-                        AND voided = 0)
-        ORDER BY e2.encounter_datetime DESC
-        LIMIT 1)
-    INNER JOIN obs o ON o.voided = 0
-        AND o.concept_id = @mh_intervention
-        AND o.encounter_id = e.encounter_id
-    INNER JOIN concept_name cnd ON cnd.concept_name_id  = o.value_coded and cnd.voided = 0 and cnd.locale = 'fr'
-    GROUP BY pp.patient_id) tli ON tli.patient_program_id = tmh.patient_program_id
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, group_concat(distinct(cn.name) separator ' | ') intervention from patient_program pp
+INNER JOIN
+encounter e on e.encounter_id =
+    (select encounter_id from encounter e2 where
+     e2.voided = 0
+     and e2.patient_id = pp.patient_id
+     and e2.encounter_type = 19
+     and date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed) or date_completed is null)
+     and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @mh_intervention and voided = 0)
+     order by e2.encounter_datetime desc
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @mh_intervention and o.voided = 0
+     left outer join concept_name cn on concept_name_id = 
+        (select concept_name_id from concept_name cn2
+         where cn2.concept_id = o.value_coded
+         and cn2.voided = 0
+         and cn2.locale in ('en','fr')
+         order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
+         limit 1)
+     where pp.program_id = 5 and pp.voided = 0
+     group by patient_program_id   
+) tli ON tli.patient_program_id = tmh.patient_program_id
 SET
     tmh.latest_intervention = tli.intervention,
     tmh.other_intervention = (SELECT
