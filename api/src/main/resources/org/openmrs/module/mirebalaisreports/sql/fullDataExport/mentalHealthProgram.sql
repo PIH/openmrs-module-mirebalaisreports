@@ -126,27 +126,31 @@ encounter e on e.encounter_id =
          and cn2.locale in ('en','fr')
          order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
          limit 1)
-     where pp.program_id = 5 and pp.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
      group by patient_program_id
 ) tld on tld.patient_program_id = tmh.patient_program_id
 set tmh.latest_diagnosis = tld.diagnoses;
 
 -- latest zlds non null score
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @zlds_score and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @zlds_score and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @zlds_score and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) tzld
 on tzld.patient_program_id = tmh.patient_program_id
 set tmh.latest_zlds_score = tzld.value_numeric,
@@ -154,20 +158,23 @@ set tmh.latest_zlds_score = tzld.value_numeric,
 
 -- Previous zlds non-null score
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed) or date_completed is null)
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @zlds_score and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1,1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @zlds_score and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1,1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @zlds_score and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) tzld_prev
 on tzld_prev.patient_program_id = tmh.patient_program_id
 set tmh.previous_zlds_score = tzld_prev.value_numeric,
@@ -175,20 +182,24 @@ set tmh.previous_zlds_score = tzld_prev.value_numeric,
 
 -- Baseline zlds non-null score
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @zlds_score and voided = 0)
      order by e2.encounter_datetime asc
-     limit 1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @zlds_score and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @zlds_score and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) tzld_baseline
 on tzld_baseline.patient_program_id = tmh.patient_program_id
 set tmh.baseline_zlds_score = tzld_baseline.value_numeric,
@@ -196,20 +207,24 @@ set tmh.baseline_zlds_score = tzld_baseline.value_numeric,
 
 -- latest WHODAS score
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date, e.encounter_id enc_id from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @whodas_score and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @whodas_score and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @whodas_score and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) twhodas
 on twhodas.patient_program_id = tmh.patient_program_id
 set tmh.latest_whodas_score = twhodas.value_numeric,
@@ -218,20 +233,24 @@ set tmh.latest_whodas_score = twhodas.value_numeric,
 
 -- Previous WHODAS score
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @whodas_score and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1,1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @whodas_score and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1,1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @whodas_score and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) twhodas_prev
 on twhodas_prev.patient_program_id = tmh.patient_program_id
 set tmh.previous_whodas_score = twhodas_prev.value_numeric,
@@ -239,20 +258,24 @@ set tmh.previous_whodas_score = twhodas_prev.value_numeric,
 
 -- first/baseline WHODAS
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @whodas_score and voided = 0)
      order by e2.encounter_datetime asc
-     limit 1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @whodas_score and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @whodas_score and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) twhodas_baseline
 on twhodas_baseline.patient_program_id = tmh.patient_program_id
 set tmh.baseline_whodas_score = twhodas_baseline.value_numeric,
@@ -260,20 +283,24 @@ set tmh.baseline_whodas_score = twhodas_baseline.value_numeric,
 
 -- latest number of seizures
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @seizures and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @seizures and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @seizures and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) seizure
 on seizure.patient_program_id = tmh.patient_program_id
 set tmh.latest_seizure_number = seizure.value_numeric,
@@ -281,20 +308,24 @@ set tmh.latest_seizure_number = seizure.value_numeric,
 
 -- Previous number of seizures
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @seizures and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1,1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @seizures and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1,1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @seizures and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) seizure_prev
 on seizure_prev.patient_program_id = tmh.patient_program_id
 set tmh.previous_seizure_number = seizure_prev.value_numeric,
@@ -302,20 +333,24 @@ set tmh.previous_seizure_number = seizure_prev.value_numeric,
 
 -- first/baseline number or seizures
 update temp_mentalhealth_program tmh
-LEFT JOIN (
-select pp.patient_id, patient_program_id, value_numeric, date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
+LEFT JOIN 
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, value_numeric from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-     -- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @seizures and voided = 0)
      order by e2.encounter_datetime asc
-     limit 1)
-INNER JOIN obs o on o.voided =0 and o.concept_id = @seizures and o.encounter_id = e.encounter_id
-group by pp.patient_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @seizures and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
 ) seizure_baseline
 on seizure_baseline.patient_program_id = tmh.patient_program_id
 set tmh.baseline_seizure_number = seizure_baseline.value_numeric,
@@ -325,20 +360,30 @@ set tmh.baseline_seizure_number = seizure_baseline.value_numeric,
 update temp_mentalhealth_program tmh
 LEFT JOIN
 (
-select pp.patient_id, patient_program_id, GROUP_CONCAT(cnd.name separator ' | ') "medication_names", date_enrolled, date_completed, date(encounter_datetime) enc_date from patient_program pp
-INNER JOIN 
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, 
+group_concat(distinct(cn.name) separator ' | ') "medication_names" from patient_program pp
+INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
-     e2.voided =0
+     e2.voided = 0
      and e2.patient_id = pp.patient_id
      and e2.encounter_type = @encounter_type
-	-- and date(e2.encounter_datetime) >= date(date_enrolled) or date(e2.encounter_datetime)  <= date(date_completed)
+     and date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed) or date_completed is null)
      and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @medication and voided = 0)
      order by e2.encounter_datetime desc
-     limit 1)
-INNER JOIN obs o on o.voided = 0 and o.concept_id = @medication and o.encounter_id = e.encounter_id
-INNER JOIN drug cnd on cnd.drug_id  = o.value_drug
-group by pp.patient_id
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @medication and o.voided = 0
+     INNER JOIN drug cnd on cnd.drug_id  = o.value_drug
+     left outer join concept_name cn on concept_name_id = 
+        (select concept_name_id from concept_name cn2
+         where cn2.concept_id = o.value_coded
+         and cn2.voided = 0
+         and cn2.locale in ('en','fr')
+         order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
+         limit 1)
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id   
 ) medication
 on medication.patient_program_id = tmh.patient_program_id
 set tmh.latest_medication_given = medication.medication_names,
@@ -346,7 +391,7 @@ set tmh.latest_medication_given = medication.medication_names,
 
 -- latest intervention
 UPDATE temp_mentalhealth_program tmh
-        LEFT JOIN
+LEFT JOIN
 (
 select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, group_concat(distinct(cn.name) separator ' | ') intervention from patient_program pp
 INNER JOIN
@@ -368,7 +413,7 @@ encounter e on e.encounter_id =
          and cn2.locale in ('en','fr')
          order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
          limit 1)
-     where pp.program_id = 5 and pp.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
      group by patient_program_id   
 ) tli ON tli.patient_program_id = tmh.patient_program_id
 SET
@@ -386,13 +431,48 @@ SET
 
 -- Last Visit Date
 UPDATE temp_mentalhealth_program tmh
-LEFT JOIN encounter e on e.encounter_id = tmh.encounter_id and e.encounter_type = @encounter_type and e.voided = 0
-set tmh.last_visit_date = date(e.encounter_datetime);
+LEFT JOIN
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date from patient_program pp
+INNER JOIN
+encounter e on e.encounter_id =
+    (select encounter_id from encounter e2 where
+     e2.voided = 0
+     and e2.patient_id = pp.patient_id
+     and e2.encounter_type = @encounter_type
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
+     order by e2.encounter_datetime desc
+     limit 1
+     )
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
+) last_visit
+on last_visit.patient_program_id = tmh.patient_program_id
+set tmh.last_visit_date = date(last_visit.enc_date);
 
 -- Next Scheduled Visit Date
 UPDATE temp_mentalhealth_program tmh
-LEFT JOIN obs o on tmh.encounter_id = o.encounter_id and o.voided = 0 and concept_id = @return_visit_date
-set tmh.next_scheduled_visit_date = date(o.value_datetime),
+LEFT JOIN
+(
+select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, value_datetime from patient_program pp
+INNER JOIN
+encounter e on e.encounter_id =
+    (select encounter_id from encounter e2 where
+     e2.voided = 0
+     and e2.patient_id = pp.patient_id
+     and e2.encounter_type = @encounter_type
+     and (date(e2.encounter_datetime) >= date(date_enrolled) and (date(e2.encounter_datetime)  <= date(date_completed)) or 
+     (date(e2.encounter_datetime) >= date(date_enrolled) and date_completed is null))
+     and exists (select 1 from obs where encounter_id = e2.encounter_id and concept_id = @return_visit_date and voided = 0)
+     order by e2.encounter_datetime desc
+     limit 1
+     )
+     inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @return_visit_date and o.voided = 0
+     where pp.program_id = @program_id and pp.voided = 0
+     group by patient_program_id
+) next_visit on next_visit.patient_program_id = tmh.patient_program_id
+set tmh.next_scheduled_visit_date = date(next_visit.value_datetime),
     tmh.patient_came_within_14_days_appt = IF(datediff(now(), tmh.last_visit_date) <= 14, 'Oui', 'No'),
     tmh.three_months_since_latest_return_date = IF(datediff(now(), tmh.last_visit_date) <= 91.2501, 'No', 'Oui'),
 	tmh.six_months_since_latest_return_date = IF(datediff(now(), tmh.last_visit_date) <= 182.5, 'No', 'Oui');
