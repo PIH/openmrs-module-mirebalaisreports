@@ -42,6 +42,11 @@ set @hum_diagnoses = concept_from_mapping('PIH','HUM Psychological diagnoses');
 set @mental_health_intervention = concept_from_mapping('PIH','Mental health intervention');
 set @other = concept_from_mapping('PIH','OTHER');
 set @medication = concept_from_mapping('PIH', 'Mental health medication');
+set @dose =  concept_from_mapping('CIEL', '160856 ');
+set @dosing_units =  concept_from_mapping('PIH', 'Dosing units coded');
+set @frequency =  concept_from_mapping('PIH', 'Drug frequency for HUM');
+set @duration =  concept_from_mapping('CIEL', '159368 ');
+set @duration_units =  concept_from_mapping('PIH', 'TIME UNITS');
 set @medication_comments = concept_from_mapping('PIH', 'Medication comments (text)');
 set @pregnant = concept_from_mapping('CIEL', '5272');
 set @last_menstruation_date = concept_from_mapping('PIH','DATE OF LAST MENSTRUAL PERIOD');
@@ -101,7 +106,24 @@ high_result_for_suicidal_screening text,
 diagnosis text,
 psychological_intervention text,
 other_psychological_intervention text,
-medication text,
+medication_1 text,
+quantity_1 double,
+dosing_units_1 text,
+frequency_1 text,
+duration_1 double,
+duration_units_1 text,
+medication_2 text,
+quantity_2 double,
+dosing_units_2 text,
+frequency_2 text,
+duration_2 double,
+duration_units_2 text,
+medication_3 text,
+quantity_3 double,
+dosing_units_3 text,
+frequency_3 text,
+duration_3 double,
+duration_units_3 text,
 medication_comments text,
 pregnant varchar(50),
 last_menstruation_date date,
@@ -319,18 +341,108 @@ set tmhv.psychological_intervention = o.names,
 update temp_mentalhealth_visit tmhv
 left join
 (
-select group_concat(d.name separator ' | ') names, encounter_id from obs o join drug d on d.concept_id = o.value_coded and o.voided = 0 and o.concept_id = @medication
-and d.retired = 0
-group by encounter_id
-) o on tmhv.encounter_id = o.encounter_id
-set tmhv.medication = o.names,
-	tmhv.medication_comments = (select value_text from obs where voided = 0 and tmhv.encounter_id = obs.encounter_id and concept_id = @medication_comments);
-
-update temp_mentalhealth_visit tmhv
-set tmhv.pregnant = IF(1=(select value_coded from obs where voided = 0 and concept_id = @pregnant
-and tmhv.encounter_id = encounter_id), 'Oui', Null),
-	tmhv.last_menstruation_date = (select date(value_datetime) from obs where voided = 0 and concept_id = @last_menstruation_date and tmhv.encounter_id = obs.encounter_id),
-    tmhv.estimated_delivery_date = (select date(value_datetime) from obs where voided = 0 and concept_id = @estimated_delivery_date and tmhv.encounter_id = obs.encounter_id);
+select e.encounter_id,
+medication_1,
+quantity_1,
+dosing_units_1,
+frequency_1,
+duration_1,
+duration_units_1,
+medication_2,
+quantity_2,
+dosing_units_2,
+frequency_2,
+duration_2,
+duration_units_2,
+medication_3,
+quantity_3,
+dosing_units_3,
+frequency_3,
+duration_3,
+duration_units_3
+from encounter e
+inner join obs pres_con1 on pres_con1.obs_id = 
+   (select opc1.obs_id from obs opc1 where  opc1.encounter_id = e.encounter_id and opc1.concept_id = 3101 limit 1)
+left outer join 
+  (select o1.obs_group_id, 
+  MAX(CASE WHEN o1.concept_id = @medication THEN d1.name END) "medication_1", 
+  MAX(CASE WHEN o1.concept_id = @dose THEN o1.value_numeric END) "quantity_1", 
+  MAX(CASE WHEN o1.concept_id = @dosing_units THEN cn1.name END) "dosing_units_1", 
+  MAX(CASE WHEN o1.concept_id = @frequency THEN cn1.name END) "frequency_1", 
+  MAX(CASE WHEN o1.concept_id = @duration THEN o1.value_numeric END) "duration_1", 
+  MAX(CASE WHEN o1.concept_id = @duration_units THEN cn1.name END) "duration_units_1"
+  from obs o1 
+  LEFT OUTER JOIN drug d1 on d1.concept_id = o1.value_coded and d1.retired = 0
+  LEFT OUTER JOIN concept_name cn1 on cn1.concept_name_id = 
+     (select concept_name_id from concept_name cn11
+     where cn11.concept_id = o1.value_coded 
+     and cn11.voided  = 0 
+     and cn11.locale in ('en', 'fr')
+     order by field(cn11.locale,'fr','en') asc, cn11.locale_preferred desc
+    limit 1)
+group by o1.obs_group_id) m1 on m1.obs_group_id = pres_con1.obs_id
+-- ------------
+left outer join obs pres_con2 on pres_con2.obs_id = 
+   (select opc2.obs_id from obs opc2 where  opc2.encounter_id = e.encounter_id and opc2.concept_id = 3101 and opc2.obs_id <> pres_con1.obs_id limit 1)
+left outer join 
+  (select o2.obs_group_id, 
+  MAX(CASE WHEN o2.concept_id = @medication THEN d2.name END) "medication_2", 
+  MAX(CASE WHEN o2.concept_id = @dose THEN o2.value_numeric END) "quantity_2", 
+  MAX(CASE WHEN o2.concept_id = @dosing_units THEN cn2.name END) "dosing_units_2", 
+  MAX(CASE WHEN o2.concept_id = @frequency THEN cn2.name END) "frequency_2", 
+  MAX(CASE WHEN o2.concept_id = @duration THEN o2.value_numeric END) "duration_2", 
+  MAX(CASE WHEN o2.concept_id = @duration_units THEN cn2.name END) "duration_units_2"
+  from obs o2 
+  LEFT OUTER JOIN drug d2 on d2.concept_id = o2.value_coded and d2.retired = 0
+   LEFT OUTER JOIN concept_name cn2 on cn2.concept_name_id = 
+     (select concept_name_id from concept_name cn21
+     where cn21.concept_id = o2.value_coded 
+     and cn21.voided  = 0 
+     and cn21.locale in ('en', 'fr')
+     order by field(cn21.locale,'fr','en') asc, cn21.locale_preferred desc
+    limit 1)
+  group by o2.obs_group_id) m2 on m2.obs_group_id =pres_con2.obs_id
+-- ------------
+left outer join obs pres_con3 on pres_con3.obs_id = 
+   (select opc3.obs_id from obs opc3 where  opc3.encounter_id = e.encounter_id and opc3.concept_id = 3101 and opc3.obs_id not in (pres_con1.obs_id,pres_con2.obs_id)  limit 1)
+left outer join 
+  (select o3.obs_group_id, 
+  MAX(CASE WHEN o3.concept_id = @medication THEN d3.name END) "medication_3", 
+  MAX(CASE WHEN o3.concept_id = @dose THEN o3.value_numeric END) "quantity_3", 
+  MAX(CASE WHEN o3.concept_id = @dosing_units THEN cn3.name END) "dosing_units_3", 
+  MAX(CASE WHEN o3.concept_id = @frequency THEN cn3.name END) "frequency_3", 
+  MAX(CASE WHEN o3.concept_id = @duration THEN o3.value_numeric END) "duration_3", 
+  MAX(CASE WHEN o3.concept_id = @duration_units THEN cn3.name END) "duration_units_3"
+  from obs o3 
+  LEFT OUTER JOIN drug d3 on d3.concept_id = o3.value_coded and d3.retired = 0
+  LEFT OUTER JOIN concept_name cn3 on cn3.concept_name_id = 
+     (select concept_name_id from concept_name cn31
+     where cn31.concept_id = o3.value_coded 
+     and cn31.voided  = 0 
+     and cn31.locale in ('en', 'fr')
+     order by field(cn31.locale,'fr','en') asc, cn31.locale_preferred desc
+    limit 1)
+  group by o3.obs_group_id) m3 on m3.obs_group_id =pres_con3.obs_id
+  ) o on tmhv.encounter_id = o.encounter_id
+  set tmhv.medication_1 = o.medication_1,
+  tmhv.quantity_1 = o.quantity_1,
+tmhv.dosing_units_1 = o.dosing_units_1,
+tmhv.frequency_1 = o.frequency_1,
+tmhv.duration_1 = o.duration_1,
+tmhv.duration_units_1 = o.duration_units_1,
+tmhv.medication_2 = o.medication_2,
+tmhv.quantity_2 = o.quantity_2,
+tmhv.dosing_units_2 = o.dosing_units_2,
+tmhv.frequency_2 = o.frequency_2,
+tmhv.duration_2 = o.duration_2,
+tmhv.duration_units_2 = o.duration_units_2,
+tmhv.medication_3 = o.medication_3,
+tmhv.quantity_3 = o.quantity_3,
+tmhv.dosing_units_3 = o.dosing_units_3,
+tmhv.frequency_3 = o.frequency_3,
+tmhv.duration_3 = o.duration_3,
+tmhv.duration_units_3 = o.duration_units_3,
+tmhv.medication_comments = (select value_text from obs where voided = 0 and tmhv.encounter_id = obs.encounter_id and concept_id = @medication_comments);
 
 update temp_mentalhealth_visit tmhv
 left join
@@ -366,6 +478,7 @@ person_address_three(patient_id) 'address3',
 person_address_one(patient_id) 'address1',
 person_address_two(patient_id) 'address2',
 provider,
+visit_id,
 enc_location,
 encounter_date,
 age_at_enc,
@@ -400,7 +513,24 @@ high_result_for_suicidal_screening,
 diagnosis,
 psychological_intervention,
 other_psychological_intervention,
-medication,
+medication_1,
+quantity_1,
+dosing_units_1,
+frequency_1,
+duration_1,
+duration_units_1,
+medication_2,
+quantity_2,
+dosing_units_2,
+frequency_2,
+duration_2,
+duration_units_2,
+medication_3,
+quantity_3,
+dosing_units_3,
+frequency_3,
+duration_3,
+duration_units_3,
 medication_comments,
 type_of_provider,
 type_of_referral_roles "referred_to",
