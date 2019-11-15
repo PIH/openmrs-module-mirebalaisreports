@@ -9,10 +9,10 @@
 	<name>Mirebalais Hospital Reporting Module</name>
 	<description>Module for generate reports for Mirebalais Hospital</description>
 	<url>https://wiki.openmrs.org/display/docs/Mirebalais+Hospital+Reporting+Module+Module+Module</url>
-	
+
 	<developers>
 	</developers>
-	
+
 	<organization>
 		<name>PIH</name>
 		<url>http://pih.org</url>
@@ -31,8 +31,8 @@
 	</modules>
 
     <properties>
-        <openMRSVersion>2.2.1-SNAPSHOT</openMRSVersion>
-        <openMRSwebVersion>2.2.1-SNAPSHOT</openMRSwebVersion>
+        <openMRSVersion>2.3.0-SNAPSHOT</openMRSVersion>
+        <openMRSwebVersion>2.3.0-SNAPSHOT</openMRSwebVersion>
         <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
         <emrapiVersion>1.27.0</emrapiVersion>
@@ -399,7 +399,7 @@
             <version>${registrationappVersion}</version>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- OpenMRS modules -->
 
         <!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
