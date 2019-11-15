@@ -372,7 +372,7 @@ left outer join
   MAX(CASE WHEN o1.concept_id = @duration THEN o1.value_numeric END) "duration_1", 
   MAX(CASE WHEN o1.concept_id = @duration_units THEN cn1.name END) "duration_units_1"
   from obs o1 
-  LEFT OUTER JOIN drug d1 on d1.concept_id = o1.value_coded and d1.retired = 0
+  LEFT OUTER JOIN drug d1 on d1.drug_id = o1.value_drug and d1.retired = 0
   LEFT OUTER JOIN concept_name cn1 on cn1.concept_name_id = 
      (select concept_name_id from concept_name cn11
      where cn11.concept_id = o1.value_coded 
@@ -393,7 +393,7 @@ left outer join
   MAX(CASE WHEN o2.concept_id = @duration THEN o2.value_numeric END) "duration_2", 
   MAX(CASE WHEN o2.concept_id = @duration_units THEN cn2.name END) "duration_units_2"
   from obs o2 
-  LEFT OUTER JOIN drug d2 on d2.concept_id = o2.value_coded and d2.retired = 0
+  LEFT OUTER JOIN drug d2 on d2.drug_id = o2.value_drug and d2.retired = 0
    LEFT OUTER JOIN concept_name cn2 on cn2.concept_name_id = 
      (select concept_name_id from concept_name cn21
      where cn21.concept_id = o2.value_coded 
@@ -414,7 +414,7 @@ left outer join
   MAX(CASE WHEN o3.concept_id = @duration THEN o3.value_numeric END) "duration_3", 
   MAX(CASE WHEN o3.concept_id = @duration_units THEN cn3.name END) "duration_units_3"
   from obs o3 
-  LEFT OUTER JOIN drug d3 on d3.concept_id = o3.value_coded and d3.retired = 0
+  LEFT OUTER JOIN drug d3 on d3.drug_id = o3.value_drug and d3.retired = 0
   LEFT OUTER JOIN concept_name cn3 on cn3.concept_name_id = 
      (select concept_name_id from concept_name cn31
      where cn31.concept_id = o3.value_coded 
