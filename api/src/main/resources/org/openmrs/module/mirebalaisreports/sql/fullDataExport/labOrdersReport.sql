@@ -7,7 +7,7 @@
 SELECT person_attribute_type_id into @unknownPt FROM person_attribute_type where uuid='8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47';
 SELECT patient_identifier_type_id into @zlId from patient_identifier_type where uuid in ('a541af1e-105c-40bf-b345-ba1fd6a59b85' ,'1a2acce0-7426-11e5-a837-0800200c9a66','0bc545e0-f401-11e4-b939-0800200c9a66');
 
-select o.patient_id, zl.identifier Patient_ZL_ID, zl_loc.name loc_registered,
+select o.patient_id, zl.identifier emr_id, zl_loc.name loc_registered,
        un.value unknown_patient, pr.gender, ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,
        pa.state_province department, pa.city_village commune, pa.address3 section, pa.address1 locality, pa.address2 street_landmark,
        o.order_number 'order_number',

@@ -41,7 +41,7 @@ insert into temp_laborders_spec (order_number,concept_id,encounter_id,encounter_
 -- The first select statement handles all of the results entered in for which there were orders (using the above list)
 -- This is UNION'ed with a select statement handling the results entered in the standalone lab results encounter
 SELECT t.patient_id,
-       zl.identifier as 'Patient_ID',
+       zl.identifier as 'emr_id',
 	   zl_loc.name as 'loc_registered',
        un.value as 'unknown_patient',
        pr.gender,
