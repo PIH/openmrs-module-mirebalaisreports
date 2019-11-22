@@ -1,7 +1,10 @@
-## set @startDate='2019-01-01';
-## set @endDate='2019-06-30';
-
-SELECT patient_identifier_type_id into @zlId from patient_identifier_type where uuid='a541af1e-105c-40bf-b345-ba1fd6a59b85';
+#set @startDate='1900-01-01';
+#set @endDate='2019-11-20';
+#a541af1e-105c-40bf-b345-ba1fd6a59b85 ZL
+#1a2acce0-7426-11e5-a837-0800200c9a66 Wellbody
+#0bc545e0-f401-11e4-b939-0800200c9a66 Liberia
+ 
+SELECT patient_identifier_type_id into @zlId from patient_identifier_type where uuid in ('a541af1e-105c-40bf-b345-ba1fd6a59b85' ,'1a2acce0-7426-11e5-a837-0800200c9a66','0bc545e0-f401-11e4-b939-0800200c9a66');
 SELECT person_attribute_type_id into @unknownPt FROM person_attribute_type where uuid='8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47';
 SELECT encounter_type_id into @labResultEnc from encounter_type where uuid= '4d77916a-0620-11e5-a6c0-1697f925ec7b';
   
@@ -25,7 +28,7 @@ insert into temp_laborders_spec (order_number,concept_id,encounter_id,encounter_
     e.encounter_datetime,
     e.patient_id
   from orders o
-    INNER JOIN obs sco on sco.value_text = o.order_number and sco.voided = 0
+    INNER JOIN obs sco on sco.value_text = o.order_number and sco.voided = 0 and o.voided = 0
     INNER JOIN encounter e on e.encounter_id = sco.encounter_id and e.voided = 0
   where o.order_type_id =
         (select ot.order_type_id from order_type ot where ot.uuid = '52a447d3-a64a-11e3-9aeb-50e549534c5e') -- Test Order
@@ -38,8 +41,8 @@ insert into temp_laborders_spec (order_number,concept_id,encounter_id,encounter_
 -- The first select statement handles all of the results entered in for which there were orders (using the above list)
 -- This is UNION'ed with a select statement handling the results entered in the standalone lab results encounter
 SELECT t.patient_id,
-       zl.identifier as 'Patient_ZL_ID',
-       zl_loc.name as 'loc_registered',
+       zl.identifier as 'emr_id',
+	   zl_loc.name as 'loc_registered',
        un.value as 'unknown_patient',
        pr.gender,
        ROUND(DATEDIFF(t.encounter_datetime, pr.birthdate)/365.25, 1) as 'age_at_enc',
