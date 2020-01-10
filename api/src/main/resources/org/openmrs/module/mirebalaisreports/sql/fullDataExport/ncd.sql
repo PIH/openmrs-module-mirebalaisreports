@@ -215,7 +215,7 @@ update temp_ncd_section tns
 left join obs o on o.encounter_id = tns.encounter_id and o.voided = 0 and o.concept_id = (select concept_id from report_mapping where source = "CIEL" and code =
 '163080')
 left join obs o1 on o1.encounter_id = tns.encounter_id and o1.voided = 0 and o1.concept_id =
-(select concept_id from report_mapping where source = "CIEL" and code = 163081)
+(select concept_id from report_mapping where source = "CIEL" and code = '163081')
 left join (select group_concat(name) hypertension, encounter_id
 from concept_name cn join obs o on o.value_coded = cn.concept_id and concept_name_type="FULLY_SPECIFIED" and locale="en" and cn.voided = 0
 and o.concept_id = (select concept_id from report_mapping where source = "PIH" and code = "Type of hypertension diagnosis") group by encounter_id) o2 on
