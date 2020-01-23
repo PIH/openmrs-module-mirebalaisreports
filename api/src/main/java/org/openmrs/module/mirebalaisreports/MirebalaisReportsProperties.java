@@ -125,6 +125,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String VCT_REPORT_DEFINITION_UUID = "8189ccd0-cd86-11e8-a8d5-f2801f1b9fd1";
     public static final String MCH_PROVIDER_REPORT_DEFINITION_UUID = "6a35bb00-e2d2-11e8-9f32-f2801f1b9fd1";
     public static final String MCH_REPORT_DEFINITION_UUID = "85656ac4-0faa-11e9-ab14-d663bd873d93";
+    public static final String MCH_J9_CASE_REGISTRATION_REPORT_DEFINITION_UUID = "ed980032-3c77-11ea-8806-0242ac110002";
     public static final String MEXICO_VISITS_REPORT_DEFINITION_UUID = "b1d80ad0-f9a2-46c6-a89f-0050d7d724cb";
     public static final String MEXICO_SUIVE_SIMPLE_REPORT_DEFINITION_UUID = "620b25e7-c1f4-43d4-ba8d-944973425597";
     public static final String MEXICO_SIS_VISITS_REPORT_DEFINITION_UUID = "171fafba-e39e-4054-a1cc-a285683e68f8";
