@@ -131,7 +131,7 @@ estimated_delivery_date date,
 type_of_provider text,
 type_of_referral_roles text,
 disposition varchar(255),
-disposition_comment varchar(255),
+disposition_comment text,
 return_date date
 );
 
@@ -361,64 +361,64 @@ frequency_3,
 duration_3,
 duration_units_3
 from encounter e
-inner join obs pres_con1 on pres_con1.obs_id = 
+inner join obs pres_con1 on pres_con1.obs_id =
    (select opc1.obs_id from obs opc1 where  opc1.encounter_id = e.encounter_id and opc1.concept_id = 3101 limit 1)
-left outer join 
-  (select o1.obs_group_id, 
-  MAX(CASE WHEN o1.concept_id = @medication THEN d1.name END) "medication_1", 
-  MAX(CASE WHEN o1.concept_id = @dose THEN o1.value_numeric END) "quantity_1", 
-  MAX(CASE WHEN o1.concept_id = @dosing_units THEN cn1.name END) "dosing_units_1", 
-  MAX(CASE WHEN o1.concept_id = @frequency THEN cn1.name END) "frequency_1", 
-  MAX(CASE WHEN o1.concept_id = @duration THEN o1.value_numeric END) "duration_1", 
+left outer join
+  (select o1.obs_group_id,
+  MAX(CASE WHEN o1.concept_id = @medication THEN d1.name END) "medication_1",
+  MAX(CASE WHEN o1.concept_id = @dose THEN o1.value_numeric END) "quantity_1",
+  MAX(CASE WHEN o1.concept_id = @dosing_units THEN cn1.name END) "dosing_units_1",
+  MAX(CASE WHEN o1.concept_id = @frequency THEN cn1.name END) "frequency_1",
+  MAX(CASE WHEN o1.concept_id = @duration THEN o1.value_numeric END) "duration_1",
   MAX(CASE WHEN o1.concept_id = @duration_units THEN cn1.name END) "duration_units_1"
-  from obs o1 
+  from obs o1
   LEFT OUTER JOIN drug d1 on d1.drug_id = o1.value_drug and d1.retired = 0
-  LEFT OUTER JOIN concept_name cn1 on cn1.concept_name_id = 
+  LEFT OUTER JOIN concept_name cn1 on cn1.concept_name_id =
      (select concept_name_id from concept_name cn11
-     where cn11.concept_id = o1.value_coded 
-     and cn11.voided  = 0 
+     where cn11.concept_id = o1.value_coded
+     and cn11.voided  = 0
      and cn11.locale in ('en', 'fr')
      order by field(cn11.locale,'fr','en') asc, cn11.locale_preferred desc
     limit 1)
 group by o1.obs_group_id) m1 on m1.obs_group_id = pres_con1.obs_id
 -- ------------
-left outer join obs pres_con2 on pres_con2.obs_id = 
+left outer join obs pres_con2 on pres_con2.obs_id =
    (select opc2.obs_id from obs opc2 where  opc2.encounter_id = e.encounter_id and opc2.concept_id = 3101 and opc2.obs_id <> pres_con1.obs_id limit 1)
-left outer join 
-  (select o2.obs_group_id, 
-  MAX(CASE WHEN o2.concept_id = @medication THEN d2.name END) "medication_2", 
-  MAX(CASE WHEN o2.concept_id = @dose THEN o2.value_numeric END) "quantity_2", 
-  MAX(CASE WHEN o2.concept_id = @dosing_units THEN cn2.name END) "dosing_units_2", 
-  MAX(CASE WHEN o2.concept_id = @frequency THEN cn2.name END) "frequency_2", 
-  MAX(CASE WHEN o2.concept_id = @duration THEN o2.value_numeric END) "duration_2", 
+left outer join
+  (select o2.obs_group_id,
+  MAX(CASE WHEN o2.concept_id = @medication THEN d2.name END) "medication_2",
+  MAX(CASE WHEN o2.concept_id = @dose THEN o2.value_numeric END) "quantity_2",
+  MAX(CASE WHEN o2.concept_id = @dosing_units THEN cn2.name END) "dosing_units_2",
+  MAX(CASE WHEN o2.concept_id = @frequency THEN cn2.name END) "frequency_2",
+  MAX(CASE WHEN o2.concept_id = @duration THEN o2.value_numeric END) "duration_2",
   MAX(CASE WHEN o2.concept_id = @duration_units THEN cn2.name END) "duration_units_2"
-  from obs o2 
+  from obs o2
   LEFT OUTER JOIN drug d2 on d2.drug_id = o2.value_drug and d2.retired = 0
-   LEFT OUTER JOIN concept_name cn2 on cn2.concept_name_id = 
+   LEFT OUTER JOIN concept_name cn2 on cn2.concept_name_id =
      (select concept_name_id from concept_name cn21
-     where cn21.concept_id = o2.value_coded 
-     and cn21.voided  = 0 
+     where cn21.concept_id = o2.value_coded
+     and cn21.voided  = 0
      and cn21.locale in ('en', 'fr')
      order by field(cn21.locale,'fr','en') asc, cn21.locale_preferred desc
     limit 1)
   group by o2.obs_group_id) m2 on m2.obs_group_id =pres_con2.obs_id
 -- ------------
-left outer join obs pres_con3 on pres_con3.obs_id = 
+left outer join obs pres_con3 on pres_con3.obs_id =
    (select opc3.obs_id from obs opc3 where  opc3.encounter_id = e.encounter_id and opc3.concept_id = 3101 and opc3.obs_id not in (pres_con1.obs_id,pres_con2.obs_id)  limit 1)
-left outer join 
-  (select o3.obs_group_id, 
-  MAX(CASE WHEN o3.concept_id = @medication THEN d3.name END) "medication_3", 
-  MAX(CASE WHEN o3.concept_id = @dose THEN o3.value_numeric END) "quantity_3", 
-  MAX(CASE WHEN o3.concept_id = @dosing_units THEN cn3.name END) "dosing_units_3", 
-  MAX(CASE WHEN o3.concept_id = @frequency THEN cn3.name END) "frequency_3", 
-  MAX(CASE WHEN o3.concept_id = @duration THEN o3.value_numeric END) "duration_3", 
+left outer join
+  (select o3.obs_group_id,
+  MAX(CASE WHEN o3.concept_id = @medication THEN d3.name END) "medication_3",
+  MAX(CASE WHEN o3.concept_id = @dose THEN o3.value_numeric END) "quantity_3",
+  MAX(CASE WHEN o3.concept_id = @dosing_units THEN cn3.name END) "dosing_units_3",
+  MAX(CASE WHEN o3.concept_id = @frequency THEN cn3.name END) "frequency_3",
+  MAX(CASE WHEN o3.concept_id = @duration THEN o3.value_numeric END) "duration_3",
   MAX(CASE WHEN o3.concept_id = @duration_units THEN cn3.name END) "duration_units_3"
-  from obs o3 
+  from obs o3
   LEFT OUTER JOIN drug d3 on d3.drug_id = o3.value_drug and d3.retired = 0
-  LEFT OUTER JOIN concept_name cn3 on cn3.concept_name_id = 
+  LEFT OUTER JOIN concept_name cn3 on cn3.concept_name_id =
      (select concept_name_id from concept_name cn31
-     where cn31.concept_id = o3.value_coded 
-     and cn31.voided  = 0 
+     where cn31.concept_id = o3.value_coded
+     and cn31.voided  = 0
      and cn31.locale in ('en', 'fr')
      order by field(cn31.locale,'fr','en') asc, cn31.locale_preferred desc
     limit 1)
