@@ -64,9 +64,9 @@
         <appuiVersion>1.8.0</appuiVersion>
         <dispensingVersion>1.0</dispensingVersion>
         <uicommonsVersion>2.7.0-SNAPSHOT</uicommonsVersion>
-        <registrationcoreVersion>1.8.0</registrationcoreVersion>
+        <registrationcoreVersion>1.9.0</registrationcoreVersion>
         <registrationappVersion>1.14.0</registrationappVersion>
-        <radiologyappVersion>1.4.0</radiologyappVersion>
+        <radiologyappVersion>1.5.0</radiologyappVersion>
         <coreappsVersion>1.25.0</coreappsVersion>
         <webservicesRestVersion>2.26.0</webservicesRestVersion>
         <appointmentschedulingVersion>1.12.0</appointmentschedulingVersion>
