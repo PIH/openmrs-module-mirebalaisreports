@@ -2,24 +2,44 @@ SET sql_safe_updates = 0;
 
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_program;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_last_ncd_enc;
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_first_ncd_enc;
 
 select patient_identifier_type_id INTO @zlId FROM patient_identifier_type where name = "ZL EMR ID";
 select patient_identifier_type_id INTO @dosId FROM patient_identifier_type where name = "Nimewo Dosye";
 select encounter_type_id INTO @NCDInitEnc FROM encounter_type where UUID = "ae06d311-1866-455b-8a64-126a9bd74171";
 select encounter_type_id INTO @NCDFollowEnc FROM encounter_type where UUID = "5cbfd6a2-92d9-4ad0-b526-9d29bfe1d10c";
 
+-- latest NCD enc table
 create temporary table temp_ncd_last_ncd_enc
 (
 encounter_id int,
 patient_id int,
 encounter_datetime datetime
 );
+insert into temp_ncd_last_ncd_enc(patient_id, encounter_datetime)
+select patient_id, max(encounter_datetime) from encounter where voided = 0
+and encounter_type in (@NCDInitEnc, @NCDFollowEnc) group by patient_id order by patient_id;
 
-insert into temp_ncd_last_ncd_enc (encounter_id, patient_id, encounter_datetime)
-select max(encounter_id), patient_id, encounter_datetime last_enc_date from encounter e2
-    where e2.encounter_type in (@NCDInitEnc, @NCDFollowEnc)
-    and e2.voided = 0 group by patient_id;
+update temp_ncd_last_ncd_enc tlne
+inner join encounter e on tlne.patient_id = e.patient_id and tlne.encounter_datetime = e.encounter_datetime
+set tlne.encounter_id = e.encounter_id;
 
+-- initial ncd enc table(ideally it should be ncd initital form only)
+create temporary table temp_ncd_first_ncd_enc
+(
+encounter_id int,
+patient_id int,
+encounter_datetime datetime
+);
+insert into temp_ncd_first_ncd_enc(patient_id, encounter_datetime)
+select patient_id, min(encounter_datetime) from encounter where voided = 0
+and encounter_type in (@NCDInitEnc, @NCDFollowEnc) group by patient_id order by patient_id;
+
+update temp_ncd_first_ncd_enc tfne
+inner join encounter e on tfne.patient_id = e.patient_id and tfne.encounter_datetime = e.encounter_datetime
+set tfne.encounter_id = e.encounter_id;
+
+-- ncd program
 create temporary table temp_ncd_program(
 patient_program_id int,
 patient_id int,
@@ -111,9 +131,9 @@ left outer join (select patient_id, identifier, location_id from patient_identif
 set p.zlemr_id = zl.identifier;
 update temp_ncd_program p
 -- -- Dossier ID
-left outer join (select distinct(patient_id), identifier from patient_identifier where identifier_type = @dosId
+left outer join (select patient_id, max(identifier) dos_id from patient_identifier where identifier_type = @dosId
             and voided = 0 order by date_created desc) dos on p.patient_id = dos.patient_id
-set p.dossier_id = dos.identifier;
+set p.dossier_id = dos.dos_id;
 
 -- Telephone number
 update temp_ncd_program p
@@ -139,15 +159,12 @@ set p.program_state = cn_state.name,
 
 update temp_ncd_program p
 -- first ncd encounter
-LEFT OUTER JOIN encounter first_ncd_enc on first_ncd_enc.patient_id = p.patient_id and first_ncd_enc.encounter_id in
-    (select min(encounter_id) last_enc_date from encounter e2
-    where e2.encounter_type in (@NCDInitEnc, @NCDFollowEnc)
-    and e2.voided = 0 group by patient_id)
+LEFT OUTER JOIN temp_ncd_first_ncd_enc first_ncd_enc on first_ncd_enc.patient_id = p.patient_id
 set p.first_ncd_encounter = DATE(first_ncd_enc.encounter_datetime);
 
 update temp_ncd_program p
 -- last visit
-LEFT OUTER JOIN encounter last_ncd_enc on last_ncd_enc.patient_id = p.patient_id and last_ncd_enc.encounter_id in (select encounter_id from temp_ncd_last_ncd_enc)
+LEFT OUTER JOIN temp_ncd_last_ncd_enc last_ncd_enc on last_ncd_enc.patient_id = p.patient_id
 -- next visit (obs)
 LEFT OUTER JOIN obs obs_next_appt on obs_next_appt.encounter_id = last_ncd_enc.encounter_id and obs_next_appt.concept_id =
      (select concept_id from report_mapping rm_next where rm_next.source = 'PIH' and rm_next.code = 'RETURN VISIT DATE')
