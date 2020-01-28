@@ -1,4 +1,4 @@
-SET sql_safe_updates = 0;
+set sql_safe_updates = 0;
 
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_program;
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_last_ncd_enc;
@@ -14,7 +14,9 @@ create temporary table temp_ncd_last_ncd_enc
 (
 encounter_id int,
 patient_id int,
-encounter_datetime datetime
+encounter_datetime datetime,
+zlemr_id varchar(255),
+dossier_id varchar(255)
 );
 insert into temp_ncd_last_ncd_enc(patient_id, encounter_datetime)
 select patient_id, max(encounter_datetime) from encounter where voided = 0
@@ -43,8 +45,6 @@ set tfne.encounter_id = e.encounter_id;
 create temporary table temp_ncd_program(
 patient_program_id int,
 patient_id int,
-zlemr_id varchar(255),
-dossier_id varchar(255),
 date_enrolled datetime,
 date_completed datetime,
 location_id int,
@@ -85,6 +85,7 @@ lack_of_meds text,
 visit_adherence text,
 recent_hospitalization text,
 ncd_meds_prescribed text,
+prescribed_insulin text,
 hypertension int,
 diabetes int,
 heart_Failure int,
@@ -124,16 +125,17 @@ set p.given_name = d.given_name,
     p.locality = d.locality,
     p.street_landmark = d.street_landmark;
 
-update temp_ncd_program p
+update temp_ncd_last_ncd_enc tlne
 -- Most recent ZL EMR ID
-left outer join (select patient_id, identifier, location_id from patient_identifier where identifier_type = @zlId
-            and voided = 0 and preferred = 1 order by date_created desc) zl on p.patient_id = zl.patient_id
-set p.zlemr_id = zl.identifier;
-update temp_ncd_program p
+inner join (select patient_id, identifier from patient_identifier where identifier_type = @zlId
+            and voided = 0 and preferred = 1 order by date_created desc) zl on tlne.patient_id = zl.patient_id
+set tlne.zlemr_id = zl.identifier;
+
+update temp_ncd_last_ncd_enc tlne
 -- -- Dossier ID
-left outer join (select patient_id, max(identifier) dos_id from patient_identifier where identifier_type = @dosId
-            and voided = 0 order by date_created desc) dos on p.patient_id = dos.patient_id
-set p.dossier_id = dos.dos_id;
+inner join (select patient_id, max(identifier) dos_id from patient_identifier where identifier_type = @dosId
+            and voided = 0 order by date_created desc) dos on tlne.patient_id = dos.patient_id
+set tlne.dossier_id = dos.dos_id;
 
 -- Telephone number
 update temp_ncd_program p
@@ -308,7 +310,8 @@ LEFT OUTER JOIN
  and obs_meds.voided = 0
  group by obs_meds.encounter_id
  ) meds on meds.encounter_id = temp_ncd_last_ncd_enc.encounter_id
- set p.ncd_meds_prescribed = meds.meds;
+ set p.ncd_meds_prescribed = meds.meds,
+	 p.prescribed_insulin = (case when lower(ncd_meds_prescribed) like '%insulin%' then 'oui' else 'non' end) ;
 
 update temp_ncd_program p
 left outer join temp_ncd_last_ncd_enc on p.patient_id = temp_ncd_last_ncd_enc.patient_id
@@ -376,7 +379,7 @@ set p.last_diagnosis_1 = diagname1.name,
     p.last_non_coded_diagnosis = d_nc.value_text;
 
 select
-patient_id,
+p.patient_id "patient_id",
 ZLemr_id,
 dossier_id,
 given_name,
@@ -415,7 +418,7 @@ lack_of_meds,
 visit_adherence,
 recent_hospitalization,
 ncd_meds_prescribed,
-Case when lower(ncd_meds_prescribed) like '%insulin%' then 'oui' else 'non' end "prescribed_insulin",
+prescribed_insulin,
 HbA1c_result,
 HbA1c_collection_date,
 HbA1c_result_date,
@@ -430,4 +433,4 @@ last_diagnosis_1,
 last_diagnosis_2,
 last_diagnosis_3,
 last_non_coded_diagnosis
-from temp_ncd_program;
+from temp_ncd_program p left outer join temp_ncd_last_ncd_enc tlne on p.patient_id = tlne.patient_id;
