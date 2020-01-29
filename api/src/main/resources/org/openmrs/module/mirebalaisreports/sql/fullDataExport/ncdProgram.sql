@@ -26,6 +26,18 @@ update temp_ncd_last_ncd_enc tlne
 inner join encounter e on tlne.patient_id = e.patient_id and tlne.encounter_datetime = e.encounter_datetime
 set tlne.encounter_id = e.encounter_id;
 
+update temp_ncd_last_ncd_enc tlne
+-- Most recent ZL EMR ID
+inner join (select patient_id, identifier from patient_identifier where identifier_type = @zlId
+            and voided = 0 and preferred = 1 order by date_created desc) zl on tlne.patient_id = zl.patient_id
+set tlne.zlemr_id = zl.identifier;
+
+update temp_ncd_last_ncd_enc tlne
+-- -- Dossier ID
+inner join (select patient_id, max(identifier) dos_id from patient_identifier where identifier_type = @dosId
+            and voided = 0 group by patient_id) dos on tlne.patient_id = dos.patient_id
+set tlne.dossier_id = dos.dos_id;
+
 -- initial ncd enc table(ideally it should be ncd initital form only)
 create temporary table temp_ncd_first_ncd_enc
 (
@@ -124,18 +136,6 @@ set p.given_name = d.given_name,
     p.section_communal = d.section_communal,
     p.locality = d.locality,
     p.street_landmark = d.street_landmark;
-
-update temp_ncd_last_ncd_enc tlne
--- Most recent ZL EMR ID
-inner join (select patient_id, identifier from patient_identifier where identifier_type = @zlId
-            and voided = 0 and preferred = 1 order by date_created desc) zl on tlne.patient_id = zl.patient_id
-set tlne.zlemr_id = zl.identifier;
-
-update temp_ncd_last_ncd_enc tlne
--- -- Dossier ID
-inner join (select patient_id, max(identifier) dos_id from patient_identifier where identifier_type = @dosId
-            and voided = 0 order by date_created desc) dos on tlne.patient_id = dos.patient_id
-set tlne.dossier_id = dos.dos_id;
 
 -- Telephone number
 update temp_ncd_program p
