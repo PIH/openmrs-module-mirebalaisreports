@@ -230,14 +230,11 @@ public class FullDataExportReportManager extends BasePihReportManager {
             }
             else {
                 if ("vaccinationsANC".equals(key) || "labResultsExport".equals(key) || "labOrdersReport".equals(key) || "ncd".equals(key) || "socialEconomics".equals(key)
-                        || "history".equals(key) || "mentalHealth".equals(key) || "mentalHealthProgram".equals(key) || || "ncdProgram".equals(key)) {
+                        || "history".equals(key) || "mentalHealth".equals(key) || "mentalHealthProgram".equals(key) || "ncdProgram".equals(key)) {
                     dsd = constructSqlFileDataSetDefinition(key);
 
                     // mental health program and ncd health program do not have start and end date, but the rest do
-                    if (!"mentalHealthProgram".equals(key)) {
-                        addStartAndEndDateParameters(rd, dsd, mappings);
-                    }
-                    if (!"ncdProgram".equals(key)) {
+                    if (!"mentalHealthProgram".equals(key) || !"ncdProgram".equals(key)) {
                         addStartAndEndDateParameters(rd, dsd, mappings);
                     }
                 }
