@@ -1,4 +1,7 @@
 DROP TEMPORARY TABLE IF EXISTS temp_mentalhealth_visit;
+DROP TEMPORARY TABLE IF EXISTS temp_medication;
+DROP TEMPORARY TABLE IF EXISTS temp_medication_two;
+DROP TEMPORARY TABLE IF EXISTS temp_medication_three;
 
 SET sql_safe_updates = 0;
 SET SESSION group_concat_max_len = 100000;
@@ -43,7 +46,7 @@ set @mental_health_intervention = concept_from_mapping('PIH','Mental health inte
 set @other = concept_from_mapping('PIH','OTHER');
 set @medication = concept_from_mapping('PIH', 'Mental health medication');
 set @dose =  concept_from_mapping('CIEL', '160856 ');
-set @dosing_units =  concept_from_mapping('PIH', 'Dosing units coded');
+set @pres_con =  concept_from_mapping('PIH', 'Prescription construct');
 set @frequency =  concept_from_mapping('PIH', 'Drug frequency for HUM');
 set @duration =  concept_from_mapping('CIEL', '159368 ');
 set @duration_units =  concept_from_mapping('PIH', 'TIME UNITS');
@@ -56,7 +59,11 @@ set @type_of_provider = concept_from_mapping('PIH','Type of provider');
 set @disposition = concept_from_mapping('PIH','HUM Disposition categories');
 set @disposition_comment = concept_from_mapping('PIH','PATIENT PLAN COMMENTS');
 set @return_date = concept_from_mapping('PIH','RETURN VISIT DATE');
-
+set @dosing_units = concept_from_mapping('PIH', 'Dosing units coded');
+set @routes = concept_from_mapping('PIH', '12651');
+set @oral = concept_from_mapping('CIEL', '160240');
+set @intraveneous = concept_from_mapping('CIEL', '160242');
+set @intramuscular = concept_from_mapping('CIEL', '160243');
 
 create temporary table temp_mentalhealth_visit
 (
@@ -106,25 +113,6 @@ high_result_for_suicidal_screening text,
 diagnosis text,
 psychological_intervention text,
 other_psychological_intervention text,
-medication_1 text,
-quantity_1 double,
-dosing_units_1 text,
-frequency_1 text,
-duration_1 double,
-duration_units_1 text,
-medication_2 text,
-quantity_2 double,
-dosing_units_2 text,
-frequency_2 text,
-duration_2 double,
-duration_units_2 text,
-medication_3 text,
-quantity_3 double,
-dosing_units_3 text,
-frequency_3 text,
-duration_3 double,
-duration_units_3 text,
-medication_comments text,
 pregnant varchar(50),
 last_menstruation_date date,
 estimated_delivery_date date,
@@ -132,13 +120,15 @@ type_of_provider text,
 type_of_referral_roles text,
 disposition varchar(255),
 disposition_comment text,
-return_date date
+return_date date,
+pres_con1_obs_id int,
+pres_con2_obs_id int
 );
 
 insert into temp_mentalhealth_visit (   patient_id,
 										zl_emr_id, gender,
                                         encounter_id,
-                                        encounter_date,
+                                       encounter_date,
                                         age_at_enc,
                                         provider,
                                         patient_address,
@@ -228,13 +218,13 @@ and tmhv.encounter_id = encounter_id), 'Oui', Null);
 
 -- Adherence to appointment day
 update temp_mentalhealth_visit tmhv
-set tmhv.adherence_to_appt = (select concept_name(value_coded, 'fr') from obs where voided = 0 and concept_id = @adherence_to_appt
+set tmhv.adherence_to_appt = (select concept_name(value_coded, 'en') from obs where voided = 0 and concept_id = @adherence_to_appt
 and tmhv.encounter_id = encounter_id);
 
 update temp_mentalhealth_visit tmhv
 left join
 (select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
-value_coded = cn.concept_id and locale='fr' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @depression_screening group by encounter_id) o on tmhv.encounter_id = o.encounter_id
+value_coded = cn.concept_id and locale='en' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @depression_screening group by encounter_id) o on tmhv.encounter_id = o.encounter_id
 set tmhv.depression_screening = o.names;
 
 -- scores
@@ -338,31 +328,40 @@ group by encounter_id
 set tmhv.psychological_intervention = o.names,
 	tmhv.other_psychological_intervention = (select comments from obs where voided = 0 and concept_id = @mental_health_intervention and value_coded = @other and tmhv.encounter_id = obs.encounter_id);
 
-update temp_mentalhealth_visit tmhv
+create temporary table temp_medication
+(
+	patient_id int,
+    encounter_id int,
+	pres_con1_obs_id int,
+	medication_1 text,
+	quantity_1 text,
+	dosing_units_1 text,
+	frequency_1 text,
+	duration_1 text,
+	duration_units_1 text,
+    route_1 text
+);
+
+insert into temp_medication (patient_id, encounter_id)
+select patient_id, encounter_id from
+encounter where voided = 0 and encounter_type = @encounter_type;
+
+update temp_medication tm
+inner join temp_mentalhealth_visit tmhv on tm.patient_id = tmhv.patient_id
 left join
 (
 select e.encounter_id,
+obs_id,
 medication_1,
 quantity_1,
 dosing_units_1,
 frequency_1,
 duration_1,
 duration_units_1,
-medication_2,
-quantity_2,
-dosing_units_2,
-frequency_2,
-duration_2,
-duration_units_2,
-medication_3,
-quantity_3,
-dosing_units_3,
-frequency_3,
-duration_3,
-duration_units_3
+route_1
 from encounter e
 inner join obs pres_con1 on pres_con1.obs_id =
-   (select opc1.obs_id from obs opc1 where  opc1.encounter_id = e.encounter_id and opc1.concept_id = 3101 limit 1)
+   (select opc1.obs_id from obs opc1 where  opc1.encounter_id = e.encounter_id and opc1.concept_id = @pres_con limit 1)
 left outer join
   (select o1.obs_group_id,
   MAX(CASE WHEN o1.concept_id = @medication THEN d1.name END) "medication_1",
@@ -370,9 +369,17 @@ left outer join
   MAX(CASE WHEN o1.concept_id = @dosing_units THEN cn1.name END) "dosing_units_1",
   MAX(CASE WHEN o1.concept_id = @frequency THEN cn1.name END) "frequency_1",
   MAX(CASE WHEN o1.concept_id = @duration THEN o1.value_numeric END) "duration_1",
-  MAX(CASE WHEN o1.concept_id = @duration_units THEN cn1.name END) "duration_units_1"
+  MAX(CASE WHEN o1.concept_id = @duration_units THEN cn1.name END) "duration_units_1",
+  MAX(CASE WHEN o1.concept_id = @routes THEN cn1.name END) "route_1"
   from obs o1
-  LEFT OUTER JOIN drug d1 on d1.drug_id = o1.value_drug and d1.retired = 0
+  -- LEFT OUTER JOIN drug d1 on d1.drug_id = o1.value_drug and d1.retired = 0
+  LEFT OUTER JOIN concept_name d1 on d1.concept_name_id =
+     (select concept_name_id from concept_name cn12
+     where cn12.concept_id = o1.value_coded
+     and cn12.voided  = 0
+     and cn12.locale in ('en', 'fr')
+     order by field(cn12.locale,'fr','en') asc, cn12.locale_preferred desc
+    limit 1)
   LEFT OUTER JOIN concept_name cn1 on cn1.concept_name_id =
      (select concept_name_id from concept_name cn11
      where cn11.concept_id = o1.value_coded
@@ -381,9 +388,55 @@ left outer join
      order by field(cn11.locale,'fr','en') asc, cn11.locale_preferred desc
     limit 1)
 group by o1.obs_group_id) m1 on m1.obs_group_id = pres_con1.obs_id
+) o1 on tm.encounter_id = o1.encounter_id
+set
+	tm.medication_1 = o1.medication_1,
+    tm.pres_con1_obs_id = o1.obs_id,
+	tm.quantity_1 = o1.quantity_1,
+	tm.dosing_units_1 = o1.dosing_units_1,
+	tm.frequency_1 = o1.frequency_1,
+	tm.duration_1 = o1.duration_1,
+	tm.duration_units_1 = o1.duration_units_1,
+    tm.route_1 = o1.route_1;
 -- ------------
+
+create temporary table temp_medication_two
+(
+	patient_id int,
+    encounter_id int,
+    pres_con2_obs_id int,
+	medication_2 text,
+	quantity_2 text,
+	dosing_units_2 text,
+	frequency_2 text,
+	duration_2 text,
+	duration_units_2 text,
+    route_2 text
+);
+
+insert into temp_medication_two (patient_id, encounter_id)
+select patient_id, encounter_id from
+encounter where voided = 0 and encounter_type = @encounter_type;
+
+
+update temp_medication_two tmt
+left join
+(
+select
+	e.encounter_id,
+    obs_id,
+    medication_2,
+	quantity_2,
+    dosing_units_2,
+    frequency_2,
+    duration_2,
+    duration_units_2,
+    route_2
+from encounter e
+left outer join temp_medication tm on tm.encounter_id = e.encounter_id
 left outer join obs pres_con2 on pres_con2.obs_id =
-   (select opc2.obs_id from obs opc2 where  opc2.encounter_id = e.encounter_id and opc2.concept_id = 3101 and opc2.obs_id <> pres_con1.obs_id limit 1)
+   (select opc2.obs_id from obs opc2 where  opc2.encounter_id = e.encounter_id and opc2.concept_id = @pres_con and opc2.obs_id <> tm.pres_con1_obs_id
+   limit 1)
 left outer join
   (select o2.obs_group_id,
   MAX(CASE WHEN o2.concept_id = @medication THEN d2.name END) "medication_2",
@@ -391,9 +444,17 @@ left outer join
   MAX(CASE WHEN o2.concept_id = @dosing_units THEN cn2.name END) "dosing_units_2",
   MAX(CASE WHEN o2.concept_id = @frequency THEN cn2.name END) "frequency_2",
   MAX(CASE WHEN o2.concept_id = @duration THEN o2.value_numeric END) "duration_2",
-  MAX(CASE WHEN o2.concept_id = @duration_units THEN cn2.name END) "duration_units_2"
+  MAX(CASE WHEN o2.concept_id = @duration_units THEN cn2.name END) "duration_units_2",
+  MAX(CASE WHEN o2.concept_id = @routes THEN cn2.name END) "route_2"
   from obs o2
-  LEFT OUTER JOIN drug d2 on d2.drug_id = o2.value_drug and d2.retired = 0
+  -- LEFT OUTER JOIN drug d2 on d2.drug_id = o2.value_drug and d2.retired = 0
+   LEFT OUTER JOIN concept_name d2 on d2.concept_name_id =
+     (select concept_name_id from concept_name cn12
+     where cn12.concept_id = o2.value_coded
+     and cn12.voided  = 0
+     and cn12.locale in ('en', 'fr')
+     order by field(cn12.locale,'fr','en') asc, cn12.locale_preferred desc
+    limit 1)
    LEFT OUTER JOIN concept_name cn2 on cn2.concept_name_id =
      (select concept_name_id from concept_name cn21
      where cn21.concept_id = o2.value_coded
@@ -401,10 +462,55 @@ left outer join
      and cn21.locale in ('en', 'fr')
      order by field(cn21.locale,'fr','en') asc, cn21.locale_preferred desc
     limit 1)
-  group by o2.obs_group_id) m2 on m2.obs_group_id =pres_con2.obs_id
+  group by o2.obs_group_id) m2 on m2.obs_group_id = pres_con2.obs_id
+) o2 on tmt.encounter_id = o2.encounter_id
+set
+	tmt.medication_2 = o2.medication_2,
+	tmt.pres_con2_obs_id = o2.obs_id,
+	tmt.quantity_2 = o2.quantity_2,
+	tmt.dosing_units_2 = o2.dosing_units_2,
+	tmt.frequency_2 = o2.frequency_2,
+	tmt.duration_2 = o2.duration_2,
+	tmt.duration_units_2 = o2.duration_units_2,
+    tmt.route_2 = o2.route_2;
 -- ------------
+
+create temporary table temp_medication_three
+(
+	patient_id int,
+    encounter_id int,
+	medication_3 text,
+	quantity_3 text,
+	dosing_units_3 text,
+	frequency_3 text,
+	duration_3 text,
+	duration_units_3 text,
+    route_3 text,
+    medication_comments text
+);
+
+insert into temp_medication_three (patient_id, encounter_id)
+select patient_id, encounter_id from
+encounter where voided = 0 and encounter_type = @encounter_type;
+
+update temp_medication_three tmth
+left join
+(
+select
+	e.encounter_id,
+	medication_3,
+    quantity_3,
+    dosing_units_3,
+    frequency_3,
+    duration_3,
+    duration_units_3,
+    route_3
+from encounter e
+left outer join temp_medication tm on tm.encounter_id = e.encounter_id
+left outer join temp_medication_two tmt on tmt.encounter_id = e.encounter_id
 left outer join obs pres_con3 on pres_con3.obs_id =
-   (select opc3.obs_id from obs opc3 where  opc3.encounter_id = e.encounter_id and opc3.concept_id = 3101 and opc3.obs_id not in (pres_con1.obs_id,pres_con2.obs_id)  limit 1)
+   (select opc3.obs_id from obs opc3 where  opc3.encounter_id = e.encounter_id and opc3.concept_id = @pres_con and opc3.obs_id <> tm.pres_con1_obs_id and  opc3.obs_id <> tmt.pres_con2_obs_id
+   limit 1)
 left outer join
   (select o3.obs_group_id,
   MAX(CASE WHEN o3.concept_id = @medication THEN d3.name END) "medication_3",
@@ -412,9 +518,17 @@ left outer join
   MAX(CASE WHEN o3.concept_id = @dosing_units THEN cn3.name END) "dosing_units_3",
   MAX(CASE WHEN o3.concept_id = @frequency THEN cn3.name END) "frequency_3",
   MAX(CASE WHEN o3.concept_id = @duration THEN o3.value_numeric END) "duration_3",
-  MAX(CASE WHEN o3.concept_id = @duration_units THEN cn3.name END) "duration_units_3"
+  MAX(CASE WHEN o3.concept_id = @duration_units THEN cn3.name END) "duration_units_3",
+  MAX(CASE WHEN o3.concept_id = @routes THEN cn3.name END) "route_3"
   from obs o3
-  LEFT OUTER JOIN drug d3 on d3.drug_id = o3.value_drug and d3.retired = 0
+  -- LEFT OUTER JOIN drug d3 on d3.drug_id = o3.value_drug and d3.retired = 0
+  LEFT OUTER JOIN concept_name d3 on d3.concept_name_id =
+     (select concept_name_id from concept_name cn12
+     where cn12.concept_id = o3.value_coded
+     and cn12.voided  = 0
+     and cn12.locale in ('en', 'fr')
+     order by field(cn12.locale,'fr','en') asc, cn12.locale_preferred desc
+    limit 1)
   LEFT OUTER JOIN concept_name cn3 on cn3.concept_name_id =
      (select concept_name_id from concept_name cn31
      where cn31.concept_id = o3.value_coded
@@ -423,26 +537,16 @@ left outer join
      order by field(cn31.locale,'fr','en') asc, cn31.locale_preferred desc
     limit 1)
   group by o3.obs_group_id) m3 on m3.obs_group_id =pres_con3.obs_id
-  ) o on tmhv.encounter_id = o.encounter_id
-  set tmhv.medication_1 = o.medication_1,
-  tmhv.quantity_1 = o.quantity_1,
-tmhv.dosing_units_1 = o.dosing_units_1,
-tmhv.frequency_1 = o.frequency_1,
-tmhv.duration_1 = o.duration_1,
-tmhv.duration_units_1 = o.duration_units_1,
-tmhv.medication_2 = o.medication_2,
-tmhv.quantity_2 = o.quantity_2,
-tmhv.dosing_units_2 = o.dosing_units_2,
-tmhv.frequency_2 = o.frequency_2,
-tmhv.duration_2 = o.duration_2,
-tmhv.duration_units_2 = o.duration_units_2,
-tmhv.medication_3 = o.medication_3,
-tmhv.quantity_3 = o.quantity_3,
-tmhv.dosing_units_3 = o.dosing_units_3,
-tmhv.frequency_3 = o.frequency_3,
-tmhv.duration_3 = o.duration_3,
-tmhv.duration_units_3 = o.duration_units_3,
-tmhv.medication_comments = (select value_text from obs where voided = 0 and tmhv.encounter_id = obs.encounter_id and concept_id = @medication_comments);
+  ) o3 on tmth.encounter_id = o3.encounter_id
+  set
+tmth.medication_3 = o3.medication_3,
+tmth.quantity_3 = o3.quantity_3,
+tmth.dosing_units_3 = o3.dosing_units_3,
+tmth.frequency_3 = o3.frequency_3,
+tmth.duration_3 = o3.duration_3,
+tmth.duration_units_3 = o3.duration_units_3,
+tmth.route_3 = o3.route_3,
+tmth.medication_comments = (select value_text from obs where voided = 0 and tmth.encounter_id = obs.encounter_id and concept_id = @medication_comments);
 
 update temp_mentalhealth_visit tmhv
 left join
@@ -467,16 +571,16 @@ set tmhv.disposition = (select concept_name(value_coded, 'fr') from obs where co
 
 
 select
-encounter_id,
-patient_id,
+tmhv.encounter_id,
+tmhv.patient_id as 'patient_id',
 zl_emr_id,
 gender,
 unknown_patient,
-person_address_state_province(patient_id) 'province',
-person_address_city_village(patient_id) 'city_village',
-person_address_three(patient_id) 'address3',
-person_address_one(patient_id) 'address1',
-person_address_two(patient_id) 'address2',
+person_address_state_province(tmhv.patient_id) 'province',
+person_address_city_village(tmhv.patient_id) 'city_village',
+person_address_three(tmhv.patient_id) 'address3',
+person_address_one(tmhv.patient_id) 'address1',
+person_address_two(tmhv.patient_id) 'address2',
 provider,
 visit_id,
 enc_location,
@@ -519,22 +623,33 @@ dosing_units_1,
 frequency_1,
 duration_1,
 duration_units_1,
+route_1
 medication_2,
 quantity_2,
 dosing_units_2,
 frequency_2,
 duration_2,
 duration_units_2,
+route_2,
 medication_3,
 quantity_3,
 dosing_units_3,
 frequency_3,
 duration_3,
 duration_units_3,
+route_3,
 medication_comments,
 type_of_provider,
 type_of_referral_roles "referred_to",
 disposition,
 disposition_comment,
 return_date
-from temp_mentalhealth_visit;
+from
+temp_mentalhealth_visit tmhv
+inner join
+temp_medication tm on tmhv.patient_id = tm.patient_id and tmhv.encounter_id = tm.encounter_id
+inner join
+temp_medication_two tmt on tmhv.patient_id = tmt.patient_id and tmhv.encounter_id = tmt.encounter_id
+inner join
+temp_medication_three tmth on tmhv.patient_id = tmth.patient_id and tmhv.encounter_id = tmth.encounter_id
+order by patient_id;

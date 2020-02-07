@@ -1,6 +1,7 @@
+SET sql_safe_updates = 0;
+
 DROP TEMPORARY TABLE IF EXISTS temp_mentalhealth_program;
 
-set sql_safe_updates = 0;
 SET SESSION group_concat_max_len = 100000;
 
 set @program_id = program('Mental Health');
@@ -13,6 +14,10 @@ set @medication = concept_from_mapping('PIH', 'Mental health medication');
 set @mh_intervention =  concept_from_mapping('PIH', 'Mental health intervention');
 set @other_noncoded = concept_from_mapping('PIH', 'OTHER NON-CODED');
 set @return_visit_date = concept_from_mapping('PIH', 'RETURN VISIT DATE');
+set @routes = concept_from_mapping('PIH', '12651');
+set @oral = concept_from_mapping('CIEL', '160240');
+set @intraveneous = concept_from_mapping('CIEL', '160242');
+set @intramuscular = concept_from_mapping('CIEL', '160243');
 
 create temporary table temp_mentalhealth_program
 (
@@ -51,6 +56,7 @@ previous_seizure_date date,
 baseline_seizure_number double,
 baseline_seizure_date date,
 latest_medication_given text,
+routes text,
 latest_medication_date date,
 latest_intervention text,
 other_intervention text,
@@ -361,7 +367,9 @@ update temp_mentalhealth_program tmh
 LEFT JOIN
 (
 select pp.patient_id, patient_program_id, date_enrolled, date_completed, e.encounter_id enc_id, date(e.encounter_datetime) enc_date, 
-group_concat(distinct(cn.name) separator ' | ') "medication_names" from patient_program pp
+group_concat(distinct(cn.name) separator ' | ') "medication_names",
+group_concat(distinct(cn1.name) separator ' | ') "routes"
+ from patient_program pp
 INNER JOIN
 encounter e on e.encounter_id =
     (select encounter_id from encounter e2 where
@@ -374,10 +382,18 @@ encounter e on e.encounter_id =
      limit 1
      )
      inner join obs o on o.encounter_id = e.encounter_id and o.concept_id = @medication and o.voided = 0
-     INNER JOIN drug cnd on cnd.drug_id  = o.value_drug
+     left join obs o1 on o1.encounter_id = o.encounter_id and o1.concept_id = @routes and o1.voided = 0 and o1.value_coded in (@oral, @intramuscular, @intraveneous) and o.obs_group_id = o1.obs_group_id
+     -- INNER JOIN drug cnd on cnd.drug_id  = o.value_drug
      left outer join concept_name cn on concept_name_id = 
         (select concept_name_id from concept_name cn2
          where cn2.concept_id = o.value_coded
+         and cn2.voided = 0
+         and cn2.locale in ('en','fr')
+         order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
+         limit 1)
+     left outer join concept_name cn1 on cn1.name = 
+        (select name from concept_name cn2
+         where cn2.concept_id = o1.value_coded
          and cn2.voided = 0
          and cn2.locale in ('en','fr')
          order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
@@ -387,6 +403,7 @@ encounter e on e.encounter_id =
 ) medication
 on medication.patient_program_id = tmh.patient_program_id
 set tmh.latest_medication_given = medication.medication_names,
+	tmh.routes = medication.routes,
 	tmh.latest_medication_date = medication.enc_date;
 
 -- latest intervention
@@ -514,6 +531,7 @@ previous_seizure_date,
 baseline_seizure_number,
 baseline_seizure_date,
 latest_medication_given,
+routes,
 latest_medication_date,
 latest_intervention,
 other_intervention,
