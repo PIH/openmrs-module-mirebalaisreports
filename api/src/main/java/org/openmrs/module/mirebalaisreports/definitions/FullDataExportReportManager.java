@@ -233,8 +233,8 @@ public class FullDataExportReportManager extends BasePihReportManager {
                         || "history".equals(key) || "mentalHealth".equals(key) || "mentalHealthProgram".equals(key) || "ncdProgram".equals(key)) {
                     dsd = constructSqlFileDataSetDefinition(key);
 
-                    // mental health program does not have start and end date, but the rest do
-                    if (!"mentalHealthProgram".equals(key)) {
+                    // mental health program and ncd health program do not have start and end date, but the rest do
+                    if ((!"mentalHealthProgram".equals(key)) && (!"ncdProgram".equals(key)))  {
                         addStartAndEndDateParameters(rd, dsd, mappings);
                     }
                 }
