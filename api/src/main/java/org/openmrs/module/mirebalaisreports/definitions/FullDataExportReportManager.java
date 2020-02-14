@@ -229,8 +229,10 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             else {
-                if ("vaccinationsANC".equals(key) || "labResultsExport".equals(key) || "labOrdersReport".equals(key) || "ncd".equals(key) || "socialEconomics".equals(key)
-                        || "history".equals(key) || "mentalHealth".equals(key) || "mentalHealthProgram".equals(key) || "ncdProgram".equals(key)) {
+                if ("vaccinationsANC".equals(key) || "labResultsExport".equals(key) || "labOrdersReport".equals(key) ||
+                        "ncd".equals(key) || "socialEconomics".equals(key) || "history".equals(key) ||
+                        "mentalHealth".equals(key) || "mentalHealthProgram".equals(key) ||
+                        "ncdProgram".equals(key) || "j9CaseRegistration".equals(key)) {
                     dsd = constructSqlFileDataSetDefinition(key);
 
                     // mental health program and ncd health program do not have start and end date, but the rest do
