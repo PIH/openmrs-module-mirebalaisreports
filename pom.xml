@@ -524,7 +524,7 @@
         <repository>
             <id>openmrs-repo-modules-pih</id>
             <name>OpenMRS Modules</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules-pih</url>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules-pih/</url>
         </repository>
         <snapshotRepository>
             <id>openmrs-repo-modules-pih-snapshots</id>
