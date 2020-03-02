@@ -33,9 +33,9 @@
     <properties>
         <openMRSVersion>2.3.0</openMRSVersion>
         <openMRSwebVersion>2.3.0</openMRSwebVersion>
-        <pihcoreVersion>1.0-SNAPSHOT</pihcoreVersion>
+        <pihcoreVersion>1.1.0-SNAPSHOT</pihcoreVersion>
         <mirebalaismetadataVersion>1.0-SNAPSHOT</mirebalaismetadataVersion>
-        <emrapiVersion>1.27.0</emrapiVersion>
+        <emrapiVersion>1.28.0</emrapiVersion>
         <paperrecordVersion>1.3.0</paperrecordVersion>
         <emrVersion>2.2.0</emrVersion>
         <uiframeworkVersion>3.16.0</uiframeworkVersion>
@@ -65,10 +65,10 @@
         <dispensingVersion>1.1.0</dispensingVersion>
         <uicommonsVersion>2.7.0-SNAPSHOT</uicommonsVersion>
         <registrationcoreVersion>1.9.0</registrationcoreVersion>
-        <registrationappVersion>1.14.0</registrationappVersion>
+        <registrationappVersion>1.15.0</registrationappVersion>
         <radiologyappVersion>1.5.0</radiologyappVersion>
-        <coreappsVersion>1.25.0</coreappsVersion>
-        <webservicesRestVersion>2.26.0</webservicesRestVersion>
+        <coreappsVersion>1.27.0</coreappsVersion>
+        <webservicesRestVersion>2.27.0</webservicesRestVersion>
         <appointmentschedulingVersion>1.12.0</appointmentschedulingVersion>
         <appointmentschedulinguiVersion>1.3</appointmentschedulinguiVersion>
         <testutilsVersion>1.7.0</testutilsVersion>
@@ -522,14 +522,14 @@
 
     <distributionManagement>
         <repository>
-            <id>openmrs-repo-modules</id>
+            <id>openmrs-repo-modules-pih</id>
             <name>OpenMRS Modules</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules</url>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules-pih/</url>
         </repository>
         <snapshotRepository>
-            <id>openmrs-repo-snapshots</id>
+            <id>openmrs-repo-modules-pih-snapshots</id>
             <name>OpenMRS Snapshots</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules-pih-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 

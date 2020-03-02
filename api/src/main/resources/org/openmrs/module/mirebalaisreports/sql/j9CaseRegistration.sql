@@ -1,71 +1,142 @@
-select p.patient_id,
-       per.uuid,
-       cna.given_name,
-       cna.family_name,
-       zl.identifier "ZL_identifier",
-       pa.value      "telephone",
-       per.birthdate,
-       mg.value_text "J9_group",
-       wsn.name      "J9_program",
-       cna.department,
-       cna.commune,
-       cna.section_communal,
-       cna.locality,
-       cna.street_landmark
+select program_workflow_state_id into @prenatalGroup from program_workflow_state where uuid = '41a2753c-8a14-11e8-9a94-a6cf71072f73';
+select program_workflow_state_id into @pedsGroup from program_workflow_state where uuid = '2fa7008c-aa58-11e8-98d0-529269fb1459';
+select program_id into @matHealthProgram from program where uuid = '41a2715e-8a14-11e8-9a94-a6cf71072f73';
+select concept_id into @mothersGroup from concept where uuid = 'c1b2db38-8f72-4290-b6ad-99826734e37e';
+select concept_id into @edd from concept where uuid = '3cee56a6-26fe-102b-80cb-0017a47871b2';
+select concept_id into @add from concept where uuid = '5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+select relationship_type_id into @aParentToB from relationship_type  where uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f' ;
+select person_attribute_type_id into @tele from person_attribute_type pat where pat.uuid =  '14d4f066-15f5-102d-96e4-000c29c2a5d7';
+
+drop TEMPORARY TABLE IF EXISTS temp_J9_patients;
+
+create temporary table temp_J9_patients
+(
+    patient_id int(11),
+    patient_uuid char(38),
+    given_name varchar(50),
+    family_name varchar(50),
+    ZL_identifier varchar(50),
+    Dossier_identifier varchar(50),
+    J9_group text,
+    J9_program varchar(50),
+    telephone varchar(50),
+    birthdate date,
+    age int(3),
+    estimated_delivery_date date,
+    actual_delivery_date date,
+    mama_dossier varchar(50),
+    department varchar(255),
+    commune varchar(255),
+    section_communal varchar(255),
+    locality varchar(255),
+    street_landmark varchar(255),
+    j9_enrollment_date datetime,
+    j9_exit_date date,
+    j9_exit_reason varchar(255)
+)
+;
+
+-- this populates the temp table with the cohort of patients to be included in the report
+-- The logic is, patients that:
+-- * have ever been in the maternal health program
+-- * has a state of prenatal group or pediatric group
+-- * maximum of one row per patient.  So return the most recent enrollment if more than one
+insert into temp_J9_patients (patient_id, patient_uuid, j9_enrollment_date, j9_exit_date, J9_program, birthdate, age, j9_exit_reason)
+Select p.patient_id, per.uuid, pp.date_enrolled, pp.date_completed, wsn.name, per.birthdate, TIMESTAMPDIFF(YEAR,per.birthdate, now()) "age", ppo.name
 from patient p
          inner join person per on per.person_id = p.patient_id and per.dead = 0
-         inner join program pr on pr.uuid = '41a2715e-8a14-11e8-9a94-a6cf71072f73' -- maternal child health program
-         inner join patient_program pp
-                    on pp.patient_id = p.patient_id and pp.program_id = pr.program_id and pp.date_completed is null and
-                       pp.voided = 0
--- only include J9 patients in prenatal and pediatric groups (not maternal individual)
-         inner join patient_state ps on pp.patient_program_id = ps.patient_program_id and ps.voided = 0 and ps.state in
-                                                                                                            (select program_workflow_state_id
-                                                                                                             from program_workflow_state pws1
-                                                                                                             where pws1.uuid in
-                                                                                                                   ('41a2753c-8a14-11e8-9a94-a6cf71072f73',
-                                                                                                                    '2fa7008c-aa58-11e8-98d0-529269fb1459')) -- prenatal group and pediatric group
--- return J9 program name
+         inner join patient_program pp on pp.patient_id = p.patient_id and pp.program_id = @matHealthProgram and pp.voided = 0
+         inner join patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.voided = 0 and ps.state in (@prenatalGroup,@pedsGroup)
+         inner join
+     (select pp.patient_id, max(pp.date_enrolled) "maxdate"
+      from patient_program pp
+               inner join patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.voided = 0 and ps.state in (@prenatalGroup,@pedsGroup)
+      where  pp.program_id = @matHealthProgram and pp.voided = 0
+      group by pp.patient_id) t on t.patient_id = p.patient_id and pp.date_enrolled = t.maxdate
+-- J9 program name
          left outer join program_workflow_state pws ON pws.program_workflow_state_id = ps.state and pws.retired = 0
-         left outer join concept_name wsn on concept_name_id =
-                                             (select concept_name_id
-                                              from concept_name cn1
-                                              where cn1.concept_id = pws.concept_id
-                                                and cn1.locale = 'en'
-                                                and wsn.voided = 0
-                                              order by cn1.locale_preferred desc
-                                              limit 1)
--- name and address
-         left outer join current_name_address cna on cna.person_id = p.patient_id
--- ZL identifier
-         left outer join patient_identifier zl on zl.patient_identifier_id =
-                                                  (select pid2.patient_identifier_id pid2
-                                                   from patient_identifier pid2
-                                                   where pid2.patient_id = p.patient_id
-                                                     and pid2.voided = 0
-                                                     and pid2.identifier_type =
-                                                         (select patient_identifier_type_id
-                                                          from patient_identifier_type pit
-                                                          where pit.uuid = 'a541af1e-105c-40bf-b345-ba1fd6a59b85') -- ZL EMR ID
-                                                   order by pid2.preferred desc
-                                                   limit 1)
--- telephone number
-         left outer join person_attribute pa on pa.person_id = p.patient_id and pa.person_attribute_type_id =
-                                                                                (select person_attribute_type_id
-                                                                                 from person_attribute_type pat
-                                                                                 where pat.uuid = '14d4f066-15f5-102d-96e4-000c29c2a5d7') -- telephone number
-    and pa.voided = 0
--- J9 group (latest observation of entered J9 group)
-         left outer join obs mg on mg.obs_id =
-                                   (select mg1.obs_id
-                                    from obs mg1
-                                    where mg1.person_id = p.patient_id
-                                      and mg1.voided = 0
-                                      and mg1.concept_id =
-                                          (select concept_id
-                                           from concept
-                                           where uuid = 'c1b2db38-8f72-4290-b6ad-99826734e37e') -- Mothers Group concept
-                                    order by mg1.obs_datetime desc
-                                    limit 1)
-where p.voided = 0
+         left outer join concept_name wsn on wsn.concept_id = pws.concept_id and wsn.locale = 'en' and wsn.voided =0 and wsn.locale_preferred = 1
+-- program outcome
+         left outer join concept_name ppo on ppo.concept_id = pp.outcome_concept_id and ppo.voided = 0 and ppo.locale_preferred = 1 and ppo.locale = 'fr'
 ;
+
+-- telephone number
+update temp_J9_patients t
+    left outer join person_attribute pa on pa.person_id = t.patient_id and pa.person_attribute_type_id = @tele
+        and pa.voided = 0
+set t.telephone = pa.value
+;
+
+-- patient address
+update temp_J9_patients t
+    left outer join current_name_address cna on cna.person_id = t.patient_id
+set t.department = cna.department,
+    t.commune = cna.commune,
+    t.section_communal = cna.section_communal,
+    t.locality = cna.locality,
+    t.street_landmark = cna.street_landmark
+;
+
+update temp_J9_patients t
+set t.ZL_identifier =  zlEMR(t.patient_id)
+;
+
+update temp_J9_patients t
+set t.Dossier_identifier =  dosId(t.patient_id)
+;
+
+-- patient names
+update temp_J9_patients t
+    left outer join current_name_address cna on cna.person_id = t.patient_id
+set t.given_name = cna.given_name,
+    t.family_name = cna.family_name
+;
+
+-- J9 group (latest observation of entered J9 group, since program enrollment)
+update temp_J9_patients t
+set t.J9_group =  (select value_text from obs where obs_id = latestObs(t.patient_id, @mothersGroup, j9_enrollment_date))
+;
+
+-- estimated delivery date
+update temp_J9_patients t
+set t.estimated_delivery_date =  (select value_datetime from obs where obs_id = latestObs(t.patient_id, @edd, j9_enrollment_date))
+;
+
+-- Actual Delivery Date
+update temp_J9_patients t
+set t.actual_delivery_date =  (select value_datetime from obs where obs_id = latestObs(t.patient_id, @add, j9_enrollment_date))
+;
+
+-- Baby's mother: return dossier id of mother (parent who is female) if the patient is < 1 year
+update temp_J9_patients t
+    left outer join relationship rm on rm.person_b = t.patient_id and rm.voided = 0 and rm.relationship = @aParentToB
+        and gender(rm.person_a) = 'F'
+        and  TIMESTAMPDIFF(YEAR,t.birthdate, now()) < 1
+-- mother's dossier id
+set t.mama_dossier = dosId(rm.person_a)
+;
+
+select
+    patient_id,
+    patient_uuid,
+    given_name,
+    family_name,
+    ZL_identifier,
+    Dossier_identifier,
+    J9_group,
+    J9_program,
+    telephone,
+    birthdate,
+    age,
+    estimated_delivery_date,
+    actual_delivery_date,
+    mama_dossier,
+    department,
+    commune,
+    section_communal,
+    locality,
+    street_landmark,
+    j9_enrollment_date,
+    j9_exit_date,
+    j9_exit_reason
+from temp_J9_patients;

@@ -3,6 +3,7 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
@@ -51,7 +52,7 @@ public class J9CaseRegistrationReportManager extends BasePihReportManager {
 
     @Override
     public ReportDefinition constructReportDefinition() {
-        return constructSqlReportDefinition(getName());
+        return constructSqlFileReportDefinition(getName(), new HashMap<String, Object>());
     }
 
     @Override

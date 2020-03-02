@@ -1,5 +1,7 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.OpenmrsObject;
@@ -12,10 +14,9 @@ import org.openmrs.module.pihcore.config.Config;
 import org.openmrs.module.radiologyapp.RadiologyProperties;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.SqlFileDataSetDefinition;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Map;
 
 /**
  * Includes helpful methods for dealing with PIH Metadata (this class exists so that someday we might consider
@@ -46,6 +47,24 @@ public abstract class BasePihReportManager extends BaseReportManager {
 
     public void setMirebalaisReportsProperties(MirebalaisReportsProperties mirebalaisReportsProperties) {
         this.mirebalaisReportsProperties = mirebalaisReportsProperties;
+    }
+
+    protected ReportDefinition constructSqlFileReportDefinition(String sqlFileResourceName, Map<String, Object> mappings) {
+        ReportDefinition rd = new ReportDefinition();
+        rd.setName(getMessageCodePrefix() + "name");
+        rd.setDescription(getMessageCodePrefix() + "description");
+        rd.setParameters(getParameters());
+        rd.setUuid(getUuid());
+
+        SqlFileDataSetDefinition sqlDsd = new SqlFileDataSetDefinition();
+        sqlDsd.setName(MessageUtil.translate(getMessageCodePrefix() + "name"));
+        sqlDsd.setDescription(MessageUtil.translate(getMessageCodePrefix() + "description"));
+        sqlDsd.addParameters(getParameters());
+        sqlDsd.setSqlResource(SQL_DIR + sqlFileResourceName + ".sql");
+
+        rd.addDataSetDefinition(sqlFileResourceName, sqlDsd, mappings);
+
+        return rd;
     }
 
     protected ReportDefinition constructSqlReportDefinition(String sqlFileName) {
