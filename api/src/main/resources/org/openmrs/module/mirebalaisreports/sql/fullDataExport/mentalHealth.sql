@@ -553,4 +553,5 @@ type_of_referral_roles "referred_to",
 disposition,
 disposition_comment,
 return_date
-from temp_mentalhealth_visit;
+from temp_mentalhealth_visit
+;
