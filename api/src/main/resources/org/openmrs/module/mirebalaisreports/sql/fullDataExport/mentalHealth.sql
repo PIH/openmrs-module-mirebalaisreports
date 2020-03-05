@@ -61,6 +61,7 @@ set @oral = concept_from_mapping('CIEL', '160240');
 set @intraveneous = concept_from_mapping('CIEL', '160242');
 set @intramuscular = concept_from_mapping('CIEL', '160243');
 
+
 create temporary table temp_mentalhealth_visit
 (
 patient_id int,
@@ -379,7 +380,8 @@ left outer join
   MAX(CASE WHEN o1.concept_id = @dosing_units THEN cn1.name END) "dosing_units_1",
   MAX(CASE WHEN o1.concept_id = @frequency THEN cn1.name END) "frequency_1",
   MAX(CASE WHEN o1.concept_id = @duration THEN o1.value_numeric END) "duration_1",
-  MAX(CASE WHEN o1.concept_id = @duration_units THEN cn1.name END) "duration_units_1"
+  MAX(CASE WHEN o1.concept_id = @duration_units THEN cn1.name END) "duration_units_1",
+  MAX(CASE WHEN o1.concept_id = @routes THEN cn1.name END) "route_1"
   from obs o1
   LEFT OUTER JOIN concept_name cn1 on cn1.concept_name_id =
      (select concept_name_id from concept_name cn11
@@ -399,7 +401,8 @@ left outer join
   MAX(CASE WHEN o2.concept_id = @dosing_units THEN cn2.name END) "dosing_units_2",
   MAX(CASE WHEN o2.concept_id = @frequency THEN cn2.name END) "frequency_2",
   MAX(CASE WHEN o2.concept_id = @duration THEN o2.value_numeric END) "duration_2",
-  MAX(CASE WHEN o2.concept_id = @duration_units THEN cn2.name END) "duration_units_2"
+  MAX(CASE WHEN o2.concept_id = @duration_units THEN cn2.name END) "duration_units_2",
+  MAX(CASE WHEN o2.concept_id = @routes THEN cn2.name END) "route_2"
   from obs o2
    LEFT OUTER JOIN concept_name cn2 on cn2.concept_name_id =
      (select concept_name_id from concept_name cn21
@@ -419,7 +422,8 @@ left outer join
   MAX(CASE WHEN o3.concept_id = @dosing_units THEN cn3.name END) "dosing_units_3",
   MAX(CASE WHEN o3.concept_id = @frequency THEN cn3.name END) "frequency_3",
   MAX(CASE WHEN o3.concept_id = @duration THEN o3.value_numeric END) "duration_3",
-  MAX(CASE WHEN o3.concept_id = @duration_units THEN cn3.name END) "duration_units_3"
+  MAX(CASE WHEN o3.concept_id = @duration_units THEN cn3.name END) "duration_units_3",
+  MAX(CASE WHEN o3.concept_id = @routes THEN cn3.name END) "route_3"
   from obs o3
   LEFT OUTER JOIN concept_name cn3 on cn3.concept_name_id =
      (select concept_name_id from concept_name cn31
