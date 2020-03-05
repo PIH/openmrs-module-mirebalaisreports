@@ -1,0 +1,10 @@
+type: "load-sqlserver"
+configuration:
+  extract:
+    datasource: "datasources/mysql-openmrs.yml"
+    query:  "jobs/encountertypetest/source.sql"
+
+  load:
+    datasource: "datasources/sqlserver-TestDB.yml"
+    table: "encounter_types"
+    schema: "jobs/encountertypetest/target.sql"

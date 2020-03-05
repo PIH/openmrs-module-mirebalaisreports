@@ -1,0 +1,10 @@
+type: "load-sqlserver"
+configuration:
+  extract:
+    datasource: "datasources/mysql-openmrs.yml"
+    query:  "jobs/vaccinations_anc/source.sql"
+
+  load:
+    datasource: "datasources/sqlserver-TestDB.yml"
+    table: "vaccinations_anc"
+    schema: "jobs/vaccinations_anc/target.sql"

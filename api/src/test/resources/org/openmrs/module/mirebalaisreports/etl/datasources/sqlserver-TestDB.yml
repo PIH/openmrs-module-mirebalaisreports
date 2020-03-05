@@ -1,0 +1,6 @@
+databaseType: "sqlserver"
+host: "localhost"
+port: "1433"
+databaseName: "TestDB"
+user: "SA"
+password: "Admin123"
