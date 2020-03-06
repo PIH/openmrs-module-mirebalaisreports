@@ -30,9 +30,7 @@ create temporary table temp_J9_patients
     section_communal varchar(255),
     locality varchar(255),
     street_landmark varchar(255),
-    j9_enrollment_date datetime,
-    j9_exit_date date,
-    j9_exit_reason varchar(255)
+    j9_enrollment_date datetime
 )
 ;
 
@@ -41,23 +39,15 @@ create temporary table temp_J9_patients
 -- * have ever been in the maternal health program
 -- * has a state of prenatal group or pediatric group
 -- * maximum of one row per patient.  So return the most recent enrollment if more than one
-insert into temp_J9_patients (patient_id, patient_uuid, j9_enrollment_date, j9_exit_date, J9_program, birthdate, age, j9_exit_reason)
-Select p.patient_id, per.uuid, pp.date_enrolled, pp.date_completed, wsn.name, per.birthdate, TIMESTAMPDIFF(YEAR,per.birthdate, now()) "age", ppo.name
+insert into temp_J9_patients (patient_id, patient_uuid, j9_enrollment_date, J9_program, birthdate, age)
+Select p.patient_id, per.uuid, pp.date_enrolled, wsn.name, per.birthdate, TIMESTAMPDIFF(YEAR,per.birthdate, now()) "age"
 from patient p
          inner join person per on per.person_id = p.patient_id and per.dead = 0
-         inner join patient_program pp on pp.patient_id = p.patient_id and pp.program_id = @matHealthProgram and pp.voided = 0
+         inner join patient_program pp on pp.patient_id = p.patient_id and pp.program_id = @matHealthProgram and pp.voided = 0  and pp.date_completed is null
          inner join patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.voided = 0 and ps.state in (@prenatalGroup,@pedsGroup)
-         inner join
-     (select pp.patient_id, max(pp.date_enrolled) "maxdate"
-      from patient_program pp
-               inner join patient_state ps on ps.patient_program_id = pp.patient_program_id and ps.voided = 0 and ps.state in (@prenatalGroup,@pedsGroup)
-      where  pp.program_id = @matHealthProgram and pp.voided = 0
-      group by pp.patient_id) t on t.patient_id = p.patient_id and pp.date_enrolled = t.maxdate
 -- J9 program name
          left outer join program_workflow_state pws ON pws.program_workflow_state_id = ps.state and pws.retired = 0
          left outer join concept_name wsn on wsn.concept_id = pws.concept_id and wsn.locale = 'en' and wsn.voided =0 and wsn.locale_preferred = 1
--- program outcome
-         left outer join concept_name ppo on ppo.concept_id = pp.outcome_concept_id and ppo.voided = 0 and ppo.locale_preferred = 1 and ppo.locale = 'fr'
 ;
 
 -- telephone number
@@ -136,7 +126,5 @@ select
     section_communal,
     locality,
     street_landmark,
-    j9_enrollment_date,
-    j9_exit_date,
-    j9_exit_reason
+    j9_enrollment_date
 from temp_J9_patients;
