@@ -386,7 +386,7 @@ encounter e on e.encounter_id =
          limit 1)
      left outer join concept_name cn1 on cn1.name = 
         (select name from concept_name cn2
-         where cn2.concept_id = o1.value_coded
+         where cn2.concept_id = o.value_coded
          and cn2.voided = 0
          and cn2.locale in ('en','fr')
          order by field(cn2.locale,'fr','en') asc, cn2.locale_preferred desc
