@@ -15,7 +15,6 @@ set @inpatient_hospitalization = concept_from_mapping('PIH','INPATIENT HOSPITALI
 set @traumatic_event = concept_from_mapping('PIH','12362');
 set @yes =   concept_from_mapping('PIH', 'YES');
 set @adherence_to_appt = concept_from_mapping('PIH','Appearance at appointment time');
-set @depression_screening = concept_from_Mapping('CIEL','165554');
 set @zldsi_score = concept_from_Mapping('CIEL','163225');
 set @ces_dc = concept_from_Mapping('CIEL','163228');
 set @psc_35 = concept_from_Mapping('CIEL','165534');
@@ -87,7 +86,6 @@ hospitalization_reason text,
 hospitalized_at_time_of_visit varchar(50),
 traumatic_event varchar(50),
 adherence_to_appt varchar(225),
-depression_screening varchar(255),
 zldsi_score double,
 ces_dc double,
 psc_35 double,
@@ -237,12 +235,6 @@ and tmhv.encounter_id = encounter_id), 'Oui', Null);
 update temp_mentalhealth_visit tmhv
 set tmhv.adherence_to_appt = (select concept_name(value_coded, 'fr') from obs where voided = 0 and concept_id = @adherence_to_appt
 and tmhv.encounter_id = encounter_id);
-
-update temp_mentalhealth_visit tmhv
-left join
-(select group_concat(cn.name separator ' | ') names, encounter_id from concept_name cn join obs o on o.voided = 0 and cn.voided = 0 and
-value_coded = cn.concept_id and locale='fr' and concept_name_type = "FULLY_SPECIFIED" and o.concept_id = @depression_screening group by encounter_id) o on tmhv.encounter_id = o.encounter_id
-set tmhv.depression_screening = o.names;
 
 -- scores
 update temp_mentalhealth_visit tmhv
@@ -457,6 +449,21 @@ tmhv.duration_units_3 = o.duration_units_3,
 tmhv.route_3 = o.route_3,
 tmhv.medication_comments = (select value_text from obs where voided = 0 and tmhv.encounter_id = obs.encounter_id and concept_id = @medication_comments);
 
+-- pregnancy questions
+update temp_mentalhealth_visit tmhv
+left join obs preg on preg.encounter_id = tmhv.encounter_id and preg.concept_id = @pregnant and preg.voided = 0
+set tmhv.pregnant = concept_name(preg.value_coded, 'fr');
+
+update temp_mentalhealth_visit tmhv
+left join obs lmd on lmd.encounter_id = tmhv.encounter_id and lmd.concept_id = @last_menstruation_date and lmd.voided = 0
+set tmhv.last_menstruation_date = lmd.value_datetime
+;
+
+update temp_mentalhealth_visit tmhv
+left join obs edd on edd.encounter_id = tmhv.encounter_id and edd.concept_id = @estimated_delivery_date and edd.voided = 0
+set tmhv.estimated_delivery_date = edd.value_datetime
+;
+
 update temp_mentalhealth_visit tmhv
 left join
 (
@@ -504,7 +511,6 @@ hospitalization_reason,
 hospitalized_at_time_of_visit,
 traumatic_event,
 adherence_to_appt,
-depression_screening,
 zldsi_score,
 ces_dc,
 psc_35,
@@ -548,6 +554,9 @@ duration_3,
 duration_units_3,
 route_3,
 medication_comments,
+pregnant, 
+last_menstruation_date,
+estimated_delivery_date,
 type_of_provider,
 type_of_referral_roles "referred_to",
 disposition,
