@@ -12,7 +12,7 @@
 	</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
     <configVersion>1.3</configVersion>
-    <mandatory>true</mandatory>
+    <mandatory>false</mandatory>
 
 	<require_version>1.9.3</require_version>
 
@@ -22,9 +22,6 @@
         </require_module>
         <require_module version="${emrVersion}">
             org.openmrs.module.emr
-        </require_module>
-        <require_module version="${mirebalaismetadataVersion}">
-            org.openmrs.module.mirebalaismetadata
         </require_module>
         <require_module version="${radiologyappVersion}">
             org.openmrs.module.radiologyapp
