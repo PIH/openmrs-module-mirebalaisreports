@@ -73,6 +73,7 @@ public abstract class BaseReportManager implements ReportManager {
             MirebalaisReportsProperties.LQAS_DIAGNOSES_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID,
+            MirebalaisReportsProperties.MCH_J9_CASE_REGISTRATION_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.MEXICO_VISITS_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.MEXICO_SUIVE_SIMPLE_REPORT_DEFINITION_UUID,
             MirebalaisReportsProperties.MEXICO_SIS_VISITS_REPORT_DEFINITION_UUID,
