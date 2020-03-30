@@ -15,7 +15,7 @@ set @patient_id = (select person_id from person where uuid = @patient);
 set @loc = IF(@locale is null, 'fr', @locale);
 
 
-select e.encounter_id,p.uuid "person_uuid", e.uuid "encounter_uuid",v.uuid "visit_uuid",  zlemr(e.patient_id) "zl_emr_id", concat(cna.given_name, ' ', cna.family_name) "patient_name", date(encounter_datetime) "referral_date",
+select p.uuid "patient_uuid", e.uuid "encounter_uuid",v.uuid "visit_uuid",  zlemr(e.patient_id) "zl_emr_id", concat(cna.given_name, ' ', cna.family_name) "patient_name", date(encounter_datetime) "referral_date",
 CASE  -- locale?
   WHEN o_r.concept_id = @general_referral and @loc = 'en' THEN "General"
   WHEN o_r.concept_id = @general_referral and @loc = 'fr' THEN "Général"
@@ -38,7 +38,7 @@ CASE
   WHEN o_r.concept_id = @malnutrition_referral then date(o_r.value_datetime)
 END "details"
 from encounter e
-INNER JOIN person p on p.person_id = e.patient_id and (@patient_id is null or p.person_id = @patient_id)
+INNER JOIN person p on p.person_id = e.patient_id and (@patient is null or p.person_id = @patient_id)
 INNER JOIN visit v on v.visit_id = e.visit_id
 LEFT OUTER JOIN current_name_address cna on cna.person_id = e.patient_id
 INNER JOIN obs o_r on e.encounter_id = o_r.encounter_id and o_r.voided = 0 and
