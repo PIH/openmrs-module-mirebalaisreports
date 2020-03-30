@@ -1,11 +1,5 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.config.Components;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
@@ -13,6 +7,12 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.ReportDesignRenderer;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.openmrs.module.mirebalaisreports.definitions.BaseReportManager.Category.DATA_EXPORT;
 
 @Component
 public class J9CaseRegistrationReportManager extends BasePihReportManager {
@@ -28,7 +28,7 @@ public class J9CaseRegistrationReportManager extends BasePihReportManager {
     }
 
     @Override
-    public String getComponent() { return Components.MCH_PROGRAM; }
+    public String getComponent() { return Components.J9; }
 
     @Override
     public Integer getOrder() {

@@ -27,7 +27,7 @@ public class J9ReferralReportManager extends BasePihReportManager {
     }
 
     @Override
-    public String getComponent() { return Components.MCH_PROGRAM; }
+    public String getComponent() { return Components.J9; }
 
     @Override
     public Integer getOrder() {
