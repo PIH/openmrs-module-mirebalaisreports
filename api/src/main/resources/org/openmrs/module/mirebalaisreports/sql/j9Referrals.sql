@@ -30,7 +30,7 @@ set @malnutrition_referral = (select concept_id from concept where uuid = '3ce1e
 
 
 -- only for testing...remove!
--- set @patient_id = null; 
+-- set @patient_id = null;
 -- set @startDate = '2020-04-16';
 -- set @endDate = '2020-04-30';
 -- set @locale = 'en';
@@ -55,70 +55,70 @@ create temporary table temp_referrals
 )
 ;
 
--- inserts rows into the temp table for every observation that indicates a referral. 
+-- inserts rows into the temp table for every observation that indicates a referral.
 insert into temp_referrals (encounter_id, person_uuid,encounter_uuid,visit_uuid,zl_emr_id,patient_name,referral_date,referral_concept_id,referral_value_coded,referral_value_datetime,urgent_value_coded)
-select e.encounter_id, p.uuid "person_uuid", e.uuid "encounter_uuid",v.uuid "visit_uuid",  zlemr(e.patient_id) "zl_emr_id", concat(cna.given_name, ' ', cna.family_name) "patient_name", date(encounter_datetime) "referral_date", 
+select e.encounter_id, p.uuid "patient_uuid", e.uuid "encounter_uuid",v.uuid "visit_uuid",  zlemr(e.patient_id) "zl_emr_id", concat(cna.given_name, ' ', cna.family_name) "patient_name", date(encounter_datetime) "referral_date",
 o_r.concept_id, o_r.value_coded, o_r.value_datetime,ou.value_coded
 from encounter e
 INNER JOIN person p on p.person_id = e.patient_id and (@patient_id is null or p.person_id = @patient_id)
-INNER JOIN visit v on v.visit_id = e.visit_id 
+INNER JOIN visit v on v.visit_id = e.visit_id
 LEFT OUTER JOIN current_name_address cna on cna.person_id = e.patient_id
-INNER JOIN obs o_r on e.encounter_id = o_r.encounter_id and o_r.voided = 0 and 
+INNER JOIN obs o_r on e.encounter_id = o_r.encounter_id and o_r.voided = 0 and
   ( (o_r.concept_id = @general_referral_question and o_r.value_coded = @yes) or
     (o_r.concept_id = @family_referred_question and o_r.value_coded = @yes) or
     (o_r.concept_id = @tetanus_vaccine_question and o_r.value_coded = @yes) or
     o_r.concept_id = @mh_referral_question or
-    o_r.concept_id = @malnutrition_referral_question or 
+    o_r.concept_id = @malnutrition_referral_question or
     (o_r.concept_id = @ped_vaccine_question and o_r.value_coded = @yes)
-    )     
+    )
 LEFT OUTER JOIN obs ou on e.encounter_id = ou.encounter_id and ou.voided = 0 and ou.concept_id = @urgent
-where e.voided = 0  
+where e.voided = 0
 and e.encounter_type in (@prenatal, @pediatric,@postnatal,@mat_followup)
 AND date(e.encounter_datetime) >= date(@startDate)
 AND date(e.encounter_datetime) <= date(@endDate)
-order by referral_date desc  
+order by referral_date desc
 ;
 
 -- update referral status
 update temp_referrals t
-inner join obs rc on rc.voided = 0 and rc.concept_id = @referral_construct and rc.encounter_id = t.encounter_id 
+inner join obs rc on rc.voided = 0 and rc.concept_id = @referral_construct and rc.encounter_id = t.encounter_id
 inner join obs tr on tr.voided = 0 and tr.obs_group_id = rc.obs_id and tr.concept_id = @type_referral and
   ( (referral_concept_id = @general_referral_question and tr.value_coded = @general_referral) or
     (referral_concept_id = @family_referred_question and tr.value_coded = @fam_member_referral) or
     (referral_concept_id = @mh_referral_question and tr.value_coded = @mh_referral) or
     (referral_concept_id = @tetanus_vaccine_question and tr.value_coded = @tetanus_vaccine_referral) or
     (referral_concept_id = @malnutrition_referral_question and tr.value_coded = @malnutrition_referral) or
-    (referral_concept_id = @ped_vaccine_question and tr.value_coded = @ped_vaccine_referral) 
-  )  
-inner join obs fs on fs.voided = 0 and  fs.obs_group_id = rc.obs_id and fs.concept_id = @fulfillment  
+    (referral_concept_id = @ped_vaccine_question and tr.value_coded = @ped_vaccine_referral)
+  )
+inner join obs fs on fs.voided = 0 and  fs.obs_group_id = rc.obs_id and fs.concept_id = @fulfillment
 set t.referral_status_coded = fs.value_coded
 ;
 
 
- -- select and translate results.  
+ -- select and translate results.
  -- Note that since a mental health referral with multiple reasons is really just one referral, we are grouping by referral type (and everything else except reason) here.
 select t.encounter_id, person_uuid, encounter_uuid, visit_uuid, zl_emr_id, patient_name, referral_date ,
-CASE 
-  WHEN t.referral_concept_id = @general_referral_question and @locale = 'en' THEN "General" 
-  WHEN t.referral_concept_id = @general_referral_question and @locale = 'fr' THEN "Général" 
+CASE
+  WHEN t.referral_concept_id = @general_referral_question and @locale = 'en' THEN "General"
+  WHEN t.referral_concept_id = @general_referral_question and @locale = 'fr' THEN "Général"
   WHEN t.referral_concept_id = @family_referred_question and @locale = 'en' THEN "Family Member"
   WHEN t.referral_concept_id = @family_referred_question and @locale = 'fr' THEN "Membre de famille"
   WHEN t.referral_concept_id = @mh_referral_question and @locale = 'en' THEN "Mental Health"
-  WHEN t.referral_concept_id = @mh_referral_question and @locale = 'fr' THEN "Santé mentale"  
+  WHEN t.referral_concept_id = @mh_referral_question and @locale = 'fr' THEN "Santé mentale"
   WHEN t.referral_concept_id = @tetanus_vaccine_question and @locale = 'en' THEN  "Tetanus Vaccination"
-  WHEN t.referral_concept_id = @tetanus_vaccine_question and @locale = 'fr' THEN  "Vaccination contre le tétanos"  
+  WHEN t.referral_concept_id = @tetanus_vaccine_question and @locale = 'fr' THEN  "Vaccination contre le tétanos"
   WHEN t.referral_concept_id = @malnutrition_referral_question and @locale = 'en' THEN  "Malnutrition"
-  WHEN t.referral_concept_id = @malnutrition_referral_question and @locale = 'fr' THEN  "Malnutrition"  
+  WHEN t.referral_concept_id = @malnutrition_referral_question and @locale = 'fr' THEN  "Malnutrition"
   WHEN t.referral_concept_id = @ped_vaccine_question and @locale = 'en' THEN  "Pediatric Vaccination"
-  WHEN t.referral_concept_id = @ped_vaccine_question and @locale = 'fr' THEN  "Vaccination pédiatrique"  
+  WHEN t.referral_concept_id = @ped_vaccine_question and @locale = 'fr' THEN  "Vaccination pédiatrique"
 END "referral_type",
 group_concat(
-CASE 
-  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale = 'en' THEN "Urgent"  
-  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale = 'fr' THEN "Urgent"  
-  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'en' THEN "non-Urgent" 
-  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'fr' THEN "Pas urgent" 
-  WHEN t.referral_concept_id = @mh_referral_question then concept_name(t.referral_value_coded, @locale)  
+CASE
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale = 'en' THEN "Urgent"
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale = 'fr' THEN "Urgent"
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'en' THEN "non-Urgent"
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'fr' THEN "Pas urgent"
+  WHEN t.referral_concept_id = @mh_referral_question then concept_name(t.referral_value_coded, @locale)
   WHEN t.referral_concept_id = @malnutrition_referral_question then date(t.referral_value_datetime)
 END separator ', ') "details",
 concept_name(t.referral_status_coded, @locale) 'fulfillment_status'
