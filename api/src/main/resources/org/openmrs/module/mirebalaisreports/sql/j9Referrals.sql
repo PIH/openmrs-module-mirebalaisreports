@@ -120,7 +120,7 @@ CASE
   WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'fr' THEN "Pas urgent" 
   WHEN t.referral_concept_id = @mh_referral_question then concept_name(t.referral_value_coded, @locale)  
   WHEN t.referral_concept_id = @malnutrition_referral_question then date(t.referral_value_datetime)
-END separator '|') "details",
+END separator ', ') "details",
 concept_name(t.referral_status_coded, @locale) 'fulfillment_status'
 from temp_referrals t
 group by t.encounter_id, person_uuid, encounter_uuid, visit_uuid, zl_emr_id, patient_name, referral_date, referral_type, fulfillment_status
