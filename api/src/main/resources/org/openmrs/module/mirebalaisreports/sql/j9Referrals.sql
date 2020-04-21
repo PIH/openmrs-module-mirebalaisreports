@@ -124,5 +124,5 @@ END separator ', ') "details",
 concept_name(t.referral_status_coded, @locale) 'fulfillment_status'
 from temp_referrals t
 group by t.encounter_id, person_uuid, encounter_uuid, visit_uuid, zl_emr_id, patient_name, referral_date, referral_type, fulfillment_status
-order by referral_date, zl_emr_id, referral_type
+order by referral_date desc, zl_emr_id, referral_type
 ;
