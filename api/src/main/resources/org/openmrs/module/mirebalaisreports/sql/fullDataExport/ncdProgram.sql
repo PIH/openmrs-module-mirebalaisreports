@@ -259,7 +259,7 @@ AND voided = 0 AND encounter_id IN (SELECT encounter_id FROM encounter WHERE voi
 DROP TEMPORARY TABLE IF EXISTS temp_final_ncd_nyha;
 CREATE TEMPORARY TABLE temp_final_ncd_nyha
 (
-SELECT person_id, concept_id, GROUP_CONCAT(DISTINCT(nyha) SEPARATOR " | ") last_nyha_classes, MAX(obs_datetime) FROM temp_stage_ncd__nyha GROUP BY person_id ORDER BY person_id
+SELECT person_id, concept_id, GROUP_CONCAT(DISTINCT(nyha) SEPARATOR " | ") last_nyha_classes, MAX(obs_datetime) FROM temp_stage_ncd_nyha GROUP BY person_id ORDER BY person_id
 );
 
 -- Lack of meds
