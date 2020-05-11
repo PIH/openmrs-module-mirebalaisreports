@@ -291,7 +291,7 @@ LEFT OUTER JOIN concept_name cn_recent_hosp ON cn_recent_hosp.concept_id = obs_r
 AND cn_recent_hosp.locale_preferred = 1 AND cn_recent_hosp.voided = 0
 SET p.recent_hospitalization = cn_recent_hosp.name;
 
--- last ncd meds
+-- ncd meds
 DROP TEMPORARY TABLE IF EXISTS temp_stage_ncd_meds;
 CREATE TEMPORARY TABLE temp_stage_ncd_meds
 (
@@ -301,11 +301,37 @@ SELECT person_id, concept_id, CONCEPT_NAME(value_coded, 'en') ncd_meds, obs_date
 AND meds.encounter_id IN (SELECT encounter_id FROM encounter WHERE voided = 0 AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc))
 );
 
+DROP TEMPORARY TABLE IF EXISTS temp_latest_ncd_meds_date;
+CREATE TEMPORARY TABLE temp_latest_ncd_meds_date
+(
+SELECT person_id, MAX(obs_datetime) latest_date_ncd_meds FROM temp_stage_ncd_meds
+GROUP BY person_id ORDER BY person_id
+);
+
+DROP TEMPORARY TABLE IF EXISTS temp_baseline_ncd_meds_date;
+CREATE TEMPORARY TABLE temp_baseline_ncd_meds_date
+(
+SELECT person_id, MIN(obs_datetime) baseline_date_ncd_meds FROM temp_stage_ncd_meds
+GROUP BY person_id ORDER BY person_id
+);
+
+-- baseline ncd meds
+DROP TEMPORARY TABLE IF EXISTS temp_baseline_ncd_meds;
+CREATE TEMPORARY TABLE temp_baseline_ncd_meds
+(
+SELECT tsnm.person_id, concept_id, baseline_date_ncd_meds, GROUP_CONCAT(ncd_meds SEPARATOR " | ") baseline_ncd_meds FROM temp_stage_ncd_meds tsnm INNER JOIN temp_baseline_ncd_meds_date tbnmd
+ON tsnm.person_id = tbnmd.person_id AND tsnm.obs_datetime = tbnmd.baseline_date_ncd_meds GROUP BY tsnm.person_id
+);
+
+-- lastr ncd meds recorded
 DROP TEMPORARY TABLE IF EXISTS temp_latest_ncd_meds;
 CREATE TEMPORARY TABLE temp_latest_ncd_meds
 (
-SELECT person_id, concept_id, GROUP_CONCAT(DISTINCT(ncd_meds) SEPARATOR " | ") last_ncd_meds_prescribed, MAX(obs_datetime) FROM temp_stage_ncd_meds GROUP BY person_id ORDER BY person_id
+SELECT tsnm.person_id, concept_id, latest_date_ncd_meds, GROUP_CONCAT(ncd_meds SEPARATOR " | ") latest_ncd_meds FROM temp_stage_ncd_meds tsnm INNER JOIN temp_latest_ncd_meds_date tlnmd
+ON tsnm.person_id = tlnmd.person_id AND tsnm.obs_datetime = tlnmd.latest_date_ncd_meds GROUP BY tlnmd.person_id
 );
+
+
 
 UPDATE temp_ncd_program p
 LEFT OUTER JOIN temp_ncd_last_ncd_enc ON p.patient_id = temp_ncd_last_ncd_enc.patient_id
@@ -338,50 +364,94 @@ p.anemia = cats.Anemia,
 p.epilepsy = cats.Epilepsy,
 p.other_category = cats.Other_Category;
 
--- last 3 diagnoses
-DROP TEMPORARY TABLE IF EXISTS temp_stage_ncd_latest_diagnoses;
-CREATE TEMPORARY TABLE temp_stage_ncd_latest_diagnoses
+
+-- ncd_diagnoses
+DROP TEMPORARY TABLE IF EXISTS temp_stage_ncd_diagnoses;
+CREATE TEMPORARY TABLE temp_stage_ncd_diagnoses
 (
 person_id INT(11),
 concept_id INT(11),
 value_coded INT(11),
 obs_datetime DATETIME
 );
-INSERT INTO temp_stage_ncd_latest_diagnoses (person_id, concept_id, value_coded, obs_datetime)
+INSERT INTO temp_stage_ncd_diagnoses (person_id, concept_id, value_coded, obs_datetime)
   SELECT person_id, concept_id, value_coded, DATE(obs_datetime) FROM obs WHERE encounter_id IN (SELECT encounter_id FROM encounter WHERE voided = 0 AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc))
   AND concept_id = (SELECT concept_id FROM report_mapping WHERE source = 'PIH' AND code = 'DIAGNOSIS') AND voided = 0;
 
-DROP TEMPORARY TABLE IF EXISTS temp_ncd_first_latest_diagnoses;
-CREATE TEMPORARY TABLE temp_ncd_first_latest_diagnoses
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_first_baseline_diagnoses;
+CREATE TEMPORARY TABLE temp_ncd_first_baseline_diagnoses
 (
 person_id_1 INT(11),
 concept_id_1 INT(11),
 value_coded_1 INT(11),
 obs_datetime_1 DATETIME,
-last_non_coded_diagnosis TEXT
+baseline_non_coded_diagnosis TEXT
 );
-INSERT INTO temp_ncd_first_latest_diagnoses (person_id_1, concept_id_1, value_coded_1, obs_datetime_1)
-  SELECT person_id, concept_id, value_coded, MAX(obs_datetime) FROM temp_stage_ncd_latest_diagnoses tsnld GROUP BY tsnld.person_id ORDER BY tsnld.person_id;
+INSERT INTO temp_ncd_first_baseline_diagnoses (person_id_1, concept_id_1, value_coded_1, obs_datetime_1)
+  SELECT person_id, concept_id, value_coded, MIN(obs_datetime) baseline_date_of_diagnosis FROM temp_stage_ncd_diagnoses tsnld GROUP BY tsnld.person_id ORDER BY tsnld.person_id;
+-- baseline 3 diagnoses
+UPDATE temp_ncd_first_baseline_diagnoses tnfbd
+LEFT JOIN (SELECT person_id, concept_id, DATE(obs_datetime) obsdatetime, value_text
+FROM  obs o WHERE o.concept_id = (SELECT concept_id FROM report_mapping WHERE source = 'PIH' AND code = 'Diagnosis or problem, non-coded') AND o.voided = 0 AND
+o.encounter_id IN (SELECT encounter_id FROM encounter WHERE voided = 0 AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc))) ob
+  ON ob.person_id = tnfbd.person_id_1 AND tnfbd.obs_datetime_1 = ob.obsdatetime
+SET tnfbd.baseline_non_coded_diagnosis = ob.value_text;
+
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_filtered_baseline_diagnoses_2;
+CREATE TEMPORARY TABLE temp_ncd_filtered_baseline_diagnoses_2
+(
+SELECT person_id, concept_id, value_coded, obs_datetime, person_id_1, concept_id_1, value_coded_1, obs_datetime_1 FROM temp_stage_ncd_diagnoses tsnld INNER JOIN
+temp_ncd_first_baseline_diagnoses tnfbd ON tsnld.person_id = tnfbd.person_id_1 AND tsnld.obs_datetime = tnfbd.obs_datetime_1
+);
+
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_filtered_baseline_diagnoses_3;
+CREATE TEMPORARY TABLE temp_ncd_filtered_baseline_diagnoses_3
+(
+SELECT person_id, concept_id, value_coded, obs_datetime FROM temp_ncd_filtered_baseline_diagnoses_2 tnfbd2 INNER JOIN temp_ncd_first_baseline_diagnoses tnfbd
+  ON tnfbd2.person_id = tnfbd.person_id_1 AND tnfbd2.value_coded <> tnfbd.value_coded_1 GROUP BY tnfbd2.person_id
+);
+
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_filtered_baseline_diagnoses_4;
+CREATE TEMPORARY TABLE temp_ncd_filtered_baseline_diagnoses_4
+(
+SELECT tnfbd2.person_id, tnfbd2.concept_id, tnfbd2.value_coded, tnfbd2.obs_datetime FROM temp_ncd_filtered_baseline_diagnoses_2 tnfbd2 INNER JOIN temp_ncd_filtered_baseline_diagnoses_3 tnfbd3 ON tnfbd2.person_id = tnfbd3.person_id
+AND tnfbd2.obs_datetime = tnfbd3.obs_datetime AND tnfbd2.value_coded NOT IN (tnfbd3.value_coded)
+  INNER JOIN temp_ncd_first_baseline_diagnoses tnfbd ON tnfbd2.person_id = tnfbd.person_id_1 AND tnfbd2.obs_datetime = tnfbd.obs_datetime_1
+  AND  tnfbd2.value_coded NOT IN (tnfbd.value_coded_1) GROUP BY tnfbd2.person_id
+);
+
+-- last 3 diagnoses
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_first_latest_diagnoses;
+CREATE TEMPORARY TABLE temp_ncd_first_latest_diagnoses
+(
+person_id_2 INT(11),
+concept_id_2 INT(11),
+value_coded_2 INT(11),
+obs_datetime_2 DATETIME,
+latest_non_coded_diagnosis TEXT
+);
+INSERT INTO temp_ncd_first_latest_diagnoses (person_id_2, concept_id_2, value_coded_2, obs_datetime_2)
+  SELECT person_id, concept_id, value_coded, MAX(obs_datetime) latest_date_of_diagnosis FROM temp_stage_ncd_diagnoses tsnld GROUP BY tsnld.person_id ORDER BY tsnld.person_id;
 
 UPDATE temp_ncd_first_latest_diagnoses tnfld
 LEFT JOIN (SELECT person_id, concept_id, DATE(obs_datetime) obsdatetime, value_text
 FROM  obs o WHERE o.concept_id = (SELECT concept_id FROM report_mapping WHERE source = 'PIH' AND code = 'Diagnosis or problem, non-coded') AND o.voided = 0 AND
 o.encounter_id IN (SELECT encounter_id FROM encounter WHERE voided = 0 AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc))) o1
-  ON o1.person_id = tnfld.person_id_1 AND tnfld.obs_datetime_1 = o1.obsdatetime
-SET tnfld.last_non_coded_diagnosis = o1.value_text;
+  ON o1.person_id = tnfld.person_id_2 AND tnfld.obs_datetime_2 = o1.obsdatetime
+SET tnfld.latest_non_coded_diagnosis = o1.value_text;
 
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_filtered_latest_diagnoses_2;
 CREATE TEMPORARY TABLE temp_ncd_filtered_latest_diagnoses_2
 (
-SELECT person_id, concept_id, value_coded, obs_datetime, person_id_1, concept_id_1, value_coded_1, obs_datetime_1 FROM temp_stage_ncd_latest_diagnoses tsnld INNER JOIN
-temp_ncd_first_latest_diagnoses tnfld ON tsnld.person_id = tnfld.person_id_1 AND tsnld.obs_datetime = tnfld.obs_datetime_1
+SELECT person_id, concept_id, value_coded, obs_datetime, person_id_2, concept_id_2, value_coded_2, obs_datetime_2 FROM temp_stage_ncd_diagnoses tsnld INNER JOIN
+temp_ncd_first_latest_diagnoses tnfld ON tsnld.person_id = tnfld.person_id_2 AND tsnld.obs_datetime = tnfld.obs_datetime_2
 );
 
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_filtered_latest_diagnoses_3;
 CREATE TEMPORARY TABLE temp_ncd_filtered_latest_diagnoses_3
 (
 SELECT person_id, concept_id, value_coded, obs_datetime FROM temp_ncd_filtered_latest_diagnoses_2 tnfld2 INNER JOIN temp_ncd_first_latest_diagnoses tnfld
-  ON tnfld2.person_id = tnfld.person_id_1 AND tnfld2.value_coded <> tnfld.value_coded_1 GROUP BY tnfld2.person_id
+  ON tnfld2.person_id = tnfld.person_id_2 AND tnfld2.value_coded <> tnfld.value_coded_2 GROUP BY tnfld2.person_id
 );
 
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_filtered_latest_diagnoses_4;
@@ -389,20 +459,29 @@ CREATE TEMPORARY TABLE temp_ncd_filtered_latest_diagnoses_4
 (
 SELECT tnfld2.person_id, tnfld2.concept_id, tnfld2.value_coded, tnfld2.obs_datetime FROM temp_ncd_filtered_latest_diagnoses_2 tnfld2 INNER JOIN temp_ncd_filtered_latest_diagnoses_3 tnfld3 ON tnfld2.person_id = tnfld3.person_id
 AND tnfld2.obs_datetime = tnfld3.obs_datetime AND tnfld2.value_coded NOT IN (tnfld3.value_coded)
-  INNER JOIN temp_ncd_first_latest_diagnoses tnfld ON tnfld2.person_id = tnfld.person_id_1 AND tnfld2.obs_datetime = tnfld.obs_datetime_1
-  AND  tnfld2.value_coded NOT IN (tnfld.value_coded_1) GROUP BY tnfld2.person_id
+  INNER JOIN temp_ncd_first_latest_diagnoses tnfld ON tnfld2.person_id = tnfld.person_id_2 AND tnfld2.obs_datetime = tnfld.obs_datetime_2
+  AND  tnfld2.value_coded NOT IN (tnfld.value_coded_2) GROUP BY tnfld2.person_id
 );
 
-DROP TEMPORARY TABLE IF EXISTS temp_ncd_final_latest_diagnoses;
-CREATE TEMPORARY TABLE temp_ncd_final_latest_diagnoses
+DROP TEMPORARY TABLE IF EXISTS temp_ncd_final_diagnoses;
+CREATE TEMPORARY TABLE temp_ncd_final_diagnoses
 (
-SELECT person_id_1, obs_datetime_1, CONCEPT_NAME(value_coded_1, 'en') last_diagnosis_1, CONCEPT_NAME(tnfld3.value_coded, 'en') last_diagnosis_2,
-       CONCEPT_NAME(tnfld4.value_coded, 'en') last_diagnosis_3, last_non_coded_diagnosis FROM temp_ncd_first_latest_diagnoses tnfld
+SELECT person_id_1, person_id_2, obs_datetime_1, obs_datetime_2, CONCEPT_NAME(value_coded_1, 'en') baseline_diagnosis_1, 
+	   CONCEPT_NAME(tnfbd3.value_coded, 'en') baseline_diagnosis_2, CONCEPT_NAME(tnfbd4.value_coded, 'en') baseline_diagnosis_3, 
+	   CONCEPT_NAME(value_coded_2, 'en') latest_diagnosis_1, CONCEPT_NAME(tnfld3.value_coded, 'en') latest_diagnosis_2,
+       CONCEPT_NAME(tnfld4.value_coded, 'en') latest_diagnosis_3, baseline_non_coded_diagnosis, latest_non_coded_diagnosis
+       FROM temp_ncd_first_baseline_diagnoses tnfbd
   LEFT JOIN
-  temp_ncd_filtered_latest_diagnoses_3 tnfld3 ON tnfld.person_id_1 = tnfld3.person_id
+  temp_ncd_filtered_baseline_diagnoses_3 tnfbd3 ON tnfbd.person_id_1 = tnfbd3.person_id
   LEFT JOIN
-  temp_ncd_filtered_latest_diagnoses_4 tnfld4 ON  tnfld.person_id_1 = tnfld4.person_id
-ORDER BY tnfld.person_id_1
+  temp_ncd_filtered_baseline_diagnoses_4 tnfbd4 ON  tnfbd.person_id_1 = tnfbd4.person_id
+  LEFT JOIN
+  temp_ncd_first_latest_diagnoses tnfld ON tnfbd.person_id_1 = tnfld.person_id_2
+  LEFT JOIN
+  temp_ncd_filtered_latest_diagnoses_3 tnfld3 ON tnfbd.person_id_1 = tnfld3.person_id
+  LEFT JOIN
+  temp_ncd_filtered_latest_diagnoses_4 tnfld4 ON  tnfbd.person_id_1 = tnfld4.person_id
+ORDER BY tnfbd.person_id_1
 );
 
 SELECT
@@ -444,8 +523,6 @@ last_nyha_classes,
 lack_of_meds,
 visit_adherence,
 recent_hospitalization,
-last_ncd_meds_prescribed,
-IF(last_ncd_meds_prescribed like '%nsulin%', 'oui', 'non') prescribed_insulin,
 HbA1c_result,
 HbA1c_collection_date,
 HbA1c_result_date,
@@ -456,12 +533,25 @@ weight,
 creatinine_result,
 creatinine_collection_date,
 creatinine_result_date,
-last_diagnosis_1,
-last_diagnosis_2,
-last_diagnosis_3,
-last_non_coded_diagnosis
+baseline_date_ncd_meds,
+baseline_ncd_meds,
+IF(baseline_ncd_meds LIKE '%nsulin%', 'oui', 'non') prescribed_insulin_during_baseline,
+latest_date_ncd_meds,
+latest_ncd_meds,
+IF(latest_ncd_meds LIKE '%nsulin%', 'oui', 'non') prescribed_insulin,
+obs_datetime_1 'baseline_diagnosis_date',
+baseline_diagnosis_1,
+baseline_diagnosis_2,
+baseline_diagnosis_3,
+baseline_non_coded_diagnosis,
+obs_datetime_2 'latest_diagnosis_date',
+latest_diagnosis_1,
+latest_diagnosis_2,
+latest_diagnosis_3,
+latest_non_coded_diagnosis
 FROM temp_ncd_program p LEFT OUTER JOIN temp_ncd_last_ncd_enc tlne ON p.patient_id = tlne.patient_id
-  LEFT OUTER JOIN temp_ncd_final_latest_diagnoses tnfld ON p.patient_id = tnfld.person_id_1
+  LEFT OUTER JOIN temp_ncd_final_diagnoses tnfld ON p.patient_id = tnfld.person_id_1
   LEFT OUTER JOIN temp_latest_ncd_meds tlnm ON p.patient_id = tlnm.person_id
   LEFT OUTER JOIN temp_ncd_lack_of_meds tnlom ON p.patient_id = tnlom.person_id
-  LEFT OUTER JOIN temp_final_ncd_nyha tfnn ON p.patient_id = tfnn.person_id;
+  LEFT OUTER JOIN temp_final_ncd_nyha tfnn ON p.patient_id = tfnn.person_id
+  LEFT OUTER JOIN temp_baseline_ncd_meds tbnm ON p.patient_id = tbnm.person_id;
