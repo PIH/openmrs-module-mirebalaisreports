@@ -97,27 +97,36 @@ set t.referral_status_coded = fs.value_coded
 
  -- select and translate results.
  -- Note that since a mental health referral with multiple reasons is really just one referral, we are grouping by referral type (and everything else except reason) here.
+ -- Also, translations for French and Haitian Creole are in here, and English is used if it's any other language.
 select t.encounter_id, person_uuid, encounter_uuid, visit_uuid, zl_emr_id, patient_name, referral_date ,
 CASE
-  WHEN t.referral_concept_id = @general_referral_question and @locale = 'en' THEN "General"
+  WHEN t.referral_concept_id = @general_referral_question and @locale not in ('fr','ht') THEN "General"
   WHEN t.referral_concept_id = @general_referral_question and @locale = 'fr' THEN "Général"
-  WHEN t.referral_concept_id = @family_referred_question and @locale = 'en' THEN "Family Member"
+  WHEN t.referral_concept_id = @general_referral_question and @locale = 'ht' THEN "Jeneral"
+  WHEN t.referral_concept_id = @family_referred_question and @locale not in ('fr','ht') THEN "Family Member"
   WHEN t.referral_concept_id = @family_referred_question and @locale = 'fr' THEN "Membre de famille"
-  WHEN t.referral_concept_id = @mh_referral_question and @locale = 'en' THEN "Mental Health"
+  WHEN t.referral_concept_id = @family_referred_question and @locale = 'ht' THEN "Manm fanmi an"
+  WHEN t.referral_concept_id = @mh_referral_question and @locale not in ('fr','ht') THEN "Mental Health"
   WHEN t.referral_concept_id = @mh_referral_question and @locale = 'fr' THEN "Santé mentale"
-  WHEN t.referral_concept_id = @tetanus_vaccine_question and @locale = 'en' THEN  "Tetanus Vaccination"
+  WHEN t.referral_concept_id = @mh_referral_question and @locale = 'ht' THEN "Sante mantal"
+  WHEN t.referral_concept_id = @tetanus_vaccine_question and @locale not in ('fr','ht') THEN  "Tetanus Vaccination"
   WHEN t.referral_concept_id = @tetanus_vaccine_question and @locale = 'fr' THEN  "Vaccination contre le tétanos"
-  WHEN t.referral_concept_id = @malnutrition_referral_question and @locale = 'en' THEN  "Malnutrition"
+  WHEN t.referral_concept_id = @tetanus_vaccine_question and @locale = 'ht' THEN  "Vaksinasyon kont tetanò"
+  WHEN t.referral_concept_id = @malnutrition_referral_question and @localenot in ('fr','ht') THEN  "Malnutrition"
   WHEN t.referral_concept_id = @malnutrition_referral_question and @locale = 'fr' THEN  "Malnutrition"
-  WHEN t.referral_concept_id = @ped_vaccine_question and @locale = 'en' THEN  "Pediatric Vaccination"
+  WHEN t.referral_concept_id = @malnutrition_referral_question and @locale = 'ht' THEN  "Malnitrisyon"  
+  WHEN t.referral_concept_id = @ped_vaccine_question and @locale not in ('fr','ht') THEN  "Pediatric Vaccination"
   WHEN t.referral_concept_id = @ped_vaccine_question and @locale = 'fr' THEN  "Vaccination pédiatrique"
+  WHEN t.referral_concept_id = @ped_vaccine_question and @locale = 'ht' THEN  "Vaksen Pedyat"
 END "referral_type",
 group_concat(
 CASE
-  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale = 'en' THEN "Urgent"
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale not in ('fr','ht') THEN "Urgent"
   WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale = 'fr' THEN "Urgent"
-  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'en' THEN "non-Urgent"
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @yes and @locale = 'ht' THEN "Ijan"
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale  not in ('fr','ht') THEN "non-Urgent"
   WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'fr' THEN "Pas urgent"
+  WHEN t.referral_concept_id = @general_referral_question and t.urgent_value_coded = @no and @locale = 'ht' THEN "Pa ijan"
   WHEN t.referral_concept_id = @mh_referral_question then concept_name(t.referral_value_coded, @locale)
   WHEN t.referral_concept_id = @malnutrition_referral_question then date(t.referral_value_datetime)
 END separator ', ') "details",
