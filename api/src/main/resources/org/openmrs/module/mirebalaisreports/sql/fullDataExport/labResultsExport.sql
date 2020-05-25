@@ -7,35 +7,42 @@
 SELECT patient_identifier_type_id into @zlId from patient_identifier_type where uuid in ('a541af1e-105c-40bf-b345-ba1fd6a59b85' ,'1a2acce0-7426-11e5-a837-0800200c9a66','0bc545e0-f401-11e4-b939-0800200c9a66');
 SELECT person_attribute_type_id into @unknownPt FROM person_attribute_type where uuid='8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47';
 SELECT encounter_type_id into @labResultEnc from encounter_type where uuid= '4d77916a-0620-11e5-a6c0-1697f925ec7b';
+SELECT order_type_id into @test_order from order_type where uuid = '52a447d3-a64a-11e3-9aeb-50e549534c5e';
+SELECT encounter_type_id into @specimen_collection from encounter_type where uuid = '39C09928-0CAB-4DBA-8E48-39C631FA4286';
+SELECT concept_id into @test_order from concept where uuid = '393dec41-2fb5-428f-acfa-36ea85da6666';
   
 drop temporary table if exists temp_laborders_spec;
 create temporary table temp_laborders_spec
 (
-  order_number    varchar(50) Primary key,
+  order_number    varchar(50),
   concept_id          int(11),
+  accession_number varchar(255),
   encounter_id        int(11),
   encounter_datetime  datetime,
   patient_id          int(11)
 
 );
 
--- This first query writes one row per order of the correct order type and within the date range that has a specimen collection encounter
+-- This first set of queries write one row per order of the correct order type and within the date range that has a specimen collection encounter
 -- All data from the order and specimen collection encounter that's needed is written here 
-insert into temp_laborders_spec (order_number,concept_id,encounter_id,encounter_datetime,patient_id)
-  select o.order_number,
-    o.concept_id,
-    sco.encounter_id,
-    e.encounter_datetime,
-    e.patient_id
-  from orders o
-    INNER JOIN obs sco on sco.value_text = o.order_number and sco.voided = 0 and o.voided = 0
-    INNER JOIN encounter e on e.encounter_id = sco.encounter_id and e.voided = 0
-  where o.order_type_id =
-        (select ot.order_type_id from order_type ot where ot.uuid = '52a447d3-a64a-11e3-9aeb-50e549534c5e') -- Test Order
-        and order_action = 'NEW'
-        and date(e.encounter_datetime) >= date(@startDate)
-        and date(e.encounter_datetime) <= date(@endDate)
-  group by o.order_number;
+insert into temp_laborders_spec (encounter_id,encounter_datetime,patient_id)
+select e.encounter_id,
+e.encounter_datetime,
+e.patient_id
+from encounter e
+where e.encounter_type = @specimen_collection and e.encounter_type = @specimen_collection and e.voided = 0
+and date(e.encounter_datetime) >= date(@startDate)
+and date(e.encounter_datetime) <= date(@endDate)
+ ;
+
+update temp_laborders_spec t
+INNER JOIN obs sco on sco.encounter_id = t.encounter_id and sco.concept_id = @test_order and sco.voided = 0
+SET order_number = sco.value_text;
+
+update temp_laborders_spec t
+INNER JOIN orders o on o.order_number = t.order_number
+SET t.concept_id = o.concept_id,
+t.accession_number = o.accession_number;
 
 -- The following query takes the list of orders/specimen collection encounters from above and pulls lab results for each them where they exist   
 -- The first select statement handles all of the results entered in for which there were orders (using the above list)
@@ -52,6 +59,7 @@ SELECT t.patient_id,
        pa.address1 as 'locality',
        pa.address2 as 'street_landmark',
        t.order_number,
+       t.accession_number as 'lab_visit_id',
        ocn.name as 'orderable',
        -- only return test name is test was performed:
        CASE when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' then cnq.name END as 'test',
@@ -118,6 +126,7 @@ SELECT e.patient_id,
        pa.address1 as 'locality',
        pa.address2 as 'street_landmark',
        null 'order_number',
+       null 'lab_visit_id',
        null 'orderable',
        cnq.name as 'test',
        e.encounter_datetime as 'specimen_collection_date',
