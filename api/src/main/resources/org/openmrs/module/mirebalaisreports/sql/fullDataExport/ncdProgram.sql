@@ -16,8 +16,10 @@ CREATE TEMPORARY TABLE temp_ncd_last_ncd_enc
   encounter_id INT,
   patient_id INT,
   encounter_datetime DATETIME,
-  zlemr_id VARCHAR(255),
-  dossier_id VARCHAR(255)
+  encounter_obs_date DATETIME,
+  weight DOUBLE,
+  bp_diastolic DOUBLE,
+  bp_systolic DOUBLE
 );
 INSERT INTO temp_ncd_last_ncd_enc(patient_id, encounter_datetime)
   SELECT patient_id, MAX(encounter_datetime) FROM encounter WHERE voided = 0
@@ -27,18 +29,45 @@ UPDATE temp_ncd_last_ncd_enc tlne
 INNER JOIN encounter e ON tlne.patient_id = e.patient_id AND tlne.encounter_datetime = e.encounter_datetime AND e.encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
 SET tlne.encounter_id = e.encounter_id;
 
+-- set the secs to 00:00
 UPDATE temp_ncd_last_ncd_enc tlne
--- Most recent ZL EMR ID
-INNER JOIN (SELECT patient_id, identifier FROM patient_identifier WHERE identifier_type = @zlId
-            AND voided = 0 AND preferred = 1 ORDER BY date_created DESC) zl ON tlne.patient_id = zl.patient_id
-SET tlne.zlemr_id = zl.identifier;
+SET tlne.encounter_obs_date = DATE(encounter_datetime);
+
+-- weight
+DROP TEMPORARY TABLE IF EXISTS temp_table_weight;
+CREATE TEMPORARY TABLE temp_table_weight
+(SELECT person_id, DATE(obs_datetime) obsdatetime, value_numeric FROM obs WHERE voided = 0 AND concept_id = 
+(SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'WEIGHT (KG)'));
 
 UPDATE temp_ncd_last_ncd_enc tlne
--- -- Dossier ID
-INNER JOIN (SELECT patient_id, MAX(identifier) dos_id FROM patient_identifier WHERE identifier_type = @dosId
-            AND voided = 0 GROUP BY patient_id) dos ON tlne.patient_id = dos.patient_id
-SET tlne.dossier_id = dos.dos_id;
+LEFT OUTER JOIN temp_table_weight weight ON weight.person_id = tlne.patient_id AND weight.obsdatetime = tlne.encounter_obs_date
+SET tlne.weight = weight.value_numeric;
 
+-- Blood Pressure 
+DROP TEMPORARY TABLE IF EXISTS temp_table_sys_bp;
+CREATE TEMPORARY TABLE temp_table_sys_bp
+(SELECT person_id, DATE(obs_datetime) obsdatetime, value_numeric FROM obs WHERE voided = 0 AND concept_id = 
+(SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'Systolic Blood Pressure'));
+
+UPDATE temp_ncd_last_ncd_enc tlne
+        LEFT OUTER JOIN
+    temp_table_sys_bp systolic_bp ON systolic_bp.person_id = tlne.patient_id
+        AND systolic_bp.obsdatetime = tlne.encounter_obs_date 
+SET 
+    tlne.bp_systolic = systolic_bp.value_numeric;
+
+DROP TEMPORARY TABLE IF EXISTS temp_table_dia_bp;
+CREATE TEMPORARY TABLE temp_table_dia_bp
+(SELECT person_id, DATE(obs_datetime) obsdatetime, value_numeric FROM obs WHERE voided = 0 AND concept_id = 
+(SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'Diastolic Blood Pressure'));
+
+UPDATE temp_ncd_last_ncd_enc tlne
+        LEFT OUTER JOIN
+    temp_table_dia_bp diastolic_bp ON diastolic_bp.person_id = tlne.patient_id
+        AND diastolic_bp.obsdatetime = tlne.encounter_obs_date 
+SET 
+    tlne.bp_diastolic = diastolic_bp.value_numeric;
+  
 -- initial ncd enc table(ideally it should be ncd initital form only)
 CREATE TEMPORARY TABLE temp_ncd_first_ncd_enc
 (
@@ -86,10 +115,7 @@ CREATE TEMPORARY TABLE temp_ncd_program(
   HbA1c_result DOUBLE,
   HbA1c_collection_date DATETIME,
   HbA1c_result_date DATETIME,
-  bp_diastolic DOUBLE,
-  bp_systolic DOUBLE,
   height DOUBLE,
-  weight DOUBLE,
   creatinine_result DOUBLE,
   creatinine_collection_date DATETIME,
   creatinine_result_date DATETIME,
@@ -142,8 +168,8 @@ LEFT OUTER JOIN obs contact_telephone ON contact_telephone.person_id = p.patient
 report_mapping WHERE source="PIH" AND code="TELEPHONE NUMBER OF CONTACT")
 SET p.contact_telephone_number = contact_telephone.value_text;
 
-UPDATE temp_ncd_program p
 -- patient state
+UPDATE temp_ncd_program p
 LEFT OUTER JOIN patient_state ps ON ps.patient_program_id = p.patient_program_id AND ps.end_date IS NULL AND ps.voided = 0
 LEFT OUTER JOIN program_workflow_state pws ON pws.program_workflow_state_id = ps.state AND pws.retired = 0
 LEFT OUTER JOIN concept_name cn_state ON cn_state.concept_id = pws.concept_id  AND cn_state.locale = 'en' AND cn_state.locale_preferred = '1'  AND cn_state.voided = 0
@@ -199,21 +225,6 @@ p.HbA1c_collection_date = HbA1c_results.HbA1c_coll_date,
 p.HbA1c_result_date = DATE(HbA1c_date.value_datetime);
 
 UPDATE temp_ncd_program p
--- last collected Blood Pressure
-LEFT OUTER JOIN obs bp_syst ON bp_syst.obs_id =
-(SELECT obs_id FROM obs o2 WHERE o2.person_id = p.patient_id
-    AND o2.concept_id =
-      (SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'Systolic Blood Pressure')
-    ORDER BY o2.obs_datetime DESC LIMIT 1
-    ) AND bp_syst.voided = 0
-LEFT OUTER JOIN obs bp_diast ON bp_diast.encounter_id = bp_syst.encounter_id
-AND bp_diast.concept_id =
-(SELECT concept_id FROM report_mapping rm_diast WHERE rm_diast.source = 'PIH' AND rm_diast.code = 'Diastolic Blood Pressure')
-  AND bp_diast.voided = 0
-SET p.bp_diastolic  = bp_diast.value_numeric,
-p.bp_systolic = bp_syst.value_numeric;
-
-UPDATE temp_ncd_program p
 -- last collected Creatinine test
 LEFT OUTER JOIN
 (SELECT person_id, value_numeric, creat_test.encounter_id, DATE(obs_datetime), DATE(edate.encounter_datetime) creat_coll_date FROM obs creat_test JOIN encounter
@@ -232,36 +243,15 @@ p.creatinine_collection_date = DATE(creat_results.creat_coll_date),
 p.creatinine_result_date = DATE(creat_date.value_datetime);
 
 UPDATE temp_ncd_program p
--- last collected Height, Weight
+-- last collected Height
 LEFT OUTER JOIN obs height ON height.obs_id =
 (SELECT obs_id FROM obs o2 WHERE o2.person_id = p.patient_id
     AND o2.concept_id =
       (SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'HEIGHT (CM)')
     ORDER BY o2.obs_datetime DESC LIMIT 1
-    ) AND height.voided = 0
-LEFT OUTER JOIN obs weight ON weight.obs_id =
-(SELECT obs_id FROM obs o2 WHERE o2.person_id = p.patient_id
-    AND o2.concept_id =
-      (SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'WEIGHT (KG)')
-    ORDER BY o2.obs_datetime DESC LIMIT 1
-    ) AND weight.voided = 0
-SET p.height = height.value_numeric,
-p.weight = weight.value_numeric;
-
--- last NYHA recorded
-DROP TEMPORARY TABLE IF EXISTS temp_stage_ncd_nyha;
-CREATE TEMPORARY TABLE temp_stage_ncd_nyha
-(
-SELECT person_id, concept_id, CONCEPT_NAME(value_coded, 'en') nyha, obs_datetime FROM obs WHERE concept_id = (SELECT concept_id FROM report_mapping rm_next WHERE rm_next.source = 'PIH' AND rm_next.code = 'NYHA CLASS')
-AND voided = 0 AND encounter_id IN (SELECT encounter_id FROM encounter WHERE voided = 0 AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc))
-);
-
-DROP TEMPORARY TABLE IF EXISTS temp_final_ncd_nyha;
-CREATE TEMPORARY TABLE temp_final_ncd_nyha
-(
-SELECT person_id, concept_id, GROUP_CONCAT(DISTINCT(nyha) SEPARATOR " | ") last_nyha_classes, MAX(obs_datetime) FROM temp_stage_ncd_nyha GROUP BY person_id ORDER BY person_id
-);
-
+    ) AND height.voided = 0   
+SET p.height = height.value_numeric;
+ 
 -- Lack of meds
 DROP TEMPORARY TABLE IF EXISTS temp_ncd_lack_of_meds;
 CREATE TEMPORARY TABLE temp_ncd_lack_of_meds
@@ -331,8 +321,6 @@ SELECT tsnm.person_id, concept_id, latest_date_ncd_meds, GROUP_CONCAT(ncd_meds S
 ON tsnm.person_id = tlnmd.person_id AND tsnm.obs_datetime = tlnmd.latest_date_ncd_meds GROUP BY tlnmd.person_id
 );
 
-
-
 UPDATE temp_ncd_program p
 LEFT OUTER JOIN temp_ncd_last_ncd_enc ON p.patient_id = temp_ncd_last_ncd_enc.patient_id
 -- NCD category
@@ -363,7 +351,6 @@ p.rehab = cats.Rehab,
 p.anemia = cats.Anemia,
 p.epilepsy = cats.Epilepsy,
 p.other_category = cats.Other_Category;
-
 
 -- ncd_diagnoses
 DROP TEMPORARY TABLE IF EXISTS temp_stage_ncd_diagnoses;
@@ -484,10 +471,27 @@ SELECT person_id_1, person_id_2, obs_datetime_1, obs_datetime_2, CONCEPT_NAME(va
 ORDER BY tnfbd.person_id_1
 );
 
+-- last NYHA recorded
+DROP TEMPORARY TABLE IF EXISTS temp_stage_ncd_nyha;
+CREATE TEMPORARY TABLE temp_stage_ncd_nyha
+(
+SELECT person_id, concept_id, CONCEPT_NAME(value_coded, 'en') nyha, DATE(obs_datetime) obsdatetime FROM obs WHERE concept_id = (SELECT concept_id FROM report_mapping rm_next WHERE rm_next.source = 'PIH' AND rm_next.code = 'NYHA CLASS')
+AND voided = 0 AND encounter_id IN (SELECT encounter_id FROM encounter WHERE voided = 0 AND encounter_type IN (@NCDInitEnc, @NCDFollowEnc))
+);
+
+DROP TEMPORARY TABLE IF EXISTS temp_final_ncd_nyha;
+CREATE TEMPORARY TABLE temp_final_ncd_nyha
+(
+SELECT person_id, concept_id, GROUP_CONCAT(nyha SEPARATOR " | ") last_nyha_classes, obsdatetime FROM temp_stage_ncd_nyha INNER JOIN
+temp_ncd_program ON temp_ncd_program.patient_id = temp_stage_ncd_nyha.person_id AND temp_ncd_program.last_ncd_encounter = temp_stage_ncd_nyha.obsdatetime
+GROUP BY temp_stage_ncd_nyha.person_id
+);
+
+
 SELECT
 p.patient_id "patient_id",
-zlemr_id,
-dossier_id,
+ZLEMR(p.patient_id) zlemr_id,
+DOSID(p.patient_id) dossier_id,
 given_name,
 family_name,
 birthdate,
@@ -519,6 +523,7 @@ rehab,
 anemia,
 epilepsy,
 other_category,
+tfnn.obsdatetime "date_last_nyha_classes",
 last_nyha_classes,
 lack_of_meds,
 visit_adherence,
