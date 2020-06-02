@@ -17,7 +17,9 @@ CREATE TEMPORARY TABLE temp_ncd_last_ncd_enc
   patient_id INT,
   encounter_datetime DATETIME,
   encounter_obs_date DATETIME,
-  weight DOUBLE
+  weight DOUBLE,
+  bp_diastolic DOUBLE,
+  bp_systolic DOUBLE
 );
 INSERT INTO temp_ncd_last_ncd_enc(patient_id, encounter_datetime)
   SELECT patient_id, MAX(encounter_datetime) FROM encounter WHERE voided = 0
@@ -27,9 +29,11 @@ UPDATE temp_ncd_last_ncd_enc tlne
 INNER JOIN encounter e ON tlne.patient_id = e.patient_id AND tlne.encounter_datetime = e.encounter_datetime AND e.encounter_type IN (@NCDInitEnc, @NCDFollowEnc)
 SET tlne.encounter_id = e.encounter_id;
 
+-- set the secs to 00:00
 UPDATE temp_ncd_last_ncd_enc tlne
 SET tlne.encounter_obs_date = DATE(encounter_datetime);
 
+-- weight
 DROP TEMPORARY TABLE IF EXISTS temp_table_weight;
 CREATE TEMPORARY TABLE temp_table_weight
 (SELECT person_id, DATE(obs_datetime) obsdatetime, value_numeric FROM obs WHERE voided = 0 AND concept_id = 
@@ -38,7 +42,32 @@ CREATE TEMPORARY TABLE temp_table_weight
 UPDATE temp_ncd_last_ncd_enc tlne
 LEFT OUTER JOIN temp_table_weight weight ON weight.person_id = tlne.patient_id AND weight.obsdatetime = tlne.encounter_obs_date
 SET tlne.weight = weight.value_numeric;
- 
+
+-- Blood Pressure 
+DROP TEMPORARY TABLE IF EXISTS temp_table_sys_bp;
+CREATE TEMPORARY TABLE temp_table_sys_bp
+(SELECT person_id, DATE(obs_datetime) obsdatetime, value_numeric FROM obs WHERE voided = 0 AND concept_id = 
+(SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'Systolic Blood Pressure'));
+
+UPDATE temp_ncd_last_ncd_enc tlne
+        LEFT OUTER JOIN
+    temp_table_sys_bp systolic_bp ON systolic_bp.person_id = tlne.patient_id
+        AND systolic_bp.obsdatetime = tlne.encounter_obs_date 
+SET 
+    tlne.bp_systolic = systolic_bp.value_numeric;
+
+DROP TEMPORARY TABLE IF EXISTS temp_table_dia_bp;
+CREATE TEMPORARY TABLE temp_table_dia_bp
+(SELECT person_id, DATE(obs_datetime) obsdatetime, value_numeric FROM obs WHERE voided = 0 AND concept_id = 
+(SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'Diastolic Blood Pressure'));
+
+UPDATE temp_ncd_last_ncd_enc tlne
+        LEFT OUTER JOIN
+    temp_table_dia_bp diastolic_bp ON diastolic_bp.person_id = tlne.patient_id
+        AND diastolic_bp.obsdatetime = tlne.encounter_obs_date 
+SET 
+    tlne.bp_diastolic = diastolic_bp.value_numeric;
+  
 -- initial ncd enc table(ideally it should be ncd initital form only)
 CREATE TEMPORARY TABLE temp_ncd_first_ncd_enc
 (
@@ -86,8 +115,6 @@ CREATE TEMPORARY TABLE temp_ncd_program(
   HbA1c_result DOUBLE,
   HbA1c_collection_date DATETIME,
   HbA1c_result_date DATETIME,
-  bp_diastolic DOUBLE,
-  bp_systolic DOUBLE,
   height DOUBLE,
   creatinine_result DOUBLE,
   creatinine_collection_date DATETIME,
@@ -141,8 +168,8 @@ LEFT OUTER JOIN obs contact_telephone ON contact_telephone.person_id = p.patient
 report_mapping WHERE source="PIH" AND code="TELEPHONE NUMBER OF CONTACT")
 SET p.contact_telephone_number = contact_telephone.value_text;
 
-UPDATE temp_ncd_program p
 -- patient state
+UPDATE temp_ncd_program p
 LEFT OUTER JOIN patient_state ps ON ps.patient_program_id = p.patient_program_id AND ps.end_date IS NULL AND ps.voided = 0
 LEFT OUTER JOIN program_workflow_state pws ON pws.program_workflow_state_id = ps.state AND pws.retired = 0
 LEFT OUTER JOIN concept_name cn_state ON cn_state.concept_id = pws.concept_id  AND cn_state.locale = 'en' AND cn_state.locale_preferred = '1'  AND cn_state.voided = 0
@@ -196,21 +223,6 @@ AND HbA1c_date.concept_id =
 SET p.HbA1c_result = HbA1c_results.value_numeric,
 p.HbA1c_collection_date = HbA1c_results.HbA1c_coll_date,
 p.HbA1c_result_date = DATE(HbA1c_date.value_datetime);
-
-UPDATE temp_ncd_program p
--- last collected Blood Pressure
-LEFT OUTER JOIN obs bp_syst ON bp_syst.obs_id =
-(SELECT obs_id FROM obs o2 WHERE o2.person_id = p.patient_id
-    AND o2.concept_id =
-      (SELECT concept_id FROM report_mapping rm_syst WHERE rm_syst.source = 'PIH' AND rm_syst.code = 'Systolic Blood Pressure')
-    ORDER BY o2.obs_datetime DESC LIMIT 1
-    ) AND bp_syst.voided = 0
-LEFT OUTER JOIN obs bp_diast ON bp_diast.encounter_id = bp_syst.encounter_id
-AND bp_diast.concept_id =
-(SELECT concept_id FROM report_mapping rm_diast WHERE rm_diast.source = 'PIH' AND rm_diast.code = 'Diastolic Blood Pressure')
-  AND bp_diast.voided = 0
-SET p.bp_diastolic  = bp_diast.value_numeric,
-p.bp_systolic = bp_syst.value_numeric;
 
 UPDATE temp_ncd_program p
 -- last collected Creatinine test
