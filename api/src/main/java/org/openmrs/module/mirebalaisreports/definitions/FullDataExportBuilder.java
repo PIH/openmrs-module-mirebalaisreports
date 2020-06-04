@@ -182,6 +182,13 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MCH_REPORT_DEFINITION_UUID, "mchdataexport",
                         Arrays.asList("prenatalAndDelivery", "vaccinationsANC", "mchCCHomeVisitData")));
             }
+            if (config.isComponentEnabled(Components.COVID19) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(
+                        MirebalaisReportsProperties.COVID19_ENCOUNTER_EXPORT_REPORT_DEFINITION_UUID,
+                        "covid19encounterexport",
+                        Arrays.asList("covid19encounterexport")
+                ));
+            }
 
         }
         return configurations;
