@@ -188,6 +188,11 @@ public class FullDataExportBuilder {
                         "covid19encounterexport",
                         Arrays.asList("covid19encounterexport")
                 ));
+                configurations.add(new Configuration(
+                        MirebalaisReportsProperties.COVID19_DAILY_CENSUS_REPORT_DEFINITION_UUID,
+                        "covid19dailycensusexport",
+                        Arrays.asList("covid19dailycensusexport")
+                ));
             }
 
         }

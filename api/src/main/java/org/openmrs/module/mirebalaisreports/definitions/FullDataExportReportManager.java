@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.apache.commons.io.FileUtils;
 import org.openmrs.Concept;
 import org.openmrs.Drug;
 import org.openmrs.Location;
@@ -66,8 +67,11 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.ReportDesignRenderer;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -236,8 +240,12 @@ public class FullDataExportReportManager extends BasePihReportManager {
                         key.contains("covid19")) {
                     dsd = constructSqlFileDataSetDefinition(key);
 
-                    // mental health program and ncd health program do not have start and end date, but the rest do
-                    if ((!"mentalHealthProgram".equals(key)) && (!"ncdProgram".equals(key)))  {
+                    // most reports have start and end date parameters.  the below do not
+                    if (
+                            (!"mentalHealthProgram".equals(key)) &&
+                            (!"ncdProgram".equals(key)) &&
+                            (!"covid19dailycensusexport".equals(key))
+                    )  {
                         addStartAndEndDateParameters(rd, dsd, mappings);
                     }
                 }
@@ -447,7 +455,21 @@ public class FullDataExportReportManager extends BasePihReportManager {
 
     private SqlFileDataSetDefinition constructSqlFileDataSetDefinition(String key) {
         SqlFileDataSetDefinition dsd = new SqlFileDataSetDefinition();
-        dsd.setSqlResource(SQL_DIR + key + ".sql");
+        // First check to see if there is a SQL file in the configuration directory
+        try {
+            File configDir = OpenmrsUtil.getDirectoryInApplicationDataDirectory("configuration");
+            File sqlFile = FileUtils.getFile(configDir, "pih", "reports", "sql", key + ".sql");
+            if (sqlFile.exists()) {
+                dsd.setSqlFile(sqlFile.getAbsolutePath());
+            }
+        }
+        catch (Exception e) {
+            log.warn("An error occured checking the configuration directory for a SQL report", e);
+        }
+        // If no SQL file was found in the configuration directory, use whatever default is configured on the classpath
+        if (StringUtils.isEmpty(dsd.getSqlFile())) {
+            dsd.setSqlResource(SQL_DIR + key + ".sql");
+        }
         return dsd;
     }
 
