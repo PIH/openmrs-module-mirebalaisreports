@@ -133,6 +133,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String MEXICO_SIS_DIAGNOSES_REPORT_DEFINITION_UUID = "6d271d1c-26c5-4ee5-989d-2316dea1a561";
     public static final String MEXICO_CES_MEDS_REPORT_DEFINITION_UUID = "f03e1621-8801-47c9-a845-3839ba44fa03";
     public static final String MEXICO_SSA_MEDS_REPORT_DEFINITION_UUID = "84ed6470-84f8-4cf6-ba23-bb27c7e4fa76";
+    public static final String COVID19_ENCOUNTER_EXPORT_REPORT_DEFINITION_UUID = "df97b32b-a5d0-11ea-b958-0242ac110002";
+	public static final String COVID19_DAILY_CENSUS_REPORT_DEFINITION_UUID = "e00f64eb-a654-11ea-b958-0242ac110002";
 
     //***** SCHEDULED REPORT REQUESTS *****
     public static final String ALL_PATIENTS_SCHEDULED_REPORT_REQUEST_UUID = "733cd7c0-2ed0-11e4-8c21-0800200c9a66";
