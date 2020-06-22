@@ -1,8 +1,10 @@
-#set @startDate='1900-01-01';
-#set @endDate='2019-11-20';
+#set @startDate='2020-01-01';
+#set @endDate='2020-05-20';
 #a541af1e-105c-40bf-b345-ba1fd6a59b85 ZL
 #1a2acce0-7426-11e5-a837-0800200c9a66 Wellbody
 #0bc545e0-f401-11e4-b939-0800200c9a66 Liberia
+ 
+set @locale = global_property_value('default_locale', 'en'); 
  
 SELECT patient_identifier_type_id into @zlId from patient_identifier_type where uuid in ('a541af1e-105c-40bf-b345-ba1fd6a59b85' ,'1a2acce0-7426-11e5-a837-0800200c9a66','0bc545e0-f401-11e4-b939-0800200c9a66');
 SELECT person_attribute_type_id into @unknownPt FROM person_attribute_type where uuid='8b56eac7-5c76-4b9c-8c6f-1deab8d3fc47';
@@ -10,170 +12,203 @@ SELECT encounter_type_id into @labResultEnc from encounter_type where uuid= '4d7
 SELECT order_type_id into @test_order from order_type where uuid = '52a447d3-a64a-11e3-9aeb-50e549534c5e';
 SELECT encounter_type_id into @specimen_collection from encounter_type where uuid = '39C09928-0CAB-4DBA-8E48-39C631FA4286';
 SELECT concept_id into @test_order from concept where uuid = '393dec41-2fb5-428f-acfa-36ea85da6666';
-  
+SELECT concept_id into @not_performed from concept where uuid = '5dc35a2a-228c-41d0-ae19-5b1e23618eda';
+SELECT concept_id into @order_number from concept where UUID = '393dec41-2fb5-428f-acfa-36ea85da6666'; 
+SELECT concept_id into @result_date from concept where UUID = '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'; 
+SELECT concept_id into @test_location from concept where UUID = global_property_value('labworkflowowa.locationOfLaboratory', 'Unknown Location'); -- test location may differ by implementation
+SELECT concept_id into @test_status from concept where UUID = '7e0cf626-dbe8-42aa-9b25-483b51350bf8'; 
+SELECT concept_id into @collection_date_estimated from concept where UUID = '87f506e3-4433-40ec-b16c-b3c65e402989'; 
+
+-- this temp table stores specimen collection encounter-level information
 drop temporary table if exists temp_laborders_spec;
 create temporary table temp_laborders_spec
 (
-  order_number    varchar(50),
-  concept_id          int(11),
-  accession_number varchar(255),
-  encounter_id        int(11),
+  order_number varchar(50),
+  concept_id int(11),
+  encounter_id int(11),
   encounter_datetime  datetime,
-  patient_id          int(11)
+  patient_id int(11),
+  emr_id varchar(50),
+  loc_registered varchar(255),
+  unknown_patient varchar(50),
+  gender varchar(50),
+  age_at_enc int(11),
+  department varchar(255),
+  commune varchar(255),
+  section varchar(255),
+  locality varchar(255),
+  street_landmark varchar(255),
+  results_date datetime,
+  results_entry_date datetime
+ );
 
+-- this temp table stores specimen encounter-level information from above and result-level information 
+drop temporary table if exists temp_labresults;
+create temporary table temp_labresults
+(
+  patient_id int(11),
+  emr_id varchar(50),
+  loc_registered varchar(255),
+  unknown_patient varchar(50),
+  gender varchar(50),
+  age_at_enc int(11),
+  department varchar(255),
+  commune varchar(255),
+  section varchar(255),
+  locality varchar(255),
+  street_landmark varchar(255),
+  order_number varchar(50) ,
+  orderable varchar(255),
+  test varchar(255),
+  specimen_collection_date datetime,
+  results_date datetime,
+  results_entry_date datetime,
+  result varchar(255),
+  units varchar(255),
+  test_concept_id int(11),
+  reason_not_performed text,
+  result_coded_answer varchar(255),
+  result_numeric_answer double,
+  result_text_answer text
 );
-
--- This first set of queries write one row per order of the correct order type and within the date range that has a specimen collection encounter
--- All data from the order and specimen collection encounter that's needed is written here 
-insert into temp_laborders_spec (encounter_id,encounter_datetime,patient_id)
+ 
+ -- this loads all specimen encounters (from the lab application) into a temp table 
+insert into temp_laborders_spec (encounter_id,encounter_datetime,patient_id,emr_id)
 select e.encounter_id,
 e.encounter_datetime,
-e.patient_id
+e.patient_id,
+patient_identifier(e.patient_id, metadata_uuid('org.openmrs.module.emrapi', 'emr.primaryIdentifierType'))
 from encounter e
-where e.encounter_type = @specimen_collection and e.encounter_type = @specimen_collection and e.voided = 0
+where e.encounter_type = @specimen_collection and e.voided = 0
 and date(e.encounter_datetime) >= date(@startDate)
 and date(e.encounter_datetime) <= date(@endDate)
- ;
+;
 
+
+
+-- updates order number 
 update temp_laborders_spec t
 INNER JOIN obs sco on sco.encounter_id = t.encounter_id and sco.concept_id = @test_order and sco.voided = 0
 SET order_number = sco.value_text;
 
+-- updates concept id of orderable
 update temp_laborders_spec t
 INNER JOIN orders o on o.order_number = t.order_number
-SET t.concept_id = o.concept_id,
-t.accession_number = o.accession_number;
+SET t.concept_id = o.concept_id
+;
 
--- The following query takes the list of orders/specimen collection encounters from above and pulls lab results for each them where they exist   
--- The first select statement handles all of the results entered in for which there were orders (using the above list)
--- This is UNION'ed with a select statement handling the results entered in the standalone lab results encounter
-SELECT t.patient_id,
-       zl.identifier as 'emr_id',
-	   zl_loc.name as 'loc_registered',
-       un.value as 'unknown_patient',
-       pr.gender,
-       ROUND(DATEDIFF(t.encounter_datetime, pr.birthdate)/365.25, 1) as 'age_at_enc',
-       pa.state_province as 'department',
-       pa.city_village as 'commune',
-       pa.address3 as 'section',
-       pa.address1 as 'locality',
-       pa.address2 as 'street_landmark',
-       t.order_number,
-       t.accession_number as 'lab_visit_id',
-       ocn.name as 'orderable',
-       -- only return test name is test was performed:
-       CASE when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' then cnq.name END as 'test',
-       t.encounter_datetime as 'specimen_collection_date',
-       res_date.value_datetime as 'results_date',
-       res.date_created "results_entry_date",
-       -- only return the result if the test was performed:     
-       CASE 
-         when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' and res.value_numeric is not null then res.value_numeric
-         when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' and res.value_text is not null then res.value_text
-         when c.UUID <> '5dc35a2a-228c-41d0-ae19-5b1e23618eda' and cna.name is not null then cna.name
-       END as 'result',
-       cu.units,
-       CASE when c.UUID = '5dc35a2a-228c-41d0-ae19-5b1e23618eda' then cna.name else null END as 'reason_not_performed'  
-from temp_laborders_spec t
-  -- ZL EMR ID
-  LEFT OUTER JOIN patient_identifier zl on zl.patient_identifier_id =
-                                           (select pid2.patient_identifier_id pid2 from patient_identifier pid2 where pid2.patient_id = t.patient_id and pid2.voided = 0 and pid2.identifier_type = @zlId
-                                            order by pid2.preferred desc limit 1)
-  -- ZL EMR ID location
-  INNER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
-  -- Unknown patient
-  LEFT OUTER JOIN person_attribute un ON t.patient_id = un.person_id AND un.person_attribute_type_id = @unknownPt
-                                         AND un.voided = 0
-  -- Gender
-  INNER JOIN person pr ON t.patient_id = pr.person_id AND pr.voided = 0
-  -- Address
-  LEFT OUTER JOIN person_address pa ON pa.person_address_id = (select person_address_id from person_address a2 where a2.person_id =  t.patient_id and a2.voided = 0
-                                                               order by a2.preferred desc, a2.date_created desc limit 1)
-  -- Orderable
-  LEFT OUTER JOIN concept_name ocn on ocn.concept_name_id = (select concept_name_id from concept_name ocn2 where ocn2.concept_id = t.concept_id and ocn2.locale in ('fr','en','ht') order by field(ocn2.locale,'fr','en','ht'), ocn2.locale_preferred desc
-                                                             limit 1)
-  -- bring in actual results obs below. Note that we're excluding obs that are not lab results, but are including reason lab was not performed
-  INNER JOIN obs res on res.encounter_id = t.encounter_id
-                        and res.voided = 0
-                        and res.concept_id not in
-                            (select concept_id from concept where UUID in
-                                                                  ('393dec41-2fb5-428f-acfa-36ea85da6666',  -- test order number
-                                                                   '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0', -- date of test results
-                                                                   'e9732df4-971d-4a9a-9129-e2e610552468', -- test location
-                                                                   '7e0cf626-dbe8-42aa-9b25-483b51350bf8', -- test status
-                                                                   '87f506e3-4433-40ec-b16c-b3c65e402989') -- estimated collection date
-                            )
-                        and (res.value_numeric is not null or res.value_text is not null or res.value_coded is not null)
-  LEFT OUTER JOIN concept_name cnq on cnq.concept_name_id = (select concept_name_id from concept_name cn where cn.concept_id = res.concept_id and cn.voided = 0 and cn.locale in ('fr','en','ht') order by field(cn.locale,'fr','en','ht'), cn.locale_preferred desc limit 1)
-  LEFT OUTER JOIN concept_name cna on cna.concept_name_id = (select concept_name_id from concept_name cn where cn.concept_id = res.value_coded and cn.voided = 0 and cn.locale in ('fr','en','ht') order by field(cn.locale,'fr','en','ht'), cn.locale_preferred desc limit 1)
-  LEFT OUTER JOIN concept c on c.concept_id = res.concept_id and c.retired = 0
-  -- units
-  LEFT OUTER JOIN concept_numeric cu on cu.concept_id = res.concept_id
-  -- results date
-  LEFT OUTER JOIN obs res_date on res_date.voided = 0 and res_date.encounter_id = t.encounter_id and res_date.concept_id =    
-      (select concept_id from concept where UUID = '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0')  
-UNION
--- the following select statement brings in the standalone lab results entered in on the lab results encounter
-SELECT e.patient_id,
-       zl.identifier as 'Patient_ZL_ID',
-       zl_loc.name as 'loc_registered',
-       un.value as 'unknown_patient',
-       pr.gender,
-       ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) as 'age_at_enc',
-       pa.state_province as 'department',
-       pa.city_village as 'commune',
-       pa.address3 as 'section',
-       pa.address1 as 'locality',
-       pa.address2 as 'street_landmark',
-       null 'order_number',
-       null 'lab_visit_id',
-       null 'orderable',
-       cnq.name as 'test',
-       e.encounter_datetime as 'specimen_collection_date',
-       res_date.value_datetime as 'results_date',
-       res.date_created "results_entry_date",
-       CASE 
-         when res.value_numeric is not null then res.value_numeric
-         when res.value_text is not null then res.value_text
-         when cna.name is not null then cna.name
-       END as 'result',
-       cu.units,
-      null
+ -- this adds the standalone lab results encounters into the temp table 
+insert into temp_laborders_spec (encounter_id,encounter_datetime,patient_id,emr_id)
+select e.encounter_id,
+e.encounter_datetime,
+e.patient_id,
+patient_identifier(e.patient_id, metadata_uuid('org.openmrs.module.emrapi', 'emr.primaryIdentifierType'))
 from encounter e
-  -- ZL EMR ID
-  LEFT OUTER JOIN patient_identifier zl on zl.patient_identifier_id =
-                                           (select pid2.patient_identifier_id pid2 from patient_identifier pid2 where pid2.patient_id = e.patient_id and pid2.voided = 0 and pid2.identifier_type = @zlId
-                                            order by pid2.preferred desc limit 1)
-  -- ZL EMR ID location
-  LEFT OUTER JOIN location zl_loc ON zl.location_id = zl_loc.location_id
-  -- Unknown patient
-  LEFT OUTER JOIN person_attribute un ON e.patient_id = un.person_id AND un.person_attribute_type_id = @unknownPt
-                                         AND un.voided = 0
-  -- Gender
-  INNER JOIN person pr ON e.patient_id = pr.person_id AND pr.voided = 0
-  -- Address
-  LEFT OUTER JOIN person_address pa ON pa.person_address_id = (select person_address_id from person_address a2 where a2.person_id =  e.patient_id and a2.voided = 0
-                                                               order by a2.preferred desc, a2.date_created desc limit 1)
-   -- bring in actual results obs below. Note that we're excluding obs that are not lab results
-  INNER JOIN obs res on res.encounter_id = e.encounter_id
-                        and res.voided = 0
-                        and res.concept_id not in
-                            (select concept_id from concept where UUID in
-                                                                  ('68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0', -- date of test results
-                                                                   'e9732df4-971d-4a9a-9129-e2e610552468', -- test location
-                                                                   '87f506e3-4433-40ec-b16c-b3c65e402989') -- estimated collection date
-                            )
-                        and (res.value_numeric is not null or res.value_text is not null or res.value_coded is not null)
-  LEFT OUTER JOIN concept_name cnq on cnq.concept_name_id = (select concept_name_id from concept_name cn where cn.concept_id = res.concept_id and cn.voided = 0 and cn.locale in ('fr','en','ht') order by field(cn.locale,'fr','en','ht'), cn.locale_preferred desc limit 1)
-  LEFT OUTER JOIN concept_name cna on cna.concept_name_id = (select concept_name_id from concept_name cn where cn.concept_id = res.value_coded and cn.voided = 0 and cn.locale in ('fr','en','ht') order by field(cn.locale,'fr','en','ht'), cn.locale_preferred desc limit 1)
-  -- units
-  LEFT OUTER JOIN concept_numeric cu on cu.concept_id = res.concept_id
-  -- result date
-  -- note that the Add Lab Results form uses "Date of Laboratory Test" for results date.  That will need to change at some point, and then the UUID below will need to change 
-  LEFT OUTER JOIN obs res_date on res_date.voided = 0 and res_date.encounter_id = e.encounter_id and res_date.concept_id =    
-      (select concept_id from concept where UUID = 'bbeb58d7-63ba-4d7b-ac5b-4f72d3985888')
-WHERE e.voided = 0
-and e.encounter_type = @labResultEnc
+where e.encounter_type = @labResultEnc and e.voided = 0
 and date(e.encounter_datetime) >= date(@startDate)
 and date(e.encounter_datetime) <= date(@endDate)
 ;
+
+-- emr id location 
+update temp_laborders_spec ts 
+inner join patient_identifier pid on pid.patient_id = ts.patient_id and pid.identifier = ts.emr_id
+inner join location l ON l.location_id = pid.location_id
+set ts.loc_registered = l.name
+;
+
+-- unknown patient
+update temp_laborders_spec ts
+LEFT OUTER JOIN person_attribute un ON ts.patient_id = un.person_id AND un.person_attribute_type_id = @unknownPt AND un.voided = 0
+set ts.unknown_patient = un.value;
+
+-- gender & age
+update temp_laborders_spec ts
+INNER JOIN person pr ON ts.patient_id = pr.person_id AND pr.voided = 0
+set ts.gender = pr.gender,
+ts.age_at_enc = ROUND(DATEDIFF(ts.encounter_datetime, pr.birthdate)/365.25, 1);
+
+-- address
+update temp_laborders_spec ts
+inner join person_address pa ON pa.person_address_id = (select person_address_id from person_address a2 where a2.person_id =  ts.patient_id and a2.voided = 0
+                                                               order by a2.preferred desc, a2.date_created desc limit 1)
+set department = pa.state_province,
+commune = pa.city_village,
+section = pa.address3,
+locality =pa.address1,
+street_landmark =pa.address2
+;
+
+ -- results date
+update temp_laborders_spec ts
+inner join obs res_date on res_date.voided = 0 and res_date.encounter_id = ts.encounter_id and res_date.concept_id = @result_date
+set ts.results_date = res_date.value_datetime,
+    ts.results_entry_date = res_date.date_created;
+
+
+-- This query loads all specimen encounter-level information from above and observations from results entered  
+insert into temp_labresults (patient_id,emr_id,loc_registered, unknown_patient, gender, age_at_enc, department, commune, section, locality, street_landmark,order_number,orderable,specimen_collection_date, results_date, results_entry_date,test_concept_id,test,result_coded_answer,result_numeric_answer,result_text_answer)
+select ts.patient_id,
+ts.emr_id,
+ts.loc_registered, 
+ts.unknown_patient, 
+ts.gender, 
+ts.age_at_enc, 
+ts.department, 
+ts.commune, 
+ts.section, 
+ts.locality, 
+ts.street_landmark,
+ts.order_number, 
+ifnull(concept_name(ts.concept_id,'fr'),concept_name(ts.concept_id, @locale)), 
+ts.encounter_datetime, 
+ts.results_date,
+ts.results_entry_date,
+res.concept_id, 
+ifnull(concept_name(res.concept_id, 'fr'),concept_name(res.concept_id, @locale)), 
+ifnull(concept_name(res.value_coded, 'fr'),concept_name(res.value_coded, @locale)),
+res.value_numeric,
+res.value_text
+  from temp_laborders_spec ts
+-- observations from specimen collection encounters that are results (all except the ones listed below) are added here:   
+INNER JOIN obs res on res.encounter_id = ts.encounter_id
+  and res.voided = 0 and res.concept_id not in (@order_number,@result_date,@test_location,@test_status,@collection_date_estimated)
+  and (res.value_numeric is not null or res.value_text is not null or res.value_coded is not null)
+;
+
+
+
+-- update test units (where they exist)
+update temp_labresults t
+INNER JOIN concept_numeric cu on cu.concept_id = t.test_concept_id
+set t.units = cu.units
+;
+
+-- select  all output:
+SELECT t.patient_id,
+       t.emr_id,
+	     t.loc_registered,
+       t.unknown_patient,
+       t.gender,
+       t.age_at_enc,
+       t.department,
+       t.commune,
+       t.section,
+       t.locality,
+       t.street_landmark,
+       t.order_number,
+       t.orderable,
+       -- only return test name is test was performed:
+       CASE when t.test_concept_id  <> @not_performed then t.test END as 'test',
+       t.specimen_collection_date,
+       t.results_date,
+       t.results_entry_date,
+       -- only return the result if the test was performed:     
+       CASE 
+         when t.test_concept_id  <> @not_performed  and t.result_numeric_answer is not null then t.result_numeric_answer
+         when t.test_concept_id  <> @not_performed  and t.result_text_answer is not null then t.result_text_answer
+         when t.test_concept_id  <> @not_performed  and t.result_coded_answer  is not null then t.result_coded_answer 
+       END as 'result',
+       t.units,
+       CASE when t.test_concept_id  = @not_performed  then t.result_coded_answer else null END as 'reason_not_performed'  
+from temp_labresults t;
+
