@@ -1,4 +1,7 @@
-DROP TEMPORARY TABLE IF EXISTS temp_social_econ;
+drop temporary table if exists temp_social_econ;
+
+set sql_safe_updates = 0;
+set session group_concat_max_len = 100000;
 
 set @encounter_type = encounter_type('Socio-economics');
 set @education = concept_from_mapping('CIEL','1712');
@@ -38,75 +41,76 @@ set @household_doesnot_own_assetts = concept_from_mapping('CIEL', '165500');
 
 create temporary table temp_social_econ
 (
-patient_id int,
-zl_emr_id varchar(255),
-gender varchar(50),
-unknown_patient text,
-patient_address text,
-provider varchar(255),
-loc_registered varchar(255),
-location_id int,
-enc_location varchar(255),
-encounter_id int,
-encounter_date datetime,
-age_at_enc double,
-education_answer_concept int,
-education varchar(50),
-people_living_in_house double,
-number_of_children_living double,
-number_of_rooms double,
-radio varchar(50),
-television varchar(50),
-fridge varchar(50),
-bank_account varchar(50),
-toilet varchar(50),
-latrine varchar(50),
-floor varchar(255),
-roof varchar(255),
-walls varchar(255),
-transport_method_to_clinic varchar(50),
-cost_of_transport double,
-travel_time_to_clinic varchar(50),
-main_daily_activities_before_illness text,
-ability_to_perform_main_daily_activity_since_illness text,
-recieved_assistance text,
-recommended_assistance text,
-other_recommended_or_recieved_assistance_name text,
-recieved_other_assistance varchar(50),
-recommended_other_assistance varchar(50),
-socio_economic_assistance_comment text,
-undernourishment varchar(255),
-infant_mortality varchar(255),
-completed_six_years_schooling varchar(255),
-not_attending_school varchar(255),
-cooks_with_dung_wood_charcoal_or_coal varchar(255),
-household_sanitation_improvement varchar(255),
-improved_drinking_water varchar(255),
-electricity varchar(255),
-inadequate_housing_materials varchar(255),
-household_doesnot_own_assetts varchar(255)
+  patient_id int,
+  zl_emr_id varchar(255),
+  gender varchar(50),
+  unknown_patient text,
+  patient_address text,
+  provider varchar(255),
+  location_id int,
+  enc_location varchar(255),
+  encounter_id int,
+  encounter_date datetime,
+  age_at_enc double,
+  education_answer_concept int,
+  education varchar(50),
+  people_living_in_house double,
+  number_of_children_living double,
+  number_of_rooms double,
+  radio varchar(50),
+  television varchar(50),
+  fridge varchar(50),
+  bank_account varchar(50),
+  toilet varchar(50),
+  latrine varchar(50),
+  floor varchar(255),
+  roof varchar(255),
+  walls varchar(255),
+  transport_method_to_clinic varchar(50),
+  cost_of_transport double,
+  travel_time_to_clinic varchar(50),
+  main_daily_activities_before_illness text,
+  ability_to_perform_main_daily_activity_since_illness text,
+  recieved_assistance text,
+  recommended_assistance text,
+  other_recommended_or_recieved_assistance_name text,
+  recieved_other_assistance varchar(50),
+  recommended_other_assistance varchar(50),
+  socio_economic_assistance_comment text,
+  undernourishment varchar(255),
+  infant_mortality varchar(255),
+  completed_six_years_schooling varchar(255),
+  not_attending_school varchar(255),
+  cooks_with_dung_wood_charcoal_or_coal varchar(255),
+  household_sanitation_improvement varchar(255),
+  improved_drinking_water varchar(255),
+  electricity varchar(255),
+  inadequate_housing_materials varchar(255),
+  household_doesnot_own_assetts varchar(255)
 );
 
-insert into temp_social_econ (patient_id, zl_emr_id, gender, encounter_id, encounter_date, age_at_enc, provider, patient_address, loc_registered, location_id)
-select patient_id, zlemr(patient_id), gender(patient_id), encounter_id,  encounter_datetime, age_at_enc(patient_id), provider(encounter_id), person_address(patient_id),
-loc_registered(patient_id), location_id
- from encounter where voided = 0 and encounter_type = @encounter_type
--- filter by date
- AND date(encounter_datetime) >=  date(@startDate)
- AND date(encounter_datetime) <=  date(@endDate)
-;
+insert into temp_social_econ (patient_id, zl_emr_id, gender, encounter_id, encounter_date, age_at_enc,  provider, patient_address, location_id)
+  select patient_id, zlemr(patient_id), gender(patient_id), encounter_id,  encounter_datetime, age_at_enc(patient_id, encounter_id), provider(encounter_id), person_address(patient_id), location_id
+  from encounter where voided = 0 and encounter_type = @encounter_type
+  -- filter by date
+  and date(encounter_datetime) >=  date(@startDate)
+  and date(encounter_datetime) <=  date(@endDate);
+
+drop temporary table if exists temp_loc;
+create temporary table temp_loc(
+select patient_id, name loc_registered from location l join patient_identifier pi on pi.location_id = l.location_id and pi.voided = 0 and pi.patient_id in (select patient_id from temp_social_econ)
+and identifier_type = (select pid2.patient_identifier_type_id from patient_identifier_type pid2 where
+pid2.name = 'ZL EMR ID' group by patient_id));
 
 -- exclude test patients
 delete from temp_social_econ where
-patient_id IN (SELECT person_id FROM person_attribute WHERE value = 'true' AND person_attribute_type_id = (select
-person_attribute_type_id from person_attribute_type where name = "Test Patient")
-                         AND voided = 0)
-;
+patient_id in (select person_id from person_attribute where value = 'true' and person_attribute_type_id = (select
+                                                                                                           person_attribute_type_id from person_attribute_type where name = "Test Patient")
+and voided = 0);
 
 -- unknown patient
-
 update temp_social_econ tsn
-set tsn.unknown_patient = IF(tsn.patient_id = unknown_patient(tsn.patient_id), 'true', NULL);
+set tsn.unknown_patient = if(tsn.patient_id = unknown_patient(tsn.patient_id), 'true', null);
 
 update temp_social_econ tsn
 left join location l on tsn.location_id = l.location_id
@@ -219,12 +223,12 @@ set tsn.other_recommended_or_recieved_assistance_name = o1.value_text;
 update temp_social_econ tsn
 left join
 obs o2 on o2.encounter_id = tsn.encounter_id and o2.voided = 0 and o2.concept_id = @recieved_assistance and o2.value_coded = @other
-set tsn.recieved_other_assistance = IF(o2.value_coded = @other, "Yes", NULL);
+set tsn.recieved_other_assistance = if(o2.value_coded = @other, "Yes", null);
 
 update temp_social_econ tsn
 left join
 obs o3 on o3.encounter_id = tsn.encounter_id and o3.voided = 0 and o3.concept_id = @recommended_assistance and value_coded = @other
-set tsn.recommended_other_assistance =  IF(o3.value_coded = @other, "Yes", NULL);
+set tsn.recommended_other_assistance =  if(o3.value_coded = @other, "Yes", null);
 
 -- socio_economic_assistance_comment
 update temp_social_econ tsn
@@ -283,9 +287,8 @@ left join
 obs o9 on o9.encounter_id = tsn.encounter_id and o9.voided = 0 and o9.concept_id = @household_doesnot_own_assetts
 set tsn.household_doesnot_own_assetts = concept_name(o9.value_coded, 'fr');
 
-
 select
-patient_id,
+tse.patient_id "patient_id",
 zl_emr_id,
 gender,
 unknown_patient,
@@ -330,4 +333,4 @@ improved_drinking_water,
 electricity,
 inadequate_housing_materials,
 household_doesnot_own_assetts
-from temp_social_econ;
+from temp_social_econ tse left join temp_loc tl on tse.patient_id = tl.patient_id;
