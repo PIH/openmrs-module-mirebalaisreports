@@ -19,7 +19,8 @@ CREATE TEMPORARY TABLE temp_ncd_last_ncd_enc
   encounter_obs_date DATETIME,
   weight DOUBLE,
   bp_diastolic DOUBLE,
-  bp_systolic DOUBLE
+  bp_systolic DOUBLE,
+  asthma_diagnosis VARCHAR(255)
 );
 INSERT INTO temp_ncd_last_ncd_enc(patient_id, encounter_datetime)
   SELECT patient_id, MAX(encounter_datetime) FROM encounter WHERE voided = 0
@@ -487,6 +488,9 @@ temp_ncd_program ON temp_ncd_program.patient_id = temp_stage_ncd_nyha.person_id 
 GROUP BY temp_stage_ncd_nyha.person_id
 );
 
+-- asthma detail recorded during last encounter
+UPDATE temp_ncd_last_ncd_enc SET asthma_diagnosis = OBS_VALUE_CODED_LIST(encounter_id, 'PIH', 'Asthma classification', 'fr');
+
 
 SELECT
 p.patient_id "patient_id",
@@ -522,6 +526,7 @@ respiratory,
 rehab,
 anemia,
 epilepsy,
+asthma_diagnosis,
 other_category,
 tfnn.obsdatetime "date_last_nyha_classes",
 last_nyha_classes,
