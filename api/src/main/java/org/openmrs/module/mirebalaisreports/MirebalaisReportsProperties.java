@@ -98,15 +98,16 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID = "e4d1d6b0-642d-11e3-949a-0800200c9a66";
     public static final String APPOINTMENTS_REPORT_DEFINITION_UUID = "7fd11020-e5d1-11e3-ac10-0800200c9a66";
     public static final String REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID = "a4f410a8-f8cc-11e4-a7d0-e82aea237783";
-    public static final String LAB_RESULTS_EXPORT_DEFINITION_UUID = "9BCEEAE9-C804-499E-AA78-1F03FE937637";
+  /*  public static final String LAB_RESULTS_EXPORT_DEFINITION_UUID = "9BCEEAE9-C804-499E-AA78-1F03FE937637";
     public static final String LAB_ORDERS_DATA_EXPORT_REPORT_DEFINITION_UUID = "6E90A739-CB1F-4042-BC11-6548779881C9";
-    public static final String ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID = "202e6ee0-45d6-11e5-b970-0800200c9a66";
-    public static final String NCD_DATA_EXPORT_REPORT_DEFINITION_UUID = "13629220-6b9e-11e5-a837-0800200c9a66";
+    */
+  public static final String ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID = "202e6ee0-45d6-11e5-b970-0800200c9a66";
+   /* public static final String NCD_DATA_EXPORT_REPORT_DEFINITION_UUID = "13629220-6b9e-11e5-a837-0800200c9a66";
     public static final String NCD_DATA_PROGRAM_EXPORT_REPORT_DEFINITION_UUID = "1de224fc-82d4-40cc-be07-f2e95ed2e452";
     public static final String MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID = "d2e7c170-e703-11e5-a837-0800200c9a66";
-    public static final String MENTAL_HEALTH_PROGRAM_DATA_EXPORT_REPORT_DEFINITION_UUID = "e2d8b170-e793-10e5-a837-0888200c9a66";
+    public static final String MENTAL_HEALTH_PROGRAM_DATA_EXPORT_REPORT_DEFINITION_UUID = "e2d8b170-e793-10e5-a837-0888200c9a66";*/
     public static final String ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID = "87588ec0-4deb-11e6-bdf4-0800200c9a66";
-    public static final String SOCIAL_ECONOMICS_DATA_EXPORT_REPORT_DEFINITION_UUID = "c40bf377-5954-481e-b58b-bffc26052d45";
+/*    public static final String SOCIAL_ECONOMICS_DATA_EXPORT_REPORT_DEFINITION_UUID = "c40bf377-5954-481e-b58b-bffc26052d45";*/
     public static final String VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID = "228BCF82-D496-49B0-929B-5B3C6AF3767E";
     public static final String BILLABLE_EXPORT_REPORT_DEFINITION_UUID = "6bd65742-5b45-4f50-a5a8-90c81a387f90";
     public static final String ALLERGIES_EXPORT_REPORT_DEFINITION_UUID = "3b83bbd7-f16a-4df1-9ba8-280c0e4ea977";
@@ -124,7 +125,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID = "bf1fbee4-0a35-4d7c-9054-6681f3c06463";
     public static final String VCT_REPORT_DEFINITION_UUID = "8189ccd0-cd86-11e8-a8d5-f2801f1b9fd1";
     public static final String MCH_PROVIDER_REPORT_DEFINITION_UUID = "6a35bb00-e2d2-11e8-9f32-f2801f1b9fd1";
-    public static final String MCH_REPORT_DEFINITION_UUID = "85656ac4-0faa-11e9-ab14-d663bd873d93";
+/*    public static final String MCH_REPORT_DEFINITION_UUID = "85656ac4-0faa-11e9-ab14-d663bd873d93";*/
     public static final String MCH_J9_CASE_REGISTRATION_REPORT_DEFINITION_UUID = "ed980032-3c77-11ea-8806-0242ac110002";
     public static final String MCH_J9_REFERRALS_REPORT_DEFINITION_UUID = "cd7dfde7-764a-4da6-81c2-d5887ed1df51";
     public static final String MEXICO_VISITS_REPORT_DEFINITION_UUID = "b1d80ad0-f9a2-46c6-a89f-0050d7d724cb";

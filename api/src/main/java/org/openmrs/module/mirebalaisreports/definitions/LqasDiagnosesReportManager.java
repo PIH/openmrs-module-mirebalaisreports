@@ -93,7 +93,7 @@ public class LqasDiagnosesReportManager extends BasePihReportManager {
         dsd.addParameter(getLocationParameter());
 
         String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "lqas_diagnoses.sql");
-        sql = applyMetadataReplacements(sql);
+        sql = MirebalaisReportsUtil.applyMetadataReplacements(sql);
         dsd.setSqlQuery(sql);
         if (log.isTraceEnabled()) {
             log.trace("sql = " + sql);

@@ -61,7 +61,7 @@ public class AllPatientsWithIdsReportManager extends BasePihReportManager {
         dsd.setDescription(getDescription());
 
         String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + "allPatients_withIds.sql");
-        sql = applyMetadataReplacements(sql);
+        sql = MirebalaisReportsUtil.applyMetadataReplacements(sql);
         dsd.setSqlQuery(sql);
         if (log.isTraceEnabled()) {
             log.trace("sql = " + sql);
@@ -73,7 +73,7 @@ public class AllPatientsWithIdsReportManager extends BasePihReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        
+
         ReportDesign reportDesign = csvReportDesign(reportDefinition);
         reportDesign.addPropertyValue(ReportDesignRenderer.FILENAME_BASE_PROPERTY,
                 "allpatientslistdataexport." +

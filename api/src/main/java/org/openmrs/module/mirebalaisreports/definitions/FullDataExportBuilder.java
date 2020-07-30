@@ -77,8 +77,8 @@ public class FullDataExportBuilder {
             if (config.getCountry().equals(ConfigDescriptor.Country.HAITI)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
                         Arrays.asList("encounters")));
-                configurations.add(new Configuration(MirebalaisReportsProperties.SOCIAL_ECONOMICS_DATA_EXPORT_REPORT_DEFINITION_UUID, "socialeconomicsdataexport",
-                        Arrays.asList("socialEconomics")));
+           /*     configurations.add(new Configuration(MirebalaisReportsProperties.SOCIAL_ECONOMICS_DATA_EXPORT_REPORT_DEFINITION_UUID, "socialeconomicsdataexport",
+                        Arrays.asList("socialEconomics")));*/
 
             }
 
@@ -124,30 +124,30 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "vitalsdataexport",
                         Arrays.asList("vitals")));
             }
-            if (config.isComponentEnabled(Components.LAB_RESULTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+         /*   if (config.isComponentEnabled(Components.LAB_RESULTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.LAB_RESULTS_EXPORT_DEFINITION_UUID, "labresultsexport",
                         Arrays.asList("labResultsExport")));
             }
             if (config.isComponentEnabled(Components.LAB_RESULTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.LAB_ORDERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "labordersdataexport",
                         Arrays.asList("labOrdersReport")));
-            }
+            }*/
             if (config.isComponentEnabled(Components.ONCOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "oncologydataexport",
                         Arrays.asList("oncology")));
             }
-            if (config.isComponentEnabled(Components.NCD) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+           /* if (config.isComponentEnabled(Components.NCD) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.NCD_DATA_EXPORT_REPORT_DEFINITION_UUID, "ncddataexport",
                         Arrays.asList("ncd")));
                 configurations.add(new Configuration(MirebalaisReportsProperties.NCD_DATA_PROGRAM_EXPORT_REPORT_DEFINITION_UUID, "ncdprogramdataexport",
                         Arrays.asList("ncdProgram")));
-            }
-            if (config.isComponentEnabled(Components.MENTAL_HEALTH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            }*/
+        /*    if (config.isComponentEnabled(Components.MENTAL_HEALTH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MENTAL_HEALTH_DATA_EXPORT_REPORT_DEFINITION_UUID, "mentalhealthdataexport",
                         Arrays.asList("mentalHealth")));
                 configurations.add(new Configuration(MirebalaisReportsProperties.MENTAL_HEALTH_PROGRAM_DATA_EXPORT_REPORT_DEFINITION_UUID, "mentalhealthprogramdataexport",
                         Arrays.asList("mentalHealthProgram")));
-            }
+            }*/
             if (config.isComponentEnabled(Components.ED_TRIAGE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID, "edtriagedataexport",
                         Arrays.asList("edTriage")));
@@ -178,10 +178,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MCH_PROVIDER_REPORT_DEFINITION_UUID, "mchproviderdataexport",
                         Arrays.asList("mchProvider")));
             }
-            if (config.isComponentEnabled(Components.MCH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+          /*  if (config.isComponentEnabled(Components.MCH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MCH_REPORT_DEFINITION_UUID, "mchdataexport",
                         Arrays.asList("prenatalAndDelivery", "vaccinationsANC", "mchCCHomeVisitData")));
-            }
+            }*/
         }
         return configurations;
     }
