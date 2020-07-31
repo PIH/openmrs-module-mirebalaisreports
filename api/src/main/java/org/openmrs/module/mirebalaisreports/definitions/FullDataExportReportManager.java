@@ -446,7 +446,7 @@ public class FullDataExportReportManager extends BasePihReportManager {
         SqlDataSetDefinition sqlDsd = new SqlDataSetDefinition();
 
         String sql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + key + ".sql");
-        sql = MirebalaisReportsUtil.applyMetadataReplacements(sql);
+        sql = applyMetadataReplacements(sql);
         sqlDsd.setSqlQuery(sql);
         return sqlDsd;
     }
