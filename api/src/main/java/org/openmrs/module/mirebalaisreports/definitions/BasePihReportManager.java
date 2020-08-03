@@ -1,7 +1,5 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.OpenmrsObject;
@@ -17,6 +15,8 @@ import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlFileDataSetDefinition;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 /**
  * Includes helpful methods for dealing with PIH Metadata (this class exists so that someday we might consider
@@ -210,6 +210,7 @@ public abstract class BasePihReportManager extends BaseReportManager {
 
         // sets for radiological exam modalities
         try {
+            sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
             sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
             sql = replace(sql, "ctOrderables", radiologyProperties.getCTScanOrderablesConcept());
             sql = replace(sql, "ultrasoundOrderables", radiologyProperties.getUltrasoundOrderablesConcept());

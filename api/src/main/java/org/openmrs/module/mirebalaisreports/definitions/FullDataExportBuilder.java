@@ -91,14 +91,15 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID, "checkinsdataexport",
                         Arrays.asList("checkins")));
             }
-            if (config.isComponentEnabled(Components.RADIOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+
+/*            if (config.isComponentEnabled(Components.RADIOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "radiologydataexport",
                         Arrays.asList("radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters")));
                 configurations.add(new Configuration(MirebalaisReportsProperties.RADIOLOGY_CONSOIDATED_DATA_EXPORT_REPORT_DEFINITION_UUID, "radiologyconsolidateddataexport",
                         Arrays.asList("radiologyConsolidated")));
 
-            }
-            if (config.isComponentEnabled(Components.SURGERY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            }*/
+/*            if (config.isComponentEnabled(Components.SURGERY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.SURGERY_DATA_EXPORT_REPORT_DEFINITION_UUID, "surgerydataexport",
                         Arrays.asList("postOpNote1", "postOpNote2")));
             }
@@ -106,7 +107,7 @@ public class FullDataExportBuilder {
                     || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.HOSPITALIZATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "hospitalizationsdataexport",
                         Arrays.asList("hospitalizations", "postOpNote1", "postOpNote2")));
-            }
+            }*/
             if (config.isComponentEnabled(Components.CONSULT) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.CONSULTATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "consultationsdataexport",
                         Arrays.asList("consultations")));
@@ -132,10 +133,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.LAB_ORDERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "labordersdataexport",
                         Arrays.asList("labOrdersReport")));
             }*/
-            if (config.isComponentEnabled(Components.ONCOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+  /*          if (config.isComponentEnabled(Components.ONCOLOGY) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ONCOLOGY_DATA_EXPORT_REPORT_DEFINITION_UUID, "oncologydataexport",
                         Arrays.asList("oncology")));
-            }
+            }*/
            /* if (config.isComponentEnabled(Components.NCD) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.NCD_DATA_EXPORT_REPORT_DEFINITION_UUID, "ncddataexport",
                         Arrays.asList("ncd")));
@@ -148,10 +149,10 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MENTAL_HEALTH_PROGRAM_DATA_EXPORT_REPORT_DEFINITION_UUID, "mentalhealthprogramdataexport",
                         Arrays.asList("mentalHealthProgram")));
             }*/
-            if (config.isComponentEnabled(Components.ED_TRIAGE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+/*            if (config.isComponentEnabled(Components.ED_TRIAGE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID, "edtriagedataexport",
                         Arrays.asList("edTriage")));
-            }
+            }*/
 
             if ((config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) &&
                     (!config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
