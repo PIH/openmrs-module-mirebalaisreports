@@ -110,8 +110,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
 /*    public static final String SOCIAL_ECONOMICS_DATA_EXPORT_REPORT_DEFINITION_UUID = "c40bf377-5954-481e-b58b-bffc26052d45";*/
     public static final String VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID = "228BCF82-D496-49B0-929B-5B3C6AF3767E";
     public static final String BILLABLE_EXPORT_REPORT_DEFINITION_UUID = "6bd65742-5b45-4f50-a5a8-90c81a387f90";
-    public static final String ALLERGIES_EXPORT_REPORT_DEFINITION_UUID = "3b83bbd7-f16a-4df1-9ba8-280c0e4ea977";
-    public static final String PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID = "7877eef3-a3bb-4efc-a9ef-3582378053ca";
+    public static final String ALLERGIES_EXPORT_REPORT_DEFINITION_UUID = "3b83bbd7-f16a-4df1-9ba8-280c0e4ea977";/*
+    public static final String PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID = "7877eef3-a3bb-4efc-a9ef-3582378053ca";*/
     public static final String RELATIONSHIPS_REPORT_DEFINITION_UUID = "f42366c3-388d-47f7-93ff-a64270a613eb";
     public static final String WEEKLY_MONITORING_REPORT_DEFINITION_UUID = "bfac0d81-09fc-4981-adf2-d6fa9e5ec852";
     public static final String NEW_DISEASE_EPISODES_REPORTING_DEFINITION_UUID = "172163ed-c9eb-418c-bc32-f32a861ee7c9";
@@ -122,8 +122,8 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String ZIKA_REPORT_DEFINITION_UUID = "c6bafa69-1745-4838-9171-cffaacf8fb1d";
     public static final String CHRONIC_MALADIES_REPORTING_DEFINITION_UUID = "66a975d4-790e-4348-9a88-8dfbcf551afc";
     public static final String HIV_SUMMARY_REPORT_DEFINITION_UUID = "bccfa83d-3c28-42ea-9240-941aa93a2cce";
-    public static final String PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID = "bf1fbee4-0a35-4d7c-9054-6681f3c06463";
-    public static final String VCT_REPORT_DEFINITION_UUID = "8189ccd0-cd86-11e8-a8d5-f2801f1b9fd1";
+/*    public static final String PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID = "bf1fbee4-0a35-4d7c-9054-6681f3c06463";*/
+/*    public static final String VCT_REPORT_DEFINITION_UUID = "8189ccd0-cd86-11e8-a8d5-f2801f1b9fd1";*/
     public static final String MCH_PROVIDER_REPORT_DEFINITION_UUID = "6a35bb00-e2d2-11e8-9f32-f2801f1b9fd1";
 /*    public static final String MCH_REPORT_DEFINITION_UUID = "85656ac4-0faa-11e9-ab14-d663bd873d93";*/
     public static final String MCH_J9_CASE_REGISTRATION_REPORT_DEFINITION_UUID = "ed980032-3c77-11ea-8806-0242ac110002";

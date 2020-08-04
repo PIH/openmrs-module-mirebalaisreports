@@ -61,9 +61,13 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "dashboarddataexport",
                         Arrays.asList("patients", "checkins", "vitals", "consultations", "diagnoses", "visits", "hospitalizations", "postOpNote1", "postOpNote2")));
 
+
+                // TODO: move visits and billable to pih-zl, customize by site?
+
                 // TODO should/can these be more generic?
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISITS_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitsdataexport",
                         Arrays.asList("visits")));
+
 
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "patientsdataexport",
                         Arrays.asList("patients")));
@@ -159,26 +163,26 @@ public class FullDataExportBuilder {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitnotedataexport",
                         Arrays.asList("chiefComplaint", "diagnoses", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
             }
-            if (config.isComponentEnabled(Components.ALLERGIES) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+         /*   if (config.isComponentEnabled(Components.ALLERGIES) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.ALLERGIES_EXPORT_REPORT_DEFINITION_UUID, "allergiesdataexport",
                         Arrays.asList("allergies")));
-            }
-            if (config.isComponentEnabled(Components.PATHOLOGY_TRACKING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            }*/
+         /*   if (config.isComponentEnabled(Components.PATHOLOGY_TRACKING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID, "pathologydataexport",
                         Arrays.asList("pathology")));
-            }
-            if (config.isComponentEnabled(Components.BIOMETRICS_FINGERPRINTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            }*/
+           /* if (config.isComponentEnabled(Components.BIOMETRICS_FINGERPRINTS) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_WITH_FINGERPRINTS_DEFINITION_UUID, "fingerprintsdataexport",
                         Arrays.asList("patientsWithFingerprints")));
-            }
-            if (config.isComponentEnabled(Components.VCT) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            }*/
+ /*           if (config.isComponentEnabled(Components.VCT) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.VCT_REPORT_DEFINITION_UUID, "vctdataexport",
                         Arrays.asList("hivCounselingTest")));
-            }
-            if (config.isComponentEnabled(Components.CHW_APP) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+            }*/
+    /*        if (config.isComponentEnabled(Components.CHW_APP) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MCH_PROVIDER_REPORT_DEFINITION_UUID, "mchproviderdataexport",
                         Arrays.asList("mchProvider")));
-            }
+            }*/
           /*  if (config.isComponentEnabled(Components.MCH) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                 configurations.add(new Configuration(MirebalaisReportsProperties.MCH_REPORT_DEFINITION_UUID, "mchdataexport",
                         Arrays.asList("prenatalAndDelivery", "vaccinationsANC", "mchCCHomeVisitData")));
