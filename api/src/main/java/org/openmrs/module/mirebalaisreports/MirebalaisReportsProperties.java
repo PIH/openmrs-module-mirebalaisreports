@@ -91,7 +91,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID = "5dd60b6c-4d45-11e3-9325-f3ae8db9f6a7";
     public static final String DAILY_CHECK_INS_REPORT_DEFINITION_UUID = "f170699a-50af-11e3-ba00-27a0ac7f78d9";
     public static final String DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID = "8b2f46e0-5d13-11e3-949a-0800200c9a66";
-    public static final String VISITS_DATA_EXPORT_REPORT_DEFINITION_UUID = "fa46aee9-fc73-11e3-8248-08002769d9ae";
+/*    public static final String VISITS_DATA_EXPORT_REPORT_DEFINITION_UUID = "fa46aee9-fc73-11e3-8248-08002769d9ae";*/
     public static final String VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID = "09c9f9ee-fc74-11e3-8248-08002769d9ae";
     public static final String CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID = "1c72b461-fc74-11e3-8248-08002769d9ae";
     public static final String DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID = "257bb3e9-fc74-11e3-8248-08002769d9ae";
@@ -109,7 +109,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 /*    public static final String ED_TRIAGE_DATA_EXPORT_REPORT_DEFINITION_UUID = "87588ec0-4deb-11e6-bdf4-0800200c9a66";*/
 /*    public static final String SOCIAL_ECONOMICS_DATA_EXPORT_REPORT_DEFINITION_UUID = "c40bf377-5954-481e-b58b-bffc26052d45";*/
     public static final String VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID = "228BCF82-D496-49B0-929B-5B3C6AF3767E";
-    public static final String BILLABLE_EXPORT_REPORT_DEFINITION_UUID = "6bd65742-5b45-4f50-a5a8-90c81a387f90";
+   /* public static final String BILLABLE_EXPORT_REPORT_DEFINITION_UUID = "6bd65742-5b45-4f50-a5a8-90c81a387f90";*/
     public static final String ALLERGIES_EXPORT_REPORT_DEFINITION_UUID = "3b83bbd7-f16a-4df1-9ba8-280c0e4ea977";/*
     public static final String PATHOLOGY_EXPORT_REPORT_DEFINITION_UUID = "7877eef3-a3bb-4efc-a9ef-3582378053ca";*/
     public static final String RELATIONSHIPS_REPORT_DEFINITION_UUID = "f42366c3-388d-47f7-93ff-a64270a613eb";

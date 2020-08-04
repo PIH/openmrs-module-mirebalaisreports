@@ -203,13 +203,11 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 dsd = registrationDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
-            // TODO: This is really ugly. We need to get this into proper configuration--Liberia check-ins report uses a manager, but Haiti "falls through" to old sql report
-            else if ("checkins".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
+            else if ("checkins".equals(key)) {
                 dsd = checkInDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
-            // TODO: This is really ugly. We need to get this into proper configuration--Liberia consultation report uses a manager, but Haiti "falls through" to old sql report
-            else if ("consultations".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
+            else if ("consultations".equals(key)) {
                 dsd = consultationsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
@@ -219,8 +217,7 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 dsd = vitalsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
-            // TODO: This is really ugly. We need to get this into proper configuration--Liberia diagnoses report uses a manager, but Haiti "falls through" to old sql report
-            else if ("diagnoses".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
+            else if ("diagnoses".equals(key)) {
                 dsd = diagnosesDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
@@ -238,6 +235,7 @@ public class FullDataExportReportManager extends BasePihReportManager {
                     addStartAndEndDateParameters(rd, dsd, mappings);
                 }
                 catch (Exception e) {
+                    // TODO: can we remove this? hopefully yes
                     // try legacy sql data set definition
                     dsd = constructSqlDataSetDefinition(key);
                     // only add start and end date if they are specified in the defined SQL
