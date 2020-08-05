@@ -51,43 +51,62 @@ public class FullDataExportBuilder {
 
     private List<Configuration> configurations;
 
+    /**
+     * Note that we have moved all SQL-based reports out of this module and into our config proects
+     * However, we still have some Java-based reports that need to be configured here
+     * We could hopefully clean this up if we decide to implement https://pihemr.atlassian.net/browse/UHM-4736
+     */
     public List<Configuration> getConfigurations() {
         if (configurations == null) {
             configurations = new ArrayList<Configuration>();
 
             // mirebalais-specific
             if (config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS)) {
-                // TODO move these
+                // these reports use a conbination of SQL-based and Java data set definitions, so we can not yet configure the reports  via config
                 configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "fulldataexport", null));
                 configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "dashboarddataexport",
                         Arrays.asList("patients", "checkins", "vitals", "consultations", "diagnoses", "visits", "hospitalizations", "postOpNote1", "postOpNote2")));
 
-                // reporting framework report
+                // Java-based dataset definition
                 configurations.add(new Configuration(MirebalaisReportsProperties.PATIENTS_DATA_EXPORT_REPORT_DEFINITION_UUID, "patientsdataexport",
                         Arrays.asList("patients")));
-
             }
 
             // Haiti-specific
-            // reporting framework report
             if (config.getCountry().equals(ConfigDescriptor.Country.HAITI)) {
+                // Java-based dataset definition
                 configurations.add(new Configuration(MirebalaisReportsProperties.ENCOUNTERS_DATA_EXPORT_REPORT_DEFINITION_UUID, "encountersdataexport",
                         Arrays.asList("encounters")));
             }
 
             // others that depend on enabled components
-            // reporting framework report
             if (config.isComponentEnabled(Components.PATIENT_REGISTRATION) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                // Java-based dataset definition
                 configurations.add(new Configuration(MirebalaisReportsProperties.REGISTRATIONS_DATA_EXPORT_REPORT_DEFINITION_UUID, "registrationdataexport",
                         Arrays.asList("registration")));
             }
 
             if (config.isComponentEnabled(Components.DISPENSING) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                // Java-based dataset definition
                 configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "dispensingdataexport",
                         Arrays.asList("dispensing")));
             }
 
-            // only Sierra Leone and Liberia use "reporting framework" reports for these, Haiti used SQL reports
+            // Haiti Mirebalais uses a SQL data set definition, while the rest of Haiti, and other countries, use a Java DSD based report, so we don't define the vitals reports via config
+            if ((config.isComponentEnabled(Components.VITALS) || config.isComponentEnabled(Components.UHM_VITALS))
+                    || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "vitalsdataexport",
+                        Arrays.asList("vitals")));
+            }
+
+            // diagnoses is a Java data set definition in Sierra Leone and Liberia, but a SQL report in Haiti, so we handle the config here
+            if ((config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) &&
+                    (!config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
+                configurations.add(new Configuration(MirebalaisReportsProperties.VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitnotedataexport",
+                        Arrays.asList("chiefComplaint", "diagnoses", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
+            }
+
+            // only Sierra Leone and Liberia use Java data set definitions for these, Haiti used SQL data set definitions, so for Haiti we define these reports in config
             if (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE)) {
 
                 if (config.isComponentEnabled(Components.CHECK_IN) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
@@ -104,18 +123,6 @@ public class FullDataExportBuilder {
                 }
             }
 
-
-            // TODO: ticket whatever we want to do with this?  move vitals?
-            if ((config.isComponentEnabled(Components.VITALS) || config.isComponentEnabled(Components.UHM_VITALS))
-                    || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
-                configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "vitalsdataexport",
-                        Arrays.asList("vitals")));
-            }
-            if ((config.isComponentEnabled(Components.VISIT_NOTE) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) &&
-                    (!config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
-                configurations.add(new Configuration(MirebalaisReportsProperties.VISIT_NOTE_DATA_EXPORT_REPORT_DEFINITION_UUID, "visitnotedataexport",
-                        Arrays.asList("chiefComplaint", "diagnoses", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
-            }
         }
         return configurations;
     }
