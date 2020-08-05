@@ -93,6 +93,7 @@ public abstract class BasePihReportManager extends BaseReportManager {
         return rd;
     }
 
+    // TODO remove these once we've migrated all reports that use it
     protected String applyMetadataReplacements(String sql) {
         log.debug("Replacing metadata references");
         MirebalaisReportsProperties mrp = mirebalaisReportsProperties;
