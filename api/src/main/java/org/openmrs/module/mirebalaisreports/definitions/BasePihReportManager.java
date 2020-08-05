@@ -212,7 +212,6 @@ public abstract class BasePihReportManager extends BaseReportManager {
         // sets for radiological exam modalities
         try {
             sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
-            sql = replace(sql, "xrayOrderables", radiologyProperties.getXrayOrderablesConcept());
             sql = replace(sql, "ctOrderables", radiologyProperties.getCTScanOrderablesConcept());
             sql = replace(sql, "ultrasoundOrderables", radiologyProperties.getUltrasoundOrderablesConcept());
         }

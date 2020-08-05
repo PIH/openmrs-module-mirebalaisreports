@@ -52,7 +52,7 @@ public class FullDataExportBuilder {
     private List<Configuration> configurations;
 
     /**
-     * Note that we have moved all SQL-based reports out of this module and into our config proects
+     * Note that we have moved all SQL-based reports this class genereates out of this module and into our config projects
      * However, we still have some Java-based reports that need to be configured here
      * We could hopefully clean this up if we decide to implement https://pihemr.atlassian.net/browse/UHM-4736
      */
