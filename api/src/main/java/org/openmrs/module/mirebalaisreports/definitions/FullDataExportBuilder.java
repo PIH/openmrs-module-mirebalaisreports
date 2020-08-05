@@ -39,9 +39,6 @@ public class FullDataExportBuilder {
     @Autowired
     Config config;
 
-    public static final String SQL_DIR = "org/openmrs/module/mirebalaisreports/sql/fullDataExport/";
-    public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
-
     public final List<String> dataSetOptions = Arrays.asList(
             "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
             "hospitalizations", "postOpNote1", "postOpNote2",
