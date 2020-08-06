@@ -103,8 +103,8 @@ public class FullDataExportBuilder {
                         Arrays.asList("chiefComplaint", "diagnoses", "exams", "feeding", "history", "primaryCarePlans", "supplements", "vaccinations")));
             }
 
-            // only Sierra Leone and Liberia use Java data set definitions for these, Haiti used SQL data set definitions, so for Haiti we define these reports in config
-            if (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE)) {
+            // Haiti used SQL data set definitions, so for Haiti we define these reports in config
+            if (!config.getCountry().equals(ConfigDescriptor.Country.HAITI)) {
 
                 if (config.isComponentEnabled(Components.CHECK_IN) || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
                     configurations.add(new Configuration(MirebalaisReportsProperties.CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID, "checkinsdataexport",
