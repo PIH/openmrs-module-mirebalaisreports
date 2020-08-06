@@ -208,9 +208,8 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 dsd = consultationsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
-            // TODO figure out if we can standardize on a vitals data export across Haiti
-            else if ("vitals".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE) ||
-                    (config.getCountry().equals(ConfigDescriptor.Country.HAITI) && !config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS) ))) {
+            // TODO figure out if we can standardize on a vitals data export across Haiti; looks like we use the non-SQL report everywhere but Mirebalais
+            else if ("vitals".equals(key)  && !config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS)) {
                 dsd = vitalsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
