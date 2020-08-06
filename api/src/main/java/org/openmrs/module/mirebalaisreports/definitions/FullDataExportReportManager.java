@@ -213,8 +213,8 @@ public class FullDataExportReportManager extends BasePihReportManager {
                 dsd = vitalsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
-            // Haiti uses a SQL-based approach, while Liberia and Sierra use Java data set managers
-            else if ("diagnoses".equals(key) && (config.getCountry().equals(ConfigDescriptor.Country.LIBERIA) || config.getCountry().equals(ConfigDescriptor.Country.SIERRA_LEONE))) {
+            // Haiti uses a SQL-based approach, so skip here
+            else if ("diagnoses".equals(key) && (!config.getCountry().equals(ConfigDescriptor.Country.HAITI))) {
                 dsd = diagnosesDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
