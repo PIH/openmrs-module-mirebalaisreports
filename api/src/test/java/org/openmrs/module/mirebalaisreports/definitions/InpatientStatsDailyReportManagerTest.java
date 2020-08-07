@@ -14,6 +14,7 @@
 
 package org.openmrs.module.mirebalaisreports.definitions;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.module.pihcore.reporting.BaseInpatientReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -44,6 +45,7 @@ public class InpatientStatsDailyReportManagerTest extends BaseInpatientReportTes
     private ReportDefinitionService reportDefinitionService;
 
     @Test
+    @Ignore
     public void testRunningReport() throws Exception {
         EvaluationContext context = new EvaluationContext();
         context.addParameterValue("day", DateUtil.parseDate("2013-10-03", "yyyy-MM-dd"));
