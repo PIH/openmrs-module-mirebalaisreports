@@ -44,7 +44,6 @@ import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.ExcelUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
-import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -375,115 +374,6 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
                 .address("", "", "Kapina").save();
         data.encounter().patient(patient).encounterType(Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION))
                 .encounterDatetime("2013-09-08").location(Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC)).save();
-    }
-
-    @Test
-    public void testConsultationsHacky() throws Exception {
-        testExportHacky("consultations",
-                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
-                "DATE(rvd.value_datetime) appointment,",
-                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
-                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
-        // we don't actually test anything here beyond the fact that the SQL query can be executed
-    }
-
-    @Test
-    @Ignore
-    public void testHospitalizationsExportHacky() throws Exception {
-        testExportHacky("hospitalizations",
-                "ROUND(DATEDIFF(adm.encounter_datetime, pr.birthdate)/365.25, 1) age_at_adm,",
-                "IF(dis_dispo.disposition IS NOT NULL, dis_dispo.disposition, 'Toujours hospitalisé') outcome,",
-                "(DATEDIFF(IF(dis.encounter_datetime IS NOT NULL AND dis.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY), dis.encounter_datetime, COALESCE(v.date_stopped, :endDate)), adm.encounter_datetime) + 1) length_of_hospitalization,",
-                "IF(pr.death_date IS NOT NULL AND pr.death_date < ADDDATE(:endDate, INTERVAL 1 DAY), IF(TIME_TO_SEC(TIMEDIFF(pr.death_date, adm.encounter_datetime))/3600 < 48, 'Décès < 48 hrs', 'Décès >= 48 hrs'), null) died,",
-                "AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)",
-                "AND adm.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
-    }
-
-    private ReportData testExportHacky(String dataSetName, String... removeTheseSnippets) throws Exception {
-        FullDataExportBuilder.Configuration configuration = new FullDataExportBuilder.Configuration("uuid", "prefix", asList(dataSetName));
-        FullDataExportReportManager reportManager = builder.buildReportManager(configuration);
-        ReportDefinition reportDefinition = reportManager.constructReportDefinition();
-
-        // H2 cannot handle the following snippets, so we remove them from the query
-        SqlDataSetDefinition sqlDsd = (SqlDataSetDefinition) reportDefinition.getDataSetDefinitions().get(dataSetName).getParameterizable();
-        String sql = sqlDsd.getSqlQuery();
-        for (int i = 0; i < removeTheseSnippets.length; ++i) {
-            sql = sql.replace(removeTheseSnippets[i], "");
-        }
-        sqlDsd.setSqlQuery(sql);
-
-        EvaluationContext context = new EvaluationContext();
-        context.addParameterValue("startDate", DateUtil.parseDate("2013-10-01", "yyyy-MM-dd"));
-        context.addParameterValue("endDate", DateUtil.parseDate("2013-10-31", "yyyy-MM-dd"));
-
-        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
-        new TsvReportRenderer().render(reportData, null, System.out);
-
-        return reportData;
-    }
-
-    @Test
-    public void testPostOpNote1ExportHacky() throws Exception {
-        testExportHacky("postOpNote1",
-                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
-                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
-                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
-
-        // we don't actually test anything here beyond the fact that the SQL query can be executed
-    }
-
-    @Test
-    public void testPostOpNote2ExportHacky() throws Exception {
-        testExportHacky("postOpNote2",
-                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
-                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
-                "IF(whole_blood.obs_id IS NOT NULL, 'Oui', 'Non') whole_blood,",
-                "IF(plasma.obs_id IS NOT NULL, 'Oui', 'Non') plasma,",
-                "IF(platelets.obs_id IS NOT NULL, 'Oui', 'Non') platelets,",
-                "IF(packed_cells.obs_id IS NOT NULL, 'Oui', 'Non') packed_cells,",
-                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
-
-        // we don't actually test anything here beyond the fact that the SQL query can be executed
-    }
-
-    @Test
-    @Ignore
-    public void testRadiologyStudyEncountersHacky() throws Exception {
-        testExportHacky("radiologyStudyEncounters",
-                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
-                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
-                "CASE\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyChest) THEN 'chest'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyHeadNeck) THEN 'head and neck'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologySpine) THEN 'spine'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyVascular) THEN 'vascular'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyAbdomenPelvis) THEN 'abdomen and pelvis'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyMusculoskeletal) THEN 'musculoskeletal (non-cranial/spinal)'\n" +
-                        "  ELSE '?'\n" +
-                        "END AS anatomical_grouping,",
-                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
-
-        // we don't actually test anything here beyond the fact that the SQL query can be executed
-    }
-
-    @Test
-    @Ignore
-    public void testRadiologyReportEncountersHacky() throws Exception {
-        testExportHacky("radiologyStudyEncounters",
-                "ROUND(DATEDIFF(e.encounter_datetime, pr.birthdate)/365.25, 1) age_at_enc,",
-                "IF(TIME_TO_SEC(e.date_created) - TIME_TO_SEC(e.encounter_datetime) > 1800, TRUE, FALSE) retrospective,",
-                "CASE\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyChest) THEN 'chest'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyHeadNeck) THEN 'head and neck'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologySpine) THEN 'spine'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyVascular) THEN 'vascular'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyAbdomenPelvis) THEN 'abdomen and pelvis'\n" +
-                        "  WHEN proc_perf.value_coded IN (SELECT concept_id FROM concept_set WHERE concept_set = :radiologyMusculoskeletal) THEN 'musculoskeletal (non-cranial/spinal)'\n" +
-                        "  ELSE '?'\n" +
-                        "END AS anatomical_grouping,",
-                "AND e.encounter_datetime >= :startDate AND e.encounter_datetime < ADDDATE(:endDate, INTERVAL 1 DAY)");
-
-        // we don't actually test anything here beyond the fact that the SQL query can be executed
     }
 
     @Test @Ignore("H2 cannot handle DATE() function to cast a timestamp to a date")
