@@ -56,7 +56,7 @@
         <pacsintegrationVersion>1.7.0</pacsintegrationVersion>
         <addresshierarchyVersion>2.13.0</addresshierarchyVersion>
         <providermanagementVersion>2.11.0</providermanagementVersion>
-        <eventVersion>2.5</eventVersion>
+        <eventVersion>2.8.0</eventVersion>
         <logicVersion>0.5.2</logicVersion>
         <importpatientfromwsVersion>1.0</importpatientfromwsVersion>
         <uilibraryVersion>2.0.6</uilibraryVersion>
@@ -369,12 +369,6 @@
         <dependency>
             <groupId>org.openmrs</groupId>
             <artifactId>event-api</artifactId>
-            <version>${eventVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs</groupId>
-            <artifactId>event-api-2.x</artifactId>
             <version>${eventVersion}</version>
             <scope>test</scope>
         </dependency>
