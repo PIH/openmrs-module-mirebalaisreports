@@ -41,7 +41,7 @@
         <appframeworkVersion>2.16.0</appframeworkVersion>
         <metadatasharingVersion>1.7.0</metadatasharingVersion>
         <metadatamappingVersion>1.3.5</metadatamappingVersion>
-        <metadatadeployVersion>1.12.1</metadatadeployVersion>
+        <metadatadeployVersion>1.13.0-SNAPSHOT</metadatadeployVersion>
         <htmlformentryVersion>3.10.0</htmlformentryVersion>
         <htmlformentry19extVersion>1.7</htmlformentry19extVersion>
         <htmlformentryuiVersion>1.7.0</htmlformentryuiVersion>
@@ -295,6 +295,12 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>metadatadeploy-api-1.10</artifactId>
+            <version>${metadatadeployVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>metadatadeploy-api-1.11</artifactId>
             <version>${metadatadeployVersion}</version>
             <scope>provided</scope>
         </dependency>
