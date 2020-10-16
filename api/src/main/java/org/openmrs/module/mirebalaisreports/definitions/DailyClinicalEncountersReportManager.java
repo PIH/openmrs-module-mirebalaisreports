@@ -4,7 +4,6 @@ import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
-import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -33,8 +32,8 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
     }
 
     @Override
-    public List<ConfigDescriptor.Site> getSites() {
-        return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
+    public List<String> getSites() {
+        return Arrays.asList("MIREBALAIS");
     }
 
     @Override

@@ -2,7 +2,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
-import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -28,8 +27,8 @@ public class LqasDiagnosesReportManager extends BasePihReportManager {
     public static final String TEMPLATE_DIR = "org/openmrs/module/mirebalaisreports/reportTemplates/";
 
     @Override
-    public List<ConfigDescriptor.Site> getSites() {
-        return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
+    public List<String> getSites() {
+        return Arrays.asList("MIREBALAIS");
     }
 
     @Override

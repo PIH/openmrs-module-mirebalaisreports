@@ -17,7 +17,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.pihcore.reporting.library.PihCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.TimePeriod;
@@ -56,7 +55,7 @@ public class InpatientStatsMonthlyReportManager extends BasePihReportManager {
     }
 
     @Override
-    public List<ConfigDescriptor.Site> getSites() {
+    public List<String> getSites() {
         return Arrays.asList(); //Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
     }
 
