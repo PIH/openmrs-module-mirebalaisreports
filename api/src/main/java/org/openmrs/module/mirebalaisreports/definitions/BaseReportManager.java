@@ -101,7 +101,7 @@ public abstract class BaseReportManager implements ReportManager {
         return Collections.emptyList();
     }
 
-    public List<ConfigDescriptor.Site> getSites() {
+    public List<String> getSites() {
         return Collections.emptyList();
     }
 

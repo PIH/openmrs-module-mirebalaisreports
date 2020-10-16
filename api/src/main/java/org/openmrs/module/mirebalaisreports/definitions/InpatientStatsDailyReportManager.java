@@ -20,7 +20,6 @@ import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.pihcore.reporting.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
 import org.openmrs.module.pihcore.reporting.cohort.definition.DiedSoonAfterEncounterCohortDefinition;
 import org.openmrs.module.pihcore.reporting.cohort.definition.LastDispositionBeforeExitCohortDefinition;
@@ -62,8 +61,8 @@ public class InpatientStatsDailyReportManager extends BasePihReportManager {
     }
 
     @Override
-    public List<ConfigDescriptor.Site> getSites() {
-        return Arrays.asList(ConfigDescriptor.Site.MIREBALAIS);
+    public List<String> getSites() {
+        return Arrays.asList("MIREBALAIS");
     }
 
     @Override

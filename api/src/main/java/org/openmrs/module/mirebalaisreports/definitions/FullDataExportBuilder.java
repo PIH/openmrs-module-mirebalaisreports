@@ -58,7 +58,7 @@ public class FullDataExportBuilder {
             configurations = new ArrayList<Configuration>();
 
             // mirebalais-specific
-            if (config.getSite().equals(ConfigDescriptor.Site.MIREBALAIS)) {
+            if (config.getSite().equalsIgnoreCase("MIREBALAIS")) {
                 // these reports use a conbination of SQL-based and Java data set definitions, so we can not yet configure the reports  via config
                 configurations.add(new Configuration(MirebalaisReportsProperties.FULL_DATA_EXPORT_REPORT_DEFINITION_UUID, "fulldataexport", null));
                 configurations.add(new Configuration(MirebalaisReportsProperties.DASHBOARD_DATA_EXPORT_REPORT_DEFINITION_UUID, "dashboarddataexport",
