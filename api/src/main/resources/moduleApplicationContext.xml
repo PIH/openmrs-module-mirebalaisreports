@@ -23,9 +23,9 @@
 		<property name="moduleService">
 			<list merge="true">
 				<value>org.openmrs.module.mirebalaisreports.api.MirebalaisReportsService</value>
-				<ref local="mirebalaisReportsService"/>
+				<ref bean="mirebalaisReportsService"/>
 			</list>
 		</property>
 	</bean>
-	
+
 </beans>
