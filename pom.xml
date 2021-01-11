@@ -61,7 +61,7 @@
         <importpatientfromwsVersion>1.0</importpatientfromwsVersion>
         <uilibraryVersion>2.0.6</uilibraryVersion>
         <appuiVersion>1.8.0</appuiVersion>
-        <dispensingVersion>1.1.0</dispensingVersion>
+        <dispensingVersion>1.2.0</dispensingVersion>
         <uicommonsVersion>2.7.0-SNAPSHOT</uicommonsVersion>
         <registrationcoreVersion>1.10.0</registrationcoreVersion>
         <registrationappVersion>1.21.0</registrationappVersion>
