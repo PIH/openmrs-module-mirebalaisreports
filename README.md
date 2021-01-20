@@ -1,18 +1,19 @@
 openmrs-module-mirebalaisreports
 ================================
 
-This module leverages the
-[OpenMRS Reporting Module](https://github.com/openmrs/openmrs-module-reporting)
-to define reports.
+This module provides **legacy** mechanisms for defining reports using the
+[OpenMRS Reporting Module](https://github.com/openmrs/openmrs-module-reporting).
 
-## Defining Reports
+**Do not use this** for defining new reports. New reports should be created using
+[config](https://github.com/PIH/openmrs-config-pihemr/#reports).
 
-There are several ways to define a report.
+## Legacy reports
+
+There are several ways these reports are defined.
 
 1. **FullDataExport**: Allows defining, a CSV report. Requires some Java and some SQL.
 2. **DataReportManager with SQL**: Allows defining a CSV report, or can fill in an XML template. Requires Java and SQL.
-3. **DataReportManager with only Java**: Allows defining a CSV report, or can fill in an XML template. Requires Java, lots of it.
-4. **SQL Only** *You can't do this yet. But someday, hopefully someday soon.* 
+3. **DataReportManager with only Java**: Allows defining a CSV report, or can fill in an XML template. Requires Java, lots of it. 
 
 ### 1. Using FullDataExport
 
@@ -54,13 +55,3 @@ See
 [DailyCheckInsReportManager.java](https://github.com/PIH/openmrs-module-mirebalaisreports/blob/master/api/src/main/java/org/openmrs/module/mirebalaisreports/definitions/DailyCheckInsReportManager.java)
 and the associated files for an example of how to do this.
 
-But really, it would be better if you didn't use this method. Write some SQL. It'll be fine.
-
-### 4. Using SQL Only
-
-As mentioned above, you can't do this yet. The code supporting this needs to be pulled in from
-[openmrs-module-pihmalawi](https://github.com/PIH/openmrs-module-pihmalawi).
-
-But take a quick look at
-[patientWeightChange.sql](https://github.com/PIH/openmrs-module-pihmalawi/blob/master/api/src/main/resources/org/openmrs/module/pihmalawi/reporting/reports/sql/patientWeightChange.sql)
-to whet your appetite for it. No Java had to be added to support this particular report.
