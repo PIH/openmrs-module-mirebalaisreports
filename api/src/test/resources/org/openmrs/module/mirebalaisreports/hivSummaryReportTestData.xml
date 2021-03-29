@@ -61,6 +61,10 @@
     <concept concept_id="9993141" retired="0" datatype_id="4" class_id="18" is_set="0" creator="2" date_created="2006-08-31 19:20:09.0" changed_by="2" date_changed="2017-10-05 11:04:02.0" uuid="3cdc0604-26fe-102b-80cb-0017a47871b2" />
     <!-- HIV State: Tx Stopped -->
     <concept concept_id="9993142" retired="0" datatype_id="4" class_id="18" is_set="0" creator="2" date_created="2006-08-31 19:20:09.0" changed_by="2" date_changed="2017-10-05 11:04:02.0" uuid="3cdc0d7a-26fe-102b-80cb-0017a47871b2" />
+    <!-- HIV State: TREATMENT_STOPPED_SIDE_EFFECTS -->
+    <concept concept_id="9993145" retired="0" datatype_id="4" class_id="18" is_set="0" creator="2" date_created="2021-03-29 11:20:09.0" changed_by="2" date_changed="2021-03-29 11:20:09.0" uuid="3cdceb64-26fe-102b-80cb-0017a47871b2" />
+    <!-- HIV State: TREATMENT_STOPPED_OTHER -->
+    <concept concept_id="9993146" retired="0" datatype_id="4" class_id="18" is_set="0" creator="2" date_created="2021-03-29 11:20:09.0" changed_by="2" date_changed="2021-03-29 11:20:09.0" uuid="a3c87bc9-b335-481c-94b1-8c47b7ff06ed" />
     <!-- HIV Workflow: Reactivation Status -->
     <concept concept_id="9993143" retired="0" datatype_id="2" class_id="20" is_set="0" creator="2" date_created="2017-06-22 11:27:19.0" changed_by="2" date_changed="2017-10-05 11:04:03.0" uuid="e7503dd3-ea1e-4709-81a1-990015eb71e5" />
     <!-- HIV State: Returned to care -->
