@@ -4,8 +4,6 @@ import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.mirebalaisreports.definitions.BasePihReportManager;
-import org.openmrs.module.pihcore.metadata.core.Locations;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -77,12 +75,12 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BasePihRe
      */
     public List<Location> getLocations() {
         List<String> skip = new ArrayList<String>();
-        skip.addAll(Arrays.asList(Locations.UNKNOWN.uuid(), MirebalaisLocations.MIREBALAIS_HOSPITAL.uuid(), MirebalaisLocations.MIREBALAIS_CDI_PARENT.uuid()));
+        skip.addAll(Arrays.asList("Unknown Location", "Hôpital Universitaire de Mirebalais - Prensipal", "Mirebalais"));
 
         List<Location> locations = locationService.getAllLocations(false);
         for (Iterator<Location> i = locations.iterator(); i.hasNext(); ) {
             Location candidate = i.next();
-            if (skip.contains(candidate.getUuid())) {
+            if (skip.contains(candidate.getName())) {
                 i.remove();
             }
         }
