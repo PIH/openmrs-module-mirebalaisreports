@@ -7,13 +7,13 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.deploy.bundle.core.program.HIVProgramBundle;
 import org.openmrs.module.pihcore.deploy.bundle.core.program.ZikaProgramBundle;
 import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.core.Locations;
 import org.openmrs.module.pihcore.metadata.core.program.HIVProgram;
 import org.openmrs.module.pihcore.metadata.core.program.ZikaProgram;
 import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
@@ -35,6 +35,9 @@ import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWit
 
 @SkipBaseSetup
 public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
+
+    @Autowired
+    private LocationService locationService;
 
     @Autowired
     private ProgramWorkflowService programWorkflowService;
@@ -68,7 +71,7 @@ public class HIVProgramSummaryReportManagerTest extends BaseReportTest {
     public void testReport() throws Exception {
 
         PatientIdentifierType zlemrId = Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID);
-        Location unknown = Metadata.lookup(Locations.UNKNOWN);
+        Location unknown = locationService.getLocation("Unknown Location");
 
         Program hivProgram = programWorkflowService.getProgramByUuid(HIVProgram.HIV.uuid());
         Program zikaProgram = programWorkflowService.getProgramByUuid(ZikaProgram.ZIKA.uuid());

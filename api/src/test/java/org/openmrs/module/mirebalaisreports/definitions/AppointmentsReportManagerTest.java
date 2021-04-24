@@ -14,7 +14,6 @@ import org.openmrs.module.appointmentscheduling.api.AppointmentService;
 import org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.paperrecord.PaperRecordProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -49,16 +48,17 @@ public class AppointmentsReportManagerTest extends BaseReportTest {
     @Test
     public void testAppointmentsExport() throws Exception {
 
+        Location mirebalais = locationService.getLocation("Mirebalais");
+
         Patient patient = data.randomPatient()
-                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
-                .identifier(paperRecordProperties.getPaperRecordIdentifierType(), "A000001", Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL))
+                .identifier(emrApiProperties.getPrimaryIdentifierType(), "2AA00V", mirebalais)
+                .identifier(paperRecordProperties.getPaperRecordIdentifierType(), "A000001", mirebalais)
                 .personAttribute(Metadata.lookup(HaitiPersonAttributeTypes.TELEPHONE_NUMBER), "123-4567")
                 .save();
 
         Date startDate = new DateTime(2014,1,1,9,0,0).toDate();
         Date endDate = new DateTime(2014,1,1,11,0,0).toDate();
 
-        Location mirebalaisHospital = locationService.getLocationByUuid("a084f714-a536-473b-94e6-ec317b152b43");
         Provider scheduledProvider = data.randomProvider().save();
 
         AppointmentType appointmentType = new AppointmentType();
@@ -68,7 +68,7 @@ public class AppointmentsReportManagerTest extends BaseReportTest {
 
         AppointmentBlock block = new AppointmentBlock();
         block.setTypes(Collections.singleton(appointmentType));
-        block.setLocation(mirebalaisHospital);
+        block.setLocation(mirebalais);
         block.setProvider(scheduledProvider);
         block.setStartDate(startDate);
         block.setEndDate(endDate);

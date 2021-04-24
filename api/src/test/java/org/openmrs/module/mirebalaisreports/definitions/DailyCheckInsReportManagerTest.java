@@ -11,7 +11,6 @@ import org.openmrs.Visit;
 import org.openmrs.VisitType;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -41,9 +40,9 @@ public class DailyCheckInsReportManagerTest extends BaseReportTest {
     @Before
     public void setUp() throws Exception {
         VisitType atFacility = emrApiProperties.getAtFacilityVisitType();
-        Location registrationDesk = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
-        Location outpatient = Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC);
-        Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
+        Location registrationDesk = locationService.getLocation("Biwo Resepsyon");
+        Location outpatient = locationService.getLocation("Klinik Ekstèn");
+        Location mirebalaisHospital = locationService.getLocation("Hôpital Universitaire de Mirebalais - Prensipal");
         EncounterType registration = Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION);
         EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
         EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
