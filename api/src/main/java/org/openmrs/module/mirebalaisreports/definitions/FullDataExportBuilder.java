@@ -40,7 +40,7 @@ public class FullDataExportBuilder {
     Config config;
 
     public final List<String> dataSetOptions = Arrays.asList(
-            "patients", "registration", "visits", "checkins", "vitals", "consultations", "diagnoses",
+            "patients", "registration", "visits", "checkins", "consultations", "diagnoses",
             "hospitalizations", "postOpNote1", "postOpNote2",
             "radiologyOrders", "radiologyOrderEncounters", "radiologyStudyEncounters", "radiologyReportEncounters",
             "dispensing", "encounters"
@@ -87,13 +87,6 @@ public class FullDataExportBuilder {
                 // Java-based dataset definition
                 configurations.add(new Configuration(MirebalaisReportsProperties.DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID, "dispensingdataexport",
                         Arrays.asList("dispensing")));
-            }
-
-            // Haiti Mirebalais uses a SQL data set definition, while the rest of Haiti, and other countries, use a Java DSD based report, so we don't define the vitals reports via config
-            if ((config.isComponentEnabled(Components.VITALS) || config.isComponentEnabled(Components.UHM_VITALS))
-                    || config.isComponentEnabled(Components.ALL_DATA_EXPORTS)) {
-                configurations.add(new Configuration(MirebalaisReportsProperties.VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID, "vitalsdataexport",
-                        Arrays.asList("vitals")));
             }
 
             // diagnoses is a Java data set definition in Sierra Leone and Liberia, but a SQL report in Haiti, so we handle the config here
