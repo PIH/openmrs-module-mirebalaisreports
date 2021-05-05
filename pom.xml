@@ -76,6 +76,7 @@
         <allergyuiVersion>1.8.1</allergyuiVersion>
         <chartsearchVersion>1.6</chartsearchVersion>
         <haiticoreVersion>1.0.0</haiticoreVersion>
+        <pihemrconfigVersion>1.0.0-SNAPSHOT</pihemrconfigVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.4.0</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

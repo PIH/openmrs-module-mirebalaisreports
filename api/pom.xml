@@ -12,6 +12,16 @@
 	<name>Mirebalais Hospital Reporting Module Module API</name>
 	<description>API project for MirebalaisHospitalReportingModule</description>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.pih.openmrs</groupId>
+			<artifactId>openmrs-config-pihemr-api</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>compile</scope>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<resources>
 			<resource>
