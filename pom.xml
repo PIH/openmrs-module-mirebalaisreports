@@ -497,17 +497,21 @@
 
 	</build>
 
-	<repositories>
-		<repository>
-			<id>openmrs-repo</id>
-			<name>OpenMRS Nexus Repository</name>
-			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
-		</repository>
+    <repositories>
+        <repository>
+            <id>openmrs-repo</id>
+            <name>OpenMRS Nexus Repository</name>
+            <url>https://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+        </repository>
         <repository>
             <id>rubygems-releases</id>
             <url>http://rubygems-proxy.torquebox.org/releases</url>
         </repository>
-	</repositories>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/public</url>
+        </repository>
+    </repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
