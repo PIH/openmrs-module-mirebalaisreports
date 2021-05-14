@@ -36,7 +36,6 @@ import org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
-import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
 import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -366,10 +365,10 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
 
     private void setUpPatientsBasedOnCoreMetadata() {
         Patient patient = data.patient().name("Christy","Lee").gender("F")
-                .identifier(Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID), "TT200E", locationService.getLocation("Klinik Ekstèn"))
+                .identifier(mirebalaisReportsProperties.getZlEmrIdentifierType(), "TT200E", locationService.getLocation("Klinik Ekstèn"))
                 .address("1050 Wishard Blvd", "RG5", "Indianapolis", "IN").save();
         data.patient().name("Bobby", "Joe").gender("M")
-                .identifier(Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID), "TT201C", locationService.getLocation("Klinik Ekstèn"))
+                .identifier(mirebalaisReportsProperties.getZlEmrIdentifierType(), "TT201C", locationService.getLocation("Klinik Ekstèn"))
                 .address("", "", "Kapina").save();
         data.encounter().patient(patient).encounterType(Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION))
                 .encounterDatetime("2013-09-08").location(locationService.getLocation("Klinik Ekstèn")).save();
@@ -377,7 +376,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
 
     @Test @Ignore("H2 cannot handle DATE() function to cast a timestamp to a date")
     public void shouldSuccessfullyRenderConsultationsToExcel() throws Exception {
-        PatientIdentifierType zlEmrId = Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID);
+        PatientIdentifierType zlEmrId = mirebalaisReportsProperties.getZlEmrIdentifierType();
         Location mirebalaisHospital = locationService.getLocation("Hôpital Universitaire de Mirebalais - Prensipal");
         Location clinicRegistration = locationService.getLocation("Biwo Resepsyon");
         Location womensWard = locationService.getLocation("Sal Fanm");
