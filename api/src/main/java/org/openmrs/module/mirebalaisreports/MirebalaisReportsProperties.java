@@ -33,9 +33,9 @@ import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.haiticore.metadata.HaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.CesConfigConstants;
 import org.openmrs.module.pihcore.PihEmrConfigConstants;
+import org.openmrs.module.pihcore.ZlConfigConstants;
 import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
-import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -205,26 +205,21 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
 	//***** IDENTIFIER TYPES *****
 
-
-    public static final String DOSSIER_NUMBER_UUID = "e66645eb-03a8-4991-b4ce-e87318e37566";
-
-    public static final String HIV_EMR_ID_UUID = "139766e8-15f5-102d-96e4-000c29c2a5d7";
-
     public PatientIdentifierType getZlEmrIdentifierType() {
-		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.ZL_EMR_ID.uuid());
+		return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_ZLEMRID_UUID);
 	}
 
 	public PatientIdentifierType getDossierNumberIdentifierType() {
-		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.DOSSIER_NUMBER.uuid());
+		return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_DOSSIERNUMBER_UUID);
 	}
 
 
 	public PatientIdentifierType getHivEmrIdentifierType() {
-		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.HIVEMR_V1.uuid());
+		return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_HIVEMRV1_UUID);
 	}
 
     public PatientIdentifierType getUserEnteredReferenceNumberIdentifierType() {
-        return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.USER_ENTERED_REF_NUMBER.uuid());
+        return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_USERENTEREDREF_UUID);
     }
 
 
