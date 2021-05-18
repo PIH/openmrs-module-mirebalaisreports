@@ -9,8 +9,6 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
-import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -26,7 +24,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertThat;
 import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyIds;
-import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyMembers;;
+import static org.openmrs.module.pihcore.reporting.ReportingMatchers.isCohortWithExactlyMembers;
 
 
 @SkipBaseSetup
@@ -38,14 +36,16 @@ public class DailyCheckInsReportManagerTest extends BaseReportTest {
     private Patient p2, p3, p4;
 
     @Before
-    public void setUp() throws Exception {
+    @Override
+    public void setup() throws Exception {
+        super.setup();
         VisitType atFacility = emrApiProperties.getAtFacilityVisitType();
         Location registrationDesk = locationService.getLocation("Biwo Resepsyon");
         Location outpatient = locationService.getLocation("Klinik Ekstèn");
         Location mirebalaisHospital = locationService.getLocation("Hôpital Universitaire de Mirebalais - Prensipal");
-        EncounterType registration = Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION);
-        EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
-        EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
+        EncounterType registration = getRegistrationEncounterType();
+        EncounterType checkIn = getCheckInEncounterType();
+        EncounterType consult = getConsultationEncounterType();
 
         // never registered or seen
         data.randomPatient().age(50).dateCreated("2013-10-01").save();

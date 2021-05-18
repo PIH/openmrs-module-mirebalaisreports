@@ -35,7 +35,6 @@ import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
 import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -166,7 +165,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
                 .creator(checkinUser).save();
 
         Encounter e2 = data.encounter().visit(visit)
-                .encounterType(Metadata.lookup(EncounterTypes.VITALS))
+                .encounterType(getVitalsEncounterType())
                 .location(locationService.getLocation("Klinik Ekstèn"))
                 .encounterDatetime("2013-08-30 09:15:00")
                 .provider(mirebalaisReportsProperties.getNurseEncounterRole(), nurseProvider)
@@ -210,7 +209,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
             Integer encounterId = (Integer) row.getColumnValue("encounterId");
             if (encounterId.equals(e1.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e1.getEncounterId()));
-                assertThat((String) row.getColumnValue("encounterType"), is(EncounterTypes.CHECK_IN.name()));
+                assertThat((String) row.getColumnValue("encounterType"), is(getCheckInEncounterType().getName()));
                 assertThat((String) row.getColumnValue("encounterLocation"), is("Biwo Resepsyon"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:00:00")));
                 assertThat(row.getColumnValue("disposition"), nullValue());
@@ -228,7 +227,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
             }
             else if (encounterId.equals(e2.getEncounterId())) {
                 assertThat((Integer) row.getColumnValue("encounterId"), is(e2.getEncounterId()));
-                assertThat((String) row.getColumnValue("encounterType"), is(EncounterTypes.VITALS.name()));
+                assertThat((String) row.getColumnValue("encounterType"), is(getVitalsEncounterType().getName()));
                 assertThat((String) row.getColumnValue("encounterLocation"), is("Klinik Ekstèn"));
                 assertThat((Timestamp) row.getColumnValue("encounterDatetime"), is(Timestamp.valueOf("2013-08-30 09:15:00")));
                 assertThat((String) row.getColumnValue("disposition"), is("Admettre à l'hôpital"));
@@ -370,7 +369,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         data.patient().name("Bobby", "Joe").gender("M")
                 .identifier(mirebalaisReportsProperties.getZlEmrIdentifierType(), "TT201C", locationService.getLocation("Klinik Ekstèn"))
                 .address("", "", "Kapina").save();
-        data.encounter().patient(patient).encounterType(Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION))
+        data.encounter().patient(patient).encounterType(getRegistrationEncounterType())
                 .encounterDatetime("2013-09-08").location(locationService.getLocation("Klinik Ekstèn")).save();
     }
 
@@ -382,9 +381,10 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         Location womensWard = locationService.getLocation("Sal Fanm");
         PersonAttributeType unknownPatient = Metadata.lookup(HaitiPersonAttributeTypes.UNKNOWN_PATIENT);
         VisitType visitType = emrApiProperties.getAtFacilityVisitType();
-        EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
-        EncounterType admission = Metadata.lookup(EncounterTypes.ADMISSION);
-        EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
+        EncounterType checkIn = getCheckInEncounterType();
+        EncounterType admission = getAdmissionEncounterType();
+        EncounterType consult = getConsultationEncounterType();
+
         EncounterRole consultingClinician = mirebalaisReportsProperties.getConsultingClinicianEncounterRole();
 
         User paulaMorris = data.user().personName("Paula", null, "Morris").username("pmorris").gender("F").save();

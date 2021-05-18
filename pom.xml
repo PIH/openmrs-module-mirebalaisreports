@@ -76,6 +76,7 @@
         <allergyuiVersion>1.8.1</allergyuiVersion>
         <chartsearchVersion>1.6</chartsearchVersion>
         <haiticoreVersion>1.0.0</haiticoreVersion>
+        <initializerVersion>2.2.0-SNAPSHOT</initializerVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.4.0</supercsvVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -398,6 +399,30 @@
             <version>${registrationappVersion}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Begin Mekom -->
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>initializer-api</artifactId>
+            <version>${initializerVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>initializer-api-2.2</artifactId>
+            <version>${initializerVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>initializer-api-2.3</artifactId>
+            <version>${initializerVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- End Mekom -->
 
         <!-- OpenMRS modules -->
 
