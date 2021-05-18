@@ -12,8 +12,6 @@ import org.openmrs.Visit;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -53,10 +51,10 @@ public class DailyClinicalEncountersReportManagerTest extends BaseReportTest {
         Location registrationDesk = locationService.getLocation("Biwo Resepsyon");
         Location outpatient = locationService.getLocation("Klinik Ekstèn");
         Location mirebalaisHospital = locationService.getLocation("Hôpital Universitaire de Mirebalais - Prensipal");
-        EncounterType registration = Metadata.lookup(EncounterTypes.PATIENT_REGISTRATION);
-        EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
-        EncounterType vitals = Metadata.lookup(EncounterTypes.VITALS);
-        EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
+        EncounterType registration = getRegistrationEncounterType();
+        EncounterType checkIn = getCheckInEncounterType();
+        EncounterType vitals = getVitalsEncounterType();
+        EncounterType consult = getConsultationEncounterType();
 
         // never registered or seen
         testData.patient().name("Mary", "Rodriguez").gender("F").birthdate("1946-05-26", false).dateCreated("2013-10-01").identifier(zlemrId, "Y2ARM5", mirebalaisHospital).save();
