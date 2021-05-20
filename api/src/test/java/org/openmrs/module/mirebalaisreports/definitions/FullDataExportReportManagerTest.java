@@ -32,7 +32,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.dispensing.DispensingProperties;
 import org.openmrs.module.emrapi.disposition.DispositionService;
-import org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.reporting.dataset.manager.EncounterDataSetManagerTest;
@@ -379,7 +378,7 @@ public class FullDataExportReportManagerTest extends EncounterDataSetManagerTest
         Location mirebalaisHospital = locationService.getLocation("Hôpital Universitaire de Mirebalais - Prensipal");
         Location clinicRegistration = locationService.getLocation("Biwo Resepsyon");
         Location womensWard = locationService.getLocation("Sal Fanm");
-        PersonAttributeType unknownPatient = Metadata.lookup(HaitiPersonAttributeTypes.UNKNOWN_PATIENT);
+        PersonAttributeType unknownPatient = Metadata.getUnknownPatientAttributeType();
         VisitType visitType = emrApiProperties.getAtFacilityVisitType();
         EncounterType checkIn = getCheckInEncounterType();
         EncounterType admission = getAdmissionEncounterType();

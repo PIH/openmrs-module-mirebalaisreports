@@ -75,7 +75,6 @@
         <allergyapiVersion>1.4</allergyapiVersion>
         <allergyuiVersion>1.8.1</allergyuiVersion>
         <chartsearchVersion>1.6</chartsearchVersion>
-        <haiticoreVersion>1.0.0</haiticoreVersion>
         <initializerVersion>2.2.0-SNAPSHOT</initializerVersion>
         <!-- Need to phase this out. -->
         <supercsvVersion>2.4.0</supercsvVersion>
@@ -327,12 +326,6 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>addresshierarchy-api</artifactId>
             <version>${addresshierarchyVersion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>haiticore-api</artifactId>
-            <version>${haiticoreVersion}</version>
             <scope>provided</scope>
         </dependency>
 
