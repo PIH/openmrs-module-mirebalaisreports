@@ -30,10 +30,10 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionService;
-import org.openmrs.module.haiticore.metadata.HaitiPatientIdentifierTypes;
 import org.openmrs.module.pihcore.CesConfigConstants;
 import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.pihcore.ZlConfigConstants;
+import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,7 +223,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
 
     public PatientIdentifierType getBiometricIdentifierType() {
-        return getIdentifierTypeByUuid(HaitiPatientIdentifierTypes.BIOMETRIC_REF_NUMBER.uuid());
+        return Metadata.getBiometricsReferenceNumberIdentifierType();
     }
 
 	private PatientIdentifierType getIdentifierTypeByUuid(String uuid) {
