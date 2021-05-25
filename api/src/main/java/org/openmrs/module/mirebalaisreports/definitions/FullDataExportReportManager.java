@@ -28,7 +28,6 @@ import org.openmrs.module.pihcore.reporting.dataset.manager.CheckInDataSetManage
 import org.openmrs.module.pihcore.reporting.dataset.manager.ConsultationsDataSetManager;
 import org.openmrs.module.pihcore.reporting.dataset.manager.DiagnosesDataSetManager;
 import org.openmrs.module.pihcore.reporting.dataset.manager.RegistrationDataSetManager;
-import org.openmrs.module.pihcore.reporting.dataset.manager.VitalsDataSetManager;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -103,9 +102,6 @@ public class FullDataExportReportManager extends BasePihReportManager {
 
     @Autowired
     private ConsultationsDataSetManager consultationsDataSetManager;
-
-    @Autowired
-    private VitalsDataSetManager vitalsDataSetManager;
 
     @Autowired
     private DiagnosesDataSetManager diagnosesDataSetManager;
@@ -206,11 +202,6 @@ public class FullDataExportReportManager extends BasePihReportManager {
             }
             else if ("consultations".equals(key)) {
                 dsd = consultationsDataSetManager.constructDataSet();
-                addStartAndEndDateParameters(rd, dsd, mappings);
-            }
-            // TODO figure out if we can standardize on a vitals data export across Haiti; looks like we use the non-SQL report everywhere but Mirebalais
-            else if ("vitals".equals(key)  && !config.getSite().equalsIgnoreCase("MIREBALAIS")) {
-                dsd = vitalsDataSetManager.constructDataSet();
                 addStartAndEndDateParameters(rd, dsd, mappings);
             }
             // Haiti uses a SQL-based approach, so skip here

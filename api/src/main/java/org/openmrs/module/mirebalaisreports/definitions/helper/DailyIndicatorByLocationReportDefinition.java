@@ -4,8 +4,6 @@ import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.mirebalaisreports.definitions.BasePihReportManager;
-import org.openmrs.module.pihcore.metadata.core.Locations;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -77,7 +75,10 @@ public abstract class DailyIndicatorByLocationReportDefinition extends BasePihRe
      */
     public List<Location> getLocations() {
         List<String> skip = new ArrayList<String>();
-        skip.addAll(Arrays.asList(Locations.UNKNOWN.uuid(), MirebalaisLocations.MIREBALAIS_HOSPITAL.uuid(), MirebalaisLocations.MIREBALAIS_CDI_PARENT.uuid()));
+        skip.addAll(Arrays.asList(
+                "8d6c993e-c2cc-11de-8d13-0010c6dffd0f",  // Unknown location
+                "24bd1390-5959-11e4-8ed6-0800200c9a66",  // Hôpital Universitaire de Mirebalais - Prensipal
+                "a084f714-a536-473b-94e6-ec317b152b43"));  // Mirebalais
 
         List<Location> locations = locationService.getAllLocations(false);
         for (Iterator<Location> i = locations.iterator(); i.hasNext(); ) {

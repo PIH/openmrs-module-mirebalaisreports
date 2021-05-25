@@ -32,12 +32,8 @@ import org.openmrs.VisitType;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.contrib.testdata.TestDataManager;
-import org.openmrs.module.haiticore.metadata.HaitiPersonAttributeTypes;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
-import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
-import org.openmrs.module.pihcore.metadata.haiti.mirebalais.MirebalaisLocations;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.encounter.EvaluatedEncounterData;
@@ -84,17 +80,17 @@ public class EncounterDataLibraryTest extends BaseReportTest {
     @Before
     public void setUp() throws Exception {
         VisitType visitType = emrApiProperties.getAtFacilityVisitType();
-        EncounterType checkIn = Metadata.lookup(EncounterTypes.CHECK_IN);
-        EncounterType admission = Metadata.lookup(EncounterTypes.ADMISSION);
-        EncounterType consult = Metadata.lookup(EncounterTypes.CONSULTATION);
-        EncounterType exitFromInpatient = Metadata.lookup(EncounterTypes.EXIT_FROM_CARE);
-        Location visitLocation = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
-        Location outpatient = Metadata.lookup(MirebalaisLocations.OUTPATIENT_CLINIC);
-        Location clinicRegistration = Metadata.lookup(MirebalaisLocations.CLINIC_REGISTRATION);
-        Location mirebalaisHospital = Metadata.lookup(MirebalaisLocations.MIREBALAIS_HOSPITAL);
-        Location womensWard = Metadata.lookup(MirebalaisLocations.WOMENS_INTERNAL_MEDICINE);
-        PatientIdentifierType zlEmrId = Metadata.lookup(PihHaitiPatientIdentifierTypes.ZL_EMR_ID);
-        PersonAttributeType unknownPatient = Metadata.lookup(HaitiPersonAttributeTypes.UNKNOWN_PATIENT);
+        EncounterType checkIn = getCheckInEncounterType();
+        EncounterType admission = getAdmissionEncounterType();
+        EncounterType consult = getConsultationEncounterType();
+        EncounterType exitFromInpatient = getExitEncounterType();
+        Location visitLocation = locationService.getLocation("Mirebalais");
+        Location outpatient = locationService.getLocation("Klinik Ekstèn");
+        Location clinicRegistration = locationService.getLocation("Biwo Resepsyon");
+        Location mirebalaisHospital = locationService.getLocation("Mirebalais");
+        Location womensWard = locationService.getLocation("Sal Fanm");
+        PatientIdentifierType zlEmrId = mirebalaisReportsProperties.getZlEmrIdentifierType();
+        PersonAttributeType unknownPatient = Metadata.getUnknownPatientAttributeType();
         EncounterRole consultingClinician = mirebalaisReportsProperties.getConsultingClinicianEncounterRole();
         EncounterRole attendingSurgeonRole = mirebalaisReportsProperties.getAttendingSurgeonEncounterRole();
         Provider unknownProvider = providerService.getProvider(1);
@@ -188,9 +184,9 @@ public class EncounterDataLibraryTest extends BaseReportTest {
         context.setBaseEncounters(encounterIdSet);
         EncounterDataDefinition definition = library.getMostRecentZLEmrIdLocation();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
-        assertThat((String)data.getData().get(e1.getId()), is(MirebalaisLocations.MIREBALAIS_HOSPITAL.name()));
-        assertThat((String)data.getData().get(e2.getId()), is(MirebalaisLocations.MIREBALAIS_HOSPITAL.name()));
-        assertThat((String) data.getData().get(e3.getId()), is(MirebalaisLocations.MIREBALAIS_HOSPITAL.name()));
+        assertThat((String)data.getData().get(e1.getId()), is("Mirebalais"));
+        assertThat((String)data.getData().get(e2.getId()), is("Mirebalais"));
+        assertThat((String) data.getData().get(e3.getId()), is("Mirebalais"));
     }
 
     @Test
@@ -328,9 +324,9 @@ public class EncounterDataLibraryTest extends BaseReportTest {
         context.setBaseEncounters(encounterIdSet);
         EncounterDataDefinition definition = library.getEncounterTypeName();
         EvaluatedEncounterData data = encounterDataService.evaluate(definition, context);
-        assertThat((String) data.getData().get(e1.getId()), is(EncounterTypes.CHECK_IN.name()));
-        assertThat((String) data.getData().get(e2.getId()), is(EncounterTypes.ADMISSION.name()));
-        assertThat((String) data.getData().get(e3.getId()), is(EncounterTypes.CONSULTATION.name()));
+        assertThat((String) data.getData().get(e1.getId()), is(getCheckInEncounterType().getName()));
+        assertThat((String) data.getData().get(e2.getId()), is(getAdmissionEncounterType().getName()));
+        assertThat((String) data.getData().get(e3.getId()), is(getConsultationEncounterType().getName()));
     }
 
     @Test

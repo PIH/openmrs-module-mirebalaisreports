@@ -30,12 +30,11 @@ import org.openmrs.module.emr.EmrProperties;
 import org.openmrs.module.emrapi.EmrApiConstants;
 import org.openmrs.module.emrapi.disposition.Disposition;
 import org.openmrs.module.emrapi.disposition.DispositionService;
-import org.openmrs.module.haiticore.metadata.HaitiPatientIdentifierTypes;
-import org.openmrs.module.pihcore.metadata.core.EncounterTypes;
+import org.openmrs.module.pihcore.CesConfigConstants;
+import org.openmrs.module.pihcore.PihEmrConfigConstants;
+import org.openmrs.module.pihcore.ZlConfigConstants;
+import org.openmrs.module.pihcore.metadata.Metadata;
 import org.openmrs.module.pihcore.metadata.core.OrderTypes;
-import org.openmrs.module.pihcore.metadata.core.program.ZikaProgram;
-import org.openmrs.module.pihcore.metadata.haiti.PihHaitiPatientIdentifierTypes;
-import org.openmrs.module.pihcore.metadata.mexico.MexicoEncounterTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -86,7 +85,6 @@ public class MirebalaisReportsProperties extends EmrProperties {
     public static final String DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID = "5dd60b6c-4d45-11e3-9325-f3ae8db9f6a7";
     public static final String DAILY_CHECK_INS_REPORT_DEFINITION_UUID = "f170699a-50af-11e3-ba00-27a0ac7f78d9";
     public static final String DISPENSING_DATA_EXPORT_REPORT_DEFINITION_UUID = "8b2f46e0-5d13-11e3-949a-0800200c9a66";
-    public static final String VITALS_DATA_EXPORT_REPORT_DEFINITION_UUID = "09c9f9ee-fc74-11e3-8248-08002769d9ae";
     public static final String CHECKINS_DATA_EXPORT_REPORT_DEFINITION_UUID = "1c72b461-fc74-11e3-8248-08002769d9ae";
     public static final String DIAGNOSES_DATA_EXPORT_REPORT_DEFINITION_UUID = "257bb3e9-fc74-11e3-8248-08002769d9ae";
     public static final String USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID = "e4d1d6b0-642d-11e3-949a-0800200c9a66";
@@ -206,31 +204,26 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
 	//***** IDENTIFIER TYPES *****
 
-
-    public static final String DOSSIER_NUMBER_UUID = "e66645eb-03a8-4991-b4ce-e87318e37566";
-
-    public static final String HIV_EMR_ID_UUID = "139766e8-15f5-102d-96e4-000c29c2a5d7";
-
     public PatientIdentifierType getZlEmrIdentifierType() {
-		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.ZL_EMR_ID.uuid());
+		return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_ZLEMRID_UUID);
 	}
 
 	public PatientIdentifierType getDossierNumberIdentifierType() {
-		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.DOSSIER_NUMBER.uuid());
+		return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_DOSSIERNUMBER_UUID);
 	}
 
 
 	public PatientIdentifierType getHivEmrIdentifierType() {
-		return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.HIVEMR_V1.uuid());
+		return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_HIVEMRV1_UUID);
 	}
 
     public PatientIdentifierType getUserEnteredReferenceNumberIdentifierType() {
-        return getIdentifierTypeByUuid(PihHaitiPatientIdentifierTypes.USER_ENTERED_REF_NUMBER.uuid());
+        return getIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_USERENTEREDREF_UUID);
     }
 
 
     public PatientIdentifierType getBiometricIdentifierType() {
-        return getIdentifierTypeByUuid(HaitiPatientIdentifierTypes.BIOMETRIC_REF_NUMBER.uuid());
+        return Metadata.getBiometricsReferenceNumberIdentifierType();
     }
 
 	private PatientIdentifierType getIdentifierTypeByUuid(String uuid) {
@@ -263,127 +256,127 @@ public class MirebalaisReportsProperties extends EmrProperties {
 	//***** ENCOUNTER TYPES *****
 
 	public EncounterType getRegistrationEncounterType() {
-		return getEncounterTypeByUuid(EncounterTypes.PATIENT_REGISTRATION.uuid());
+		return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PATIENT_REGISTRATION_UUID);
 	}
 
 	public EncounterType getCheckInEncounterType() {
-		return getEncounterTypeByUuid(EncounterTypes.CHECK_IN.uuid());
+		return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CHECK_IN_UUID);
 	}
 
 	public EncounterType getPaymentEncounterType() {
-		return getEncounterTypeByUuid(EncounterTypes.PAYMENT.uuid());
+		return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PAYMENT_UUID);
 	}
 
 	public EncounterType getVitalsEncounterType() {
-		return getEncounterTypeByUuid(EncounterTypes.VITALS.uuid());
+		return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_VITALS_UUID);
 	}
 
 	public EncounterType getConsultEncounterType() {
-		return getEncounterTypeByUuid(EncounterTypes.CONSULTATION.uuid());
+		return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CONSULTATION_UUID);
 	}
 
 	public EncounterType getRadiologyOrderEncounterType() {
-		return getEncounterTypeByUuid(EncounterTypes.RADIOLOGY_ORDER.uuid());
+		return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_RADIOLOGY_ORDER_UUID);
 	}
 
     public EncounterType getRadiologyStudyEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.RADIOLOGY_STUDY.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_RADIOLOGY_STUDY_UUID);
     }
 
     public EncounterType getRadiologyReportEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.RADIOLOGY_REPORT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_RADIOLOGY_REPORT_UUID);
     }
 
     public EncounterType getPostOpNoteEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.POST_OPERATIVE_NOTE.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_POST_OPERATIVE_NOTE_UUID);
     }
 
     public EncounterType getVCTEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.VCT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_VCT_UUID);
     }
 
     public EncounterType getANCInitialEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.ANC_INTAKE.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_ANC_INTAKE_UUID);
     }
 
     public EncounterType getANCFollowupEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.ANC_FOLLOWUP.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_ANC_FOLLOWUP_UUID);
     }
 
     public EncounterType getDeliveryEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.MCH_DELIVERY.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_MCH_DELIVERY_UUID);
     }
 
     public EncounterType getAdmissionEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.ADMISSION.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_ADMISSION_UUID);
     }
 
     public EncounterType getExitFromInpatientEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.EXIT_FROM_CARE.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_EXIT_FROM_CARE_UUID);
     }
 
     public EncounterType getTransferEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.TRANSFER.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_TRANSFER_UUID);
     }
 
     public EncounterType getLabResultsEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.LAB_RESULTS.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_LAB_RESULTS_UUID);
     }
 
     public EncounterType getOncologyEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.ONCOLOGY_CONSULT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_ONCOLOGY_CONSULT_UUID);
     }
 
     public EncounterType getOncologyIntakeEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.ONCOLOGY_INITIAL_VISIT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_ONCOLOGY_INITIAL_VISIT_UUID);
     }
 
     public EncounterType getChemotherapyEncounterType() {
-	    return getEncounterTypeByUuid(EncounterTypes.CHEMOTHERAPY_SESSION.uuid());
+	    return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CHEMOTHERAPY_SESSION_UUID);
     }
 
     public EncounterType getMentalHealthAssessmentEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.MENTAL_HEALTH_ASSESSMENT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_MENTAL_HEALTH_ASSESSMENT_UUID);
     }
 
     public EncounterType getEDTriageEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.EMERGENCY_TRIAGE.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_EMERGENCY_TRIAGE_UUID);
     }
 
     public EncounterType getPedsInitialConsultEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_PEDS_INITIAL_CONSULT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PRIMARY_CARE_PEDS_INITIAL_CONSULT_UUID);
     }
 
     public EncounterType getPedsFollowupConsultEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_PEDS_FOLLOWUP_CONSULT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PRIMARY_CARE_PEDS_FOLLOWUP_CONSULT_UUID);
     }
 
     public EncounterType getAdultInitialConsultEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_ADULT_INITIAL_CONSULT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PRIMARY_CARE_ADULT_INITIAL_CONSULT_UUID);
     }
 
     public EncounterType getAdultFollowupConsultEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.PRIMARY_CARE_ADULT_FOLLOWUP_CONSULT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PRIMARY_CARE_ADULT_FOLLOWUP_CONSULT_UUID);
     }
 
     public EncounterType getNCDConsultEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.NCD_INITIAL_CONSULT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_NCD_INITIAL_CONSULT_UUID);
     }
 
     public EncounterType getNCDInitialEncounterType() {
-	    return getEncounterTypeByUuid(EncounterTypes.NCD_INITIAL_CONSULT.uuid());
+	    return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_NCD_INITIAL_CONSULT_UUID);
     }
 
     public EncounterType getNCDFollowupEncounterType() {
-        return getEncounterTypeByUuid(EncounterTypes.NCD_FOLLOWUP_CONSULT.uuid());
+        return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_NCD_FOLLOWUP_CONSULT_UUID);
     }
 
     public EncounterType getMedicationDispensedEncountertype() {
-	    return getEncounterTypeByUuid(EncounterTypes.MEDICATION_DISPENSED.uuid());
+	    return getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_MEDICATION_DISPENSED_UUID);
     }
 
     public EncounterType getMexicoConsultEncounterType() {
-	    return getEncounterTypeByUuid(MexicoEncounterTypes.MEXICO_CONSULT.uuid());
+	    return getEncounterTypeByUuid(CesConfigConstants.ENCOUNTERTYPE_MEXICOCONSULT_UUID);
     }
 
     /**
@@ -898,7 +891,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     // ****** PROGRAMS ************
     public Program getZikaProgram() {
-        return programWorkflowService.getProgramByUuid(ZikaProgram.ZIKA.uuid());
+        return programWorkflowService.getProgramByUuid(PihEmrConfigConstants.PROGRAM_ZIKA_UUID);
     }
 
     /**
