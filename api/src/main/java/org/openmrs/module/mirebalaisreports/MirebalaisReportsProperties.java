@@ -34,7 +34,6 @@ import org.openmrs.module.pihcore.CesConfigConstants;
 import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.pihcore.ZlConfigConstants;
 import org.openmrs.module.pihcore.metadata.Metadata;
-import org.openmrs.module.pihcore.metadata.core.OrderTypes;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -882,11 +881,11 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
     // ****** ORDER TYPES *********
     public OrderType getTestOrderType() {
-        return orderService.getOrderTypeByUuid(OrderTypes.TEST_ORDER.uuid());
+        return orderService.getOrderTypeByUuid(PihEmrConfigConstants.ORDERTYPE_TESTORDER_UUID);
     }
 
     public OrderType getPathologyTestOrderType() {
-        return orderService.getOrderTypeByUuid(OrderTypes.PATHOLOGY_TEST_ORDER.uuid());
+        return orderService.getOrderTypeByUuid(PihEmrConfigConstants.ORDERTYPE_PATHOLOGYTESTORDER_UUID);
     }
 
     // ****** PROGRAMS ************
