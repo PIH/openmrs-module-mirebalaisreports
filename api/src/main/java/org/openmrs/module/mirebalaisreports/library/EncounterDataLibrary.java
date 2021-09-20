@@ -23,7 +23,6 @@ import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.pihcore.reporting.library.PihPatientDataLibrary;
 import org.openmrs.module.reporting.common.AuditInfo;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
@@ -46,6 +45,7 @@ import org.openmrs.module.reporting.data.encounter.definition.SqlEncounterDataDe
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
+import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -354,7 +354,7 @@ public class EncounterDataLibrary extends BaseDefinitionLibrary<EncounterDataDef
     }
 
     private EncounterDataDefinition sqlEncounterDataDefinition(String resourceName, Replacements replacements) {
-        String sql = MirebalaisReportsUtil.getStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);
+        String sql = ReportUtil.readStringFromResource("org/openmrs/module/mirebalaisreports/sql/encounterData/" + resourceName);
         if (replacements != null) {
             for (Map.Entry<String, String> entry : replacements.entrySet()) {
                 sql = sql.replaceAll(":" + entry.getKey(), entry.getValue());

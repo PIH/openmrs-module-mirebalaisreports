@@ -7,13 +7,13 @@ import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.descriptor.MissingConceptException;
 import org.openmrs.module.emrapi.disposition.DispositionService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsUtil;
 import org.openmrs.module.pihcore.config.Config;
 import org.openmrs.module.radiologyapp.RadiologyProperties;
 import org.openmrs.module.reporting.common.MessageUtil;
 import org.openmrs.module.reporting.dataset.definition.SqlDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.SqlFileDataSetDefinition;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.util.ReportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -82,7 +82,7 @@ public abstract class BasePihReportManager extends BaseReportManager {
         sqlDsd.setName(MessageUtil.translate(getMessageCodePrefix() + "name"));
         sqlDsd.setDescription(MessageUtil.translate(getMessageCodePrefix() + "description"));
 
-        String rawSql = MirebalaisReportsUtil.getStringFromResource(SQL_DIR + sqlFileName + ".sql");
+        String rawSql = ReportUtil.readStringFromResource(SQL_DIR + sqlFileName + ".sql");
         String preparedSql = applyMetadataReplacements(rawSql);
         log.warn("Updating report SQL query for " + sqlFileName + ". New query:\n" + preparedSql);
         sqlDsd.setSqlQuery(preparedSql);
