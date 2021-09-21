@@ -56,7 +56,7 @@
         <pacsintegrationVersion>1.7.0</pacsintegrationVersion>
         <addresshierarchyVersion>2.14.2</addresshierarchyVersion>
         <providermanagementVersion>2.13.0</providermanagementVersion>
-        <eventVersion>2.9.0</eventVersion>
+        <eventVersion>2.10.0</eventVersion>
         <logicVersion>0.5.2</logicVersion>
         <importpatientfromwsVersion>1.0</importpatientfromwsVersion>
         <uilibraryVersion>2.0.6</uilibraryVersion>
