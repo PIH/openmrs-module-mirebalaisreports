@@ -17,7 +17,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.apache.commons.io.IOUtils;
 import org.openmrs.Location;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
@@ -29,20 +28,15 @@ import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
-import org.openmrs.module.reporting.report.ReportProcessorConfiguration;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.reporting.report.processor.DiskReportProcessor;
 import org.openmrs.module.reporting.report.renderer.CsvReportRenderer;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.openmrs.util.OpenmrsClassLoader;
-import org.openmrs.util.OpenmrsUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,42 +50,6 @@ import java.util.Properties;
 public abstract class BaseReportManager implements ReportManager {
 
     public enum Category { OVERVIEW, DAILY, DATA_EXPORT, DATA_QUALITY, MONITORING };
-
-     // TODO these control display order, should really be somewhere else?
-     public static final List<String> REPORTING_OVERVIEW_REPORTS_ORDER = Arrays.asList(
-        MirebalaisReportsProperties.DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID,
-        MirebalaisReportsProperties.DAILY_CHECK_INS_REPORT_DEFINITION_UUID,
-        MirebalaisReportsProperties.DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID,
-        MirebalaisReportsProperties.INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID,
-        MirebalaisReportsProperties.INPATIENT_STATS_MONTHLY_REPORT_DEFINITION_UUID);
-
-    public static final List<String> REPORTING_DATA_EXPORT_REPORTS_ORDER = Arrays.asList(
-            MirebalaisReportsProperties.PROGRAMS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.ZIKA_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.USERS_AND_PROVIDERS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.RELATIONSHIPS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.LQAS_DIAGNOSES_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.ALL_PATIENTS_WITH_IDS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.APPOINTMENTS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MCH_J9_CASE_REGISTRATION_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MEXICO_VISITS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MEXICO_SUIVE_SIMPLE_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MEXICO_SIS_VISITS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MEXICO_SIS_DIAGNOSES_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MEXICO_CES_MEDS_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.MEXICO_SSA_MEDS_REPORT_DEFINITION_UUID);
-
-    public static final List<String> REPORTING_MONITORING_REPORTS_ORDER = Arrays.asList(
-            MirebalaisReportsProperties.WEEKLY_MONITORING_REPORT_DEFINITION_UUID,
-            MirebalaisReportsProperties.NEW_DISEASE_EPISODES_REPORTING_DEFINITION_UUID,
-            MirebalaisReportsProperties.ACCOUNTING_REPORTING_DEFINITION_UUID,
-            MirebalaisReportsProperties.VISIT_REGISTRY_REPORTING_DEFINITION_UUID,
-            MirebalaisReportsProperties.MORBIDITY_REGISTRY_REPORTING_DEFINITION_UUID,
-            MirebalaisReportsProperties.CHRONIC_MALADIES_REPORTING_DEFINITION_UUID);
-
-	/**
-	 * @return the message code prefix used for all translations for the report
-	 */
 
     public Category getCategory() { return null; }
 
@@ -155,20 +113,6 @@ public abstract class BaseReportManager implements ReportManager {
         return new Parameter("location", "mirebalaisreports.parameter.location", Location.class);
     }
 
-    protected List<Parameter> getStartAndEndDateParameters() {
-        List<Parameter> l = new ArrayList<Parameter>();
-        l.add(getStartDateParameter());
-        l.add(getEndDateParameter());
-        return l;
-    }
-
-    protected Map<String,Object> getStartAndEndDateMappings() {
-        Map<String, Object> mappings =  new HashMap<String, Object>();
-        mappings.put("startDate","${startDate}");
-        mappings.put("endDate", "${endDate}");
-        return mappings;
-    }
-
 	protected String translate(String code) {
 		String messageCode = getMessageCodePrefix()+code;
 		String translation = MessageUtil.translate(messageCode);
@@ -230,18 +174,6 @@ public abstract class BaseReportManager implements ReportManager {
         return design;
     }
 
-    protected ReportProcessorConfiguration constructSaveToDiskReportProcessorConfiguration() {
-        Properties saveToDiskProperties = new Properties();
-        saveToDiskProperties.put(DiskReportProcessor.SAVE_LOCATION, OpenmrsUtil.getApplicationDataDirectory() + "reports");
-        saveToDiskProperties.put(DiskReportProcessor.COMPRESS_OUTPUT, "true");
-
-        ReportProcessorConfiguration saveToDiskProcessorConfiguration
-                = new ReportProcessorConfiguration("saveToDisk", DiskReportProcessor.class, saveToDiskProperties, true, false);
-        saveToDiskProcessorConfiguration.setProcessorMode(ReportProcessorConfiguration.ProcessorMode.AUTOMATIC);
-
-        return saveToDiskProcessorConfiguration;
-    }
-
     public <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {
         if (parameterizable == null) {
             throw new NullPointerException("Programming error: missing parameterizable");
@@ -250,12 +182,5 @@ public abstract class BaseReportManager implements ReportManager {
             mappings = ""; // probably not necessary, just to be safe
         }
         return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
-    }
-
-    protected byte[] getBytesForResource(String pathToResource) throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(pathToResource);
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        OpenmrsUtil.copyFile(inputStream, bytes);
-        return bytes.toByteArray();
     }
 }

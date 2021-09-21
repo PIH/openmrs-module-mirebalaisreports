@@ -53,7 +53,7 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
 
     @Override
     public Integer getOrder() {
-        return REPORTING_OVERVIEW_REPORTS_ORDER.indexOf(getUuid());
+        return 3;
     }
 
     @Override
