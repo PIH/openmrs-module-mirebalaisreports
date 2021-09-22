@@ -15,7 +15,7 @@
 package org.openmrs.module.mirebalaisreports.fragment.controller;
 
 import org.openmrs.Cohort;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.mirebalaisreports.definitions.InpatientStatsDailyReportManager;
 import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
@@ -42,7 +42,7 @@ public class InpatientStatsDailyReportFragmentController {
         EvaluationContext context = new EvaluationContext();
         context.addParameterValue("day", day);
 
-        ReportDefinition reportDefinition = reportDefinitionService.getDefinitionByUuid(MirebalaisReportsProperties.INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID);
+        ReportDefinition reportDefinition = reportDefinitionService.getDefinitionByUuid(InpatientStatsDailyReportManager.INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID);
         ReportData data = reportDefinitionService.evaluate(reportDefinition, context);
 
         SimpleObject cohortResults = new SimpleObject();

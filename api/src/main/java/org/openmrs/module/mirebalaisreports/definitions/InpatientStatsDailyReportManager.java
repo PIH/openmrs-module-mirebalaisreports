@@ -21,7 +21,6 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.emrapi.adt.AdtService;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.pihcore.reporting.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
 import org.openmrs.module.pihcore.reporting.cohort.definition.DiedSoonAfterEncounterCohortDefinition;
@@ -46,6 +45,8 @@ import java.util.List;
 
 @Component
 public class InpatientStatsDailyReportManager extends BasePihReportManager {
+
+    public static final String INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID = "f3bb8094-3738-11e3-b90a-a351ac6b1528";
 
     public static final String EMERGENCY_DEPARTMENT_UUID = "f3a5586e-f06c-4dfb-96b0-6f3451a35e90";
     public static final String EMERGENCY_RECEPTION_UUID = "afa09010-43b6-4f19-89e0-58d09941bcbd";
@@ -78,7 +79,7 @@ public class InpatientStatsDailyReportManager extends BasePihReportManager {
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID;
+        return INPATIENT_STATS_DAILY_REPORT_DEFINITION_UUID;
     }
 
     @Override

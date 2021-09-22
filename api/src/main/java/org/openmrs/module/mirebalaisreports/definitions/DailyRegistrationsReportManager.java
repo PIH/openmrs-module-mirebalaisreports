@@ -2,7 +2,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.Location;
 import org.openmrs.api.EncounterService;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -26,6 +25,8 @@ import java.util.Map;
 @Component
 public class DailyRegistrationsReportManager extends DailyIndicatorByLocationReportManager {
 
+    public static final String DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID = "2e91bd04-4c7a-11e3-9325-f3ae8db9f6a7";
+
     @Autowired
     EncounterService encounterService;
 
@@ -41,7 +42,7 @@ public class DailyRegistrationsReportManager extends DailyIndicatorByLocationRep
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID;
+        return DAILY_REGISTRATIONS_REPORT_DEFINITION_UUID;
     }
 
     @Override

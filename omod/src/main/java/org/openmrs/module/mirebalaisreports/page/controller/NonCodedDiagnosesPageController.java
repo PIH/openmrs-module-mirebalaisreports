@@ -19,8 +19,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Provider;
+import org.openmrs.api.ProviderService;
 import org.openmrs.module.coreapps.CoreAppsProperties;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.mirebalaisreports.definitions.NonCodedDiagnosesReportManager;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
@@ -30,11 +30,15 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +48,7 @@ public class NonCodedDiagnosesPageController {
     private final Log log = LogFactory.getLog(getClass());
 
     public void get(@SpringBean NonCodedDiagnosesReportManager reportManager,
-                    @SpringBean MirebalaisReportsProperties mrp,
+                    @SpringBean ProviderService providerService,
                     @RequestParam(required = false, value = "fromDate") Date fromDate,
                     @RequestParam(required = false, value = "toDate") Date toDate,
                     PageModel model) throws EvaluationException, IOException {
@@ -59,7 +63,7 @@ public class NonCodedDiagnosesPageController {
         toDate = DateUtil.getEndOfDay(toDate);
 
         model.addAttribute("nonCodedRows", null);
-        model.addAttribute("providers", mrp.getAllProviders());
+        model.addAttribute("providers", getAllProviders(providerService));
         model.addAttribute("reportManager", reportManager);
         model.addAttribute("fromDate", null);
         model.addAttribute("toDate", null);
@@ -68,7 +72,7 @@ public class NonCodedDiagnosesPageController {
     }
 
     public void post(@SpringBean NonCodedDiagnosesReportManager reportManager,
-                     @SpringBean MirebalaisReportsProperties mrp,
+                     @SpringBean ProviderService providerService,
                      @SpringBean ReportDefinitionService reportDefinitionService,
                      @SpringBean CoreAppsProperties coreAppsProperties,
                      @RequestParam(required = false, value = "fromDate") Date fromDate,
@@ -115,9 +119,21 @@ public class NonCodedDiagnosesPageController {
         model.addAttribute("reportManager", reportManager);
         model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", DateUtil.getStartOfDay(toDate));
-        model.addAttribute("providers", mrp.getAllProviders());
+        model.addAttribute("providers", getAllProviders(providerService));
         model.addAttribute("dashboardUrl", coreAppsProperties.getDashboardUrl());
 
     }
 
+    public List<Provider> getAllProviders(ProviderService providerService){
+        List<Provider> providers = providerService.getAllProviders(true);
+        if (providers != null && providers.size() > 0){
+            Collections.sort(providers, new Comparator<Provider>() {
+                @Override
+                public int compare(Provider p1, Provider p2) {
+                    return OpenmrsUtil.compareWithNullAsGreatest(p1.getName(), p2.getName());
+                }
+            });
+        }
+        return providers;
+    }
 }

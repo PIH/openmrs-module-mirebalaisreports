@@ -1,6 +1,6 @@
 package org.openmrs.module.mirebalaisreports.page.controller;
 
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.ui.framework.page.PageModel;
 
 /**
@@ -10,6 +10,6 @@ import org.openmrs.ui.framework.page.PageModel;
 public class RegistrationsByAgePageController {
 
     public void get(PageModel model) throws Exception {
-        model.addAttribute("privilegePatientDashboard", MirebalaisReportsProperties.PRIVILEGE_PATIENT_DASHBOARD);
+        model.addAttribute("privilegePatientDashboard", PihEmrConfigConstants.PRIVILEGE_APP_COREAPPS_PATIENT_DASHBOARD);
     }
 }

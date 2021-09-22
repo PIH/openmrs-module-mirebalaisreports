@@ -3,7 +3,6 @@ package org.openmrs.module.mirebalaisreports.definitions;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.api.EncounterService;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
 import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -28,6 +27,8 @@ import java.util.Map;
 @Component
 public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocationReportManager {
 
+    public static final String DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID = "5dd60b6c-4d45-11e3-9325-f3ae8db9f6a7";
+
     @Autowired
     EncounterService encounterService;
 
@@ -43,7 +44,7 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID;
+        return DAILY_CLINICAL_ENCOUNTERS_REPORT_DEFINITION_UUID;
     }
 
     @Override

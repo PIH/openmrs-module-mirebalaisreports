@@ -11,7 +11,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.Visit;
 import org.openmrs.contrib.testdata.TestDataManager;
 import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.ZlConfigConstants;
 import org.openmrs.module.pihcore.reporting.BaseReportTest;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -31,10 +31,6 @@ public class DailyRegistrationsReportManagerTest extends BaseReportTest {
 
     @Autowired
     DailyRegistrationsReportManager manager;
-
-    @Autowired
-    MirebalaisReportsProperties mrp;
-
     @Autowired
     TestDataManager testData;
 
@@ -44,7 +40,7 @@ public class DailyRegistrationsReportManagerTest extends BaseReportTest {
     public void setUp() throws Exception {
         EmrApiProperties eap = emrApiProperties;
 
-        PatientIdentifierType zlemrId = mrp.getZlEmrIdentifierType();
+        PatientIdentifierType zlemrId = patientService.getPatientIdentifierTypeByUuid(ZlConfigConstants.PATIENTIDENTIFIERTYPE_ZLEMRID_UUID);
         Location registrationDesk = locationService.getLocation("Biwo Resepsyon");
         Location outpatient = locationService.getLocation("Klinik Ekstèn");
         Location mirebalaisHospital = locationService.getLocation("Hôpital Universitaire de Mirebalais - Prensipal");

@@ -19,9 +19,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.openmrs.Provider;
 import org.openmrs.module.emrapi.EmrApiProperties;
-import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.pihcore.reporting.dataset.definition.NonCodedDiagnosisDataSetDefinition;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
+import org.openmrs.module.pihcore.reporting.dataset.definition.NonCodedDiagnosisDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -40,6 +39,8 @@ import java.util.Map;
  */
 @Component
 public class NonCodedDiagnosesReportManager extends BasePihReportManager {
+
+	public static final String NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID = "3737be52-2265-11e3-818c-c7ea4184d59e";
 
     private final Log log = LogFactory.getLog(getClass());
 
@@ -60,7 +61,7 @@ public class NonCodedDiagnosesReportManager extends BasePihReportManager {
 
     @Override
     public String getUuid() {
-        return MirebalaisReportsProperties.NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID;
+        return NON_CODED_DIAGNOSES_REPORT_DEFINITION_UUID;
     }
 
     @Override
