@@ -1,9 +1,8 @@
-package org.openmrs.module.mirebalaisreports.definitions.helper;
+package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
-import org.openmrs.module.mirebalaisreports.definitions.BasePihReportManager;
 import org.openmrs.module.reporting.definition.library.AllDefinitionLibraries;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -21,7 +20,7 @@ import java.util.Map;
 /**
  *
  */
-public abstract class DailyIndicatorByLocationReportDefinition extends BasePihReportManager {
+public abstract class DailyIndicatorByLocationReportManager extends BasePihReportManager {
 
     public static final String MAP_DAY_TO_START_AND_END_DATE = "startDate=${day},endDate=${day+1d-1ms}";
 

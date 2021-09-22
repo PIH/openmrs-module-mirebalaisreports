@@ -119,8 +119,6 @@ public class MirebalaisReportsProperties extends EmrProperties {
 
 	public static final String OUTPATIENT_CLINIC_UUID = "199e7d87-92a0-4398-a0f8-11d012178164";
     public static final String WOMEN_CLINIC_UUID = "9b2066a2-7087-47f6-9b3a-b001037432a3";
-    public static final String EMERGENCY_DEPARTMENT_UUID = "f3a5586e-f06c-4dfb-96b0-6f3451a35e90";
-    public static final String EMERGENCY_RECEPTION_UUID = "afa09010-43b6-4f19-89e0-58d09941bcbd";
     public static final String MIREBALAIS_HOSPITAL_UUID = "a084f714-a536-473b-94e6-ec317b152b43";
     public static final String CLINIC_REGISTRATION_UUID = "787a2422-a7a2-400e-bdbb-5c54b2691af5";
     public static final String WOMENS_INTERNAL_MEDICINE_UUID = "2c93919d-7fc6-406d-a057-c0b640104790";
@@ -139,13 +137,7 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return getLocationByUuid(WOMEN_CLINIC_UUID);
 	}
 
-    public Location getEmergencyLocation() {
-        return getLocationByUuid(EMERGENCY_DEPARTMENT_UUID);
-    }
 
-    public Location getEmergencyReceptionLocation() {
-        return getLocationByUuid(EMERGENCY_RECEPTION_UUID);
-    }
 
     public Location getMirebalaisHospitalLocation() {
         return getLocationByUuid(MIREBALAIS_HOSPITAL_UUID);

@@ -2,8 +2,9 @@ package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
+import org.openmrs.api.EncounterService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
+import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -12,6 +13,7 @@ import org.openmrs.module.reporting.dataset.definition.CohortsWithVaryingParamet
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -24,7 +26,10 @@ import java.util.Map;
  *
  */
 @Component
-public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocationReportDefinition {
+public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocationReportManager {
+
+    @Autowired
+    EncounterService encounterService;
 
     @Override
     public Category getCategory() {
@@ -63,8 +68,8 @@ public class DailyClinicalEncountersReportManager extends DailyIndicatorByLocati
 
     @Override
     public void addDataSetDefinitions(ReportDefinition reportDefinition) {
-        EncounterType vitalsEncounterType = mirebalaisReportsProperties.getVitalsEncounterType();
-        EncounterType consultEncounterType = mirebalaisReportsProperties.getConsultEncounterType();
+        EncounterType vitalsEncounterType = encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_VITALS_UUID);
+        EncounterType consultEncounterType = encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CONSULTATION_UUID);
 
         CohortDefinition clinicalCheckIns = definitionLibraries.getDefinition(CohortDefinition.class, "mirebalais.cohortDefinition.clinicalCheckInAtLocation");
         clinicalCheckIns.setName("clinicalCheckIns");

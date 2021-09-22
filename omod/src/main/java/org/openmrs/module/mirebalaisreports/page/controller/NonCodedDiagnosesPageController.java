@@ -105,7 +105,9 @@ public class NonCodedDiagnosesPageController {
         }
         model.addAttribute("providerId", providerId);
 
-        EvaluationContext context = reportManager.initializeContext(params);
+        EvaluationContext context = new EvaluationContext();
+        context.setParameterValues(params);
+
         ReportDefinition reportDefinition = reportManager.constructReportDefinition();
         ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
         model.addAttribute("nonCodedRows", reportData.getDataSets().get(NonCodedDiagnosesReportManager.DATA_SET_NAME));

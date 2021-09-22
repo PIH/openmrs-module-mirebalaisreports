@@ -1,8 +1,9 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.Location;
+import org.openmrs.api.EncounterService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
+import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
@@ -10,6 +11,7 @@ import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefi
 import org.openmrs.module.reporting.dataset.definition.CohortsWithVaryingParametersDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -22,7 +24,10 @@ import java.util.Map;
  *
  */
 @Component
-public class DailyRegistrationsReportManager extends DailyIndicatorByLocationReportDefinition {
+public class DailyRegistrationsReportManager extends DailyIndicatorByLocationReportManager {
+
+    @Autowired
+    EncounterService encounterService;
 
     @Override
     public Category getCategory() {
@@ -62,7 +67,7 @@ public class DailyRegistrationsReportManager extends DailyIndicatorByLocationRep
     @Override
     public void addDataSetDefinitions(ReportDefinition reportDefinition) {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
-        cd.addEncounterType(mirebalaisReportsProperties.getRegistrationEncounterType());
+        cd.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PATIENT_REGISTRATION_UUID));
         cd.addParameter(new Parameter("locationList", "Location", Location.class));
         cd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
@@ -89,7 +94,7 @@ public class DailyRegistrationsReportManager extends DailyIndicatorByLocationRep
         overallDsd.addParameter(getEndDateParameter());
 
         EncounterCohortDefinition overall = new EncounterCohortDefinition();
-        overall.addEncounterType(mirebalaisReportsProperties.getRegistrationEncounterType());
+        overall.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_PATIENT_REGISTRATION_UUID));
         overall.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
         overall.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 

@@ -18,8 +18,11 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.LocationService;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
+import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.pihcore.reporting.cohort.definition.AdmissionSoonAfterExitCohortDefinition;
 import org.openmrs.module.pihcore.reporting.cohort.definition.DiedSoonAfterEncounterCohortDefinition;
 import org.openmrs.module.pihcore.reporting.cohort.definition.LastDispositionBeforeExitCohortDefinition;
@@ -38,12 +41,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 @Component
 public class InpatientStatsDailyReportManager extends BasePihReportManager {
+
+    public static final String EMERGENCY_DEPARTMENT_UUID = "f3a5586e-f06c-4dfb-96b0-6f3451a35e90";
+    public static final String EMERGENCY_RECEPTION_UUID = "afa09010-43b6-4f19-89e0-58d09941bcbd";
+
+    @Autowired
+    EncounterService encounterService;
+
+    @Autowired
+    LocationService locationService;
 
     @Autowired
     private AllDefinitionLibraries libraries;
@@ -109,7 +120,7 @@ public class InpatientStatsDailyReportManager extends BasePihReportManager {
 
     public DataSetDefinition constructDataSetDefinition() {
         List<Location> inpatientLocations = adtService.getInpatientLocations();
-        EncounterType admissionEncounterType = emrApiProperties.getAdmissionEncounterType();
+        EncounterType admissionEncounterType = encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_ADMISSION_UUID);
 
         Concept dischargedDisposition = conceptService.getConceptByMapping("DISCHARGED", "PIH");
         Concept deathDisposition = conceptService.getConceptByMapping("DEATH", "PIH");
@@ -218,9 +229,9 @@ public class InpatientStatsDailyReportManager extends BasePihReportManager {
         EncounterCohortDefinition edCheckIn = new EncounterCohortDefinition();
         edCheckIn.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
         edCheckIn.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-        edCheckIn.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
-        edCheckIn.addLocation(mirebalaisReportsProperties.getEmergencyLocation());
-        edCheckIn.addLocation(mirebalaisReportsProperties.getEmergencyReceptionLocation());
+        edCheckIn.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CONSULTATION_UUID));
+        edCheckIn.addLocation(locationService.getLocationByUuid(EMERGENCY_DEPARTMENT_UUID));
+        edCheckIn.addLocation(locationService.getLocationByUuid(EMERGENCY_RECEPTION_UUID));
 
         CohortIndicator edCheckInInd = buildIndicator("ED Check In", edCheckIn, "onOrAfter=${startDate},onOrBefore=${endDate}");
         cohortDsd.addColumn("edcheckin", "ED Check In", map(edCheckInInd, "startDate=${startDate},endDate=${endDate}"), "");
@@ -229,7 +240,7 @@ public class InpatientStatsDailyReportManager extends BasePihReportManager {
         EncounterCohortDefinition surgicalNotes = new EncounterCohortDefinition();
         surgicalNotes.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
         surgicalNotes.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
-        surgicalNotes.addEncounterType(mirebalaisReportsProperties.getPostOpNoteEncounterType());
+        surgicalNotes.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_POST_OPERATIVE_NOTE_UUID));
 
         CohortIndicator surgicalNotesInd = buildIndicator("OR Volume", surgicalNotes, "onOrAfter=${startDate},onOrBefore=${endDate}");
         cohortDsd.addColumn("orvolume", "OR Volume", map(surgicalNotesInd, "startDate=${startDate},endDate=${endDate}"), "");
@@ -247,15 +258,6 @@ public class InpatientStatsDailyReportManager extends BasePihReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        // At present we aren't maintaining an excel template for this, because we don't intend for it to be downloaded.
-        // If we commit to that decision, then remove this commented out code, as well as the xls file.
-        //try {
-        //    return Arrays.asList(xlsReportDesign(reportDefinition, getBytesForResource("org/openmrs/module/mirebalaisreports/reportTemplates/InpatientStatsDailyReport.xls")));
-        //} catch (IOException e) {
-        //    throw new IllegalStateException("Unable to load excel template", e);
-        //}
-        //return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
-        return Collections.EMPTY_LIST;
+        return new ArrayList<ReportDesign>();
     }
-
 }

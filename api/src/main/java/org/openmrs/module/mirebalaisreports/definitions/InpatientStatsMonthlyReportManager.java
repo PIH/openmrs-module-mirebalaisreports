@@ -143,8 +143,13 @@ public class InpatientStatsMonthlyReportManager extends BasePihReportManager {
     }
 
     @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) throws IOException {
-        return Arrays.asList(xlsReportDesign(reportDefinition, "InpatientStatsMonthly", "sheet:1,column:3,dataset:dsd"));
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+        try {
+            return Arrays.asList(xlsReportDesign(reportDefinition, "InpatientStatsMonthly", "sheet:1,column:3,dataset:dsd"));
+        }
+        catch (IOException e) {
+            throw new IllegalStateException("Unable to load xls report design", e);
+        }
     }
 
 }

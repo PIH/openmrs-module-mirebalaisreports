@@ -20,7 +20,7 @@ import org.hibernate.SessionFactory;
 import org.openmrs.Provider;
 import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.dataset.definition.NonCodedDiagnosisDataSetDefinition;
+import org.openmrs.module.pihcore.reporting.dataset.definition.NonCodedDiagnosisDataSetDefinition;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -39,7 +39,7 @@ import java.util.Map;
  * Responsible for defining the full data export report
  */
 @Component
-public class NonCodedDiagnosesReportManager extends BaseReportManager {
+public class NonCodedDiagnosesReportManager extends BasePihReportManager {
 
     private final Log log = LogFactory.getLog(getClass());
 

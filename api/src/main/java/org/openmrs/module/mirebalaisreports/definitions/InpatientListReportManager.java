@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -74,9 +73,7 @@ public class InpatientListReportManager extends BasePihReportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        //return Arrays.asList(xlsReportDesign(reportDefinition, null, null));
-        return Collections.EMPTY_LIST;
-
+        return new ArrayList<ReportDesign>();
     }
 
     private Parameter getEffectiveDateParameter() {

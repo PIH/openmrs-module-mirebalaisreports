@@ -1,8 +1,9 @@
 package org.openmrs.module.mirebalaisreports.definitions;
 
 import org.openmrs.Location;
+import org.openmrs.api.EncounterService;
 import org.openmrs.module.mirebalaisreports.MirebalaisReportsProperties;
-import org.openmrs.module.mirebalaisreports.definitions.helper.DailyIndicatorByLocationReportDefinition;
+import org.openmrs.module.pihcore.PihEmrConfigConstants;
 import org.openmrs.module.pihcore.config.ConfigDescriptor;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
@@ -13,6 +14,7 @@ import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefi
 import org.openmrs.module.reporting.dataset.definition.CohortsWithVaryingParametersDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -22,7 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDefinition {
+public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportManager {
+
+    @Autowired
+    EncounterService encounterService;
 
     @Override
     public Category getCategory() {
@@ -62,12 +67,12 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
     @Override
     public void addDataSetDefinitions(ReportDefinition reportDefinition) {
         EncounterCohortDefinition priorConsultAtLocation = new EncounterCohortDefinition();
-        priorConsultAtLocation.addEncounterType(mirebalaisReportsProperties.getConsultEncounterType());
+        priorConsultAtLocation.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CONSULTATION_UUID));
         priorConsultAtLocation.addParameter(new Parameter("locationList", "Location List", Location.class));
         priorConsultAtLocation.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
 
         EncounterCohortDefinition overall = new EncounterCohortDefinition();
-        overall.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
+        overall.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CHECK_IN_UUID));
         overall.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
         overall.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
         CohortCrossTabDataSetDefinition overallDsd = new CohortCrossTabDataSetDefinition();
@@ -77,17 +82,11 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         overallDsd.addColumn(getMessageCodePrefix() + "overall", map(overall, "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
         EncounterCohortDefinition multipleCheckIns = new EncounterCohortDefinition();
-        multipleCheckIns.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
+        multipleCheckIns.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CHECK_IN_UUID));
         multipleCheckIns.setAtLeastCount(2);
         multipleCheckIns.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
         multipleCheckIns.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
         overallDsd.addColumn(getMessageCodePrefix() + "dataQuality.multipleCheckins", map(multipleCheckIns, "onOrAfter=${startDate},onOrBefore=${endDate}"));
-
-        //CohortCrossTabDataSetDefinition dataQualityDsd = new CohortCrossTabDataSetDefinition();
-        //dataQualityDsd.setName("dataQuality");
-        //dataQualityDsd.addParameter(getStartDateParameter());
-        //dataQualityDsd.addParameter(getEndDateParameter());
-        //dataQualityDsd.addColumn(getMessageCodePrefix() + "dataQuality.multipleCheckins", map(multipleCheckIns, "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
         CohortsWithVaryingParametersDataSetDefinition byLocationDsd = new CohortsWithVaryingParametersDataSetDefinition();
         byLocationDsd.setName("byLocation");
@@ -133,7 +132,7 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
         cd.addParameter(new Parameter("locationList", "Locations", Location.class));
-        cd.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
+        cd.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CHECK_IN_UUID));
         cd.setConcept(conceptService.getConceptByMapping("Type of HUM visit", "PIH"));
         cd.addIncludeCodedValue(conceptService.getConceptByMapping(value.getCode(), value.getSource()));
         return renameParameters(cd);
@@ -146,7 +145,7 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
         cd.addParameter(new Parameter("onOrAfter", "On or after", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or before", Date.class));
         cd.addParameter(new Parameter("locationList", "Locations", Location.class));
-        cd.addEncounterType(mirebalaisReportsProperties.getCheckInEncounterType());
+        cd.addEncounterType(encounterService.getEncounterTypeByUuid(PihEmrConfigConstants.ENCOUNTERTYPE_CHECK_IN_UUID));
         cd.setConcept(conceptService.getConceptByMapping("Type of HUM visit", "PIH"));
         cd.setIncludeNoObsValue(true);
         for (String excludeValue : excludeValues) {
