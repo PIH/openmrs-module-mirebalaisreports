@@ -71,7 +71,7 @@ public class InpatientStatsMonthlyReportManager extends BasePihReportManager {
 
     @Override
     public Integer getOrder() {
-        return REPORTING_OVERVIEW_REPORTS_ORDER.indexOf(getUuid());
+        return 5;
     }
 
     @Override

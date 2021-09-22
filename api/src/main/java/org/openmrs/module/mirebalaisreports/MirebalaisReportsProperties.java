@@ -416,22 +416,6 @@ public class MirebalaisReportsProperties extends EmrProperties {
 		return conceptService.getConceptSourceByName("PIH");
 	}
 
-	public ConceptSource getMirebalaisReportsConceptSource() {
-		return conceptService.getConceptSourceByName("org.openmrs.module.mirebalaisreports");
-	}
-
-    public Concept getAdmissionLocationConcept() {
-        return dispositionService.getDispositionDescriptor().getAdmissionLocationConcept();
-    }
-
-    public Concept getInternalTransferLocationConcept() {
-        return dispositionService.getDispositionDescriptor().getInternalTransferLocationConcept();
-    }
-
-    public Concept getDispositionConcept() {
-        return dispositionService.getDispositionDescriptor().getDispositionConcept();
-    }
-
     public Concept getAdmissionDispositionConcept() {
         return getConceptForDisposition("admitToHospital");
     }

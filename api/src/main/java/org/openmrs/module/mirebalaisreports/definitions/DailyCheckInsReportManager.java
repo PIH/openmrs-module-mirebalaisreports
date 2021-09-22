@@ -51,7 +51,7 @@ public class DailyCheckInsReportManager extends DailyIndicatorByLocationReportDe
 
     @Override
     public Integer getOrder() {
-        return REPORTING_OVERVIEW_REPORTS_ORDER.indexOf(getUuid());
+        return 2;
     }
 
     @Override
